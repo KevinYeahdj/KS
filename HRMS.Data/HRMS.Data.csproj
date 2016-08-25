@@ -45,12 +45,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DbHelperSQL.cs" />
+    <Compile Include="Entity\HRInfoEntity.cs" />
     <Compile Include="Entity\Table.cs" />
     <Compile Include="Entity\LaborInfoEntity.cs" />
     <Compile Include="Entity\DicEntity.cs" />
     <Compile Include="Entity\UserEntity.cs" />
     <Compile Include="IRepository.cs" />
     <Compile Include="ManagerBase.cs" />
+    <Compile Include="Manager\HRInfoManager.cs" />
     <Compile Include="Manager\LaborInfoManager.cs" />
     <Compile Include="Manager\DicManager.cs" />
     <Compile Include="Manager\UserManager.cs" />

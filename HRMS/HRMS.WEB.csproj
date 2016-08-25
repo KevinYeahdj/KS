@@ -150,6 +150,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\HRController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
@@ -400,6 +401,7 @@
     <Content Include="FlatLab\bootstrap-table\src\locale\bootstrap-table-vi-VN.js" />
     <Content Include="FlatLab\bootstrap-table\src\locale\bootstrap-table-zh-CN.js" />
     <Content Include="FlatLab\bootstrap-table\src\locale\bootstrap-table-zh-TW.js" />
+    <Content Include="FlatLab\knockout-3.4.0.js" />
     <Content Include="FlatLab\toastr\build\toastr.css" />
     <Content Include="FlatLab\toastr\build\toastr.min.css" />
     <Content Include="FlatLab\toastr\build\toastr.min.js" />
@@ -683,6 +685,7 @@
     <Content Include="Views\Manage\DicIndex.cshtml" />
     <Content Include="Views\Manage\PeopleIndex.cshtml" />
     <Content Include="Views\Manage\MenuIndex.cshtml" />
+    <Content Include="Views\HR\BasicIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
