@@ -1,0 +1,197 @@
+﻿@model HRMS.WEB.Models.LoginViewModel
+@{
+    ViewBag.Title = "用户登录";
+}
+<link rel="stylesheet" href="/Content/login.css" type="text/css" charset="utf-8">
+<style type="text/css">
+    div.logo {
+        width: 980px;
+        height: 16px;
+        background: url(/content/images/logo.png) no-repeat 0 40px;
+        margin: 0px auto;
+        padding-top: 40px;
+    }
+
+    div.lgCon {
+        width: 980px;
+        margin: 0px auto;
+        position: relative;
+    }
+
+        div.lgCon ul {
+            width: 345px;
+            margin: 0px auto;
+            position: relative;
+            list-style: none;
+        }
+
+    #lgPwdNoteUl {
+        top: 0px;
+        right: 23px;
+        position: absolute;
+        list-style: none;
+        visibility: hidden;
+    }
+
+    #btnfunc {
+        top: 58px;
+        left: 337px;
+        position: absolute;
+        z-index: 0;
+    }
+
+    input.lgBtnR {
+        height: 38px;
+        width: 38px;
+        padding: 0;
+        border: 0 none;
+        cursor: pointer;
+        background: url(/content/images/wzd.png) no-repeat -105px -193px;
+    }
+
+    li.loginHelp {
+        margin-top: 15px;
+        padding-left: 7px;
+        text-indent: 7px;
+    }
+
+    i.loginHelp {
+        width: 13px;
+        height: 13px;
+        display: inline-block;
+        vertical-align: middle;
+        cursor: pointer;
+        background: url(/content/images/wzd.png) no-repeat -262px -247px;
+    }
+
+    span.loginHelp {
+        color: #ffffff;
+        *margin-left: 5px;
+        vertical-align: middle;
+        cursor: pointer;
+    }
+
+    #loginFeg {
+        width: 340px;
+        height: 50px;
+        color: white;
+        border-radius: 3px;
+        margin-top: 10px;
+        position: relative;
+        background: #FB6E52;
+        visibility: hidden;
+    }
+
+        #loginFeg p {
+            padding: 10px;
+            line-height: 16px;
+            word-wrap: break-word;
+            word-break: break-all;
+            text-indent: 0px;
+        }
+
+        #loginFeg i {
+            height: 0px;
+            line-height: 0px;
+            width: 0px;
+            top: -3px;
+            left: 40px;
+            position: absolute;
+            border-style: solid;
+            border-color: #48CFAE #48CFAE #FB6E52 #48CFAE;
+            border-width: 0px 4px 3px 4px;
+        }
+
+    #lgPwdNote {
+        font-size: 0px;
+        position: relative;
+        z-index: 1;
+    }
+
+        #lgPwdNote div.noteCon {
+            font-size: 12px;
+        }
+
+    #loginError {
+        width: auto;
+        margin-top: 0px;
+        padding: 5px 0px 0px 7px;
+        line-height: 16px;
+    }
+
+    li.note i.arrowLgL {
+        line-height: 0px;
+        border-style: solid;
+        border-width: 4px 3px 4px 0px;
+        border-color: #48CFAE #FB6E52 #48CFAE #48CFAE;
+        vertical-align: middle;
+        display: inline-block;
+        *display: inline;
+        *zoom: 1;
+    }
+
+    #Cover p {
+        padding: 0px;
+        text-align: center;
+        color: #FFFFFF;
+        font-weight: bold;
+        font-size: 16px;
+    }
+</style>
+
+<body style="font-size: 12px; height: 80%; background-color: rgb(72, 207, 174);">
+    
+        @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+            
+    <div class="lgCon" style="margin-top: 94px;">
+        <ul>
+            <li>
+                <ul class="inputUl">
+                    <li class="inputLi">
+                        @Html.LabelFor(m => m.UserName)
+                        @Html.TextBoxFor(m => m.UserName)
+                    </li>
+                    @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
+                </ul>
+                <ul><li>&nbsp;</li></ul>
+                <ul class="inputUl">
+                    <li class="inputLi">
+                        @Html.LabelFor(m => m.Password)
+                        @Html.PasswordFor(m => m.Password)
+                    </li>                   
+                     @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                </ul>
+                <ul><li>@Html.ValidationSummary(true, "", new { @class = "text-danger" })</li></ul>
+            </li>
+            <li id="btnfunc">
+                <input type="submit" value=""  class="lgBtnR" />
+            </li>
+        </ul>
+    </div>
+        }
+</body>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+<script src="~/FlatLab/js/jquery-1.8.3.min.js?v=267"></script>
+<script>
+    function changeSubmitStyle() {
+        if ($("#UserName").val() != "" && $("#Password").val() != "") {
+            $("input.lgBtnR")[0].style.background = "url(/content/images/wzd.png) no-repeat -150px -193px";
+
+        } else {
+            $("input.lgBtnR")[0].style.background = "url(/content/images/wzd.png) no-repeat -105px -193px";
+        }
+    }
+
+    $("#UserName").keyup(function () {
+        changeSubmitStyle();
+    });
+    $("#Password").keyup(function () {
+        changeSubmitStyle();
+    });
+</script>

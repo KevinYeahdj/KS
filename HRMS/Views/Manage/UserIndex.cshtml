@@ -1,0 +1,412 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+}
+<style>
+    .search {
+        width: auto;
+    }
+</style>
+
+<div>
+    <div>
+        <div class="col-*-12">
+
+            <div id="toolbar">
+                <div style="float:left" class="btn btn-primary" data-toggle="modal" data-target="#addModal" onclick="AddUser()">添加记录</div>
+            </div>
+
+            <table id="mytab" class="table table-hover"></table>
+
+            <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                &times;
+                            </button>
+                            <h4 class="modal-title" id="addModalLabel">添加记录</h4>
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" id="editRowIndex" />
+                            <div class="form-group">
+                                姓名：<input type="text" class="form-control" id="iUserName" placeholder="请输入姓名">
+                            </div>
+                            <div class="form-group">
+                                所在公司：<select class="form-control" id="iCompanyCode">
+                                    <option value="-">请选择</option>
+                                    @{
+                                        foreach (var item in ViewBag.Companies)
+                                        {
+                                            <option value="@item.iKey">@item.iValue</option>
+                                        }
+                                    }
+                                </select>
+
+
+
+                            </div>
+                            <div class="form-group">
+                                工号：<input type="text" class="form-control" id="iEmployeeCodeId" placeholder="请输入工号">
+                            </div>
+                            <div class="form-group">
+                                密码：<input type="text" class="form-control" id="iPassWord" placeholder="请输入密码">
+                            </div>
+                            <div class="form-group">
+                                用户类型：<select class="form-control" id="iUserType">
+                                    <option value="-">请选择</option>
+                                    <option value="普通用户">普通用户</option>
+                                    <option value="超级用户">超级用户</option>
+                                    <option value="超级管理员">超级管理员</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-primary" id="SaveChanges">提交</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="menuModal" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                &times;
+                            </button>
+                            <h4 class="modal-title" id="menuModalLabel">菜单权限修改</h4>
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" id="editUserId" />
+                            <div class="form-group">
+                                公司：<select class="form-control" id="iMenuCompanyCode" onchange="ChangeUserCompany()">
+                                    <option value="-">请选择</option>
+                                    @{
+                                        foreach (var item in ViewBag.Companies)
+                                        {
+                                            <option value="@item.iKey">@item.iValue</option>
+                                        }
+                                    }
+                                </select>
+
+
+
+                            </div>
+
+                            <div class="form-group">
+                                <div class="zTreeDemoBackground left">
+                                    <ul id="menuTree" class="ztree"></ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-primary" id="MenuSaveChanges">提交</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $("div.icon-reorder").click(function () {
+            $('#mytab').bootstrapTable('resetView', {
+                height: tableHeight()
+            })
+        })
+        //根据窗口调整表格高度
+        $(window).resize(function () {
+            $('#mytab').bootstrapTable('resetView', {
+                height: tableHeight()
+            })
+        })
+
+        $('#mytab').bootstrapTable({
+            url: "/Manage/GetAllUsers",//数据源
+            dataField: "rows",//服务端返回数据键值 就是说记录放的键值是rows，分页时使用总记录数的键值为total
+            sortName: "iCreatedOn",//排序列
+            cache: false,
+            striped: true,//條紋行
+            clickToSelect: true,//选择行即选择checkbox
+            searchOnEnterKey: true,//ENTER键搜索
+            height: tableHeight(),//高度调整
+            search: true,//是否搜索
+            pagination: true,//是否分页
+            pageSize: 15,//单页记录数
+            pageNumber: 1,//起始页
+            pageList: [15, 20, 30, 50, 100, 10000],//分页步进值
+            sidePagination: "server",//服务端分页
+            contentType: "application/x-www-form-urlencoded",//请求数据内容格式 默认是 application/json 自己根据格式自行服务端处理
+            dataType: "json",//期待返回数据类型
+            method: "post",//请求方式
+            searchAlign: "left",//查询框对齐方式
+            queryParamsType: "limit",//查询参数组织方式
+            queryParams: function getParams(params) {
+                //params obj
+                params.other = "otherInfo";
+                return params;
+            },
+            searchOnEnterKey: false,//回车搜索
+            showRefresh: true,//刷新按钮
+            showColumns: true,//列选择按钮
+            buttonsAlign: "left",//按钮对齐方式
+            toolbar: "#toolbar",//指定工具栏
+            toolbarAlign: "right",//工具栏对齐方式
+            columns: [
+                {
+                    field: "iUserName",//键名
+                    title: "姓名",//标题
+                    sortable: true//是否可排序
+                    //order: "desc"//默认排序方式
+                },
+                {
+                    field: "iEmployeeCodeId",
+                    title: "工号",
+                    sortable: true
+                    //,titleTooltip: "this is tips"
+                },
+                {
+                    field: "iPassWord",
+                    title: "密码",
+                    sortable: true
+                    //,titleTooltip: "this is tips"
+                },
+                {
+                    field: "iCompanyCode",
+                    title: "所属公司",
+                    sortable: true,
+                    visible: false
+                },
+                {
+                    field: "iCompanyName",
+                    title: "所属公司",
+                    sortable: false
+                },
+                {
+                    field: "iUserType",
+                    title: "用户类型",
+                    sortable: true
+                    //formatter: 'infoFormatter',//对本列数据做格式化
+                },
+                {
+                    field: "iUpdatedOn",
+                    title: "最近修改时间",
+                    sortable: true,
+                    order: "desc"//默认排序方式
+                    //formatter: 'infoFormatter',//对本列数据做格式化
+                },
+                {
+                    field: "operation",
+                    title: "菜单权限",
+                    formatter: 'infoFormatter',//对本列数据做格式化
+                }
+
+            ],
+            onClickRow: function (row, $element) {
+                //$element是当前tr的jquery对象
+                //$element.css("background-color", "green");
+            },//单击row事件
+            onDblClickRow: function (row, $element) {
+
+                $("#addModalLabel").html("修改记录");
+                $("#iUserName").val(row.iUserName);
+                $("#iCompanyCode").val(row.iCompanyCode);
+                $("#iEmployeeCodeId").val(row.iEmployeeCodeId);
+                $("#iPassWord").val(row.iPassWord);
+                $("#iUserType").val(row.iUserType);
+                $("#editRowIndex").val(this.data.indexOf(row));
+                nodeObj.iUserName = row.iUserName;
+                nodeObj.iCompanyCode = row.iCompanyCode;
+                nodeObj.iEmployeeCodeId = row.iEmployeeCodeId;
+                nodeObj.iPassWord = row.iPassWord;
+                nodeObj.iUserType = row.iUserType;
+
+                $('#addModal').modal('toggle');
+            },
+            locale: "zh-CN",//中文支持,
+            detailView: false, //是否显示详情折叠
+            detailFormatter: function (index, row, element) {
+                var html = '';
+                $.each(row, function (key, val) {
+                    html += "<p>" + key + ":" + val + "</p>"
+                });
+                return html;
+            }
+        });
+        //MVVM绑定
+        window.nodeObj = {};
+        $('#iUserName').change(function () {
+            nodeObj.iUserName = this.value;
+        });
+        $('#iCompanyCode').change(function () {
+            nodeObj.iCompanyCode = this.value;
+        });
+        $('#iEmployeeCodeId').change(function () {
+            nodeObj.iEmployeeCodeId = this.value;
+        });
+        $('#iPassWord').change(function () {
+            nodeObj.iPassWord = this.value;
+        });
+        $('#iUserType').change(function () {
+            nodeObj.iUserType = this.value;
+        });
+        //保存事件
+        $("#SaveChanges").click(function () {
+
+            var param = {};
+            param.jsonString = JSON.stringify(nodeObj);
+            param.action = $("#editRowIndex").val() == "" ? "add" : "update";
+            $.ajax({
+                url: "/Manage/UsersSaveChanges",
+                type: "POST",
+                data: param,
+                dataType: 'text',
+                success: function (data) {
+                    $('#addModal').modal('toggle');
+                    if (data == "success") {
+                        if ($("#editRowIndex").val() == "") {
+                            //新增
+                            $('#mytab').bootstrapTable('refresh');
+                        }
+                        else {
+                            //修改
+                            $('#mytab').bootstrapTable('updateRow', {
+                                index: $("#editRowIndex").val(),
+                                row: {
+                                    iUserName: $("#iUserName").val(),
+                                    iEmployeeCodeId: $("#iEmployeeCodeId").val(),
+                                    iCompanyCode: $("#iCompanyCode").val(),
+                                    iCompanyName: $("#iCompanyCode").find("option:selected").text(),
+                                    iPassWord: $("#iPassWord").val(),
+                                    iUserType: $("#iUserType").val()
+                                }
+                            });
+                        }
+                    }
+                    else {
+                        console.log(data);
+                    }
+                }
+            });
+        });
+
+        $("#MenuSaveChanges").click(function () {
+            var zTree = $.fn.zTree.getZTreeObj("menuTree");
+            var nodes = zTree.getCheckedNodes();
+            var checkNodeIds =[];
+            for (var n in nodes){
+                checkNodeIds.push(nodes[n].id);
+            }
+            var userid = $("#editUserId").val();
+            var companyid = $("#iMenuCompanyCode").val();
+            var param = {};
+            param.jsonString = JSON.stringify(checkNodeIds);
+            param.userid = userid;
+            param.companyid = companyid;
+            $.ajax({
+                url: "/Manage/UserMenuSaveChanges",
+                type: "POST",
+                data: param,
+                dataType: 'text',
+                success: function (data) {
+                    if (data == "success") {
+                        toastr.success('保存成功！');
+                    }
+                    else {
+                        toastr.error('保存失败！');
+                        console.log(data);
+                    }
+                }
+            });
+        });
+
+        var setting = {
+            check: {
+                enable: true,
+                chkStyle: "checkbox",
+                chkboxType: { "Y": "ps", "N": "ps" }
+            },
+            data: {
+                simpleData: {
+                    enable: true
+                }
+            }
+        };
+        var zNodes = @(Html.Raw(ViewBag.treeNodes));
+        $.fn.zTree.init($("#menuTree"), setting, zNodes);
+    })
+
+    function tableHeight() {
+        return $(window).height() * 0.85;
+    }
+
+    function infoFormatter(value, row, index) {
+        return '<a href="#" onclick="SetMenu(\'' + row.iEmployeeCodeId + '\',\'' + row.iCompanyCode + '\',\'' + row.iUserType + '\')">点击设定</a>';
+    }
+
+    function UpdateMenuTree(userid, companyid) {
+        var width = $("#menuTree").width();
+        var height = $("#menuTree").height();
+        var $shade = $('<div id="waiting"></div>');
+        $shade.css({ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, background: '#fff url(/Content/images/waiting.gif) center center no-repeat', opacity: 0.4 });
+        $("#menuTree").append($shade);
+        $.get("/Manage/GetUserMenuTree?userid=" + userid + "&companyid=" + companyid, function(result){
+            var treeObj = $.fn.zTree.getZTreeObj("menuTree");
+            treeObj.checkAllNodes(false);
+            treeObj.setting.check.chkboxType.Y = "";  //清除上下级全选影响
+            var data = result.data;
+            for (var x in data)
+            {
+                var node = treeObj.getNodeByParam("id", data[x], null);
+                if(node){
+                    treeObj.checkNode(node, true, true);
+                }
+                else{
+                    console.log("未找到结点id为" + x);
+                }
+            }
+            treeObj.setting.check.chkboxType.Y = "ps"; //还原上下级全选影响
+            $shade.remove();
+        });
+    }
+
+    function SetMenu(userid, companyid, usertype) {
+        $("#editUserId").val(userid);
+        $("#iMenuCompanyCode").val(companyid);
+        if (usertype == "普通用户") {
+            $("#iMenuCompanyCode").attr("disabled", "disabled");
+        }
+        else {
+            $("#iMenuCompanyCode").removeAttr("disabled");
+        }
+        UpdateMenuTree(userid, companyid);
+        $('#menuModal').modal('toggle');
+    }
+
+    function ChangeUserCompany() {
+        var userid = $("#editUserId").val();
+        var companyid = $("#iMenuCompanyCode").val();
+        UpdateMenuTree(userid, companyid);
+    }
+    //
+    function AddUser() {
+        $("#addModal").find("input[type='text']").each(function () {
+            $(this).val("");
+        });
+        $("#iCompanyCode").val("-");
+        $("#iUserType").val("-");
+
+        nodeObj.iUserName = "";
+        nodeObj.iCompanyCode = "-";
+        nodeObj.iEmployeeCodeId = "";
+        nodeObj.iPassWord = "";
+        nodeObj.iUserType = "-";
+        $("#addModalLabel").html("添加记录");
+    }
+
+</script>

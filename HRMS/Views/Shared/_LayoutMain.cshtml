@@ -1,0 +1,172 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>HRMS</title>
+    <link href="~/FlatLab/css/bootstrap.min.css?v=267" rel="stylesheet">
+    <link href="~/FlatLab/bootstrap-table/src/bootstrap-table.css" rel="stylesheet" />
+    <link href="~/FlatLab/bootstrap-fileinput/css/fileinput.min.css" rel="stylesheet" />
+    <link href="~/FlatLab/css/bootstrap-reset.css?v=267" rel="stylesheet">
+    <!--external css-->
+    <link href="~/FlatLab/assets/font-awesome/css/font-awesome.min.css?v=267" rel="stylesheet" />
+    <link href="~/FlatLab/assets/jquery-easy-pie-chart/jquery.easy-pie-chart.css?v=267" rel="stylesheet" type="text/css" media="screen" />
+    <link rel="stylesheet" href="~/FlatLab/css/owl.carousel.css?v=267" type="text/css">
+    <!-- Custom styles for this template -->
+    <link href="~/FlatLab/css/style.min.css?v=267" rel="stylesheet">
+    <link href="~/FlatLab/css/style-responsive.min.css?v=267" rel="stylesheet" />
+    <link href="~/FlatLab/toastr/build/toastr.css" rel="stylesheet" />
+    <link href="~/FlatLab/zTree/zTreeStyle/zTreeStyle.css" rel="stylesheet" />
+    @RenderSection("style", required: false)
+
+    <script src="~/FlatLab/js/jquery-1.8.3.min.js?v=267"></script>
+    <script src="~/FlatLab/js/bootstrap.min.js?v=267"></script>
+    <script src="~/FlatLab/bootstrap-table/src/bootstrap-table.js"></script>
+    <script src="~/FlatLab/bootstrap-fileinput/js/fileinput.min.js"></script>
+    <script src="~/FlatLab/bootstrap-table/src/locale/bootstrap-table-zh-CN.js"></script>
+    <script src="~/FlatLab/bootstrap-fileinput/js/locales/zh.js"></script>
+    <script class="include" type="text/javascript" src="~/FlatLab/js/jquery.dcjqaccordion.2.7.js?v=267"></script>
+    <script src="~/FlatLab/js/jquery.scrollTo.min.js?v=267"></script>
+    <script src="~/FlatLab/js/jquery.nicescroll.js?v=267" type="text/javascript"></script>
+    <script src="~/FlatLab/js/jquery.sparkline.js?v=267" type="text/javascript"></script>
+    <script src="~/FlatLab/assets/jquery-easy-pie-chart/jquery.easy-pie-chart.js?v=267"></script>
+    <script src="~/FlatLab/js/owl.carousel.js?v=267"></script>
+    <script src="~/FlatLab/js/jquery.customSelect.min.js?v=267"></script>
+    <script src="~/FlatLab/js/respond.min.js?v=267"></script>
+    <script class="include" type="text/javascript" src="~/FlatLab/js/jquery.dcjqaccordion.2.7.js?v=267"></script>
+    <script src="~/FlatLab/toastr/build/toastr.min.js"></script>
+    <script src="~/FlatLab/zTree/jquery.ztree.all-3.5.min.js"></script>
+
+    @RenderSection("scripts", required: false)
+    <script>
+        function ChangeCompany(newCompany) {
+            $.ajax({
+                url: "/Manage/ChangeCompany?newCompany=" + newCompany,
+                type: "GET",
+                dataType: 'text',
+                success: function (data) {
+                    if (data == "success") {
+                        location.reload();
+                    }
+                    else {
+                        console.log(data);
+                    }
+                }
+            });
+        }
+    </script>
+
+</head>
+<body class="white-bg">
+    <header class="header white-bg">
+        <div class="sidebar-toggle-box">
+            <div data-original-title="导航伸缩" data-placement="right" class="icon-reorder tooltips"></div>
+        </div>
+        <a href="/" class="logo"><span>人力资源管理</span>平台</a>
+
+        <div class="top-nav ">
+            <ul class="nav pull-right top-menu">
+                @{
+                    if (HRMS.WEB.Utils.SessionHelper.CurrentUser.iUserType != "普通用户")
+                    {
+                        <select onchange="ChangeCompany(this.value)" class="form-control" style="width:150px;height:42.9px;float:left;">
+                            @{
+                        HRMS.Data.Manager.DicManager dm = new HRMS.Data.Manager.DicManager();
+                        foreach (var item in dm.GetDicByType("公司"))
+                        {
+                            if (item.iValue == HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode)
+                            {
+                                <option value="@item.iKey" selected="selected">@item.iValue</option>
+                            }
+                            else
+                            {
+                                <option value="@item.iKey">@item.iValue</option>
+                            }
+                        }
+                            }
+                        </select>
+                    }
+                }
+
+                <li class="dropdown">
+                    <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                        <img alt="" src="~/Flatlab/img/avatar1_small.jpg">
+                        <span class="username">@HRMS.WEB.Utils.SessionHelper.CurrentUser.iUserName</span>
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu extended logout" style="width: 56px !important; min-width: 56px !important">
+                        <div class="log-arrow-up"></div>
+                        <li>
+                            @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <a href="javascript:document.getElementById('logoutForm').submit()"><i class="icon-key"></i>退出</a>
+
+                            }
+                        </li>
+                    </ul>
+
+                </li>
+
+
+            </ul>
+
+        </div>
+    </header>
+    <aside>
+        <div id="sidebar" class="nav-collapse ">
+            <ul class="sidebar-menu" id="nav-accordion">
+
+                @{
+                    HRMS.Controllers.ManageController mc = new HRMS.Controllers.ManageController();
+                    @Html.Raw(mc.GetMenuHtml())
+                    if (HRMS.WEB.Utils.SessionHelper.CurrentUser.iUserType == "超级管理员")
+                    {
+                        <li class="sub-menu">
+                            <a href="javascript:;">
+                                <i class="icon-laptop"></i>
+                                <span>权限维护</span>
+                            </a>
+                            <ul class="sub">
+                                <li><a href="~/Manage/DicIndex">字典维护</a></li>
+                            </ul>
+                            <ul class="sub">
+                                <li><a href="~/Manage/UserIndex">用户维护</a></li>
+                            </ul>
+                            <ul class="sub">
+                                <li><a href="~/Manage/MenuIndex">菜单维护</a></li>
+                            </ul>
+                        </li>
+                    }
+
+                }
+
+            </ul>
+        </div>
+    </aside>
+
+
+
+    <section id="main-content" class="white-bg">
+        <section class="wrapper">
+            @RenderBody()
+        </section>
+    </section>
+    <footer class="site-footer" style="position:absolute;bottom:0;background:#2a3542">
+        <div class="text-center">
+            Copyright <span style="font-family: Arial, Helvetica, sans-serif;">©</span> 2016 上海敏慧劳务派遣有限公司 HRMS
+        </div>
+    </footer>
+
+    <!--common script for all pages-->
+    <script src="~/FlatLab/js/common-scripts.js?v=267"></script>
+    <!--script for this page-->
+    <script src="~/FlatLab/js/sparkline-chart.js?v=267"></script>
+    <script src="~/FlatLab/js/easy-pie-chart.js?v=267"></script>
+    <script src="~/FlatLab/js/count.js?v=267"></script>
+
+
+</body>
+</html>

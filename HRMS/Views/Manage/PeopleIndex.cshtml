@@ -1,0 +1,276 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+}
+<style>
+    .search {
+        width: auto;
+    }
+</style>
+
+<div>
+    <div>
+        <div class="col-*-12">
+
+            <div id="toolbar">
+                <div style="float:left" class="btn btn-primary" data-toggle="modal" data-target="#addModal" onclick="AddPerson()">添加记录</div>
+                <div style="float:left;margin-left:10px" class="btn btn-primary" data-toggle="modal" data-target="#importModal">数据导入</div>
+                <div style="float:left;margin-left:10px" class="btn btn-primary" onclick="ExportData()">数据导出</div>
+            </div>
+
+            <table id="mytab" class="table table-hover"></table>
+
+            <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                &times;
+                            </button>
+                            <h4 class="modal-title" id="addModalLabel">添加记录</h4>
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" id="editRowIndex" />
+                                <div class="form-group">
+                                    序号：<input type="text" class="form-control" id="iNo" placeholder="请输入序号">
+                                </div>
+                                <div class="form-group">
+                                    项目名称：<input type="text" class="form-control" id="iItemName" placeholder="请输入项目名称">
+                                </div>
+                            <div class="form-group">
+                                所在公司：<input type="text" class="form-control" id="iCompany" placeholder="请输入所在公司">
+                            </div>
+                            <div class="form-group">
+                                姓名：<input type="text" class="form-control" id="iName" placeholder="请输入姓名">
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-primary" id="addRecord">提交</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            <h4 class="modal-title" id="">数据导入</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+                                <a href="~/UploadFiles/Template/人力资源系统导入模板.xls" class="form-control" style="border:none;">下载导入模板</a>
+                                <input type="file" name="txt_file" id="txt_file" multiple class="file-loading" />
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $("div.icon-reorder").click(function () {
+            $('#mytab').bootstrapTable('resetView', {
+                height: tableHeight()
+            })
+        })
+        //根据窗口调整表格高度
+        $(window).resize(function () {
+            $('#mytab').bootstrapTable('resetView', {
+                height: tableHeight()
+            })
+        })
+
+        $('#mytab').bootstrapTable({
+            url: "/Manage/GetAllPeople",//数据源
+            dataField: "rows",//服务端返回数据键值 就是说记录放的键值是rows，分页时使用总记录数的键值为total
+            sortName: "iNo",//排序列
+            cache: false,
+            striped: true,//條紋行
+            clickToSelect: true,//选择行即选择checkbox
+            searchOnEnterKey: true,//ENTER键搜索
+            height: tableHeight(),//高度调整
+            search: true,//是否搜索
+            pagination: true,//是否分页
+            pageSize: 15,//单页记录数
+            pageNumber: 1,//起始页
+            pageList: [15, 20, 30, 50, 100, 10000],//分页步进值
+            sidePagination: "server",//服务端分页
+            contentType: "application/x-www-form-urlencoded",//请求数据内容格式 默认是 application/json 自己根据格式自行服务端处理
+            dataType: "json",//期待返回数据类型
+            method: "post",//请求方式
+            searchAlign: "left",//查询框对齐方式
+            queryParamsType: "limit",//查询参数组织方式
+            queryParams: function getParams(params) {
+                //params obj
+                params.other = "otherInfo";
+                return params;
+            },
+            searchOnEnterKey: false,//回车搜索
+            showRefresh: true,//刷新按钮
+            showColumns: true,//列选择按钮
+            buttonsAlign: "left",//按钮对齐方式
+            toolbar: "#toolbar",//指定工具栏
+            toolbarAlign: "right",//工具栏对齐方式
+            columns: [
+                {
+                    title: "全选",
+                    field: "select",
+                    checkbox: true,
+                    width: 20,//宽度
+                    align: "center",//水平
+                    valign: "middle"//垂直
+                },
+                {
+                    field: "iNo",//键名
+                    title: "序号",//标题
+                    sortable: true,//是否可排序
+                    order: "desc"//默认排序方式
+                },
+                {
+                    field: "iItemName",
+                    title: "项目名称",
+                    sortable: true
+                    //,titleTooltip: "this is tips"
+                },
+                {
+                    field: "iCompany",
+                    title: "所在公司",
+                    sortable: true
+                },
+                {
+                    field: "iName",
+                    title: "姓名",
+                    sortable: true
+                    //formatter: 'infoFormatter',//对本列数据做格式化
+                }
+            ],
+            onClickRow: function (row, $element) {
+                //$element是当前tr的jquery对象
+                //$element.css("background-color", "green");
+            },//单击row事件
+            onDblClickRow: function (row, $element) {
+                
+                $("#addModalLabel").html("修改记录");
+                $("#iNo").val(row.iNo);
+                $("#iItemName").val(row.iItemName);
+                $("#iCompany").val(row.iCompany);
+                $("#iName").val(row.iName);
+                $("#editRowIndex").val( this.data.indexOf(row));
+
+
+                $('#addModal').modal('toggle');
+            },
+            locale: "zh-CN",//中文支持,
+            detailView: true, //是否显示详情折叠
+            detailFormatter: function (index, row, element) {
+                var html = '';
+                $.each(row, function (key, val) {
+                    html += "<p>" + key + ":" + val + "</p>"
+                });
+                return html;
+            }
+        });
+
+        $("#addRecord").click(function () {
+            $('#mytab').bootstrapTable('updateRow', {
+                index: $("#editRowIndex").val(),
+                row: {
+                    iNo: $("#iNo").val()
+                }
+            });
+            alert("序号:" + $("#iNo").val() + " 项目名称:" + $("#iItemName").val());
+        });
+    })
+
+    function tableHeight() {
+        return $(window).height() * 0.85;
+    }
+
+    function infoFormatter(value, row, index) {
+        return "id:" + row.id + " name:" + row.name + " age:" + row.age;
+    }
+
+    //初始化fileinput
+    var FileInput = function () {
+        var oFile = new Object();
+        //初始化fileinput控件（第一次初始化）
+        oFile.Init = function (ctrlName, uploadUrl) {
+            var control = $('#' + ctrlName);
+            //初始化上传控件的样式
+            control.fileinput({
+                language: 'zh', //设置语言
+                uploadUrl: uploadUrl, //上传的地址
+                allowedFileExtensions: ['xls','xlsx'],//接收的文件后缀
+                showUpload: false, //是否显示上传按钮
+                showCaption: false,//是否显示标题
+                browseClass: "btn btn-primary", //按钮样式
+                //dropZoneEnabled: false,//是否显示拖拽区域
+                //minImageWidth: 50, //图片的最小宽度
+                //minImageHeight: 50,//图片的最小高度
+                //maxImageWidth: 1000,//图片的最大宽度
+                //maxImageHeight: 1000,//图片的最大高度
+                maxFileSize: 0,//单位为kb，如果为0表示不限制文件大小
+                //minFileCount: 0,
+                maxFileCount: 1, //表示允许同时上传的最大文件个数
+                enctype: 'multipart/form-data',
+                validateInitialCount: true,
+                previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
+                msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！",
+            });
+            //导入文件上传完成之后的事件
+            $("#txt_file").on("fileuploaded", function (event, data, previewId, index) {
+                $("#importModal").modal("hide");
+                if (!data.response.success) {
+                    toastr.error('文件格式类型不正确');
+                    console.log(data.response.msg);
+                    return;
+                }
+                //刷新表格
+                $('#mytab').bootstrapTable('refresh');
+            });
+        }
+        return oFile;
+    };
+    var oFileInput = new FileInput();
+    oFileInput.Init("txt_file", "/Manage/ImportPeople");
+    function ExportData() {
+        var selects = $('#mytab').bootstrapTable('getSelections');
+        var columns = $('#mytab').bootstrapTable('getOptions').columns;
+        if (selects && selects.length > 0)
+        {
+            var newSelects = JSON.stringify(selects);
+            var newColumns = JSON.stringify(columns);
+            //alert(newSelects);
+
+            var url = "/Manage/ExportPeople";
+            var inputs = '<input type="hidden" name="icolumns" value="' + newColumns + '" />';
+            inputs += ' <input type="hidden" name="idata" value="' + newSelects.replace(new RegExp("\"", "gm"), "'") + '" />';
+            $('<form action="' + url + '" method="post" target="_blank">' + inputs + '</form>').appendTo('body').submit().remove();
+
+        }
+        else {
+            toastr.error('未选择数据');
+        }
+
+    }
+
+    function AddPerson() {
+        $("#addModal").find("input[type='text']").each(function () {
+            $(this).val("");
+        });
+        $("#addModalLabel").html("添加记录");
+    }
+
+</script>
+
+
