@@ -122,6 +122,7 @@ namespace HRMS.Controllers
             dic.Add("备注1", "iNote1");
             dic.Add("备注2", "iNote2");
 
+
             //StringBuilder sb = new StringBuilder("CREATE TABLE [dbo].[LaborInfo]( \n");
             //foreach (KeyValuePair<string, string> kvp in dic)
             //{
@@ -130,12 +131,22 @@ namespace HRMS.Controllers
             //}
             //string result = sb.ToString();
 
+            //StringBuilder sb = new StringBuilder();
+            //foreach (KeyValuePair<string, string> kvp in dic)
+            //{
+            //    sb.Append(string.Format("public string {0} {2} get; set; {3} //{1} \n",kvp.Value,kvp.Key,"{","}"));
+            //}
+            //string result = sb.ToString();
+
             StringBuilder sb = new StringBuilder();
             foreach (KeyValuePair<string, string> kvp in dic)
             {
-                sb.Append(string.Format("public string {0} {2} get; set; {3} //{1} \n",kvp.Value,kvp.Key,"{","}"));
+                sb.Append(string.Format("public string {0} {2} get; set; {3} //{1} \n", kvp.Value, kvp.Key, "{", "}"));
             }
             string result = sb.ToString();
+            
+            
+            
             int i = 0;
 
 
@@ -244,16 +255,54 @@ namespace HRMS.Controllers
             //}
             //string result = sb.ToString();
 
+            //StringBuilder sb = new StringBuilder();
+            //foreach (KeyValuePair<string, string> kvp in dic)
+            //{
+            //    if(dateList.Contains(kvp.Key))
+
+            //        sb.Append(string.Format("public DateTime? {0} {2} get; set; {3} //{1} \n", kvp.Value, kvp.Key, "{", "}"));
+            //    else
+            //        sb.Append(string.Format("public string {0} {2} get; set; {3} //{1} \n", kvp.Value, kvp.Key, "{", "}"));
+            //}
+            //string result = sb.ToString();
+
+
+            //StringBuilder sb = new StringBuilder();
+            //foreach (KeyValuePair<string, string> kvp in dic)
+            //{
+            //    sb.AppendFormat("self.{0} = ko.observable(\"\"); \n", kvp.Value);
+            //}
+            //string result = sb.ToString();
+
+
+            //StringBuilder sb = new StringBuilder();
+            //foreach (KeyValuePair<string, string> kvp in dic)
+            //{
+            //    sb.AppendFormat("<div class=\"form-group\"> {0}：<input type=\"text\" class=\"form-control\" id=\"{1}\" data-bind=\"value: {1}\" placeholder=\"请输入{0}\"></div> \n", kvp.Key,kvp.Value);
+            //}
+            //string result = sb.ToString();
+
+            //StringBuilder sb = new StringBuilder();
+            //foreach (KeyValuePair<string, string> kvp in dic)
+            //{
+            //    sb.AppendFormat(",{0} field: \"{2}\", title: \"{3}\", sortable: true {1} \n","{","}", kvp.Value, kvp.Key);
+            //}
+            //string result = sb.ToString();
+
+            //StringBuilder sb = new StringBuilder();
+            //foreach (KeyValuePair<string, string> kvp in dic)
+            //{
+            //    sb.AppendFormat("myViewModel.{0}(result.data.{0}); \n", kvp.Value);
+            //}
+            //string result = sb.ToString(); 
+
             StringBuilder sb = new StringBuilder();
             foreach (KeyValuePair<string, string> kvp in dic)
             {
-                if(dateList.Contains(kvp.Key))
-
-                    sb.Append(string.Format("public DateTime? {0} {2} get; set; {3} //{1} \n", kvp.Value, kvp.Key, "{", "}"));
-                else
-                    sb.Append(string.Format("public string {0} {2} get; set; {3} //{1} \n", kvp.Value, kvp.Key, "{", "}"));
+                sb.AppendFormat("myViewModel.{0}(\"\"); \n", kvp.Value);
             }
-            string result = sb.ToString();
+            string result = sb.ToString(); 
+
             int i = 0;
 
             return View();

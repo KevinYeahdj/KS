@@ -20,6 +20,12 @@ namespace HRMS.Data.Manager
         /// <returns></returns>
         public void Insert(HRInfoEntity entity)
         {
+            if (string.IsNullOrEmpty(entity.iGuid))
+                entity.iGuid = Guid.NewGuid().ToString();
+            entity.iCreatedOn = DateTime.Now;
+            entity.iUpdatedOn = DateTime.Now;
+            entity.iIsDeleted = 0;
+            entity.iStatus = 1;
             IDbSession session = SessionFactory.CreateSession();
             try
             {
@@ -40,8 +46,6 @@ namespace HRMS.Data.Manager
         public void Update(HRInfoEntity entity)
         {
             entity.iUpdatedOn = DateTime.Now;
-            entity.iStatus = 1;
-            entity.iIsDeleted = 0;
             IDbSession session = SessionFactory.CreateSession();
             try
             {
@@ -66,7 +70,7 @@ namespace HRMS.Data.Manager
         }
         public List<HRInfoEntity> GetSearch(string companyCode, string keyString, string sort, string order, int offset, int pageSize, out int total)
         {
-            string commonSql = "from LaborInfo where icompanycode='{0}' and iname like '%{1}%' ";
+            string commonSql = "from HRInfo where icompany='{0}' and iname like '%{1}%' ";
             string querySql = "select * " + commonSql + "order by {2} {3} offset {4} row fetch next {5} rows only";
             querySql = string.Format(querySql, companyCode, keyString, sort, order, offset, pageSize);
             string totalSql = string.Format("select cast(count(1) as varchar(8)) " + commonSql, companyCode, keyString);
