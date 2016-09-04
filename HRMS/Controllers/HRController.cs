@@ -25,13 +25,32 @@ namespace HRMS.Controllers
 
         public ActionResult BasicIndex()
         {
+            DicManager dm = new DicManager();
+            var companies = dm.GetDicByType("公司");
+            ViewBag.Companies = companies;
+            var projects = dm.GetDicByType("项目");
+            ViewBag.Projects = projects;
             return View();
         }
         public ActionResult AccountIndex()
         {
+            DicManager dm = new DicManager();
+            var companies = dm.GetDicByType("公司");
+            ViewBag.Companies = companies;
+            var projects = dm.GetDicByType("项目");
+            ViewBag.Projects = projects;
             return View();
         }
         public ActionResult PositionIndex()
+        {
+            DicManager dm = new DicManager();
+            var companies = dm.GetDicByType("公司");
+            ViewBag.Companies = companies;
+            var projects = dm.GetDicByType("项目");
+            ViewBag.Projects = projects;
+            return View();
+        }
+        public ActionResult LogIndex()
         {
             return View();
         }
@@ -92,13 +111,14 @@ namespace HRMS.Controllers
                 return new JsonResult { Data = new { success = false, msg = ex.ToString() }, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
             }
         }
-
         public string SaveChanges(string jsonString)
         {
 
             try
             {
-                HRInfoEntity entity = JsonConvert.DeserializeObject<HRInfoEntity>(jsonString);
+                JsonSerializerSettings st = new JsonSerializerSettings();
+                st.DateTimeZoneHandling = DateTimeZoneHandling.Local;
+                HRInfoEntity entity = JsonConvert.DeserializeObject<HRInfoEntity>(jsonString, st);
                 HRInfoManager service = new HRInfoManager();
                 if (entity.iGuid == "")
                 {

@@ -622,7 +622,7 @@ namespace HRMS.Controllers
         {
             try
             {
-                string querySql = "select iMenuId from sysUserMenu where iemployeecode = '{0}' and icompanycode= '{1}'";
+                string querySql = "select iMenuId+'|'+iMenuRights from sysUserMenu where iemployeecode = '{0}' and icompanycode= '{1}'";
                 DataSet ds = DbHelperSQL.Query(string.Format(querySql, userId, companyId));
                 List<string> contents = new List<string>();
                 foreach (DataRow dr in ds.Tables[0].Rows)
@@ -648,12 +648,14 @@ namespace HRMS.Controllers
                 dt.Columns.Add("iEmployeeCode");
                 dt.Columns.Add("iCompanyCode");
                 dt.Columns.Add("iMenuId");
+                dt.Columns.Add("iMenuRights");
                 foreach (string menuid in menuIds)
                 {
                     DataRow dataRow = dt.NewRow();
                     dataRow[0] = userid;
                     dataRow[1] = companyid;
-                    dataRow[2] = menuid;
+                    dataRow[2] = menuid.Split('|')[0];
+                    dataRow[3] = menuid.Split('|')[1];
                     dt.Rows.Add(dataRow);
                 }
                 string deleteSql = "delete from [sysUserMenu] where iemployeecode = '{0}' and icompanycode = '{1}' ";

@@ -18,7 +18,7 @@
     }
 
     .modal-body {
-        height: 540px;
+        height: 230px;
     }
     .warning{
         border-color:red;
@@ -76,127 +76,12 @@
                             <div class="form-group"> 工号：<input type="text" class="form-control" id="iEmpNo" data-bind="value: iEmpNo" placeholder="请输入工号"></div>
                             <div class="form-group"> 姓名：<input type="text" class="form-control" id="iName" data-bind="value: iName" placeholder="请输入姓名"></div>
                             <div class="form-group"> 身份证号：<input maxlength="18" onkeyup="value=value.replace(/^[a-zA-Z]+\D*|^\d{0,16}[a-zA-Z]+|[^0-9Xx]/g,'') " type="text" class="form-control" id="iIdCard" data-bind="value: iIdCard" placeholder="请输入身份证号"></div>
-                            <div class="form-group">
-                                性别： <br />
-                                <label class="radio-inline">
-                                    <input type="radio" name="iSex" data-bind="checked: iSex" value="男"> 男
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="iSex" data-bind="checked: iSex" value="女"> 女
-                                </label>
-                            </div>
-                            <div class="form-group">
-                                出生日期：
-                                <input type="text" class="form-control" id="iBirthday" data-bind="value: iBirthday" placeholder="请输入出生日期">
-                            </div>
-                            <div class="form-group"> 户籍：<input type="text" class="form-control" id="iRegistry" data-bind="value: iRegistry" placeholder="请输入户籍"></div>
-                            <div class="form-group"> 民族：<input type="text" class="form-control" id="iNation" data-bind="value: iNation" placeholder="请输入民族"></div>
-                            <div class="form-group">
-                                户口性质：<br />
-                                <label class="radio-inline">
-                                    <input type="radio" name="iResidenceProperty" data-bind="checked: iResidenceProperty" value="农业户口"> 农业户口
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="iResidenceProperty" data-bind="checked: iResidenceProperty" value="非农业户口">非农业户口
-                                </label>
-                            </div>
-                            <div class="form-group"> 户籍地址：<input type="text" class="form-control" id="iRegistryAddress" data-bind="value: iRegistryAddress" placeholder="请输入户籍地址"></div>
-                            <div class="form-group"> 签发机关：<input type="text" class="form-control" id="iIssuedBy" data-bind="value: iIssuedBy" placeholder="请输入签发机关"></div>
-                            <div class="form-group">
-                                身份证有效期：
-                                <input type="text" class="form-control" id="iIdCardValidate" data-bind="value: iIdCardValidate" placeholder="请输入身份证有效期">
-                            </div>
-                            <div class="form-group"> 现住地：<input type="text" class="form-control" id="iLivedIn" data-bind="value: iLivedIn" placeholder="请输入现住地"></div>
-                            <div class="form-group"> 联系电话：<input type="text" class="form-control" id="iPhone" data-bind="value: iPhone" placeholder="请输入联系电话"></div>
-                            <div class="form-group"> 紧急联系人：<input type="text" class="form-control" id="iEmeContact" data-bind="value: iEmeContact" placeholder="请输入紧急联系人"></div>
-                            <div class="form-group"> 紧急联系人电话：<input type="text" class="form-control" id="iEmeContactPhone" data-bind="value: iEmeContactPhone" placeholder="请输入紧急联系人电话"></div>
-                            <div class="form-group"> 邮箱：<input type="text" class="form-control" id="iEmail" data-bind="value: iEmail" placeholder="请输入邮箱"></div>
-                            <div class="form-group"> 邮编：<input onkeyup="value = value.replace(/[^\d]/g, '');" maxlength="6" type="text" class="form-control" id="iPostCode" data-bind="value: iPostCode" placeholder="请输入邮编"></div>
-                            <div class="form-group"> 身高（cm）：<input onkeyup="value = value.replace(/[^\d]/g, '');" maxlength="3" type="text" class="form-control" id="iHeight" data-bind="value: iHeight" placeholder="请输入身高（cm）"></div>
-                            <div class="form-group"> 体重：<input onkeyup="value = value.replace(/[^\d]/g, '');" maxlength="3" type="text" class="form-control" id="iWeight" data-bind="value: iWeight" placeholder="请输入体重"></div>
-                            <div class="form-group">
-                                血型：<br />
-                                <label class="radio-inline">
-                                    <input type="radio" name="iBloodType" data-bind="checked: iBloodType" value="A"> A
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="iBloodType" data-bind="checked: iBloodType" value="B">B
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="iBloodType" data-bind="checked: iBloodType" value="AB">AB
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="iBloodType" data-bind="checked: iBloodType" value="O">O
-                                </label>
-                            </div>
+                            <div class="form-group"> 开户行：<input type="text" class="form-control" id="iWageBank" data-bind="value: iWageBank" placeholder="请输入开户行"></div>
+                            <div class="form-group"> 开户行名称：<input type="text" class="form-control" id="iWageBankName" data-bind="value: iWageBankName" placeholder="请输入开户行名称"></div>
+                            <div class="form-group"> 工资帐号：<input type="text" class="form-control" id="iWageAccount" data-bind="value: iWageAccount" placeholder="请输入工资帐号"></div>
+                            <div class="form-group"> 社保账号：<input type="text" class="form-control" id="iSocialSecurityAccount" data-bind="value: iSocialSecurityAccount" placeholder="请输入社保账号"></div>
+                            <div class="form-group"> 公积金账号：<input type="text" class="form-control" id="iProvidentAccount" data-bind="value: iProvidentAccount" placeholder="请输入公积金账号"></div>
 
-                            <div class="form-group"> 年龄：<input onkeyup="value = value.replace(/[^\d]/g, '');" maxlength="2" type="text" class="form-control" id="iAge" data-bind="value: iAge" placeholder="请输入年龄"></div>
-
-                            <div class="form-group">
-                                婚姻状况：<br />
-                                <label class="radio-inline">
-                                    <input type="radio" name="iMariage" data-bind="checked: iMariage" value="已婚"> 已婚
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="iMariage" data-bind="checked: iMariage" value="未婚">未婚
-                                </label>
-                            </div>
-
-                            <div class="form-group">
-                                体检：<br />
-                                <label class="radio-inline">
-                                    <input type="radio" name="iHealthCheck" data-bind="checked: iHealthCheck" value="是"> 是
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="iHealthCheck" data-bind="checked: iHealthCheck" value="否">否
-                                </label>
-                            </div>
-                            <div class="form-group">
-                                政治面貌：<br />
-                                <label class="radio-inline">
-                                    <input type="radio" name="iPolitical" data-bind="checked: iPolitical" value="群众"> 群众
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="iPolitical" data-bind="checked: iPolitical" value="团员">团员
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="iPolitical" data-bind="checked: iPolitical" value="共产党员">共产党员
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="iPolitical" data-bind="checked: iPolitical" value="其它">其它
-                                </label>
-                            </div>
-                            <div class="form-group">
-                                文化水平：<br />
-                                <label class="radio-inline" style="margin-left:0">
-                                    <input type="radio" name="iEducationLevel" data-bind="checked: iEducationLevel" value="小学"> 小学
-                                </label>
-                                <label class="radio-inline" style="margin-left:0">
-                                    <input type="radio" name="iEducationLevel" data-bind="checked: iEducationLevel" value="初中">初中
-                                </label>
-                                <label class="radio-inline" style="margin-left:0">
-                                    <input type="radio" name="iEducationLevel" data-bind="checked: iEducationLevel" value="中专">中专
-                                </label>
-                                <label class="radio-inline" style="margin-left:0">
-                                    <input type="radio" name="iEducationLevel" data-bind="checked: iEducationLevel" value="高中">高中
-                                </label>
-                                <label class="radio-inline" style="margin-left:0">
-                                    <input type="radio" name="iEducationLevel" data-bind="checked: iEducationLevel" value="大专"> 大专
-                                </label>
-                                <label class="radio-inline" style="margin-left:0">
-                                    <input type="radio" name="iEducationLevel" data-bind="checked: iEducationLevel" value="本科">本科
-                                </label>
-                                <label class="radio-inline" style="margin-left:0">
-                                    <input type="radio" name="iEducationLevel" data-bind="checked: iEducationLevel" value="硕士">硕士
-                                </label>
-                                <label class="radio-inline" style="margin-left:0">
-                                    <input type="radio" name="iEducationLevel" data-bind="checked: iEducationLevel" value="博士">博士
-                                </label>
-                            </div>
-                            <div class="form-group"> 专业：<input type="text" class="form-control" id="iMajor" data-bind="value: iMajor" placeholder="请输入专业"></div>
-                            <div class="form-group"> 毕业学校：<input type="text" class="form-control" id="iGraduatedSchool" data-bind="value: iGraduatedSchool" placeholder="请输入毕业学校"></div>
-                            <div class="form-group"> 毕业时间：<input type="text" class="form-control" id="iGraduatedDate" data-bind="value: iGraduatedDate" placeholder="请输入毕业时间"></div>
-                            <div class="form-group"> 工作经历：<input type="text" class="form-control" id="iWorkExperience" data-bind="value: iWorkExperience" placeholder="请输入工作经历"></div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
@@ -228,40 +113,6 @@
 
 <script type="text/javascript">
     $(function () {
-        $('#iBirthday').datetimepicker({
-            language: 'zh-CN',
-            weekStart: 1,
-            clearBtn: 1,
-            autoclose: 1,
-            todayHighlight: 1,
-            startView: 2,
-            minView: 2,
-            forceParse: 1,
-            format: 'yyyy-mm-dd'
-        });
-        $('#iIdCardValidate').datetimepicker({
-            language: 'zh-CN',
-            weekStart: 1,
-            clearBtn: 1,
-            autoclose: 1,
-            todayHighlight: 1,
-            startView: 2,
-            minView: 2,
-            forceParse: 1,
-            format: 'yyyy-mm-dd'
-        });
-
-        $('#iGraduatedDate').datetimepicker({
-            language: 'zh-CN',
-            weekStart: 1,
-            clearBtn: 1,
-            autoclose: 1,
-            todayHighlight: 1,
-            startView: 2,
-            minView: 2,
-            forceParse: 1,
-            format: 'yyyy-mm-dd'
-        });
         $("#iItemName").change(function () {
             var value = $("#iItemName").val();
             if (value != "-") {
@@ -403,32 +254,12 @@
 , { field: "iEmpNo", title: "工号", sortable: true }
 , { field: "iName", title: "姓名", sortable: true }
 , { field: "iIdCard", title: "身份证号", sortable: true }
-, { field: "iSex", title: "性别", sortable: true }
-, { field: "iBirthday", title: "出生日期", sortable: true }
-, { field: "iRegistry", title: "户籍", sortable: true }
-, { field: "iNation", title: "民族", sortable: true }
-, { field: "iResidenceProperty", title: "户口性质", sortable: true }
-, { field: "iRegistryAddress", title: "户籍地址", sortable: true }
-, { field: "iIssuedBy", title: "签发机关", sortable: true }
-, { field: "iIdCardValidate", title: "身份证有效期", sortable: true }
-, { field: "iLivedIn", title: "现住地", sortable: true }
-, { field: "iPhone", title: "联系电话", sortable: true }
-, { field: "iEmeContact", title: "紧急联系人", sortable: true }
-, { field: "iEmeContactPhone", title: "紧急联系人电话", sortable: true }
-, { field: "iEmail", title: "邮箱", sortable: true }
-, { field: "iPostCode", title: "邮编", sortable: true }
-, { field: "iHeight", title: "身高（cm）", sortable: true }
-, { field: "iWeight", title: "体重", sortable: true }
-, { field: "iBloodType", title: "血型", sortable: true }
-, { field: "iMariage", title: "婚姻状况", sortable: true }
-, { field: "iAge", title: "年龄", sortable: true }
-, { field: "iHealthCheck", title: "体检", sortable: true }
-, { field: "iPolitical", title: "政治面貌", sortable: true }
-, { field: "iEducationLevel", title: "文化水平", sortable: true }
-, { field: "iMajor", title: "专业", sortable: true }
-, { field: "iGraduatedSchool", title: "毕业学校", sortable: true }
-, { field: "iGraduatedDate", title: "毕业时间", sortable: true }
-, { field: "iWorkExperience", title: "工作经历", sortable: true }
+, { field: "iWageBank", title: "开户行", sortable: true }
+, { field: "iWageBankName", title: "开户行名称", sortable: true }
+, { field: "iWageAccount", title: "工资帐号", sortable: true }
+, { field: "iSocialSecurityAccount", title: "社保账号", sortable: true }
+, { field: "iProvidentAccount", title: "公积金账号", sortable: true }
+
 
             ],
             onClickRow: function (row, $element) {

@@ -22,10 +22,14 @@ namespace HRMS.Controllers
 {
     public class HomeController : BaseController
     {
-
-        public ActionResult Index1()
+        public ActionResult Index()
         {
-            Dictionary<string, string> dic = new Dictionary<string, string>();
+            return View();
+        }
+
+        /*测试代码
+         
+         Dictionary<string, string> dic = new Dictionary<string, string>();
             dic.Add("序号","iNo");
             dic.Add("项目名称","iItemName");
             dic.Add("所在公司","iCompany");
@@ -149,24 +153,14 @@ namespace HRMS.Controllers
             
             int i = 0;
 
-
-
-
-
-
-
             //UserEntity user = new UserEntity();
             //user.EmployeeCode = Guid.NewGuid().ToString();
             //user.UserName = "Kevin";
             //user.PassWord = "123";
             //UserManager um = new UserManager();
             //um.Insert(user);
-
-            return View();
-        }
-
-        public ActionResult Index()
-        {
+         * 
+         * 
             Dictionary<string, string> dic = new Dictionary<string, string>();
             dic.Add("iGuid", "iGuid");
 
@@ -304,8 +298,6 @@ namespace HRMS.Controllers
             string result = sb.ToString(); 
 
             int i = 0;
-
-            return View();
-        }
+         */
     }
 }

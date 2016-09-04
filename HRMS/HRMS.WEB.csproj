@@ -697,6 +697,9 @@
     <Content Include="Views\Manage\PeopleIndex.cshtml" />
     <Content Include="Views\Manage\MenuIndex.cshtml" />
     <Content Include="Views\HR\BasicIndex.cshtml" />
+    <Content Include="Views\HR\AccountIndex.cshtml" />
+    <Content Include="Views\HR\PositionIndex.cshtml" />
+    <Content Include="Views\HR\LogIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
