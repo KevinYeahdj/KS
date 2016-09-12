@@ -31,9 +31,9 @@
         <div class="col-*-12">
 
             <div id="toolbar">
-                <div style="float:left" class="btn btn-primary" data-toggle="modal" data-target="#addModal" id="NewRecord">添加记录</div>
-                <div style="float:left;margin-left:10px" class="btn btn-primary" data-toggle="modal" data-target="#importModal">数据导入</div>
-                <div style="float:left;margin-left:10px" class="btn btn-primary" onclick="ExportData()">数据导出</div>
+                <div style="float:left"><span>身份证号：</span><input id="idcard" class="form-control" /></div>
+                <div style="float:left;margin-left:10px"><span>修改日期：</span><input id="modifyfrom" class="form-control" />至<input id="modifyend" class="form-control" /></div>
+                <div style="float:left;margin-left:10px" class="btn btn-primary" onclick="Search()">查询</div>
             </div>
 
             <table id="mytab" class="table table-hover"></table>
@@ -65,8 +65,32 @@
 
 <script type="text/javascript">
 
-
+    function Search() {
+        $('#mytab').bootstrapTable('refresh');
+    }
     $(function () {
+        $("#modifyfrom").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            minView: "month",
+            maxView: "decade",
+            todayBtn: true,
+            pickerPosition: "bottom-left"
+        }).on("click", function (ev) {
+            $("#modifyfrom").datetimepicker("setEndDate", $("#modifyend").val());
+        });
+        $("#modifyend").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            minView: "month",
+            maxView: "decade",
+            todayBtn: true,
+            pickerPosition: "bottom-left"
+        }).on("click", function (ev) {
+            $("#modifyend").datetimepicker("setStartDate", $("#modifyfrom").val());
+        });
         function ChangeDateFormat(jsondate) {
             jsondate = jsondate.replace("/Date(", "").replace(")/", "");
             if (jsondate.indexOf("+") > 0) {
@@ -110,9 +134,9 @@
             cache: false,
             striped: true,//條紋行
             clickToSelect: true,//选择行即选择checkbox
-            searchOnEnterKey: true,//ENTER键搜索
+            searchOnEnterKey: false,//ENTER键搜索
             height: tableHeight(),//高度调整
-            search: true,//是否搜索
+            search: false,//是否搜索
             pagination: true,//是否分页
             pageSize: 15,//单页记录数
             pageNumber: 1,//起始页
@@ -125,7 +149,9 @@
             queryParamsType: "limit",//查询参数组织方式
             queryParams: function getParams(params) {
                 //params obj
-                params.other = "otherInfo";
+                params.iIdCard = $("#idcard").val();
+                params.iModifyOnForm = $("#modifyfrom").val();
+                params.iModifyOnTo = $("#modifyend").val();
                 return params;
             },
             searchOnEnterKey: false,//回车搜索
@@ -173,11 +199,13 @@
 , { field: "iGraduatedSchool", title: "毕业学校", sortable: true }
 , { field: "iGraduatedDate", title: "毕业时间", sortable: true }
 , { field: "iWorkExperience", title: "工作经历", sortable: true }
+, { field: "iBasicInfoNote", title: "基本信息备注", sortable: true }
 , { field: "iWageBank", title: "开户行", sortable: true }
 , { field: "iWageBankName", title: "开户行名称", sortable: true }
 , { field: "iWageAccount", title: "工资帐号", sortable: true }
 , { field: "iSocialSecurityAccount", title: "社保账号", sortable: true }
 , { field: "iProvidentAccount", title: "公积金账号", sortable: true }
+, { field: "iAccountInfoNote", title: "账户信息备注", sortable: true }
 , { field: "iEmpType", title: "人员类别", sortable: true }
 , { field: "iPosition", title: "岗位", sortable: true }
 , { field: "iManageLevel", title: "管理层级", sortable: true }
@@ -215,7 +243,7 @@
 , { field: "iIsSocialInsurancePaid", title: "是否缴纳保险", sortable: true }
 , { field: "iIsProvidentPaid", title: "是否缴纳公积金", sortable: true }
 , { field: "iIsCommercialInsurancePaid", title: "是否缴纳商业保险", sortable: true }
-
+, { field: "iPositionInfoNote", title: "职位信息备注", sortable: true }
 
             ],
             onClickRow: function (row, $element) {
@@ -252,7 +280,7 @@
             striped: true,//條紋行
             clickToSelect: true,//选择行即选择checkbox
             searchOnEnterKey: true,//ENTER键搜索
-            height: tableHeight(),//高度调整
+            height: tableHeight()*0.84,//高度调整
             search: false,//是否搜索
             pagination: true,//是否分页
             pageSize: 15,//单页记录数

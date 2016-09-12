@@ -67,9 +67,44 @@ namespace HRMS.Controllers
             int offset = Convert.ToInt32(HttpContext.Request.Params["offset"]);  //0
             int pageSize = Convert.ToInt32(HttpContext.Request.Params["limit"]);
 
+            Dictionary<string, string> bizParaDic = new Dictionary<string, string>();
+            bizParaDic.Add("search", searchKey);
+
+            string itemName = HttpContext.Request.Params["iItmeName"];
+            string company = HttpContext.Request.Params["iCompany"];
+            string idcard = HttpContext.Request.Params["iIdCard"];
+            string tel = HttpContext.Request.Params["iPhone"];
+            string empId = HttpContext.Request.Params["iEmpNo"];
+            string status = HttpContext.Request.Params["iEmployeeStatus"];
+            string employeedate1 = HttpContext.Request.Params["iEmployeeDateFrom"];
+            string employeedate2 = HttpContext.Request.Params["iEmployeeDateTo"];
+
+            string contractdeadline1 = HttpContext.Request.Params["iContractDeadLineFrom"];
+            string contractdeadline2 = HttpContext.Request.Params["iContractDeadLineTo"];
+
+            string resigndate1 = HttpContext.Request.Params["iResignDateFrom"];
+            string resigndate2 = HttpContext.Request.Params["iResignDateTo"];
+
+            string filelocation = HttpContext.Request.Params["iFileLocation"];
+
+            string modifyon1 = HttpContext.Request.Params["iModifyOnForm"];
+            string modifyon2 = HttpContext.Request.Params["iModifyOnTo"];
+
+            bizParaDic.Add("iItmeName", itemName);
+            bizParaDic.Add("iCompany", company);
+            bizParaDic.Add("iIdCard", idcard);
+            bizParaDic.Add("iPhone", tel);
+            bizParaDic.Add("iEmpNo", empId);
+            bizParaDic.Add("iEmployeeStatus", status);
+            bizParaDic.Add("iEmployeeDate[d]", employeedate1 + "§" + employeedate2);
+            bizParaDic.Add("iContractDeadLine[d]", contractdeadline1 + "§" + contractdeadline2);
+            bizParaDic.Add("iResignDate[d]", resigndate1 + "§" + resigndate2);
+            bizParaDic.Add("iFileLocation", filelocation);
+            bizParaDic.Add("iUpdatedOn[d]", modifyon1 + "§" + modifyon2);
+
             int total = 0;
             HRInfoManager service = new HRInfoManager();
-            List<HRInfoEntity> list = service.GetSearch(SessionHelper.CurrentUser.iCompanyCode, searchKey, sort, order, offset, pageSize, out total);
+            List<HRInfoEntity> list = service.GetSearch(SessionHelper.CurrentUser.iCompanyCode, bizParaDic, sort, order, offset, pageSize, out total);
 
             DicManager dm = new DicManager();
             List<DicEntity> companyDicE = dm.GetDicByType("公司");

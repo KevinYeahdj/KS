@@ -190,6 +190,10 @@ namespace HRMS.Data.Manager
                 dic.Add("是否缴纳公积金", "iIsProvidentPaid");
                 dic.Add("是否缴纳商业保险", "iIsCommercialInsurancePaid");
 
+                dic.Add("基本信息备注", "iBasicInfoNote");
+                dic.Add("账户信息备注", "iAccountInfoNote");
+                dic.Add("职位信息备注", "iPositionInfoNote");
+
                 dic.Add("iCreatedOn", "iCreatedOn");
                 dic.Add("iCreatedBy", "iCreatedBy");
                 dic.Add("iUpdatedOn", "iUpdatedOn");
@@ -272,12 +276,31 @@ namespace HRMS.Data.Manager
             string sql = @"select * from hrinfo where iguid=@id and iIsDeleted =0 and iStatus =1";
             return Repository.Query<HRInfoEntity>(sql, new { id = id }).FirstOrDefault();
         }
-        public List<HRInfoEntity> GetSearch(string companyCode, string keyString, string sort, string order, int offset, int pageSize, out int total)
+        public List<HRInfoEntity> GetSearch(string companyCode, Dictionary<string,string> para, string sort, string order, int offset, int pageSize, out int total)
         {
-            string commonSql = "from HRInfo where icompany='{0}' and iname like '%{1}%' ";
-            string querySql = "select * " + commonSql + "order by {2} {3} offset {4} row fetch next {5} rows only";
-            querySql = string.Format(querySql, companyCode, keyString, sort, order, offset, pageSize);
-            string totalSql = string.Format("select cast(count(1) as varchar(8)) " + commonSql, companyCode, keyString);
+            StringBuilder commandsb = new StringBuilder("from HRInfo where icompany='");
+            commandsb.Append(companyCode);
+            commandsb.Append("' ");
+            foreach (KeyValuePair<string, string> item in para)
+            {
+                if (!string.IsNullOrEmpty(item.Value) && item.Value != "§")
+                {
+                    if (item.Key.EndsWith("[d]"))
+                    {
+                        commandsb.Append(" and " + item.Key.Replace("[d]", "") + " between '" + (string.IsNullOrEmpty(item.Value.Split('§')[0]) ? "1900-01-01" : item.Value.Split('§')[0]) + "' and '" + (string.IsNullOrEmpty(item.Value.Split('§')[1]) ? DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") : item.Value.Split('§')[1]) + "' ");
+                    }
+                    else
+                    {
+                        commandsb.Append(" and " + item.Key + " like '%" + item.Value + "%'");
+                    }
+                }
+            }
+
+
+            string commonSql = commandsb.ToString();
+            string querySql = "select * " + commonSql + "order by {0} {1} offset {2} row fetch next {3} rows only";
+            querySql = string.Format(querySql, sort, order, offset, pageSize);
+            string totalSql = "select cast(count(1) as varchar(8)) " + commonSql;
             total = int.Parse(Repository.Query<string>(totalSql).ToList()[0]);
             return Repository.Query<HRInfoEntity>(querySql).ToList();
 

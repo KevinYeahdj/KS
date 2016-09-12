@@ -20,8 +20,9 @@
     .modal-body {
         height: 230px;
     }
-    .warning{
-        border-color:red;
+
+    .warning {
+        border-color: red;
     }
 </style>
 
@@ -30,9 +31,50 @@
         <div class="col-*-12">
 
             <div id="toolbar">
-                <div style="float:left" class="btn btn-primary" data-toggle="modal" data-target="#addModal" id="NewRecord">添加记录</div>
-                <div style="float:left;margin-left:10px" class="btn btn-primary" data-toggle="modal" data-target="#importModal">数据导入</div>
-                <div style="float:left;margin-left:10px" class="btn btn-primary" onclick="ExportData()">数据导出</div>
+                <div style="float: left; margin-left: 10px"><span>项目名称：</span>
+                    <select class="form-control" id="sItemName">
+                        <option value="">请选择</option>
+                        @{
+                            foreach (var item in ViewBag.Projects)
+                            {
+                                <option value="@item.iKey">@item.iValue</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div style="float: left; margin-left: 10px"><span>所在公司：</span>
+                    <select class="form-control" id="sCompanyCode">
+                        <option value="">请选择</option>
+                        @{
+                            foreach (var item in ViewBag.Companies)
+                            {
+                                <option value="@item.iKey">@item.iValue</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div style="float: left; margin-left: 10px"><span>身份证号：</span><input id="sIdCard" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px"><span>联系电话：</span><input id="SPhone" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px"><span>工号：&nbsp;&nbsp;</span><input id="sEmpNo" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px"><span>员工状态：</span>
+                    <select class="form-control" id="sEmpStatus">
+                        <option value="">请选择</option>
+                        <option value="在职">在职</option>
+                        <option value="离职">离职</option>
+
+                    </select>
+                </div>
+                <div style="float: left; margin-left: 10px"><span>档案位置：</span><input id="sFileLocation" class="form-control" /></div>
+                <div style="float:left;margin-left:10px"><span>入职时间：</span><input id="sEmployeeDate" class="form-control" />至<input id="sEmployeeDate2" class="form-control" /></div>
+                <div style="float:left;margin-left:10px"><span>合同到期日期：</span><input id="sContractDeadLine" class="form-control" />至<input id="sContractDeadLine2" class="form-control" /></div>
+                <div style="float:left;margin-left:10px"><span>离职日期：</span><input id="sResignDate" class="form-control" />至<input id="sResignDate2" class="form-control" /></div>
+                <div style="float:left;margin-left:10px"><span>修改日期：</span><input id="sUpdateOn" class="form-control" />至<input id="sUpdateOn2" class="form-control" /></div>
+                
+                <div style="float:right;margin-left:10px" class="btn btn-primary" onclick="ExportData()">数据导出</div>
+                <div style="float: right; margin-left: 10px" class="btn btn-primary" data-toggle="modal" data-target="#importModal">数据导入</div>
+                <div style="float: right; margin-left: 10px; " class="btn btn-primary" data-toggle="modal" data-target="#addModal" id="NewRecord">添加记录</div>
+                <div style="float: right; margin-left: 10px" class="btn btn-primary" onclick="Search()">查询</div>
+
             </div>
 
             <table id="mytab" class="table table-hover"></table>
@@ -81,7 +123,7 @@
                             <div class="form-group"> 工资帐号：<input type="text" class="form-control" id="iWageAccount" data-bind="value: iWageAccount" placeholder="请输入工资帐号"></div>
                             <div class="form-group"> 社保账号：<input type="text" class="form-control" id="iSocialSecurityAccount" data-bind="value: iSocialSecurityAccount" placeholder="请输入社保账号"></div>
                             <div class="form-group"> 公积金账号：<input type="text" class="form-control" id="iProvidentAccount" data-bind="value: iProvidentAccount" placeholder="请输入公积金账号"></div>
-
+                            <div class="form-group"> 账户信息备注：<input type="text" class="form-control" id="iAccountInfoNote" data-bind="value: iAccountInfoNote" placeholder="请输入账户信息备注"></div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
@@ -112,7 +154,103 @@
 </div>
 
 <script type="text/javascript">
+    function Search() {
+        $('#mytab').bootstrapTable('refresh');
+    }
+
     $(function () {
+        $("#sEmployeeDate").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            minView: "month",
+            maxView: "decade",
+            todayBtn: true,
+            pickerPosition: "bottom-left"
+        }).on("click", function (ev) {
+            $("#sEmployeeDate").datetimepicker("setEndDate", $("#sEmployeeDate2").val());
+        });
+        $("#sEmployeeDate2").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            minView: "month",
+            maxView: "decade",
+            todayBtn: true,
+            pickerPosition: "bottom-left"
+        }).on("click", function (ev) {
+            $("#sEmployeeDate2").datetimepicker("setStartDate", $("#sEmployeeDate").val());
+        });
+        $("#sContractDeadLine").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            minView: "month",
+            maxView: "decade",
+            todayBtn: true,
+            pickerPosition: "bottom-left"
+        }).on("click", function (ev) {
+            $("#sContractDeadLine").datetimepicker("setEndDate", $("#sContractDeadLine2").val());
+        });
+        $("#sContractDeadLine2").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            minView: "month",
+            maxView: "decade",
+            todayBtn: true,
+            pickerPosition: "bottom-left"
+        }).on("click", function (ev) {
+            $("#sContractDeadLine2").datetimepicker("setStartDate", $("#sContractDeadLine").val());
+        });
+        $("#sResignDate").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            minView: "month",
+            maxView: "decade",
+            todayBtn: true,
+            pickerPosition: "bottom-left"
+        }).on("click", function (ev) {
+            $("#sResignDate").datetimepicker("setEndDate", $("#sResignDate2").val());
+        });
+        $("#sResignDate2").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            minView: "month",
+            maxView: "decade",
+            todayBtn: true,
+            pickerPosition: "bottom-left"
+        }).on("click", function (ev) {
+            $("#sResignDate2").datetimepicker("setStartDate", $("#sResignDate").val());
+        });
+        $("#sUpdateOn").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            minView: "month",
+            maxView: "decade",
+            todayBtn: true,
+            pickerPosition: "bottom-left"
+        }).on("click", function (ev) {
+            $("#sUpdateOn").datetimepicker("setEndDate", $("#sUpdateOn2").val());
+        });
+        $("#sUpdateOn2").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            minView: "month",
+            maxView: "decade",
+            todayBtn: true,
+            pickerPosition: "bottom-left"
+        }).on("click", function (ev) {
+            $("#sUpdateOn2").datetimepicker("setStartDate", $("#sUpdateOn").val());
+        });
+
+
+
+
         $("#iItemName").change(function () {
             var value = $("#iItemName").val();
             if (value != "-") {
@@ -131,7 +269,7 @@
                 $('#iCompany').addClass("warning");
             }
         });
-        
+
         $("#iEmpNo").blur(function () {
             var value = $("#iEmpNo").val();
             if (value.length > 0) {
@@ -153,19 +291,19 @@
         $("#iIdCard").blur(function () {
 
             //日期转字符串 返回日期格式20080808
-            var dateToString = function(date) {
+            var dateToString = function (date) {
                 if (date instanceof Date) {
                     var year = date.getFullYear();
                     var month = date.getMonth() + 1;
-                    month = month < 10 ? '0' + month: month;
+                    month = month < 10 ? '0' + month : month;
                     var day = date.getDate();
-                    day = day < 10 ? '0' + day: day;
+                    day = day < 10 ? '0' + day : day;
                     return year + month + day;
                 }
                 return '';
             }
             var cardid = $("#iIdCard").val();
-            //身份证正则表达式(18位) 
+            //身份证正则表达式(18位)
             var isIdCard2 = /^[1-9]\d{5}(19\d{2}|[2-9]\d{3})((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])(\d{4}|\d{3}X)$/i;
             var stard = "10X98765432"; //最后一位身份证的号码
             var first = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2]; //1-17系数
@@ -215,9 +353,9 @@
             cache: false,
             striped: true,//條紋行
             clickToSelect: true,//选择行即选择checkbox
-            searchOnEnterKey: true,//ENTER键搜索
+            searchOnEnterKey: false,//ENTER键搜索
             height: tableHeight(),//高度调整
-            search: true,//是否搜索
+            search: false,//是否搜索
             pagination: true,//是否分页
             pageSize: 15,//单页记录数
             pageNumber: 1,//起始页
@@ -229,13 +367,26 @@
             searchAlign: "left",//查询框对齐方式
             queryParamsType: "limit",//查询参数组织方式
             queryParams: function getParams(params) {
-                //params obj
-                params.other = "otherInfo";
+                params.iItmeName = $("#sItemName").val();
+                params.iCompany = $("#sCompanyCode").val();
+                params.iIdCard = $("#sIdCard").val();
+                params.iPhone = $("#SPhone").val();
+                params.iEmpNo = $("#sEmpNo").val();
+                params.iEmployeeStatus = $("#sEmpStatus").val();
+                params.iFileLocation = $("#sFileLocation").val();
+                params.iEmployeeDateFrom = $("#sEmployeeDate").val();
+                params.iEmployeeDateTo = $("#sEmployeeDate2").val();
+                params.iContractDeadLineFrom = $("#sContractDeadLine").val();
+                params.iContractDeadLineTo = $("#sContractDeadLine2").val();
+                params.iResignDateFrom = $("#sResignDate").val();
+                params.iResignDateTo = $("#sResignDate2").val();
+                params.iModifyOnForm = $("#sUpdateOn").val();
+                params.iModifyOnTo = $("#sUpdateOn2").val();
                 return params;
             },
             searchOnEnterKey: false,//回车搜索
-            showRefresh: true,//刷新按钮
-            showColumns: true,//列选择按钮
+            showRefresh: false,//刷新按钮
+            showColumns: false,//列选择按钮
             buttonsAlign: "left",//按钮对齐方式
             toolbar: "#toolbar",//指定工具栏
             toolbarAlign: "right",//工具栏对齐方式
@@ -259,6 +410,7 @@
 , { field: "iWageAccount", title: "工资帐号", sortable: true }
 , { field: "iSocialSecurityAccount", title: "社保账号", sortable: true }
 , { field: "iProvidentAccount", title: "公积金账号", sortable: true }
+, { field: "iAccountInfoNote", title: "账户信息备注", sortable: true }
 
 
             ],
@@ -346,6 +498,14 @@
                         myViewModel.iIsReturnFee(result.data.iIsReturnFee);
                         myViewModel.iIsSocialInsurancePaid(result.data.iIsSocialInsurancePaid);
                         myViewModel.iIsProvidentPaid(result.data.iIsProvidentPaid);
+
+
+                        myViewModel.iBasicInfoNote(result.data.iBasicInfoNote);
+
+                        myViewModel.iAccountInfoNote(result.data.iAccountInfoNote);
+
+                        myViewModel.iPositionInfoNote(result.data.iPositionInfoNote);
+
                         myViewModel.iIsCommercialInsurancePaid(result.data.iIsCommercialInsurancePaid);
                         myViewModel.iCreatedOn(result.data.iCreatedOn);
                         myViewModel.iCreatedBy(result.data.iCreatedBy);
@@ -375,8 +535,7 @@
 
         $("#addRecord").click(function () {
             var warnings = $(".warning");
-            if (warnings && warnings.length > 0)
-            {
+            if (warnings && warnings.length > 0) {
                 toastr.error('数据验证未通过！');
                 return;
             }
@@ -472,6 +631,11 @@
             myViewModel.iIsSocialInsurancePaid("");
             myViewModel.iIsProvidentPaid("");
             myViewModel.iIsCommercialInsurancePaid("");
+
+            myViewModel.iBasicInfoNote("");
+            myViewModel.iAccountInfoNote("");
+            myViewModel.iPositionInfoNote("");
+
             myViewModel.iCreatedOn("");
             myViewModel.iCreatedBy("");
             myViewModel.iUpdatedOn("");
@@ -624,6 +788,11 @@
         self.iIsSocialInsurancePaid = ko.observable("");
         self.iIsProvidentPaid = ko.observable("");
         self.iIsCommercialInsurancePaid = ko.observable("");
+
+        self.iBasicInfoNote = ko.observable("");
+        self.iAccountInfoNote = ko.observable("");
+        self.iPositionInfoNote = ko.observable("");
+
         self.iCreatedOn = ko.observable("");
         self.iCreatedBy = ko.observable("");
         self.iUpdatedOn = ko.observable("");

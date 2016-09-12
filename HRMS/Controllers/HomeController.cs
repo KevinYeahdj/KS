@@ -25,22 +25,6 @@ namespace HRMS.Controllers
     {
         public ActionResult Index()
         {
-            string param = "{\"UserId\":\"kpi\",\"Sign\":\"签名\",\"RequestId\":\"请求ID\",\"RequestParam\":[{\"Name\":\"\",\"DataId\":\"28\",\"ParentId\":\"C_211\",\"QueryFields\":[],\"RequestParams\":[{\"FieldName\":\"CD_898\",\"Value\":\"2016\"},{\"FieldName\":\"CD_1165\",\"Value\":null},{\"FieldName\":\"CD_884\",\"Value\":\"D4_103\"},{\"FieldName\":\"CD_956\",\"Value\":null}],\"Pager\":null},{\"Name\":\"\",\"DataId\":\"401\",\"ParentId\":\"C_481\",\"QueryFields\":[],\"RequestParams\":[{\"FieldName\":\"CD_884\",\"Value\":\"D4_103\"},{\"FieldName\":\"CD_863\",\"Value\":null},{\"FieldName\":\"CD_898\",\"Value\":\"2016\"},{\"FieldName\":\"CD_956\",\"Value\":null},{\"FieldName\":\"CD_1165\",\"Value\":null}],\"Pager\":null}]}";
-            Regex reg1 = new Regex("(\"DataId\":\"(\\d+)\")+");
-            MatchCollection m2 = reg1.Matches(param);
-
-            string atxet = "sdsdsmy0938hidafdmyrtr34thidas";
-            Regex reg = new Regex(@"my\w+?hi");
-            MatchCollection matchs = reg.Matches(atxet);
-            foreach (Match item in matchs)
-            {
-                if (item.Success)
-                {
-                    Console.WriteLine(item.Value); //这里就是匹配到的项
-                }
-            }
-
-
             return View();
         }
 

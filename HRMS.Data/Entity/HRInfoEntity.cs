@@ -74,6 +74,10 @@ namespace ClinBrain.Data.Entity
         public string iIsProvidentPaid { get; set; } //是否缴纳公积金 
         public string iIsCommercialInsurancePaid { get; set; } //是否缴纳商业保险 
 
+        public string iBasicInfoNote { get; set; } // 基本信息备注
+        public string iAccountInfoNote { get; set; } // 账户信息备注
+        public string iPositionInfoNote { get; set; } // 职位信息备注
+
         public DateTime? iCreatedOn { get; set; }  //创建时间
         public string iCreatedBy { get; set; } //创建人
         public DateTime? iUpdatedOn { get; set; } //修改时间
