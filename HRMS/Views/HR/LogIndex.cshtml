@@ -31,8 +31,12 @@
         <div class="col-*-12">
 
             <div id="toolbar">
-                <div style="float:left"><span>身份证号：</span><input id="idcard" class="form-control" /></div>
-                <div style="float:left;margin-left:10px"><span>修改日期：</span><input id="modifyfrom" class="form-control" />至<input id="modifyend" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px"><span>身份证号：</span></div>
+                <div style="float: left; margin-left: 10px"><input id="idcard" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px"><span>修改日期：</span></div>
+                <div style="float:left;margin-left:10px"><input id="modifyfrom" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px"><span>至</span></div>
+                <div style="float: left; margin-left: 10px"><input id="modifyend" class="form-control" /></div>
                 <div style="float:left;margin-left:10px" class="btn btn-primary" onclick="Search()">查询</div>
             </div>
 
@@ -130,7 +134,8 @@
         $('#mytab').bootstrapTable({
             url: "/HR/GetAllHRInfo",//数据源
             dataField: "rows",//服务端返回数据键值 就是说记录放的键值是rows，分页时使用总记录数的键值为total
-            sortName: "iGuid",//排序列
+            sortName: "iUpdatedOn",//排序列
+            sortOrder: "desc",
             cache: false,
             striped: true,//條紋行
             clickToSelect: true,//选择行即选择checkbox

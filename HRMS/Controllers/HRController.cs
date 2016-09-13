@@ -203,5 +203,182 @@ namespace HRMS.Controllers
             //将查询结果返回  
             HttpContext.Response.Write(jss.Serialize(model));
         }
+
+        public JsonResult ImportHRInfo()
+        {
+            try
+            {
+                var oFile = HttpContext.Request.Files["txt_file"];
+                //保存文件
+                string newFile = DateTime.Now.ToString("yyyyMMddHHmmss") + "_" + oFile.FileName;
+                string path = Server.MapPath("~") + "UploadFiles\\" + newFile;
+                oFile.SaveAs(path);
+
+
+                IWorkbook workbook = null;
+                if (oFile.FileName.IndexOf(".xlsx") > 0) // 2007版本
+                    workbook = new XSSFWorkbook(oFile.InputStream);
+                else if (oFile.FileName.IndexOf(".xls") > 0) // 2003版本
+                    workbook = new HSSFWorkbook(oFile.InputStream);
+                if (workbook == null)
+                {
+                    return new JsonResult { Data = new { success = false, msg = "不是标准的Excel文件!" } };
+                }
+                string errorLog = "";
+                List<HRInfoEntity> list = ExcelSheetToEntityList(workbook.GetSheetAt(0), ref errorLog);
+                MergeToDBWithLog(list);
+
+                return new JsonResult { Data = new { success = true, msg = "msg" } };
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult { Data = new { success = false, msg = ex.ToString() } };
+
+            }
+        }
+
+        private List<HRInfoEntity> ExcelSheetToEntityList(ISheet sheet, ref string errorLog)
+        {
+            DicManager dm = new DicManager();
+            var companies = dm.GetDicByType("公司");
+            var projects = dm.GetDicByType("项目");
+            HRInfoManager service = new HRInfoManager();
+
+            List<HRInfoEntity> list = new List<HRInfoEntity>();
+
+            Dictionary<string, string> keycolumnp = HRInfoManager.hrDic;
+            Dictionary<string, int> keycolumns = new Dictionary<string, int>();
+            for (int co = 0; co < sheet.GetRow(0).LastCellNum; co++)
+            {
+                if (keycolumnp.ContainsKey(sheet.GetRow(0).GetCell(co).ToString().Trim()))
+                    keycolumns.Add(keycolumnp[sheet.GetRow(0).GetCell(co).ToString().Trim()], co);
+            }
+            //遍历数据行
+            for (int i = (sheet.FirstRowNum + 1), len = sheet.LastRowNum + 1; i < len; i++)
+            {
+                HRInfoEntity olden = new HRInfoEntity();
+                try
+                {
+                    string company = sheet.GetRow(i).GetCell(keycolumns["所在公司"]).ToString();
+                    string empcode = sheet.GetRow(i).GetCell(keycolumns["工号"]).ToString();
+                    string idcard = sheet.GetRow(i).GetCell(keycolumns["身份证号"]).ToString();
+                    olden = service.GetUniqueFirstOrDefault(company, empcode, idcard);
+                }
+                catch
+                {
+                    errorLog += "第【" + (i + 1).ToString() + "】行所在公司，工号，身份证号不能有缺失；";
+                }
+
+                HRInfoEntity en = new HRInfoEntity();
+                if (olden != null)
+                {
+                    en.iGuid = olden.iGuid;
+                }
+                foreach (var kvp in keycolumnp)
+                {
+                    if (!keycolumns.ContainsKey(kvp.Value))
+                    {
+                        if (olden != null)
+                        {
+                            en.GetType().GetProperty(kvp.Value).SetValue(en, olden.GetType().GetProperty(kvp.Value).GetValue(olden), null);
+                        }
+                        continue;
+                    }
+                    if (sheet.GetRow(i).GetCell(keycolumns[kvp.Value]) == null || sheet.GetRow(i).GetCell(keycolumns[kvp.Value]).ToString() == "")
+                    {
+                        en.GetType().GetProperty(kvp.Value).SetValue(en, null, null);
+                    }
+                    else
+                    {
+                        en.GetType().GetProperty(kvp.Value).SetValue(en, sheet.GetRow(i).GetCell(keycolumns[kvp.Value]).ToString().Trim(), null);
+                    }
+                }
+                if (projects.FirstOrDefault(pj=>pj.iValue == en.iItemName) == null)
+                {
+                    errorLog += "第【" + (i + 1).ToString() + "】行项目名称不存在；";
+                }
+
+                if (companies.FirstOrDefault(pj => pj.iValue == en.iCompany) == null)
+                {
+                    errorLog += "第【" + (i + 1).ToString() + "】行公司名称不存在；";
+                } 
+                if (string.IsNullOrEmpty(en.iEmpNo))
+                {
+                    errorLog += "第【" + (i + 1).ToString() + "】行工号不能为空,临时工用-；";
+                }
+                if (string.IsNullOrEmpty(en.iName))
+                {
+                    errorLog += "第【" + (i + 1).ToString() + "】行姓名不能为空；";
+                }
+                if (!CheckIDCard18(en.iIdCard))
+                {
+                    errorLog += "第【" + (i + 1).ToString() + "】行身份证号不合法；";
+                }
+                //还有很多校验
+
+                list.Add(en);
+            }
+            return list;
+        }
+
+        private void MergeToDBWithLog(List<HRInfoEntity> list)
+        {
+            HRInfoManager service = new HRInfoManager();
+            foreach (var item in list)
+            {
+                if (string.IsNullOrEmpty(item.iGuid))
+                {
+                    item.iCreatedBy = SessionHelper.CurrentUser.iUserName;
+                    item.iUpdatedBy = SessionHelper.CurrentUser.iUserName;
+                    service.Insert(item);
+                }
+                else
+                {
+                    item.iUpdatedBy = SessionHelper.CurrentUser.iUserName;
+                    service.Update(item);
+                }
+            }
+
+        }
+
+        /// <summary>  
+        /// 18位身份证号码验证  
+        /// </summary>  
+        private bool CheckIDCard18(string idNumber)
+        {
+            long n = 0;
+            if (long.TryParse(idNumber.Remove(17), out n) == false
+                || n < Math.Pow(10, 16) || long.TryParse(idNumber.Replace('x', '0').Replace('X', '0'), out n) == false)
+            {
+                return false;//数字验证  
+            }
+            string address = "11x22x35x44x53x12x23x36x45x54x13x31x37x46x61x14x32x41x50x62x15x33x42x51x63x21x34x43x52x64x65x71x81x82x91";
+            if (address.IndexOf(idNumber.Remove(2)) == -1)
+            {
+                return false;//省份验证  
+            }
+            string birth = idNumber.Substring(6, 8).Insert(6, "-").Insert(4, "-");
+            DateTime time = new DateTime();
+            if (DateTime.TryParse(birth, out time) == false)
+            {
+                return false;//生日验证  
+            }
+            string[] arrVarifyCode = ("1,0,x,9,8,7,6,5,4,3,2").Split(',');
+            string[] Wi = ("7,9,10,5,8,4,2,1,6,3,7,9,10,5,8,4,2").Split(',');
+            char[] Ai = idNumber.Remove(17).ToCharArray();
+            int sum = 0;
+            for (int i = 0; i < 17; i++)
+            {
+                sum += int.Parse(Wi[i]) * int.Parse(Ai[i].ToString());
+            }
+            int y = -1;
+            Math.DivRem(sum, 11, out y);
+            if (arrVarifyCode[y] != idNumber.Substring(17, 1).ToLower())
+            {
+                return false;//校验码验证  
+            }
+            return true;//符合GB11643-1999标准  
+        }  
+
     }
 }

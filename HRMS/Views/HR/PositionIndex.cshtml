@@ -32,10 +32,68 @@
         <div class="col-*-12">
 
             <div id="toolbar">
-                <div style="float:left" class="btn btn-primary" data-toggle="modal" data-target="#addModal" id="NewRecord">添加记录</div>
-                <div style="float:left;margin-left:10px" class="btn btn-primary" data-toggle="modal" data-target="#importModal">数据导入</div>
-                <div style="float:left;margin-left:10px" class="btn btn-primary" onclick="ExportData()">数据导出</div>
+                <div style="float: left; margin-left: 10px"><span>项目名称：</span></div>
+                <div style="float: left; margin-left: 10px">
+                    <select class="form-control" id="sItemName">
+                        <option value="">请选择</option>
+                        @{
+                            foreach (var item in ViewBag.Projects)
+                            {
+                                <option value="@item.iKey">@item.iValue</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div style="float: left; margin-left: 10px">
+                    <span>所在公司：</span>
+                </div>
+                <div style="float: left; margin-left: 10px">
+                    <select class="form-control" id="sCompanyCode">
+                        <option value="">请选择</option>
+                        @{
+                            foreach (var item in ViewBag.Companies)
+                            {
+                                <option value="@item.iKey">@item.iValue</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div style="float: left; margin-left: 10px"><span>身份证号：</span></div>
+                <div style="float: left; margin-left: 10px"><input id="sIdCard" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px">
+                    <span>联系电话：</span>
+                </div>
+                <div style="float: left; margin-left: 10px"><input id="SPhone" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px">&nbsp;</div>
+                <div style="float: left; margin-left: 10px">
+                    <span>工号：</span>
+                </div>
+                <div style="float: left; margin-left: 10px"><input id="sEmpNo" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px">
+                    <span>员工状态：</span>
+                </div>
+                <div style="float: left; margin-left: 10px">
+                    <select class="form-control" id="sEmpStatus">
+                        <option value="">请选择</option>
+                        <option value="在职">在职</option>
+                        <option value="离职">离职</option>
+
+                    </select>
+                </div>
+                <div style="float: left; margin-left: 10px"><span>档案位置：</span></div><div style="float: left; margin-left: 10px"><input id="sFileLocation" class="form-control" /></div>
+                <div style="float:left;margin-left:10px"><span>入职时间：</span></div><div style="float: left; margin-left: 10px;width:10%"><input id="sEmployeeDate" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 10%"><input id="sEmployeeDate2" class="form-control" /></div>
+                <div style="float:left;margin-left:10px"><span>合同到期日期：</span></div><div style="float: left; margin-left: 10px; width: 10%"><input id="sContractDeadLine" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 10%"><input id="sContractDeadLine2" class="form-control" /></div>
+                <div style="float:left;margin-left:10px"><span>离职日期：</span></div><div style="float: left; margin-left: 10px; width: 10%"><input id="sResignDate" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 10%"><input id="sResignDate2" class="form-control" /></div>
+                <div style="float:left;margin-left:10px"><span>修改日期：</span></div><div style="float: left; margin-left: 10px; width: 10%"><input id="sUpdateOn" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 10%"><input id="sUpdateOn2" class="form-control" /></div>
+
+                <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" onclick="ExportData()">数据导出</div>
+                <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" data-toggle="modal" data-target="#importModal">数据导入</div>
+                <div style="float: right; margin-left: 10px; margin-top: 5px; " class="btn btn-primary" data-toggle="modal" data-target="#addModal" id="NewRecord">添加记录</div>
+                <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" onclick="Search()">查询</div>
+
             </div>
+
+
 
             <table id="mytab" class="table table-hover"></table>
 
@@ -197,6 +255,7 @@
                                     <input type="radio" name="iIsCommercialInsurancePaid" data-bind="checked: iIsCommercialInsurancePaid" value="否">否
                                 </label>
                             </div>
+                            <div class="form-group"> 职位信息备注：<input type="text" class="form-control" id="iPositionInfoNote" data-bind="value: iPositionInfoNote" placeholder="请输入职位信息备注"></div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
@@ -215,7 +274,7 @@
                         </div>
                         <div class="modal-body">
                             <form>
-                                <a href="~/UploadFiles/Template/员工基本信息导入模板.xls" class="form-control" style="border:none;">下载导入模板</a>
+                                <a href="~/UploadFiles/Template/员工职位信息导入模板.xls" class="form-control" style="border:none;">下载导入模板</a>
                                 <input type="file" name="txt_file" id="txt_file" multiple class="file-loading" />
                             </form>
                         </div>
@@ -227,6 +286,10 @@
 </div>
 
 <script type="text/javascript">
+    function Search() {
+        $('#mytab').bootstrapTable('refresh');
+    }
+
     function ChangeDateFormat(jsondate) {
         jsondate = jsondate.replace("/Date(", "").replace(")/", "");
         if (jsondate.indexOf("+") > 0) {
@@ -248,6 +311,95 @@
     }
 
     $(function () {
+        $("#sEmployeeDate").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            minView: "month",
+            maxView: "decade",
+            todayBtn: true,
+            pickerPosition: "bottom-left"
+        }).on("click", function (ev) {
+            $("#sEmployeeDate").datetimepicker("setEndDate", $("#sEmployeeDate2").val());
+        });
+        $("#sEmployeeDate2").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            minView: "month",
+            maxView: "decade",
+            todayBtn: true,
+            pickerPosition: "bottom-left"
+        }).on("click", function (ev) {
+            $("#sEmployeeDate2").datetimepicker("setStartDate", $("#sEmployeeDate").val());
+        });
+        $("#sContractDeadLine").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            minView: "month",
+            maxView: "decade",
+            todayBtn: true,
+            pickerPosition: "bottom-left"
+        }).on("click", function (ev) {
+            $("#sContractDeadLine").datetimepicker("setEndDate", $("#sContractDeadLine2").val());
+        });
+        $("#sContractDeadLine2").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            minView: "month",
+            maxView: "decade",
+            todayBtn: true,
+            pickerPosition: "bottom-left"
+        }).on("click", function (ev) {
+            $("#sContractDeadLine2").datetimepicker("setStartDate", $("#sContractDeadLine").val());
+        });
+        $("#sResignDate").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            minView: "month",
+            maxView: "decade",
+            todayBtn: true,
+            pickerPosition: "bottom-left"
+        }).on("click", function (ev) {
+            $("#sResignDate").datetimepicker("setEndDate", $("#sResignDate2").val());
+        });
+        $("#sResignDate2").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            minView: "month",
+            maxView: "decade",
+            todayBtn: true,
+            pickerPosition: "bottom-left"
+        }).on("click", function (ev) {
+            $("#sResignDate2").datetimepicker("setStartDate", $("#sResignDate").val());
+        });
+        $("#sUpdateOn").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            minView: "month",
+            maxView: "decade",
+            todayBtn: true,
+            pickerPosition: "bottom-left"
+        }).on("click", function (ev) {
+            $("#sUpdateOn").datetimepicker("setEndDate", $("#sUpdateOn2").val());
+        });
+        $("#sUpdateOn2").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            minView: "month",
+            maxView: "decade",
+            todayBtn: true,
+            pickerPosition: "bottom-left"
+        }).on("click", function (ev) {
+            $("#sUpdateOn2").datetimepicker("setStartDate", $("#sUpdateOn").val());
+        });
+
         $('#iEmployeeDate').datetimepicker({
             language: 'zh-CN',
             weekStart: 1,
@@ -390,13 +542,14 @@
         $('#mytab').bootstrapTable({
             url: "/HR/GetAllHRInfo",//数据源
             dataField: "rows",//服务端返回数据键值 就是说记录放的键值是rows，分页时使用总记录数的键值为total
-            sortName: "iGuid",//排序列
+            sortName: "iUpdatedOn",//排序列
+            sortOrder: "desc",
             cache: false,
             striped: true,//條紋行
             clickToSelect: true,//选择行即选择checkbox
             searchOnEnterKey: true,//ENTER键搜索
             height: tableHeight(),//高度调整
-            search: true,//是否搜索
+            search: false,//是否搜索
             pagination: true,//是否分页
             pageSize: 15,//单页记录数
             pageNumber: 1,//起始页
@@ -408,13 +561,26 @@
             searchAlign: "left",//查询框对齐方式
             queryParamsType: "limit",//查询参数组织方式
             queryParams: function getParams(params) {
-                //params obj
-                params.other = "otherInfo";
+                params.iItmeName = $("#sItemName").val();
+                params.iCompany = $("#sCompanyCode").val();
+                params.iIdCard = $("#sIdCard").val();
+                params.iPhone = $("#SPhone").val();
+                params.iEmpNo = $("#sEmpNo").val();
+                params.iEmployeeStatus = $("#sEmpStatus").val();
+                params.iFileLocation = $("#sFileLocation").val();
+                params.iEmployeeDateFrom = $("#sEmployeeDate").val();
+                params.iEmployeeDateTo = $("#sEmployeeDate2").val();
+                params.iContractDeadLineFrom = $("#sContractDeadLine").val();
+                params.iContractDeadLineTo = $("#sContractDeadLine2").val();
+                params.iResignDateFrom = $("#sResignDate").val();
+                params.iResignDateTo = $("#sResignDate2").val();
+                params.iModifyOnForm = $("#sUpdateOn").val();
+                params.iModifyOnTo = $("#sUpdateOn2").val();
                 return params;
             },
             searchOnEnterKey: false,//回车搜索
-            showRefresh: true,//刷新按钮
-            showColumns: true,//列选择按钮
+            showRefresh: false,//刷新按钮
+            showColumns: false,//列选择按钮
             buttonsAlign: "left",//按钮对齐方式
             toolbar: "#toolbar",//指定工具栏
             toolbarAlign: "right",//工具栏对齐方式
@@ -470,6 +636,7 @@
 , { field: "iIsSocialInsurancePaid", title: "是否缴纳保险", sortable: true }
 , { field: "iIsProvidentPaid", title: "是否缴纳公积金", sortable: true }
 , { field: "iIsCommercialInsurancePaid", title: "是否缴纳商业保险", sortable: true }
+, { field: "iPositionInfoNote", title: "职位信息备注", sortable: true }
 
 
             ],
@@ -558,6 +725,9 @@
                         myViewModel.iIsSocialInsurancePaid(result.data.iIsSocialInsurancePaid);
                         myViewModel.iIsProvidentPaid(result.data.iIsProvidentPaid);
                         myViewModel.iIsCommercialInsurancePaid(result.data.iIsCommercialInsurancePaid);
+                        myViewModel.iBasicInfoNote(result.data.iBasicInfoNote);
+                        myViewModel.iAccountInfoNote(result.data.iAccountInfoNote);
+                        myViewModel.iPositionInfoNote(result.data.iPositionInfoNote);
                         myViewModel.iCreatedOn(result.data.iCreatedOn);
                         myViewModel.iCreatedBy(result.data.iCreatedBy);
                         myViewModel.iUpdatedOn(result.data.iUpdatedOn);
@@ -682,6 +852,9 @@
             myViewModel.iIsSocialInsurancePaid("");
             myViewModel.iIsProvidentPaid("");
             myViewModel.iIsCommercialInsurancePaid("");
+            myViewModel.iBasicInfoNote("");
+            myViewModel.iAccountInfoNote("");
+            myViewModel.iPositionInfoNote("");
             myViewModel.iCreatedOn("");
             myViewModel.iCreatedBy("");
             myViewModel.iUpdatedOn("");
@@ -747,7 +920,7 @@
         return oFile;
     };
     var oFileInput = new FileInput();
-    oFileInput.Init("txt_file", "/Manage/ImportPeople");
+    oFileInput.Init("txt_file", "/HR/ImportHRInfo");
     function ExportData() {
         var selects = $('#mytab').bootstrapTable('getSelections');
         var columns = $('#mytab').bootstrapTable('getOptions').columns;
@@ -861,6 +1034,9 @@
         self.iIsSocialInsurancePaid = ko.observable("");
         self.iIsProvidentPaid = ko.observable("");
         self.iIsCommercialInsurancePaid = ko.observable("");
+        self.iBasicInfoNote = ko.observable("");
+        self.iAccountInfoNote = ko.observable("");
+        self.iPositionInfoNote = ko.observable("");
         self.iCreatedOn = ko.observable("");
         self.iCreatedBy = ko.observable("");
         self.iUpdatedOn = ko.observable("");
