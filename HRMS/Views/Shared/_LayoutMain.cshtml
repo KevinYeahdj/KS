@@ -47,7 +47,7 @@
     <script>
         function ChangeCompany(newCompany) {
             $.ajax({
-                url: "/Manage/ChangeCompany?newCompany=" + newCompany,
+                url: "/ManageAjax/ChangeCompany?newCompany=" + newCompany,
                 type: "GET",
                 dataType: 'text',
                 success: function (data) {
@@ -126,7 +126,7 @@
             <ul class="sidebar-menu" id="nav-accordion">
 
                 @{
-                    HRMS.Controllers.ManageController mc = new HRMS.Controllers.ManageController();
+                    HRMS.Controllers.ManageAjaxController mc = new HRMS.Controllers.ManageAjaxController();
                     @Html.Raw(mc.GetMenuHtml())
                     if (HRMS.WEB.Utils.SessionHelper.CurrentUser.iUserType == "超级管理员")
                     {

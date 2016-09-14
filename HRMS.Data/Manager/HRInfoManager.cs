@@ -204,17 +204,120 @@ namespace HRMS.Data.Manager
             }
         }
 
-        public static Dictionary<string, string> hrDicConvert
+        public static Dictionary<string, string> hrBasicDic
         {
             get
             {
                 Dictionary<string, string> dic = new Dictionary<string, string>();
-                foreach (var item in hrDic)
-                {
-                    dic.Add(item.Value, item.Key);
-                }
+                dic.Add("iGuid", "iGuid");
+                dic.Add("项目名称", "iItemName");
+                dic.Add("所在公司", "iCompany");
+                dic.Add("所在工作地", "iWorkPlace");
+                dic.Add("工号", "iEmpNo");
+                dic.Add("姓名", "iName");
+                dic.Add("身份证号", "iIdCard");
+                dic.Add("性别", "iSex");
+                dic.Add("出生日期", "iBirthday");
+                dic.Add("户籍", "iRegistry");
+                dic.Add("民族", "iNation");
+                dic.Add("户口性质", "iResidenceProperty");
+                dic.Add("户籍地址", "iRegistryAddress");
+                dic.Add("签发机关", "iIssuedBy");
+                dic.Add("身份证有效期", "iIdCardValidate");
+                dic.Add("现住地", "iLivedIn");
+                dic.Add("联系电话", "iPhone");
+                dic.Add("紧急联系人", "iEmeContact");
+                dic.Add("紧急联系人电话", "iEmeContactPhone");
+                dic.Add("邮箱", "iEmail");
+                dic.Add("邮编", "iPostCode");
+                dic.Add("身高（cm）", "iHeight");
+                dic.Add("体重", "iWeight");
+                dic.Add("血型", "iBloodType");
+                dic.Add("婚姻状况", "iMariage");
+                dic.Add("年龄", "iAge");
+                dic.Add("体检", "iHealthCheck");
+                dic.Add("政治面貌", "iPolitical");
+                dic.Add("文化水平", "iEducationLevel");
+                dic.Add("专业", "iMajor");
+                dic.Add("毕业学校", "iGraduatedSchool");
+                dic.Add("毕业时间", "iGraduatedDate");
+                dic.Add("工作经历", "iWorkExperience");
+                dic.Add("基本信息备注", "iBasicInfoNote");
                 return dic;
             }
+        }
+
+        public static Dictionary<string, string> hrAccountDic
+        {
+            get
+            {
+                Dictionary<string, string> dic = new Dictionary<string, string>();
+                dic.Add("iGuid", "iGuid");
+                dic.Add("项目名称", "iItemName");
+                dic.Add("所在公司", "iCompany");
+                dic.Add("所在工作地", "iWorkPlace");
+                dic.Add("工号", "iEmpNo");
+                dic.Add("姓名", "iName");
+                dic.Add("身份证号", "iIdCard");
+                dic.Add("开户行", "iWageBank");
+                dic.Add("开户行名称", "iWageBankName");
+                dic.Add("工资帐号", "iWageAccount");
+                dic.Add("社保账号", "iSocialSecurityAccount");
+                dic.Add("公积金账号", "iProvidentAccount");
+                dic.Add("账户信息备注", "iAccountInfoNote");
+                return dic;
+            }
+        }
+        public static Dictionary<string, string> hrPositionDic
+        {
+            get
+            {
+                Dictionary<string, string> dic = new Dictionary<string, string>();
+                dic.Add("iGuid", "iGuid");
+                dic.Add("项目名称", "iItemName");
+                dic.Add("所在公司", "iCompany");
+                dic.Add("所在工作地", "iWorkPlace");
+                dic.Add("工号", "iEmpNo");
+                dic.Add("姓名", "iName");
+                dic.Add("身份证号", "iIdCard");
+                dic.Add("人员类别", "iEmpType");
+                dic.Add("岗位", "iPosition");
+                dic.Add("管理层级", "iManageLevel");
+                dic.Add("所在项目组", "iProjectGroup");
+                dic.Add("司龄", "iCompanyWorkYear");
+                dic.Add("所属一级部门", "iFirstDep");
+                dic.Add("所属二级部门", "iSecondDep");
+                dic.Add("所属三级部门", "iThirdDep");
+                dic.Add("所属四级部门", "iFourthDep");
+                dic.Add("所属五级部门", "iFifthDep");
+                dic.Add("员工状态", "iEmployeeStatus");
+                dic.Add("入职时间", "iEmployeeDate");
+                dic.Add("转正时间", "iPositiveDate");
+                dic.Add("合同类型", "iContractType");
+                dic.Add("合同签订情况", "iContractSignStatus");
+                dic.Add("合同/协议期限", "iContractTerm");
+                dic.Add("合同到期日期", "iContractDeadLine");
+                dic.Add("离职类型", "iResignType");
+                dic.Add("离职日期", "iResignDate");
+                dic.Add("离职原因（公司）", "iResignReason");
+                dic.Add("档案位置", "iFileLocation");
+                dic.Add("是否返费", "iIsReturnFee");
+                dic.Add("是否缴纳保险", "iIsSocialInsurancePaid");
+                dic.Add("是否缴纳公积金", "iIsProvidentPaid");
+                dic.Add("是否缴纳商业保险", "iIsCommercialInsurancePaid");
+                dic.Add("职位信息备注", "iPositionInfoNote");
+                return dic;
+            }
+        }
+
+        public static Dictionary<string, string> DicConvert(Dictionary<string, string> dicOri)
+        {
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            foreach (var item in dicOri)
+            {
+                dic.Add(item.Value, item.Key);
+            }
+            return dic;
         }
         /// <summary>
         /// 插入一条记录
@@ -282,7 +385,7 @@ namespace HRMS.Data.Manager
             string sql = @"select * from hrinfo where icompany=@icompany and iempno = @iempno and iidcard=@iidcard and iIsDeleted =0 and iStatus =1";
             return Repository.Query<HRInfoEntity>(sql, new { icompany = company, iempno = empcode, iidcard = idcard }).FirstOrDefault();
         }
-        public List<HRInfoEntity> GetSearch(string companyCode, Dictionary<string,string> para, string sort, string order, int offset, int pageSize, out int total)
+        public List<HRInfoEntity> GetSearch(string companyCode, Dictionary<string, string> para, string sort, string order, int offset, int pageSize, out int total)
         {
             StringBuilder commandsb = new StringBuilder("from HRInfo where icompany='");
             commandsb.Append(companyCode);
@@ -312,6 +415,30 @@ namespace HRMS.Data.Manager
 
         }
 
+        public List<HRInfoEntity> GetSearchAll(string companyCode, Dictionary<string, string> para)
+        {
+            StringBuilder commandsb = new StringBuilder("from HRInfo where icompany='");
+            commandsb.Append(companyCode);
+            commandsb.Append("' ");
+            foreach (KeyValuePair<string, string> item in para)
+            {
+                if (!string.IsNullOrEmpty(item.Value) && item.Value != "§")
+                {
+                    if (item.Key.EndsWith("[d]"))
+                    {
+                        commandsb.Append(" and " + item.Key.Replace("[d]", "") + " between '" + (string.IsNullOrEmpty(item.Value.Split('§')[0]) ? "1900-01-01" : item.Value.Split('§')[0]) + "' and '" + (string.IsNullOrEmpty(item.Value.Split('§')[1]) ? DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") : item.Value.Split('§')[1]) + "' ");
+                    }
+                    else
+                    {
+                        commandsb.Append(" and " + item.Key + " like '%" + item.Value + "%'");
+                    }
+                }
+            }
+            string commonSql = commandsb.ToString();
+            string querySql = "select * " + commonSql + "order by iUpdatedOn desc";
+            return Repository.Query<HRInfoEntity>(querySql).ToList();
+        }
+
         public ModifyLogEntity ModifyRecord(HRInfoEntity entity)
         {
             var oldEntity = GetFirstOrDefault(entity.iGuid);
@@ -324,7 +451,7 @@ namespace HRMS.Data.Manager
                 string modifiedContent = string.Empty;
                 System.Reflection.PropertyInfo[] properties = entity.GetType().GetProperties(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
 
-                Dictionary<string, string> hrDicConvertTmp = hrDicConvert;
+                Dictionary<string, string> hrDicConvertTmp = DicConvert(hrDic);
 
                 foreach (System.Reflection.PropertyInfo item in properties)
                 {

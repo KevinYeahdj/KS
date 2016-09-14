@@ -20,7 +20,7 @@ namespace HRMS.Controllers
             {
                 filterContext.Result = RedirectToRoute(new { Controller = "Account", Action = "Login", returnUrl = Request.Url.ToString() });
             }
-            ViewBag.CurrentPageRights = "unknow";
+            ViewBag.CurrentPageRights = "unknown";
             if (!"Home".Equals(filterContext.RequestContext.RouteData.Values["controller"].ToString()))
             {            //判定访问权限
                 string result = HasVisitRights(Request.Url.LocalPath.ToLower());

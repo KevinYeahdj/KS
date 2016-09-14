@@ -91,7 +91,7 @@
         })
 
         $('#mytab').bootstrapTable({
-            url: "/Manage/GetAllPeople",//数据源
+            url: "/ManageAjax/GetAllPeople",//数据源
             dataField: "rows",//服务端返回数据键值 就是说记录放的键值是rows，分页时使用总记录数的键值为total
             sortName: "iNo",//排序列
             cache: false,
@@ -242,7 +242,7 @@
         return oFile;
     };
     var oFileInput = new FileInput();
-    oFileInput.Init("txt_file", "/Manage/ImportPeople");
+    oFileInput.Init("txt_file", "/ManageAjax/ImportPeople");
     function ExportData() {
         var selects = $('#mytab').bootstrapTable('getSelections');
         var columns = $('#mytab').bootstrapTable('getOptions').columns;
@@ -252,7 +252,7 @@
             var newColumns = JSON.stringify(columns);
             //alert(newSelects);
 
-            var url = "/Manage/ExportPeople";
+            var url = "/ManageAjax/ExportPeople";
             var inputs = '<input type="hidden" name="icolumns" value="' + newColumns + '" />';
             inputs += ' <input type="hidden" name="idata" value="' + newSelects.replace(new RegExp("\"", "gm"), "'") + '" />';
             $('<form action="' + url + '" method="post" target="_blank">' + inputs + '</form>').appendTo('body').submit().remove();

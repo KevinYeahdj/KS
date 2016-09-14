@@ -28,8 +28,9 @@ namespace HRMS.Controllers
             DicManager dm = new DicManager();
             var companies = dm.GetDicByType("公司");
             ViewBag.Companies = companies;
+            ManageAjaxController ma = new ManageAjaxController();
 
-            var contents = GetStandardMenuTree(false);
+            var contents = ma.GetStandardMenuTree(false);
             ViewBag.treeNodes = JsonConvert.SerializeObject(contents);
 
             return View();
@@ -46,10 +47,15 @@ namespace HRMS.Controllers
 
         public ActionResult MenuIndex()
         {
-            var contents = GetStandardMenuTree(true);
+            ManageAjaxController ma = new ManageAjaxController();
+
+            var contents = ma.GetStandardMenuTree(true);
             ViewBag.treeNodes = JsonConvert.SerializeObject(contents);
             return View();
         }
+    }
+    public class ManageAjaxController : Controller
+    {
 
         #region 用户方法
         public void GetAllUsers()
@@ -669,7 +675,7 @@ namespace HRMS.Controllers
             }
         }
 
-        private List<ItemContent> GetStandardMenuTree(bool widthUrl = true)
+        public List<ItemContent> GetStandardMenuTree(bool widthUrl = true)
         {
             string querySql = "select iguid, iparentid, iname, iUrl from  [sysMenu] ";
             DataSet ds = DbHelperSQL.Query(querySql);

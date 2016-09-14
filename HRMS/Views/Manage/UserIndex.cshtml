@@ -127,7 +127,7 @@
         })
 
         $('#mytab').bootstrapTable({
-            url: "/Manage/GetAllUsers",//数据源
+            url: "/ManageAjax/GetAllUsers",//数据源
             dataField: "rows",//服务端返回数据键值 就是说记录放的键值是rows，分页时使用总记录数的键值为total
             sortName: "iCreatedOn",//排序列
             cache: false,
@@ -262,7 +262,7 @@
             param.jsonString = JSON.stringify(nodeObj);
             param.action = $("#editRowIndex").val() == "" ? "add" : "update";
             $.ajax({
-                url: "/Manage/UsersSaveChanges",
+                url: "/ManageAjax/UsersSaveChanges",
                 type: "POST",
                 data: param,
                 dataType: 'text',
@@ -309,7 +309,7 @@
             param.userid = userid;
             param.companyid = companyid;
             $.ajax({
-                url: "/Manage/UserMenuSaveChanges",
+                url: "/ManageAjax/UserMenuSaveChanges",
                 type: "POST",
                 data: param,
                 dataType: 'text',
@@ -372,7 +372,7 @@
         var $shade = $('<div id="waiting"></div>');
         $shade.css({ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, background: '#fff url(/Content/images/waiting.gif) center center no-repeat', opacity: 0.4 });
         $("#menuTree").append($shade);
-        $.get("/Manage/GetUserMenuTree?userid=" + userid + "&companyid=" + companyid, function(result){
+        $.get("/ManageAjax/GetUserMenuTree?userid=" + userid + "&companyid=" + companyid, function(result){
             var treeObj = $.fn.zTree.getZTreeObj("menuTree");
             treeObj.checkAllNodes(false);
             treeObj.setting.check.chkboxType.Y = "";  //清除上下级全选影响
@@ -421,6 +421,15 @@
     }
 
     function ChangeUserCompany() {
+        var treeObj = $.fn.zTree.getZTreeObj("menuTree");
+        var nodes = treeObj.getNodes();
+        nodes = treeObj.transformToArray(nodes);
+        for(var i=0;i<nodes.length;i++){
+            if(nodes[i].isParent == false && nodes[i].name.indexOf("[只读]") > -1 ){
+                nodes[i].name = nodes[i].name.replace("[只读]","");
+                treeObj.updateNode(nodes[i]);
+            }
+        }
         var userid = $("#editUserId").val();
         var companyid = $("#iMenuCompanyCode").val();
         UpdateMenuTree(userid, companyid);

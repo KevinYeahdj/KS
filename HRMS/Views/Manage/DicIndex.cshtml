@@ -67,7 +67,7 @@
         })
 
         $('#mytab').bootstrapTable({
-            url: "/Manage/GetAllDics",//数据源
+            url: "/ManageAjax/GetAllDics",//数据源
             dataField: "rows",//服务端返回数据键值 就是说记录放的键值是rows，分页时使用总记录数的键值为total
             sortName: "iCreatedOn",//排序列
             cache: false,
@@ -167,7 +167,7 @@
             param.jsonString = JSON.stringify(nodeObj);
             param.action = $("#editRowIndex").val() == "" ? "add" : "update";
             $.ajax({
-                url: "/Manage/DicsSaveChanges",
+                url: "/ManageAjax/DicsSaveChanges",
                 type: "POST",
                 data: param,
                 dataType: 'text',

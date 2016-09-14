@@ -140,7 +140,7 @@
 		    para.treeJson = JSON.stringify(nodes);
 		    $.ajax({
 		        type: 'POST',
-		        url: "@Url.Content("~/Manage/SaveItemTree")",
+		        url: "@Url.Content("~/ManageAjax/SaveItemTree")",
 		        dataType: 'text',
                 data: para,
                 success: function (data) {

@@ -54,7 +54,10 @@ namespace HRMS.Controllers
         {
             return View();
         }
+    }
 
+    public class HRAjaxController : Controller
+    {
         public void GetAllHRInfo()
         {
             //用于序列化实体类的对象  
@@ -87,7 +90,7 @@ namespace HRMS.Controllers
 
             string filelocation = HttpContext.Request.Params["iFileLocation"];
 
-            string modifyon1 = HttpContext.Request.Params["iModifyOnForm"];
+            string modifyon1 = HttpContext.Request.Params["iModifyOnFrom"];
             string modifyon2 = HttpContext.Request.Params["iModifyOnTo"];
 
             bizParaDic.Add("iItmeName", itemName);
@@ -226,9 +229,17 @@ namespace HRMS.Controllers
                 }
                 string errorLog = "";
                 List<HRInfoEntity> list = ExcelSheetToEntityList(workbook.GetSheetAt(0), ref errorLog);
-                MergeToDBWithLog(list);
 
-                return new JsonResult { Data = new { success = true, msg = "msg" } };
+                if (string.IsNullOrEmpty(errorLog))
+                {
+                    MergeToDBWithLog(list);
+                    return new JsonResult { Data = new { success = true, msg = "success" } };
+                }
+                else
+                {
+                    return new JsonResult { Data = new { success = false, msg = errorLog } };
+
+                }
             }
             catch (Exception ex)
             {
@@ -259,9 +270,9 @@ namespace HRMS.Controllers
                 HRInfoEntity olden = new HRInfoEntity();
                 try
                 {
-                    string company = sheet.GetRow(i).GetCell(keycolumns["所在公司"]).ToString();
-                    string empcode = sheet.GetRow(i).GetCell(keycolumns["工号"]).ToString();
-                    string idcard = sheet.GetRow(i).GetCell(keycolumns["身份证号"]).ToString();
+                    string company = sheet.GetRow(i).GetCell(keycolumns["iCompany"]).ToString();
+                    string empcode = sheet.GetRow(i).GetCell(keycolumns["iEmpNo"]).ToString();
+                    string idcard = sheet.GetRow(i).GetCell(keycolumns["iIdCard"]).ToString();
                     olden = service.GetUniqueFirstOrDefault(company, empcode, idcard);
                 }
                 catch
@@ -293,7 +304,7 @@ namespace HRMS.Controllers
                         en.GetType().GetProperty(kvp.Value).SetValue(en, sheet.GetRow(i).GetCell(keycolumns[kvp.Value]).ToString().Trim(), null);
                     }
                 }
-                if (projects.FirstOrDefault(pj=>pj.iValue == en.iItemName) == null)
+                if (projects.FirstOrDefault(pj => pj.iValue == en.iItemName) == null)
                 {
                     errorLog += "第【" + (i + 1).ToString() + "】行项目名称不存在；";
                 }
@@ -301,7 +312,7 @@ namespace HRMS.Controllers
                 if (companies.FirstOrDefault(pj => pj.iValue == en.iCompany) == null)
                 {
                     errorLog += "第【" + (i + 1).ToString() + "】行公司名称不存在；";
-                } 
+                }
                 if (string.IsNullOrEmpty(en.iEmpNo))
                 {
                     errorLog += "第【" + (i + 1).ToString() + "】行工号不能为空,临时工用-；";
@@ -378,7 +389,102 @@ namespace HRMS.Controllers
                 return false;//校验码验证  
             }
             return true;//符合GB11643-1999标准  
-        }  
+        }
 
+        public void ExportBasic()
+        {
+            string path = "人事基本信息导出" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
+            ExExcel<HRInfoEntity>(GetExportData(), path, HRInfoManager.DicConvert(HRInfoManager.hrBasicDic));
+        }
+        public void ExportAccount()
+        {
+            string path = "人事账户信息导出" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
+            ExExcel<HRInfoEntity>(GetExportData(), path, HRInfoManager.DicConvert(HRInfoManager.hrAccountDic));
+        }
+        public void ExportPosition()
+        {
+            string path = "人事职位信息导出" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
+            ExExcel<HRInfoEntity>(GetExportData(), path, HRInfoManager.DicConvert(HRInfoManager.hrPositionDic));
+        }
+
+        private List<HRInfoEntity> GetExportData()
+        {
+            string paraString = Request.Params["searchpara"];
+            Dictionary<string, string> paraDic = JsonConvert.DeserializeObject<Dictionary<string, string>>(paraString);
+            paraDic.Add("iEmployeeDate[d]", paraDic["iEmployeeDateFrom"] + "§" + paraDic["iEmployeeDateTo"]);
+            paraDic.Add("iContractDeadLine[d]", paraDic["iContractDeadLineFrom"] + "§" + paraDic["iContractDeadLineTo"]);
+            paraDic.Add("iResignDate[d]", paraDic["iResignDateFrom"] + "§" + paraDic["iResignDateTo"]);
+            paraDic.Add("iUpdatedOn[d]", paraDic["iModifyOnFrom"] + "§" + paraDic["iModifyOnTo"]);
+            paraDic.Remove("iEmployeeDateFrom");
+            paraDic.Remove("iEmployeeDateTo");
+            paraDic.Remove("iContractDeadLineFrom");
+            paraDic.Remove("iContractDeadLineTo");
+            paraDic.Remove("iResignDateFrom");
+            paraDic.Remove("iResignDateTo");
+            paraDic.Remove("iModifyOnFrom");
+            paraDic.Remove("iModifyOnTo");
+
+            HRInfoManager service = new HRInfoManager();
+            List<HRInfoEntity> list = service.GetSearchAll(SessionHelper.CurrentUser.iCompanyCode, paraDic);
+            return list;
+
+        }
+
+        /// <summary> 
+        /// 将一组对象导出成EXCEL 
+        /// </summary> 
+        /// <typeparam name="T">要导出对象的类型</typeparam> 
+        /// <param name="objList">一组对象</param> 
+        /// <param name="FileName">导出后的文件名</param> 
+        /// <param name="columnInfo">列名信息</param> 
+        private void ExExcel<T>(List<T> objList, string FileName, Dictionary<string, string> columnInfo)
+        {
+            if (columnInfo.Count == 0) { return; }
+            if (objList.Count == 0) { return; }
+
+            XSSFWorkbook workbook = new XSSFWorkbook();  //excel 2007版本
+            ISheet sheet = workbook.CreateSheet("数据");
+            Type myType = objList[0].GetType();
+            //根据反射从传递进来的属性名信息得到要显示的属性 
+            Dictionary<System.Reflection.PropertyInfo, int> proDic = new  Dictionary<System.Reflection.PropertyInfo, int>();
+            IRow row = sheet.CreateRow(0);
+            int index = 0;
+            foreach (string cName in columnInfo.Keys)
+            {
+                System.Reflection.PropertyInfo p = myType.GetProperty(cName);
+                if (p != null)
+                {
+                    proDic.Add(p, index);
+                    ICell cell = row.CreateCell(index, CellType.String);
+                    cell.SetCellValue(columnInfo[cName]);
+                    index++;
+                }
+            }
+            //如果没有找到可用的属性则结束 
+            if (proDic.Count == 0) { return; }
+            int rowIndex = 1;
+            foreach (T obj in objList)
+            {
+                IRow rowInner = sheet.CreateRow(rowIndex);
+                foreach (var p in proDic)
+                {
+                    ICell cell = rowInner.CreateCell(p.Value, CellType.String);
+                    cell.SetCellValue(p.Key.GetValue(obj, null) == null ? "" : p.Key.GetValue(obj, null).ToString());
+                }
+                rowIndex++;
+            }
+
+            Response.Clear();
+            MemoryStream ms = new MemoryStream();
+            workbook.Write(ms);
+            byte[] data = ms.ToArray();
+            Response.BinaryWrite(data);
+            Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            string encodefileName = System.Web.HttpUtility.UrlEncode(FileName, System.Text.Encoding.UTF8);
+            Response.AddHeader("content-disposition", "attachment;  filename=" + encodefileName);
+            Response.Flush();
+            Response.End();
+
+        }
     }
 }

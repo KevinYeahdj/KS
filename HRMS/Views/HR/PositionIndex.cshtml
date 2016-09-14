@@ -274,7 +274,7 @@
                         </div>
                         <div class="modal-body">
                             <form>
-                                <a href="~/UploadFiles/Template/员工职位信息导入模板.xls" class="form-control" style="border:none;">下载导入模板</a>
+                                <a href="~/UploadFiles/Template/员工职位信息导入模板.xlsx" class="form-control" style="border:none;">下载导入模板</a>
                                 <input type="file" name="txt_file" id="txt_file" multiple class="file-loading" />
                             </form>
                         </div>
@@ -311,6 +311,12 @@
     }
 
     $(function () {
+        if (window.menuRights == "r") {
+            $("#DataExport").hide();
+            $("#DataImport").hide();
+            $("#NewRecord").hide();
+        }
+
         $("#sEmployeeDate").datetimepicker({
             language: 'zh-CN',
             format: "yyyy-mm-dd",
@@ -540,7 +546,7 @@
         })
 
         $('#mytab').bootstrapTable({
-            url: "/HR/GetAllHRInfo",//数据源
+            url: "/HRAjax/GetAllHRInfo",//数据源
             dataField: "rows",//服务端返回数据键值 就是说记录放的键值是rows，分页时使用总记录数的键值为total
             sortName: "iUpdatedOn",//排序列
             sortOrder: "desc",
@@ -574,7 +580,7 @@
                 params.iContractDeadLineTo = $("#sContractDeadLine2").val();
                 params.iResignDateFrom = $("#sResignDate").val();
                 params.iResignDateTo = $("#sResignDate2").val();
-                params.iModifyOnForm = $("#sUpdateOn").val();
+                params.iModifyOnFrom = $("#sUpdateOn").val();
                 params.iModifyOnTo = $("#sUpdateOn2").val();
                 return params;
             },
@@ -585,14 +591,7 @@
             toolbar: "#toolbar",//指定工具栏
             toolbarAlign: "right",//工具栏对齐方式
             columns: [
-                {
-                    title: "全选",
-                    field: "select",
-                    checkbox: true,
-                    width: 20,//宽度
-                    align: "center",//水平
-                    valign: "middle"//垂直
-                }, { field: "iGuid", title: "iGuid", visible: false }
+                 { field: "iGuid", title: "iGuid", visible: false }
                  , { field: "iItemName", title: "项目名称", sortable: true }
 , { field: "iCompany", title: "所在公司", sortable: true }
 , { field: "iWorkPlace", title: "所在工作地", sortable: true }
@@ -645,7 +644,9 @@
                 //$element.css("background-color", "green");
             },//单击row事件
             onDblClickRow: function (row, $element) {
-
+                if (window.menuRights == "r") {
+                    return;
+                }
                 $("#addModalLabel").html("修改记录");
                 $('#addModal').modal('toggle');
 
@@ -660,7 +661,7 @@
                 var $shade = $('<div id="waiting"></div>');
                 $shade.css({ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, background: '#fff url(/Content/images/waiting.gif) center center no-repeat', opacity: 0.4 });
                 $("#addModal").append($shade);
-                $.get("/HR/GetHRInfo?guid=" + row.iGuid, function (result) {
+                $.get("/HRAjax/GetHRInfo?guid=" + row.iGuid, function (result) {
                     if (result.success) {
                         myViewModel.iGuid(result.data.iGuid);
                         myViewModel.iItemName(result.data.iItemName);
@@ -764,7 +765,7 @@
             var param = {};
             param.jsonString = ko.toJSON(myViewModel);
             $.ajax({
-                url: "/HR/SaveChanges",
+                url: "/HRAjax/SaveChanges",
                 type: "POST",
                 data: param,
                 dataType: 'text',
@@ -909,7 +910,7 @@
             $("#txt_file").on("fileuploaded", function (event, data, previewId, index) {
                 $("#importModal").modal("hide");
                 if (!data.response.success) {
-                    toastr.error('文件格式类型不正确');
+                    toastr.error(data.response.msg);
                     console.log(data.response.msg);
                     return;
                 }
@@ -920,25 +921,27 @@
         return oFile;
     };
     var oFileInput = new FileInput();
-    oFileInput.Init("txt_file", "/HR/ImportHRInfo");
+    oFileInput.Init("txt_file", "/HRAjax/ImportHRInfo");
     function ExportData() {
-        var selects = $('#mytab').bootstrapTable('getSelections');
-        var columns = $('#mytab').bootstrapTable('getOptions').columns;
-        if (selects && selects.length > 0) {
-            var newSelects = JSON.stringify(selects);
-            var newColumns = JSON.stringify(columns);
-            //alert(newSelects);
-
-            var url = "/Manage/ExportPeople";
-            var inputs = '<input type="hidden" name="icolumns" value="' + newColumns + '" />';
-            inputs += ' <input type="hidden" name="idata" value="' + newSelects.replace(new RegExp("\"", "gm"), "'") + '" />';
-            $('<form action="' + url + '" method="post" target="_blank">' + inputs + '</form>').appendTo('body').submit().remove();
-
-        }
-        else {
-            toastr.error('未选择数据');
-        }
-
+        var url = "/HRAjax/ExportPosition";
+        var params = {};
+        params.iItmeName = $("#sItemName").val();
+        params.iCompany = $("#sCompanyCode").val();
+        params.iIdCard = $("#sIdCard").val();
+        params.iPhone = $("#SPhone").val();
+        params.iEmpNo = $("#sEmpNo").val();
+        params.iEmployeeStatus = $("#sEmpStatus").val();
+        params.iFileLocation = $("#sFileLocation").val();
+        params.iEmployeeDateFrom = $("#sEmployeeDate").val();
+        params.iEmployeeDateTo = $("#sEmployeeDate2").val();
+        params.iContractDeadLineFrom = $("#sContractDeadLine").val();
+        params.iContractDeadLineTo = $("#sContractDeadLine2").val();
+        params.iResignDateFrom = $("#sResignDate").val();
+        params.iResignDateTo = $("#sResignDate2").val();
+        params.iModifyOnFrom = $("#sUpdateOn").val();
+        params.iModifyOnTo = $("#sUpdateOn2").val();
+        var inputs = '<input type="hidden" name="searchpara" value="' + JSON.stringify(params).replace(new RegExp("\"", "gm"), "'") + '" />';
+        $('<form action="' + url + '" method="post" target="_blank">' + inputs + '</form>').appendTo('body').submit().remove();
     }
 
 
