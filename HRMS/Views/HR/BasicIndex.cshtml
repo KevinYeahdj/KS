@@ -291,6 +291,10 @@
     }
 
     $(function () {
+        $("#sCompanyCode").val('@HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode');
+        $("#sCompanyCode").attr("disabled", true);
+        $("#iCompany").attr("disabled", true);
+
         if (window.menuRights == "r") {
             $("#DataExport").hide();
             $("#DataImport").hide();
@@ -495,7 +499,9 @@
             var result = sum % 11;
             var last = stard[result]; //计算出来的最后一位身份证号码
             if (cardid[cardid.length - 1].toUpperCase() == last) {
+                //合法身份证
                 $('#iIdCard').removeClass("warning");
+                myViewModel.iBirthday(cardid.substr(6,8).replace(/(.{4})(.{2})/,"$1-$2-"));
                 return true;
             } else {
                 $('#iIdCard').addClass("warning");
@@ -537,7 +543,7 @@
             searchAlign: "left",//查询框对齐方式
             queryParamsType: "limit",//查询参数组织方式
             queryParams: function getParams(params) {
-                params.iItmeName = $("#sItemName").val();
+                params.iItemName = $("#sItemName").val();
                 params.iCompany = $("#sCompanyCode").val();
                 params.iIdCard = $("#sIdCard").val();
                 params.iPhone = $("#SPhone").val();
@@ -694,6 +700,8 @@
                         myViewModel.iStatus(result.data.iStatus);
                         myViewModel.iIsDeleted(result.data.iIsDeleted);
 
+                        $("#iIdCard").attr("readonly", "readonly");
+
                     }
                     else {
                         console.log(result.msg);
@@ -744,14 +752,16 @@
 
         $("#NewRecord").click(function () {
 
+            $("#iIdCard").removeAttr("readonly");
+
             $("#iItemName").addClass("warning");
-            $('#iCompany').addClass("warning");
+            //$('#iCompany').addClass("warning");
             $('#iName').addClass("warning");
             $('#iEmpNo').addClass("warning");
             $('#iIdCard').addClass("warning");
             myViewModel.iGuid("");
             myViewModel.iItemName("-");
-            myViewModel.iCompany("-");
+            myViewModel.iCompany('@HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode');
             myViewModel.iWorkPlace("");
             myViewModel.iEmpNo("");
             myViewModel.iName("");
@@ -884,7 +894,7 @@
     function ExportData() {
         var url = "/HRAjax/ExportBasic";
         var params = {};
-        params.iItmeName = $("#sItemName").val();
+        params.iItemName = $("#sItemName").val();
         params.iCompany = $("#sCompanyCode").val();
         params.iIdCard = $("#sIdCard").val();
         params.iPhone = $("#SPhone").val();
@@ -908,7 +918,7 @@
         var self = this;
         self.iGuid = ko.observable("");
         self.iItemName = ko.observable("-");
-        self.iCompany = ko.observable("-");
+        self.iCompany = ko.observable('@HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode');
         self.iWorkPlace = ko.observable("");
         self.iEmpNo = ko.observable("");
         self.iName = ko.observable("");

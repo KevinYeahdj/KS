@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
@@ -73,7 +74,7 @@ namespace HRMS.Controllers
             Dictionary<string, string> bizParaDic = new Dictionary<string, string>();
             bizParaDic.Add("search", searchKey);
 
-            string itemName = HttpContext.Request.Params["iItmeName"];
+            string itemName = HttpContext.Request.Params["iItemName"];
             string company = HttpContext.Request.Params["iCompany"];
             string idcard = HttpContext.Request.Params["iIdCard"];
             string tel = HttpContext.Request.Params["iPhone"];
@@ -93,7 +94,7 @@ namespace HRMS.Controllers
             string modifyon1 = HttpContext.Request.Params["iModifyOnFrom"];
             string modifyon2 = HttpContext.Request.Params["iModifyOnTo"];
 
-            bizParaDic.Add("iItmeName", itemName);
+            bizParaDic.Add("iItemName", itemName);
             bizParaDic.Add("iCompany", company);
             bizParaDic.Add("iIdCard", idcard);
             bizParaDic.Add("iPhone", tel);
@@ -304,6 +305,32 @@ namespace HRMS.Controllers
                         en.GetType().GetProperty(kvp.Value).SetValue(en, sheet.GetRow(i).GetCell(keycolumns[kvp.Value]).ToString().Trim(), null);
                     }
                 }
+                string[] sexArray = { "男", "女" };
+                string[] residencePropertyArray = { "农业户口", "非农业户口" };
+                string[] bloodTypeArray = { "A", "B", "AB", "O" };
+                string[] marriageArray = { "已婚", "未婚" };
+                string[] yesnoArray = { "是", "否" };
+                string[] poliArray = { "群众", "团员", "共产党员", "其它" };
+                string[] eduArray = { "小学", "初中", "中专", "高中", "大专", "本科", "硕士", "博士" };
+                string[] empstaArray = { "在职", "离职" };
+                string[] contratypeArray = { "派遣", "外包" };
+                string[] resigntypeArray = { "自离", "旷工", "辞职", "辞退", "开除" };
+                string[] resignressonArray = { "身体原因", "工作原因", "家族原因", "其他" };
+                Dictionary<string, string[]> checkdic = new Dictionary<string, string[]>();
+                checkdic.Add("性别$iSex", sexArray);
+                checkdic.Add("户口性质$iResidenceProperty", residencePropertyArray);
+                checkdic.Add("血型$iBloodType", bloodTypeArray);
+                checkdic.Add("婚姻状况$iMariage", marriageArray);
+                checkdic.Add("体检$iHealthCheck|合同签订情况$iContractSignStatus|是否返费$iIsReturnFee|是否缴纳保险$iIsSocialInsurancePaid|是否缴纳公积金$iIsProvidentPaid|是否缴纳商业保险$iIsCommercialInsurancePaid", yesnoArray);
+                checkdic.Add("政治面貌$iPolitical", poliArray);
+                checkdic.Add("文化水平$iEducationLevel", eduArray);
+                checkdic.Add("员工状态$iEmployeeStatus", empstaArray);
+                checkdic.Add("合同类型$iContractType", contratypeArray);
+                checkdic.Add("离职类型$iResignType", resigntypeArray);
+                checkdic.Add("离职原因（公司）$iResignReason", resignressonArray);
+
+
+
                 if (projects.FirstOrDefault(pj => pj.iValue == en.iItemName) == null)
                 {
                     errorLog += "第【" + (i + 1).ToString() + "】行项目名称不存在；";
@@ -325,8 +352,25 @@ namespace HRMS.Controllers
                 {
                     errorLog += "第【" + (i + 1).ToString() + "】行身份证号不合法；";
                 }
-                //还有很多校验
+                //是否有效校验
 
+                foreach (var item in checkdic)
+                {
+                    foreach (var subitem in item.Key.Split('|'))
+                    {
+                        PropertyInfo property = en.GetType().GetProperty(subitem.Split('$')[1]);
+                        if (property.GetValue(en, null) != null && property.GetValue(en, null).ToString() != "" && !item.Value.Contains(property.GetValue(en, null)))
+                        {
+                            errorLog += "第【" + (i + 1).ToString() + "】行" + subitem.Split('$')[0] + "不合法，只能输入【";
+                            foreach (var value in item.Value)
+                            {
+                                errorLog += value + "，";
+                            }
+                            errorLog = errorLog.TrimEnd('，');
+                            errorLog += "】；";
+                        }
+                    }
+                }
                 list.Add(en);
             }
             return list;
@@ -444,9 +488,13 @@ namespace HRMS.Controllers
 
             XSSFWorkbook workbook = new XSSFWorkbook();  //excel 2007版本
             ISheet sheet = workbook.CreateSheet("数据");
+            ICellStyle cellStyle = workbook.CreateCellStyle();
+            cellStyle.DataFormat = HSSFDataFormat.GetBuiltinFormat("@");
+
+
             Type myType = objList[0].GetType();
             //根据反射从传递进来的属性名信息得到要显示的属性 
-            Dictionary<System.Reflection.PropertyInfo, int> proDic = new  Dictionary<System.Reflection.PropertyInfo, int>();
+            Dictionary<System.Reflection.PropertyInfo, int> proDic = new Dictionary<System.Reflection.PropertyInfo, int>();
             IRow row = sheet.CreateRow(0);
             int index = 0;
             foreach (string cName in columnInfo.Keys)
@@ -469,6 +517,7 @@ namespace HRMS.Controllers
                 foreach (var p in proDic)
                 {
                     ICell cell = rowInner.CreateCell(p.Value, CellType.String);
+                    cell.CellStyle = cellStyle;
                     cell.SetCellValue(p.Key.GetValue(obj, null) == null ? "" : p.Key.GetValue(obj, null).ToString());
                 }
                 rowIndex++;
