@@ -96,6 +96,7 @@
             $("#modifyend").datetimepicker("setStartDate", $("#modifyfrom").val());
         });
         function ChangeDateFormat(jsondate) {
+            if (!jsondate) return "";
             jsondate = jsondate.replace("/Date(", "").replace(")/", "");
             if (jsondate.indexOf("+") > 0) {
                 jsondate = jsondate.substring(0, jsondate.indexOf("+"));
