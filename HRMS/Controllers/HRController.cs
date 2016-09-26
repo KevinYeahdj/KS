@@ -119,7 +119,7 @@ namespace HRMS.Controllers
             }
             foreach (var item in list)
             {
-                item.iCompany = companyDic[item.iCompany];
+                item.iCompany = companyDic.ContainsKey(item.iCompany) ? companyDic[item.iCompany] : "";
             }
 
             //给分页实体赋值  
@@ -319,7 +319,7 @@ namespace HRMS.Controllers
                 Dictionary<string, string[]> checkdic = new Dictionary<string, string[]>();
                 checkdic.Add("性别$iSex", sexArray);
                 checkdic.Add("户口性质$iResidenceProperty", residencePropertyArray);
-                checkdic.Add("血型$iBloodType", bloodTypeArray);
+                //checkdic.Add("血型$iBloodType", bloodTypeArray);
                 checkdic.Add("婚姻状况$iMariage", marriageArray);
                 checkdic.Add("体检$iHealthCheck|合同签订情况$iContractSignStatus|是否返费$iIsReturnFee|是否缴纳保险$iIsSocialInsurancePaid|是否缴纳公积金$iIsProvidentPaid|是否缴纳商业保险$iIsCommercialInsurancePaid", yesnoArray);
                 checkdic.Add("政治面貌$iPolitical", poliArray);

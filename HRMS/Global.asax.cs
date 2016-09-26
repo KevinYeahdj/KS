@@ -47,7 +47,7 @@ namespace HRMS
         private void HitPage()
         {
             System.Net.WebClient client = new System.Net.WebClient();
-            client.DownloadData(SystemStatic.serverUrlFull + "Account/Index");
+            client.DownloadData(SystemStatic.serverUrlFull + "Account/Login");
         }
         protected void Application_BeginRequest(Object sender, EventArgs e)
         {

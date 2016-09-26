@@ -84,7 +84,7 @@ namespace HRMS.Controllers
             List<UserViewModel> listView = new List<UserViewModel>();
             foreach (var item in list)
             {
-                listView.Add(new UserViewModel { iCompanyCode = item.iCompanyCode, iCompanyName = companyDic[item.iCompanyCode], iEmployeeCodeId = item.iEmployeeCodeId, iPassWord = item.iPassWord, iUserName = item.iUserName, iUserType = item.iUserType, iUpdatedOn = item.iUpdatedOn.ToString("yyyyMMdd HH:mm") });
+                listView.Add(new UserViewModel { iCompanyCode = item.iCompanyCode, iCompanyName = companyDic.ContainsKey(item.iCompanyCode) ? companyDic[item.iCompanyCode] : "", iEmployeeCodeId = item.iEmployeeCodeId, iPassWord = item.iPassWord, iUserName = item.iUserName, iUserType = item.iUserType, iUpdatedOn = item.iUpdatedOn.ToString("yyyyMMdd HH:mm") });
             }
 
             //给分页实体赋值  
