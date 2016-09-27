@@ -33,20 +33,6 @@
                                 姓名：<input type="text" class="form-control" id="iUserName" placeholder="请输入姓名">
                             </div>
                             <div class="form-group">
-                                所在公司：<select class="form-control" id="iCompanyCode">
-                                    <option value="-">请选择</option>
-                                    @{
-                                        foreach (var item in ViewBag.Companies)
-                                        {
-                                            <option value="@item.iKey">@item.iValue</option>
-                                        }
-                                    }
-                                </select>
-
-
-
-                            </div>
-                            <div class="form-group">
                                 工号：<input type="text" class="form-control" id="iEmployeeCodeId" placeholder="请输入工号">
                             </div>
                             <div class="form-group">
@@ -80,11 +66,11 @@
                         </div>
                         <div class="modal-body">
                             <input type="hidden" id="editUserId" />
-                            <div class="form-group">
-                                公司：<select class="form-control" id="iMenuCompanyCode" onchange="ChangeUserCompany()">
+                            <div class="form-group" id="iMenuProjectGroup">
+                                项目：<select class="form-control" id="iMenuProjectCode" onchange="ChangeUserProject()">
                                     <option value="-">请选择</option>
                                     @{
-                                        foreach (var item in ViewBag.Companies)
+                                        foreach (var item in ViewBag.Projects)
                                         {
                                             <option value="@item.iKey">@item.iValue</option>
                                         }
@@ -185,7 +171,8 @@
                 {
                     field: "iCompanyName",
                     title: "所属公司",
-                    sortable: false
+                    sortable: false,
+                    visible: false
                 },
                 {
                     field: "iUserType",
@@ -296,6 +283,12 @@
         });
 
         $("#MenuSaveChanges").click(function () {
+            if(!($('#iMenuProjectCode').attr("disabled") == "disabled") && $("#iMenuProjectCode").val() == "-")
+            {
+                toastr.warning('普通用户一定要指定到项目！');
+                return;
+            }
+
             var zTree = $.fn.zTree.getZTreeObj("menuTree");
             var nodes = zTree.getCheckedNodes();
             var checkNodeIds =[];
@@ -303,11 +296,11 @@
                 checkNodeIds.push(nodes[n].id + "|"+ (nodes[n].name.indexOf("只读") >-1 ?"r":"w"));
             }
             var userid = $("#editUserId").val();
-            var companyid = $("#iMenuCompanyCode").val();
+            var projectid = $("#iMenuProjectCode").val();
             var param = {};
             param.jsonString = JSON.stringify(checkNodeIds);
             param.userid = userid;
-            param.companyid = companyid;
+            param.projectid = projectid;
             $.ajax({
                 url: "/ManageAjax/UserMenuSaveChanges",
                 type: "POST",
@@ -363,16 +356,16 @@
     }
 
     function infoFormatter(value, row, index) {
-        return '<a href="#" onclick="SetMenu(\'' + row.iEmployeeCodeId + '\',\'' + row.iCompanyCode + '\',\'' + row.iUserType + '\')">点击设定</a>';
+        return '<a href="#" onclick="SetMenu(\'' + row.iEmployeeCodeId + '\',\''+ row.iUserType + '\')">点击设定</a>';
     }
 
-    function UpdateMenuTree(userid, companyid) {
+    function UpdateMenuTree(userid, projectid) {
         var width = $("#menuTree").width();
         var height = $("#menuTree").height();
         var $shade = $('<div id="waiting"></div>');
         $shade.css({ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, background: '#fff url(/Content/images/waiting.gif) center center no-repeat', opacity: 0.4 });
         $("#menuTree").append($shade);
-        $.get("/ManageAjax/GetUserMenuTree?userid=" + userid + "&companyid=" + companyid, function(result){
+        $.get("/ManageAjax/GetUserMenuTree?userid=" + userid + "&projectid=" + projectid, function(result){
             var treeObj = $.fn.zTree.getZTreeObj("menuTree");
             treeObj.checkAllNodes(false);
             treeObj.setting.check.chkboxType.Y = "";  //清除上下级全选影响
@@ -397,14 +390,14 @@
         });
     }
 
-    function SetMenu(userid, companyid, usertype) {
+    function SetMenu(userid, usertype) {
         $("#editUserId").val(userid);
-        $("#iMenuCompanyCode").val(companyid);
-        if (usertype == "普通用户") {
-            $("#iMenuCompanyCode").attr("disabled", "disabled");
+        if (usertype == "超级用户") {
+            $("#iMenuProjectCode").val("-");
+            $("#iMenuProjectCode").attr("disabled", "disabled");
         }
         else {
-            $("#iMenuCompanyCode").removeAttr("disabled");
+            $("#iMenuProjectCode").removeAttr("disabled");
         }
         var treeObj = $.fn.zTree.getZTreeObj("menuTree");
         var nodes = treeObj.getNodes();
@@ -415,12 +408,11 @@
                 treeObj.updateNode(nodes[i]);
             }
         }
-
-        UpdateMenuTree(userid, companyid);
+        UpdateMenuTree(userid, "-");  //加载超级用户数据，清普通用户数据
         $('#menuModal').modal('toggle');
     }
 
-    function ChangeUserCompany() {
+    function ChangeUserProject() {
         var treeObj = $.fn.zTree.getZTreeObj("menuTree");
         var nodes = treeObj.getNodes();
         nodes = treeObj.transformToArray(nodes);
@@ -431,8 +423,8 @@
             }
         }
         var userid = $("#editUserId").val();
-        var companyid = $("#iMenuCompanyCode").val();
-        UpdateMenuTree(userid, companyid);
+        var projectid = $("#iMenuProjectCode").val();
+        UpdateMenuTree(userid, projectid);
     }
     //
     function AddUser() {

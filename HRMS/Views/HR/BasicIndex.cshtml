@@ -291,9 +291,11 @@
     }
 
     $(function () {
-        $("#sCompanyCode").val('@HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode');
-        $("#sCompanyCode").attr("disabled", true);
-        $("#iCompany").attr("disabled", true);
+        if (window.userType == "普通用户") {
+            $("#sItemName").val('@HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode');
+            $("#sItemName").attr("disabled", true);
+            $("#iItemName").attr("disabled", true);
+        }
 
         if (window.menuRights == "r") {
             $("#DataExport").hide();
@@ -442,7 +444,7 @@
                 $('#iCompany').addClass("warning");
             }
         });
-        
+
         $("#iEmpNo").blur(function () {
             var value = $("#iEmpNo").val();
             if (value.length > 0) {
@@ -464,19 +466,19 @@
         $("#iIdCard").blur(function () {
 
             //日期转字符串 返回日期格式20080808
-            var dateToString = function(date) {
+            var dateToString = function (date) {
                 if (date instanceof Date) {
                     var year = date.getFullYear();
                     var month = date.getMonth() + 1;
-                    month = month < 10 ? '0' + month: month;
+                    month = month < 10 ? '0' + month : month;
                     var day = date.getDate();
-                    day = day < 10 ? '0' + day: day;
+                    day = day < 10 ? '0' + day : day;
                     return year + month + day;
                 }
                 return '';
             }
             var cardid = $("#iIdCard").val();
-            //身份证正则表达式(18位) 
+            //身份证正则表达式(18位)
             var isIdCard2 = /^[1-9]\d{5}(19\d{2}|[2-9]\d{3})((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])(\d{4}|\d{3}X)$/i;
             var stard = "10X98765432"; //最后一位身份证的号码
             var first = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2]; //1-17系数
@@ -501,7 +503,7 @@
             if (cardid[cardid.length - 1].toUpperCase() == last) {
                 //合法身份证
                 $('#iIdCard').removeClass("warning");
-                myViewModel.iBirthday(cardid.substr(6,8).replace(/(.{4})(.{2})/,"$1-$2-"));
+                myViewModel.iBirthday(cardid.substr(6, 8).replace(/(.{4})(.{2})/, "$1-$2-"));
                 return true;
             } else {
                 $('#iIdCard').addClass("warning");
@@ -723,8 +725,7 @@
 
         $("#addRecord").click(function () {
             var warnings = $(".warning");
-            if (warnings && warnings.length > 0)
-            {
+            if (warnings && warnings.length > 0) {
                 toastr.error('数据验证未通过！');
                 return;
             }
@@ -753,15 +754,16 @@
         $("#NewRecord").click(function () {
 
             $("#iIdCard").removeAttr("readonly");
-
-            $("#iItemName").addClass("warning");
-            //$('#iCompany').addClass("warning");
+            if (window.userType != "普通用户") {
+                $("#iItemName").addClass("warning");
+            }
+            $('#iCompany').addClass("warning");
             $('#iName').addClass("warning");
             $('#iEmpNo').addClass("warning");
             $('#iIdCard').addClass("warning");
             myViewModel.iGuid("");
-            myViewModel.iItemName("-");
-            myViewModel.iCompany('@HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode');
+            myViewModel.iItemName('@HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode');
+            myViewModel.iCompany('-');
             myViewModel.iWorkPlace("");
             myViewModel.iEmpNo("");
             myViewModel.iName("");
@@ -917,8 +919,8 @@
     function ViewModel() {
         var self = this;
         self.iGuid = ko.observable("");
-        self.iItemName = ko.observable("-");
-        self.iCompany = ko.observable('@HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode');
+        self.iItemName = ko.observable('@HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode');
+        self.iCompany = ko.observable('-');
         self.iWorkPlace = ko.observable("");
         self.iEmpNo = ko.observable("");
         self.iName = ko.observable("");

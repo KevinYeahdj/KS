@@ -387,9 +387,10 @@ namespace HRMS.Data.Manager
         }
         public List<HRInfoEntity> GetSearch(string companyCode, Dictionary<string, string> para, string sort, string order, int offset, int pageSize, out int total)
         {
-            StringBuilder commandsb = new StringBuilder("from HRInfo where icompany='");
-            commandsb.Append(companyCode);
-            commandsb.Append("' ");
+            //StringBuilder commandsb = new StringBuilder("from HRInfo where icompany='");
+            //commandsb.Append(companyCode);
+            //commandsb.Append("' ");
+            StringBuilder commandsb = new StringBuilder("from HRInfo where 1=1 ");
             foreach (KeyValuePair<string, string> item in para)
             {
                 if (!string.IsNullOrEmpty(item.Value) && item.Value != "§")
@@ -417,9 +418,10 @@ namespace HRMS.Data.Manager
 
         public List<HRInfoEntity> GetSearchAll(string companyCode, Dictionary<string, string> para)
         {
-            StringBuilder commandsb = new StringBuilder("from HRInfo where icompany='");
-            commandsb.Append(companyCode);
-            commandsb.Append("' ");
+            //StringBuilder commandsb = new StringBuilder("from HRInfo where icompany='");
+            //commandsb.Append(companyCode);
+            //commandsb.Append("' ");
+            StringBuilder commandsb = new StringBuilder("from HRInfo where 1=1 ");
             foreach (KeyValuePair<string, string> item in para)
             {
                 if (!string.IsNullOrEmpty(item.Value) && item.Value != "§")

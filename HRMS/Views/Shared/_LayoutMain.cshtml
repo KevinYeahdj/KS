@@ -45,9 +45,9 @@
 
     @RenderSection("scripts", required: false)
     <script>
-        function ChangeCompany(newCompany) {
+        function ChangeProject(newProject) {
             $.ajax({
-                url: "/ManageAjax/ChangeCompany?newCompany=" + newCompany,
+                url: "/ManageAjax/ChangeProject?newProject=" + newProject,
                 type: "GET",
                 dataType: 'text',
                 success: function (data) {
@@ -62,6 +62,7 @@
         }
 
         window.menuRights = "@ViewBag.CurrentPageRights";
+        window.userType = "@HRMS.WEB.Utils.SessionHelper.CurrentUser.iUserType";
     </script>
 
 </head>
@@ -75,20 +76,25 @@
         <div class="top-nav ">
             <ul class="nav pull-right top-menu">
                 @{
-                    if (HRMS.WEB.Utils.SessionHelper.CurrentUser.iUserType != "普通用户")
+                    if (HRMS.WEB.Utils.SessionHelper.CurrentUser.iUserType == "普通用户")
                     {
-                        <select onchange="ChangeCompany(this.value)" class="form-control" style="width:150px;height:42.9px;float:left;">
+                        <select onchange="ChangeProject(this.value)" class="form-control" style="width:150px;height:42.9px;float:left;">
                             @{
-                        HRMS.Data.Manager.DicManager dm = new HRMS.Data.Manager.DicManager();
-                        foreach (var item in dm.GetDicByType("公司"))
+                        HRMS.Data.Service.ManageService ms = new HRMS.Data.Service.ManageService();
+                        Dictionary<string,string> pros = ms.GetUserProjects(HRMS.WEB.Utils.SessionHelper.CurrentUser.iEmployeeCodeId);
+                        if (HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode == null)
                         {
-                            if (item.iValue == HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode)
+                            HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode = pros.FirstOrDefault().Value;
+                        }
+                        foreach (KeyValuePair<string,string> item in pros)
+                        {
+                            if (item.Value == HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode)
                             {
-                                <option value="@item.iKey" selected="selected">@item.iValue</option>
+                                <option value="@item.Value" selected="selected">@item.Key</option>
                             }
                             else
                             {
-                                <option value="@item.iKey">@item.iValue</option>
+                                <option value="@item.Value">@item.Key</option>
                             }
                         }
                             }

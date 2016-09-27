@@ -26,8 +26,8 @@ namespace HRMS.Controllers
         public ActionResult UserIndex()
         {
             DicManager dm = new DicManager();
-            var companies = dm.GetDicByType("公司");
-            ViewBag.Companies = companies;
+            var projects = dm.GetDicByType("项目");
+            ViewBag.Projects = projects;
             ManageAjaxController ma = new ManageAjaxController();
 
             var contents = ma.GetStandardMenuTree(false);
@@ -84,7 +84,7 @@ namespace HRMS.Controllers
             List<UserViewModel> listView = new List<UserViewModel>();
             foreach (var item in list)
             {
-                listView.Add(new UserViewModel { iCompanyCode = item.iCompanyCode, iCompanyName = companyDic.ContainsKey(item.iCompanyCode) ? companyDic[item.iCompanyCode] : "", iEmployeeCodeId = item.iEmployeeCodeId, iPassWord = item.iPassWord, iUserName = item.iUserName, iUserType = item.iUserType, iUpdatedOn = item.iUpdatedOn.ToString("yyyyMMdd HH:mm") });
+                listView.Add(new UserViewModel { iCompanyCode = item.iCompanyCode, iCompanyName = item.iCompanyCode, iEmployeeCodeId = item.iEmployeeCodeId, iPassWord = item.iPassWord, iUserName = item.iUserName, iUserType = item.iUserType, iUpdatedOn = item.iUpdatedOn.ToString("yyyyMMdd HH:mm") });
             }
 
             //给分页实体赋值  
@@ -204,7 +204,7 @@ namespace HRMS.Controllers
         #endregion
 
         #region 公用方法
-        public ActionResult ChangeCompany(string newCompany)
+        public ActionResult ChangeProject(string newProject)
         {
             if (SessionHelper.CurrentUser == null)
             {
@@ -213,7 +213,7 @@ namespace HRMS.Controllers
             else
             {
                 UserEntity userinfo = SessionHelper.CurrentUser;
-                userinfo.iCompanyCode = newCompany;
+                userinfo.iCompanyCode = newProject;
                 Session[SessionHelper.CurrentUserKey] = userinfo;
                 return Content("success");
             }
@@ -624,12 +624,12 @@ namespace HRMS.Controllers
             }
         }
 
-        public JsonResult GetUserMenuTree(string userId, string companyId)
+        public JsonResult GetUserMenuTree(string userId, string projectid)
         {
             try
             {
-                string querySql = "select iMenuId+'|'+iMenuRights from sysUserMenu where iemployeecode = '{0}' and icompanycode= '{1}'";
-                DataSet ds = DbHelperSQL.Query(string.Format(querySql, userId, companyId));
+                string querySql = "select iMenuId+'|'+iMenuRights from sysUserMenu where iemployeecode = '{0}' and iProjectCode= '{1}'";
+                DataSet ds = DbHelperSQL.Query(string.Format(querySql, userId, projectid));
                 List<string> contents = new List<string>();
                 foreach (DataRow dr in ds.Tables[0].Rows)
                 {
@@ -644,7 +644,7 @@ namespace HRMS.Controllers
 
         }
 
-        public string UserMenuSaveChanges(string jsonString, string userid, string companyid)
+        public string UserMenuSaveChanges(string jsonString, string userid, string projectid)
         {
             try
             {
@@ -652,20 +652,20 @@ namespace HRMS.Controllers
 
                 DataTable dt = new DataTable("sysUserMenu");
                 dt.Columns.Add("iEmployeeCode");
-                dt.Columns.Add("iCompanyCode");
+                dt.Columns.Add("iProjectCode");
                 dt.Columns.Add("iMenuId");
                 dt.Columns.Add("iMenuRights");
                 foreach (string menuid in menuIds)
                 {
                     DataRow dataRow = dt.NewRow();
                     dataRow[0] = userid;
-                    dataRow[1] = companyid;
+                    dataRow[1] = projectid;
                     dataRow[2] = menuid.Split('|')[0];
                     dataRow[3] = menuid.Split('|')[1];
                     dt.Rows.Add(dataRow);
                 }
-                string deleteSql = "delete from [sysUserMenu] where iemployeecode = '{0}' and icompanycode = '{1}' ";
-                DbHelperSQL.ExecuteSql(string.Format(deleteSql, userid, companyid));
+                string deleteSql = "delete from [sysUserMenu] where iemployeecode = '{0}' and iProjectCode = '{1}' ";
+                DbHelperSQL.ExecuteSql(string.Format(deleteSql, userid, projectid));
                 WriteDataTableToServer(dt, "sysUserMenu", ConfigurationManager.ConnectionStrings["HRMSDBConnectionString"].ConnectionString);
                 return "success";
             }
@@ -698,7 +698,12 @@ namespace HRMS.Controllers
 
         public string GetMenuHtml()
         {
-            string querySql = "select iguid, iparentid, iname, iUrl from  [sysMenu] a inner join [sysUserMenu] b on a.iguid = b.imenuid and b.iemployeecode='" + SessionHelper.CurrentUser.iEmployeeCodeId + "' and b.icompanycode='" + SessionHelper.CurrentUser.iCompanyCode + "' ";
+            if (SessionHelper.CurrentUser.iUserType == "超级用户")
+            {
+                SessionHelper.CurrentUser.iCompanyCode = "-";
+            }
+            string querySql = "select iguid, iparentid, iname, iUrl from  [sysMenu] a inner join [sysUserMenu] b on a.iguid = b.imenuid and b.iemployeecode='" + SessionHelper.CurrentUser.iEmployeeCodeId + "' and b.iProjectCode='" + SessionHelper.CurrentUser.iCompanyCode + "' ";
+
             if (SessionHelper.CurrentUser.iUserType == "超级管理员")
             {
                 querySql = "select iguid, iparentid, iname, iUrl from  [sysMenu]";

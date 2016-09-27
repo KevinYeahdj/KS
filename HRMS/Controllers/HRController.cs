@@ -271,10 +271,21 @@ namespace HRMS.Controllers
                 HRInfoEntity olden = new HRInfoEntity();
                 try
                 {
-                    string company = sheet.GetRow(i).GetCell(keycolumns["iCompany"]).ToString();
-                    string empcode = sheet.GetRow(i).GetCell(keycolumns["iEmpNo"]).ToString();
-                    string idcard = sheet.GetRow(i).GetCell(keycolumns["iIdCard"]).ToString();
-                    olden = service.GetUniqueFirstOrDefault(company, empcode, idcard);
+                    if (keycolumns.ContainsKey("iGuid"))
+                    {
+                        string iguid = sheet.GetRow(i).GetCell(keycolumns["iGuid"]).ToString();
+                        if (!string.IsNullOrEmpty(iguid))
+                        {
+                            olden = service.GetFirstOrDefault(iguid);
+                        }
+                    }
+                    if (string.IsNullOrEmpty(olden.iGuid))
+                    {
+                        string company = sheet.GetRow(i).GetCell(keycolumns["iCompany"]).ToString();
+                        string empcode = sheet.GetRow(i).GetCell(keycolumns["iEmpNo"]).ToString();
+                        string idcard = sheet.GetRow(i).GetCell(keycolumns["iIdCard"]).ToString();
+                        olden = service.GetUniqueFirstOrDefault(company, empcode, idcard);
+                    }
                 }
                 catch
                 {
@@ -288,6 +299,10 @@ namespace HRMS.Controllers
                 }
                 foreach (var kvp in keycolumnp)
                 {
+                    if (kvp.Key == "iGuid")
+                    {
+                        continue;
+                    }
                     if (!keycolumns.ContainsKey(kvp.Value))
                     {
                         if (olden != null)
@@ -334,6 +349,11 @@ namespace HRMS.Controllers
                 if (projects.FirstOrDefault(pj => pj.iValue == en.iItemName) == null)
                 {
                     errorLog += "第【" + (i + 1).ToString() + "】行项目名称不存在；";
+                }
+
+                if (SessionHelper.CurrentUser.iUserType == "普通用户" && en.iItemName != SessionHelper.CurrentUser.iCompanyCode)
+                {
+                    errorLog += "第【" + (i + 1).ToString() + "】行项目名称不正确，只能导入项目" + SessionHelper.CurrentUser.iCompanyCode + "；";
                 }
 
                 if (companies.FirstOrDefault(pj => pj.iValue == en.iCompany) == null)

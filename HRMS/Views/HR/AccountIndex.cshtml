@@ -173,10 +173,11 @@
     }
 
     $(function () {
-
-        $("#sCompanyCode").val('@HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode');
-        $("#sCompanyCode").attr("disabled", true);
-        $("#iCompany").attr("disabled", true);
+        if (window.userType == "普通用户") {
+            $("#sItemName").val('@HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode');
+            $("#sItemName").attr("disabled", true);
+            $("#iItemName").attr("disabled", true);
+        }
 
         if (window.menuRights == "r") {
             $("#DataExport").hide();
@@ -583,14 +584,16 @@
         $("#NewRecord").click(function () {
 
             $("#iIdCard").removeAttr("readonly");
-            $("#iItemName").addClass("warning");
-            //$('#iCompany').addClass("warning");
+            if (window.userType != "普通用户") {
+                $("#iItemName").addClass("warning");
+            }
+            $('#iCompany').addClass("warning");
             $('#iName').addClass("warning");
             $('#iEmpNo').addClass("warning");
             $('#iIdCard').addClass("warning");
             myViewModel.iGuid("");
-            myViewModel.iItemName("-");
-            myViewModel.iCompany('@HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode');
+            myViewModel.iItemName('@HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode');
+            myViewModel.iCompany('-');
             myViewModel.iWorkPlace("");
             myViewModel.iEmpNo("");
             myViewModel.iName("");
@@ -746,8 +749,8 @@
     function ViewModel() {
         var self = this;
         self.iGuid = ko.observable("");
-        self.iItemName = ko.observable("-");
-        self.iCompany = ko.observable('@HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode');
+        self.iItemName = ko.observable('@HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode');
+        self.iCompany = ko.observable('-');
         self.iWorkPlace = ko.observable("");
         self.iEmpNo = ko.observable("");
         self.iName = ko.observable("");

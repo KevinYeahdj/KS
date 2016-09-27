@@ -3595,12 +3595,14 @@
     <Content Include="Views\HR\AccountIndex.cshtml" />
     <Content Include="Views\HR\PositionIndex.cshtml" />
     <Content Include="Views\HR\LogIndex.cshtml" />
+    <Content Include="UploadFiles\Template\员工基本信息导入模板.xlsx" />
+    <Content Include="UploadFiles\Template\员工帐户信息导入模板.xlsx" />
+    <Content Include="UploadFiles\Template\员工职位信息导入模板.xlsx" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="FlatLab\assets\bootstrap-datetimepicker\build\" />
     <Folder Include="FlatLab\assets\jquery-file-upload\server\php\files\thumbnail\" />
-    <Folder Include="UploadFiles\Template\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
