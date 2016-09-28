@@ -81,12 +81,13 @@
                         <select onchange="ChangeProject(this.value)" class="form-control" style="width:150px;height:42.9px;float:left;">
                             @{
                         HRMS.Data.Service.ManageService ms = new HRMS.Data.Service.ManageService();
-                        Dictionary<string,string> pros = ms.GetUserProjects(HRMS.WEB.Utils.SessionHelper.CurrentUser.iEmployeeCodeId);
+                        Dictionary<string, string> pros = ms.GetUserProjects(HRMS.WEB.Utils.SessionHelper.CurrentUser.iEmployeeCodeId);
                         if (HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode == null)
                         {
-                            HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode = pros.FirstOrDefault().Value;
+                            var defaultProject = pros.FirstOrDefault();
+                            HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode = (pros.Count > 0 ? defaultProject.Value : "-");
                         }
-                        foreach (KeyValuePair<string,string> item in pros)
+                        foreach (KeyValuePair<string, string> item in pros)
                         {
                             if (item.Value == HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode)
                             {
