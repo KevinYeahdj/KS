@@ -392,8 +392,8 @@
 
     function SetMenu(userid, usertype) {
         $("#editUserId").val(userid);
+        $("#iMenuProjectCode").val("-");
         if (usertype == "超级用户") {
-            $("#iMenuProjectCode").val("-");
             $("#iMenuProjectCode").attr("disabled", "disabled");
         }
         else {

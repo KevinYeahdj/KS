@@ -317,7 +317,24 @@ namespace HRMS.Controllers
                     }
                     else
                     {
-                        en.GetType().GetProperty(kvp.Value).SetValue(en, sheet.GetRow(i).GetCell(keycolumns[kvp.Value]).ToString().Trim(), null);
+                        object value = null;
+                        string propertyName = en.GetType().GetProperty(kvp.Value).PropertyType.FullName.ToLower();
+                        if (propertyName.Contains("datetime"))
+                        {
+                            try
+                            {
+                                value = sheet.GetRow(i).GetCell(keycolumns[kvp.Value]).DateCellValue;
+                            }
+                            catch (Exception ex)
+                            {
+                                errorLog += "第【" + (i + 1).ToString() + "】行不是标准日期格式；";
+                            }
+                        }
+                        else
+                        {
+                            value = sheet.GetRow(i).GetCell(keycolumns[kvp.Value]).ToString().Trim();
+                        }
+                        en.GetType().GetProperty(kvp.Value).SetValue(en, value, null);
                     }
                 }
                 string[] sexArray = { "男", "女" };

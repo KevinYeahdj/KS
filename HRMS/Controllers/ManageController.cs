@@ -646,6 +646,7 @@ namespace HRMS.Controllers
 
         public string UserMenuSaveChanges(string jsonString, string userid, string projectid)
         {
+            //在超级用户与普通用户变更时会有冗余数据出现，不过并不影响，可清可不清
             try
             {
                 List<string> menuIds = JsonConvert.DeserializeObject<List<string>>(jsonString);

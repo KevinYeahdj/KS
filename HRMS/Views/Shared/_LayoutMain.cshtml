@@ -82,7 +82,7 @@
                             @{
                         HRMS.Data.Service.ManageService ms = new HRMS.Data.Service.ManageService();
                         Dictionary<string, string> pros = ms.GetUserProjects(HRMS.WEB.Utils.SessionHelper.CurrentUser.iEmployeeCodeId);
-                        if (HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode == null)
+                        if (HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode == null || HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode == "-")
                         {
                             var defaultProject = pros.FirstOrDefault();
                             HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode = (pros.Count > 0 ? defaultProject.Value : "-");
