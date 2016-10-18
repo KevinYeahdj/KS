@@ -42,6 +42,7 @@
     <script src="~/FlatLab/knockout-3.4.0.js"></script>
     <script src="~/FlatLab/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js"></script>
     <script src="~/FlatLab/bootstrap-datetimepicker/js/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="~/FlatLab/id_card_area.js" charset="gbk"></script>
 
     @RenderSection("scripts", required: false)
     <script>
@@ -85,17 +86,17 @@
                         if (HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode == null || HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode == "-")
                         {
                             var defaultProject = pros.FirstOrDefault();
-                            HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode = (pros.Count > 0 ? defaultProject.Value : "-");
+                            HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode = (pros.Count > 0 ? defaultProject.Key : "-");
                         }
                         foreach (KeyValuePair<string, string> item in pros)
                         {
-                            if (item.Value == HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode)
+                            if (item.Key == HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode)
                             {
-                                <option value="@item.Value" selected="selected">@item.Key</option>
+                                <option value="@item.Key" selected="selected">@item.Value</option>
                             }
                             else
                             {
-                                <option value="@item.Value">@item.Key</option>
+                                <option value="@item.Key">@item.Value</option>
                             }
                         }
                             }
@@ -153,7 +154,18 @@
                             </ul>
                         </li>
                     }
-
+                    else
+                    { 
+                         <li class="sub-menu">
+                            <a href="javascript:;">
+                                <i class="icon-laptop"></i>
+                                <span>账号设置</span>
+                            </a>
+                            <ul class="sub">
+                                <li><a href="~/Account/ChangePassword">密码修改</a></li>
+                            </ul>
+                        </li>
+                    }
                 }
 
             </ul>

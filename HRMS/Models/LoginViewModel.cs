@@ -19,4 +19,25 @@ namespace HRMS.WEB.Models
         public string Password { get; set; }
 
     }
+
+
+    public class ChangePasswordViewModel
+    {
+
+        [Required(ErrorMessage = "旧密码不能为空")]
+        [DataType(DataType.Password)]
+        [Display(Name = "旧密码")]
+        public string OldPassword { get; set; }
+
+        [Required(ErrorMessage = "新密码不能为空")]
+        [DataType(DataType.Password)]
+        [Display(Name = "新密码")]
+        public string NewPassword { get; set; }
+
+        [Required(ErrorMessage = "确认新密码不能为空")]
+        [DataType(DataType.Password)]
+        [Display(Name = "确认新密码")]
+        public string RepeatNewPassword { get; set; }
+
+    }
 }

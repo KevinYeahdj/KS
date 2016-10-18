@@ -150,6 +150,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\FinanceController.cs" />
     <Compile Include="Controllers\HRController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
@@ -1880,6 +1881,7 @@
     <Content Include="FlatLab\css\table-responsive.css" />
     <Content Include="FlatLab\css\tasks.css" />
     <Content Include="FlatLab\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="FlatLab\id_card_area.js" />
     <Content Include="FlatLab\img\404_icon.png" />
     <Content Include="FlatLab\img\500_icon.png" />
     <Content Include="FlatLab\img\arrow-up.png" />
@@ -3598,6 +3600,7 @@
     <Content Include="UploadFiles\Template\员工基本信息导入模板.xlsx" />
     <Content Include="UploadFiles\Template\员工帐户信息导入模板.xlsx" />
     <Content Include="UploadFiles\Template\员工职位信息导入模板.xlsx" />
+    <Content Include="Views\Account\ChangePassword.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

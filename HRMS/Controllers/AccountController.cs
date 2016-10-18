@@ -26,11 +26,52 @@ namespace HRMS.Controllers
             return View();
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        public ActionResult ChangePassword()
+        {
+            return View();
+        }
+
         [HttpPost]
         public ActionResult LogOff()
         {
             Session[SessionHelper.CurrentUserKey] = null;
             return RedirectToAction("Login", "Account");
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public ActionResult ChangePassword(ChangePasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            if (SessionHelper.CurrentUser.iUserName == "sa")
+            {
+                ModelState.AddModelError("", "您无权修改超级管理员的密码!");
+                return View(model);
+            }
+            else
+            {
+                if(model.NewPassword == model.RepeatNewPassword && model.OldPassword == SessionHelper.CurrentUser.iPassWord)
+                {
+                    SessionHelper.CurrentUser.iPassWord = model.NewPassword;
+                    UserManager um = new UserManager();
+                    um.Update(SessionHelper.CurrentUser);
+                    ModelState.AddModelError("", "修改成功，即将进入系统！");
+                    Response.Write("<script language='javascript'>setTimeout(\"window.opener=null;window.location.href=\'/Home/Index'\",1500);</script>");
+                    //return RedirectToAction("Index", "Home");
+                    return View(model);
+                }
+                else
+                {
+                    ModelState.AddModelError("", "旧密码错误!");
+                    return View(model);
+                }
+            }
         }
 
         [HttpPost]

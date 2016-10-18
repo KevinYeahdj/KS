@@ -21,10 +21,10 @@ using NPOI.XSSF.UserModel;
 
 namespace HRMS.Controllers
 {
-    public class HRController : BaseController
+    public class FinanceController : BaseController
     {
 
-        public ActionResult BasicIndex()
+        public ActionResult SalaryIndex()
         {
             DicManager dm = new DicManager();
             var companies = dm.GetDicByType("公司");
@@ -33,7 +33,7 @@ namespace HRMS.Controllers
             ViewBag.Projects = projects;
             return View();
         }
-        public ActionResult AccountIndex()
+        public ActionResult SeriesIndex()
         {
             DicManager dm = new DicManager();
             var companies = dm.GetDicByType("公司");
@@ -42,22 +42,18 @@ namespace HRMS.Controllers
             ViewBag.Projects = projects;
             return View();
         }
-        public ActionResult PositionIndex()
+        public ActionResult ReturnFeeIndex()
         {
             DicManager dm = new DicManager();
             var companies = dm.GetDicByType("公司");
             ViewBag.Companies = companies;
             var projects = dm.GetDicByType("项目");
             ViewBag.Projects = projects;
-            return View();
-        }
-        public ActionResult LogIndex()
-        {
             return View();
         }
     }
 
-    public class HRAjaxController : Controller
+    public class FinanceAjaxController : Controller
     {
         public void GetAllHRInfo()
         {
@@ -318,31 +314,21 @@ namespace HRMS.Controllers
                     else
                     {
                         object value = null;
-                        ICell cell = sheet.GetRow(i).GetCell(keycolumns[kvp.Value]);
-                        if (cell.CellType == CellType.Blank)
-                            value = "";
+                        string propertyName = en.GetType().GetProperty(kvp.Value).PropertyType.FullName.ToLower();
+                        if (propertyName.Contains("datetime"))
+                        {
+                            try
+                            {
+                                value = sheet.GetRow(i).GetCell(keycolumns[kvp.Value]).DateCellValue;
+                            }
+                            catch (Exception ex)
+                            {
+                                errorLog += "第【" + (i + 1).ToString() + "】行不是标准日期格式；";
+                            }
+                        }
                         else
                         {
-                            string propertyName = en.GetType().GetProperty(kvp.Value).PropertyType.FullName.ToLower();
-                            if (cell.CellType == CellType.Numeric && HSSFDateUtil.IsCellDateFormatted(cell))
-                            {  
-                                try
-                                {
-                                    value = sheet.GetRow(i).GetCell(keycolumns[kvp.Value]).DateCellValue;
-                                }
-                                catch (Exception ex)
-                                {
-                                    errorLog += "第【" + (i + 1).ToString() + "】行不是标准日期格式；";
-                                }
-                                if (!propertyName.Contains("datetime") && value != null)
-                                {
-                                    value = ((DateTime)value).ToString("yyyy-MM-dd");
-                                }
-                            }
-                            else
-                            {
-                                value = sheet.GetRow(i).GetCell(keycolumns[kvp.Value]).ToString().Trim();
-                            }
+                            value = sheet.GetRow(i).GetCell(keycolumns[kvp.Value]).ToString().Trim();
                         }
                         en.GetType().GetProperty(kvp.Value).SetValue(en, value, null);
                     }

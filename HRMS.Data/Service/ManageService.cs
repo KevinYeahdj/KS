@@ -13,7 +13,7 @@ namespace HRMS.Data.Service
         public Dictionary<string, string> GetUserProjects(string userCode)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
-            string sql = "SELECT distinct n.ikey,n.ivalue FROM [dbo].[SysUserMenu] m inner join dbo.SysDic n on n.itype='项目' and m.iprojectcode = n.iValue and m.iEmployeeCode = '" + userCode + "'";
+            string sql = "SELECT distinct n.ikey,n.ivalue FROM [dbo].[SysUserMenu] m inner join dbo.SysDic n on n.itype='项目' and m.iprojectcode = n.iKey and m.iEmployeeCode = '" + userCode + "'";
             DataSet ds = DbHelperSQL.Query(sql);
             foreach (DataRow dr in ds.Tables[0].Rows)
             {

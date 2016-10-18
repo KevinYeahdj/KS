@@ -504,7 +504,7 @@
                     month = month < 10 ? '0' + month : month;
                     var day = date.getDate();
                     day = day < 10 ? '0' + day : day;
-                    return year + month + day;
+                    return year.toString() + month.toString() + day.toString();
                 }
                 return '';
             }
@@ -534,6 +534,16 @@
             if (cardid[cardid.length - 1].toUpperCase() == last) {
                 //合法身份证
                 $('#iIdCard').removeClass("warning");
+                var areainfo = id_card_area.getAreaByIdCard(cardid)
+                myViewModel.iRegistry(areainfo.split('|')[0]);
+                myViewModel.iRegistryAddress(areainfo.replace("|", ""));
+
+                var date = new Date();
+                var year = date.getFullYear();
+                var birthday_year = parseInt(cardid.substr(6, 4));
+                var userage = year - birthday_year;
+                myViewModel.iAge(userage);
+                myViewModel.iSex(cardid.substr(16, 1) % 2 == 0 ? "女" : "男");
                 myViewModel.iBirthday(cardid.substr(6, 8).replace(/(.{4})(.{2})/, "$1-$2-"));
                 return true;
             } else {
