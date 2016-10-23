@@ -3601,6 +3601,7 @@
     <Content Include="UploadFiles\Template\员工帐户信息导入模板.xlsx" />
     <Content Include="UploadFiles\Template\员工职位信息导入模板.xlsx" />
     <Content Include="Views\Account\ChangePassword.cshtml" />
+    <Content Include="Views\Finance\ReturnFeeIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

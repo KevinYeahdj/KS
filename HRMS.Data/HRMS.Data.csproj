@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DbHelperSQL.cs" />
+    <Compile Include="Entity\ReturnFeeEntity.cs" />
     <Compile Include="Entity\ModifyLogEntity.cs" />
     <Compile Include="Entity\HRInfoEntity.cs" />
     <Compile Include="Entity\Table.cs" />
@@ -53,6 +54,7 @@
     <Compile Include="Entity\UserEntity.cs" />
     <Compile Include="IRepository.cs" />
     <Compile Include="ManagerBase.cs" />
+    <Compile Include="Manager\ReturnFeeManager.cs" />
     <Compile Include="Manager\ModifyLogManager.cs" />
     <Compile Include="Manager\HRInfoManager.cs" />
     <Compile Include="Manager\LaborInfoManager.cs" />

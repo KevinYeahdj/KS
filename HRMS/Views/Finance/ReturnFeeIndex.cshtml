@@ -1,0 +1,812 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+}
+<style>
+    .search {
+        width: auto;
+    }
+
+    .form-control {
+        color: black;
+    }
+
+    .form-group {
+        width: 24%;
+        margin-left: 1%;
+        float: left;
+    }
+
+    .modal-body {
+        height: 230px;
+    }
+
+    .warning {
+        border-color: red;
+    }
+</style>
+
+<div>
+    <div>
+        <div class="col-*-12">
+
+            <div id="toolbar">
+                <div style="float: left; margin-left: 10px"><span>员工姓名：</span></div>
+                <div style="float: left; margin-left: 10px"><input id="sName" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px"><span>身份证号：</span></div>
+                    <div style="float: left; margin-left: 10px"><input id="sIdCard" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px">
+                    <span>劳务所名称：</span></div>
+                    <div style="float: left; margin-left: 10px"><input id="SLaborName" class="form-control" /></div>
+                
+                    <div style="float: left; margin-left: 10px">
+                        <span>付款情况：</span>
+                    </div>
+                    <div style="float: left; margin-left: 10px">
+                        <select class="form-control" id="sReturnFeePayment">
+                            <option value="">请选择</option>
+                            <option value="已付">已付</option>
+                            <option value="未付">未付</option>
+
+                        </select>
+                    </div>
+
+                <div style="float: left; margin-left: 10px"><span>返费天数：</span></div>
+                <div style="float: left; margin-left: 10px"><input id="sReturnFeeDays" class="form-control" /></div>
+
+
+                <div style="float:left;margin-left:10px"><span>返费日期：</span></div><div style="float: left; margin-left: 10px; width: 10%"><input id="sReturnFeeDate" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 10%"><input id="sReturnFeeDate2" class="form-control" /></div>
+                    <div style="float:left;margin-left:10px"><span>入职日期：</span></div><div style="float: left; margin-left: 10px;width:10%"><input id="sEmployeeDate" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 10%"><input id="sEmployeeDate2" class="form-control" /></div>
+                    <div style="float:left;margin-left:10px"><span>支付日期：</span></div><div style="float: left; margin-left: 10px; width: 10%"><input id="sReturnFeeActualPayDate" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 10%"><input id="sReturnFeeActualPayDate2" class="form-control" /></div>
+                   
+                    <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" onclick="ExportData()">数据导出</div>
+                    <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" data-toggle="modal" data-target="#importModal">数据导入</div>
+                    <div style="float: right; margin-left: 10px; margin-top: 5px; " class="btn btn-primary" data-toggle="modal" data-target="#addModal" id="NewRecord">添加记录</div>
+                    <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" onclick="Search()">查询</div>
+
+                </div>
+
+            <table id="mytab" class="table table-hover"></table>
+
+            <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog" style="width:90%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                &times;
+                            </button>
+                            <h4 class="modal-title" id="addModalLabel">添加记录</h4>
+                        </div>
+                        <div class="modal-body">
+                            <input style="visibility:hidden" type="hidden" id="iGuid" data-bind="value: iGuid">
+                            <div class="form-group">
+                                项目名称：
+                                <select class="form-control" id="iItemName" data-bind="value: iItemName">
+                                    <option value="-">请选择</option>
+                                    @{
+                                        foreach (var item in ViewBag.Projects)
+                                        {
+                                            <option value="@item.iKey">@item.iValue</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                所在公司：
+                                <select class="form-control" id="iCompany" data-bind="value: iCompany">
+                                    <option value="-">请选择</option>
+                                    @{
+                                        foreach (var item in ViewBag.Companies)
+                                        {
+                                            <option value="@item.iKey">@item.iValue</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group"> 所在工作地：<input type="text" class="form-control" id="iWorkPlace" data-bind="value: iWorkPlace" placeholder="请输入所在工作地"></div>
+                            <div class="form-group"> 工号：<input type="text" class="form-control" id="iEmpNo" data-bind="value: iEmpNo" placeholder="请输入工号"></div>
+                            <div class="form-group"> 姓名：<input type="text" class="form-control" id="iName" data-bind="value: iName" placeholder="请输入姓名"></div>
+                            <div class="form-group"> 身份证号：<input maxlength="18" onkeyup="value=value.replace(/^[a-zA-Z]+\D*|^\d{0,16}[a-zA-Z]+|[^0-9Xx]/g,'') " type="text" class="form-control" id="iIdCard" data-bind="value: iIdCard" placeholder="请输入身份证号"></div>
+                            <div class="form-group"> 开户行：<input type="text" class="form-control" id="iWageBank" data-bind="value: iWageBank" placeholder="请输入开户行"></div>
+                            <div class="form-group"> 开户行名称：<input type="text" class="form-control" id="iWageBankName" data-bind="value: iWageBankName" placeholder="请输入开户行名称"></div>
+                            <div class="form-group"> 工资帐号：<input type="text" class="form-control" id="iWageAccount" data-bind="value: iWageAccount" placeholder="请输入工资帐号"></div>
+                            <div class="form-group"> 社保账号：<input type="text" class="form-control" id="iSocialSecurityAccount" data-bind="value: iSocialSecurityAccount" placeholder="请输入社保账号"></div>
+                            <div class="form-group"> 公积金账号：<input type="text" class="form-control" id="iProvidentAccount" data-bind="value: iProvidentAccount" placeholder="请输入公积金账号"></div>
+                            <div class="form-group"> 账户信息备注：<input type="text" class="form-control" id="iAccountInfoNote" data-bind="value: iAccountInfoNote" placeholder="请输入账户信息备注"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-primary" id="addRecord">提交</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            <h4 class="modal-title" id="">数据导入</h4>
+                        </div>
+                        <div class="modal-body" style="height:400px">
+                            <form>
+                                <a href="~/UploadFiles/Template/员工帐户信息导入模板.xlsx" class="form-control" style="border:none;">下载导入模板</a>
+                                <input type="file" name="txt_file" id="txt_file" multiple class="file-loading" />
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function Search() {
+        $('#mytab').bootstrapTable('refresh');
+    }
+
+    $(function () {
+        if (window.userType == "普通用户") {
+            $("#sItemName").val('@HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode');
+            $("#sItemName").attr("disabled", true);
+            $("#iItemName").attr("disabled", true);
+        }
+
+        if (window.menuRights == "r") {
+            $("#DataExport").hide();
+            $("#DataImport").hide();
+            $("#NewRecord").hide();
+        }
+
+        $("#sEmployeeDate").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            minView: "month",
+            maxView: "decade",
+            todayBtn: true,
+            pickerPosition: "bottom-left"
+        }).on("click", function (ev) {
+            $("#sEmployeeDate").datetimepicker("setEndDate", $("#sEmployeeDate2").val());
+        });
+        $("#sEmployeeDate2").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            minView: "month",
+            maxView: "decade",
+            todayBtn: true,
+            pickerPosition: "bottom-left"
+        }).on("click", function (ev) {
+            $("#sEmployeeDate2").datetimepicker("setStartDate", $("#sEmployeeDate").val());
+        });
+        $("#sContractDeadLine").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            minView: "month",
+            maxView: "decade",
+            todayBtn: true,
+            pickerPosition: "bottom-left"
+        }).on("click", function (ev) {
+            $("#sContractDeadLine").datetimepicker("setEndDate", $("#sContractDeadLine2").val());
+        });
+        $("#sContractDeadLine2").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            minView: "month",
+            maxView: "decade",
+            todayBtn: true,
+            pickerPosition: "bottom-left"
+        }).on("click", function (ev) {
+            $("#sContractDeadLine2").datetimepicker("setStartDate", $("#sContractDeadLine").val());
+        });
+        $("#sResignDate").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            minView: "month",
+            maxView: "decade",
+            todayBtn: true,
+            pickerPosition: "bottom-left"
+        }).on("click", function (ev) {
+            $("#sResignDate").datetimepicker("setEndDate", $("#sResignDate2").val());
+        });
+        $("#sResignDate2").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            minView: "month",
+            maxView: "decade",
+            todayBtn: true,
+            pickerPosition: "bottom-left"
+        }).on("click", function (ev) {
+            $("#sResignDate2").datetimepicker("setStartDate", $("#sResignDate").val());
+        });
+        $("#sUpdateOn").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            minView: "month",
+            maxView: "decade",
+            todayBtn: true,
+            pickerPosition: "bottom-left"
+        }).on("click", function (ev) {
+            $("#sUpdateOn").datetimepicker("setEndDate", $("#sUpdateOn2").val());
+        });
+        $("#sUpdateOn2").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            minView: "month",
+            maxView: "decade",
+            todayBtn: true,
+            pickerPosition: "bottom-left"
+        }).on("click", function (ev) {
+            $("#sUpdateOn2").datetimepicker("setStartDate", $("#sUpdateOn").val());
+        });
+
+
+
+
+        $("#iItemName").change(function () {
+            var value = $("#iItemName").val();
+            if (value != "-") {
+                $('#iItemName').removeClass("warning");
+            }
+            else {
+                $('#iItemName').addClass("warning");
+            }
+        });
+        $("#iCompany").change(function () {
+            var value = $("#iCompany").val();
+            if (value != "-") {
+                $('#iCompany').removeClass("warning");
+            }
+            else {
+                $('#iCompany').addClass("warning");
+            }
+        });
+
+        $("#iEmpNo").blur(function () {
+            var value = $("#iEmpNo").val();
+            if (value.length > 0) {
+                $('#iEmpNo').removeClass("warning");
+            }
+            else {
+                $('#iEmpNo').addClass("warning");
+            }
+        });
+        $("#iName").blur(function () {
+            var value = $("#iName").val();
+            if (value.length > 0) {
+                $('#iName').removeClass("warning");
+            }
+            else {
+                $('#iName').addClass("warning");
+            }
+        });
+        $("#iIdCard").blur(function () {
+
+            //日期转字符串 返回日期格式20080808
+            var dateToString = function (date) {
+                if (date instanceof Date) {
+                    var year = date.getFullYear();
+                    var month = date.getMonth() + 1;
+                    month = month < 10 ? '0' + month : month;
+                    var day = date.getDate();
+                    day = day < 10 ? '0' + day : day;
+                    return year.toString() + month.toString() + day.toString();
+                }
+                return '';
+            }
+            var cardid = $("#iIdCard").val();
+            //身份证正则表达式(18位)
+            var isIdCard2 = /^[1-9]\d{5}(19\d{2}|[2-9]\d{3})((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])(\d{4}|\d{3}X)$/i;
+            var stard = "10X98765432"; //最后一位身份证的号码
+            var first = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2]; //1-17系数
+            var sum = 0;
+            if (!isIdCard2.test(cardid)) {
+                $('#iIdCard').addClass("warning");
+                return false;
+            }
+            var year = cardid.substr(6, 4);
+            var month = cardid.substr(10, 2);
+            var day = cardid.substr(12, 2);
+            var birthday = cardid.substr(6, 8);
+            if (birthday != dateToString(new Date(year + '/' + month + '/' + day))) { //校验日期是否合法
+                $('#iIdCard').addClass("warning");
+                return false;
+            }
+            for (var i = 0; i < cardid.length - 1; i++) {
+                sum += cardid[i] * first[i];
+            }
+            var result = sum % 11;
+            var last = stard[result]; //计算出来的最后一位身份证号码
+            if (cardid[cardid.length - 1].toUpperCase() == last) {
+                //合法身份证
+                $('#iIdCard').removeClass("warning");
+                var areainfo = id_card_area.getAreaByIdCard(cardid)
+                myViewModel.iRegistry(areainfo.split('|')[0]);
+                myViewModel.iRegistryAddress(areainfo.replace("|", ""));
+
+                var date = new Date();
+                var year = date.getFullYear();
+                var birthday_year = parseInt(cardid.substr(6, 4));
+                var userage = year - birthday_year;
+                myViewModel.iAge(userage);
+                myViewModel.iSex(cardid.substr(16, 1) % 2 == 0 ? "女" : "男");
+                myViewModel.iBirthday(cardid.substr(6, 8).replace(/(.{4})(.{2})/, "$1-$2-"));
+                return true;
+            } else {
+                $('#iIdCard').addClass("warning");
+                return false;
+            }
+        });
+
+        $("div.icon-reorder").click(function () {
+            $('#mytab').bootstrapTable('resetView', {
+                height: tableHeight()
+            })
+        })
+        //根据窗口调整表格高度
+        $(window).resize(function () {
+            $('#mytab').bootstrapTable('resetView', {
+                height: tableHeight()
+            })
+        })
+
+        $('#mytab').bootstrapTable({
+            url: "/HRAjax/GetAllHRInfo",//数据源
+            dataField: "rows",//服务端返回数据键值 就是说记录放的键值是rows，分页时使用总记录数的键值为total
+            sortName: "iUpdatedOn",//排序列
+            sortOrder: "desc",
+            cache: false,
+            striped: true,//條紋行
+            clickToSelect: true,//选择行即选择checkbox
+            searchOnEnterKey: false,//ENTER键搜索
+            height: tableHeight(),//高度调整
+            search: false,//是否搜索
+            pagination: true,//是否分页
+            pageSize: 15,//单页记录数
+            pageNumber: 1,//起始页
+            pageList: [15, 20, 30, 50, 100, 10000],//分页步进值
+            sidePagination: "server",//服务端分页
+            contentType: "application/x-www-form-urlencoded",//请求数据内容格式 默认是 application/json 自己根据格式自行服务端处理
+            dataType: "json",//期待返回数据类型
+            method: "post",//请求方式
+            searchAlign: "left",//查询框对齐方式
+            queryParamsType: "limit",//查询参数组织方式
+            queryParams: function getParams(params) {
+                params.iItemName = $("#sItemName").val();
+                params.iCompany = $("#sCompanyCode").val();
+                params.iIdCard = $("#sIdCard").val();
+                params.iPhone = $("#SPhone").val();
+                params.iEmpNo = $("#sEmpNo").val();
+                params.iEmployeeStatus = $("#sEmpStatus").val();
+                params.iFileLocation = $("#sFileLocation").val();
+                params.iEmployeeDateFrom = $("#sEmployeeDate").val();
+                params.iEmployeeDateTo = $("#sEmployeeDate2").val();
+                params.iContractDeadLineFrom = $("#sContractDeadLine").val();
+                params.iContractDeadLineTo = $("#sContractDeadLine2").val();
+                params.iResignDateFrom = $("#sResignDate").val();
+                params.iResignDateTo = $("#sResignDate2").val();
+                params.iModifyOnFrom = $("#sUpdateOn").val();
+                params.iModifyOnTo = $("#sUpdateOn2").val();
+                return params;
+            },
+            searchOnEnterKey: false,//回车搜索
+            showRefresh: false,//刷新按钮
+            showColumns: false,//列选择按钮
+            buttonsAlign: "left",//按钮对齐方式
+            toolbar: "#toolbar",//指定工具栏
+            toolbarAlign: "right",//工具栏对齐方式
+            columns: [
+                 { field: "iGuid", title: "iGuid", visible: false }
+                 , { field: "iItemName", title: "项目名称", sortable: true }
+, { field: "iCompany", title: "所在公司", sortable: true }
+, { field: "iWorkPlace", title: "所在工作地", sortable: true }
+, { field: "iEmpNo", title: "工号", sortable: true }
+, { field: "iName", title: "姓名", sortable: true }
+, { field: "iIdCard", title: "身份证号", sortable: true }
+, { field: "iWageBank", title: "开户行", sortable: true }
+, { field: "iWageBankName", title: "开户行名称", sortable: true }
+, { field: "iWageAccount", title: "工资帐号", sortable: true }
+, { field: "iSocialSecurityAccount", title: "社保账号", sortable: true }
+, { field: "iProvidentAccount", title: "公积金账号", sortable: true }
+, { field: "iAccountInfoNote", title: "账户信息备注", sortable: true }
+
+
+            ],
+            onClickRow: function (row, $element) {
+                //$element是当前tr的jquery对象
+                //$element.css("background-color", "green");
+            },//单击row事件
+            onDblClickRow: function (row, $element) {
+                if (window.menuRights == "r") {
+                    return;
+                }
+                $("#addModalLabel").html("修改记录");
+                $('#addModal').modal('toggle');
+
+                $("#iItemName").removeClass("warning");
+                $('#iCompany').removeClass("warning");
+                $('#iName').removeClass("warning");
+                $('#iEmpNo').removeClass("warning");
+                $('#iIdCard').removeClass("warning");
+
+                var width = $("#addModal").width();
+                var height = $("#addModal").height();
+                var $shade = $('<div id="waiting"></div>');
+                $shade.css({ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, background: '#fff url(/Content/images/waiting.gif) center center no-repeat', opacity: 0.4 });
+                $("#addModal").append($shade);
+                $.get("/HRAjax/GetHRInfo?guid=" + row.iGuid, function (result) {
+                    if (result.success) {
+                        myViewModel.iGuid(result.data.iGuid);
+                        myViewModel.iItemName(result.data.iItemName);
+                        myViewModel.iCompany(result.data.iCompany);
+                        myViewModel.iWorkPlace(result.data.iWorkPlace);
+                        myViewModel.iEmpNo(result.data.iEmpNo);
+                        myViewModel.iName(result.data.iName);
+                        myViewModel.iIdCard(result.data.iIdCard);
+                        myViewModel.iSex(result.data.iSex);
+                        myViewModel.iBirthday(result.data.iBirthday);
+                        myViewModel.iRegistry(result.data.iRegistry);
+                        myViewModel.iNation(result.data.iNation);
+                        myViewModel.iResidenceProperty(result.data.iResidenceProperty);
+                        myViewModel.iRegistryAddress(result.data.iRegistryAddress);
+                        myViewModel.iIssuedBy(result.data.iIssuedBy);
+                        myViewModel.iIdCardValidate(result.data.iIdCardValidate);
+                        myViewModel.iLivedIn(result.data.iLivedIn);
+                        myViewModel.iPhone(result.data.iPhone);
+                        myViewModel.iEmeContact(result.data.iEmeContact);
+                        myViewModel.iEmeContactPhone(result.data.iEmeContactPhone);
+                        myViewModel.iEmail(result.data.iEmail);
+                        myViewModel.iPostCode(result.data.iPostCode);
+                        myViewModel.iHeight(result.data.iHeight);
+                        myViewModel.iWeight(result.data.iWeight);
+                        myViewModel.iBloodType(result.data.iBloodType);
+                        myViewModel.iMariage(result.data.iMariage);
+                        myViewModel.iAge(result.data.iAge);
+                        myViewModel.iHealthCheck(result.data.iHealthCheck);
+                        myViewModel.iPolitical(result.data.iPolitical);
+                        myViewModel.iEducationLevel(result.data.iEducationLevel);
+                        myViewModel.iMajor(result.data.iMajor);
+                        myViewModel.iGraduatedSchool(result.data.iGraduatedSchool);
+                        myViewModel.iGraduatedDate(result.data.iGraduatedDate);
+                        myViewModel.iWorkExperience(result.data.iWorkExperience);
+                        myViewModel.iWageBank(result.data.iWageBank);
+                        myViewModel.iWageBankName(result.data.iWageBankName);
+                        myViewModel.iWageAccount(result.data.iWageAccount);
+                        myViewModel.iSocialSecurityAccount(result.data.iSocialSecurityAccount);
+                        myViewModel.iProvidentAccount(result.data.iProvidentAccount);
+                        myViewModel.iEmpType(result.data.iEmpType);
+                        myViewModel.iPosition(result.data.iPosition);
+                        myViewModel.iManageLevel(result.data.iManageLevel);
+                        myViewModel.iProjectGroup(result.data.iProjectGroup);
+                        myViewModel.iCompanyWorkYear(result.data.iCompanyWorkYear);
+                        myViewModel.iFirstDep(result.data.iFirstDep);
+                        myViewModel.iSecondDep(result.data.iSecondDep);
+                        myViewModel.iThirdDep(result.data.iThirdDep);
+                        myViewModel.iFourthDep(result.data.iFourthDep);
+                        myViewModel.iFifthDep(result.data.iFifthDep);
+                        myViewModel.iEmployeeStatus(result.data.iEmployeeStatus);
+                        myViewModel.iEmployeeDate(result.data.iEmployeeDate);
+                        myViewModel.iPositiveDate(result.data.iPositiveDate);
+                        myViewModel.iContractType(result.data.iContractType);
+                        myViewModel.iContractSignStatus(result.data.iContractSignStatus);
+                        myViewModel.iContractTerm(result.data.iContractTerm);
+                        myViewModel.iContractDeadLine(result.data.iContractDeadLine);
+                        myViewModel.iResignType(result.data.iResignType);
+                        myViewModel.iResignDate(result.data.iResignDate);
+                        myViewModel.iResignReason(result.data.iResignReason);
+                        myViewModel.iFileLocation(result.data.iFileLocation);
+                        myViewModel.iIsReturnFee(result.data.iIsReturnFee);
+                        myViewModel.iIsSocialInsurancePaid(result.data.iIsSocialInsurancePaid);
+                        myViewModel.iIsProvidentPaid(result.data.iIsProvidentPaid);
+                        myViewModel.iBasicInfoNote(result.data.iBasicInfoNote);
+                        myViewModel.iAccountInfoNote(result.data.iAccountInfoNote);
+                        myViewModel.iPositionInfoNote(result.data.iPositionInfoNote);
+                        myViewModel.iIsCommercialInsurancePaid(result.data.iIsCommercialInsurancePaid);
+                        myViewModel.iCreatedOn(result.data.iCreatedOn);
+                        myViewModel.iCreatedBy(result.data.iCreatedBy);
+                        myViewModel.iUpdatedOn(result.data.iUpdatedOn);
+                        myViewModel.iUpdatedBy(result.data.iUpdatedBy);
+                        myViewModel.iStatus(result.data.iStatus);
+                        myViewModel.iIsDeleted(result.data.iIsDeleted);
+
+                        $("#iIdCard").attr("readonly", "readonly");
+                    }
+                    else {
+                        console.log(result.msg);
+                        toastr.error('获取数据失败！');
+                    }
+                    $shade.remove();
+                });
+            },
+            locale: "zh-CN",//中文支持,
+            detailView: false, //是否显示详情折叠
+            detailFormatter: function (index, row, element) {
+                var html = '';
+                $.each(row, function (key, val) {
+                    html += "<p>" + key + ":" + val + "</p>"
+                });
+                return html;
+            }
+        });
+
+        $("#addRecord").click(function () {
+            var warnings = $(".warning");
+            if (warnings && warnings.length > 0) {
+                toastr.error('数据验证未通过！');
+                return;
+            }
+
+            var param = {};
+            param.jsonString = ko.toJSON(myViewModel);
+            $.ajax({
+                url: "/HRAjax/SaveChanges",
+                type: "POST",
+                data: param,
+                dataType: 'text',
+                success: function (data) {
+                    if (data == "success") {
+                        toastr.success('保存成功！');
+                        $('#mytab').bootstrapTable('refresh');
+                    }
+                    else {
+                        console.log(data);
+                        toastr.error('保存数据失败！');
+                    }
+                    $('#addModal').modal('toggle');
+                }
+            });
+        });
+
+        $("#NewRecord").click(function () {
+
+            $("#iIdCard").removeAttr("readonly");
+            if (window.userType != "普通用户") {
+                $("#iItemName").addClass("warning");
+            }
+            $('#iCompany').addClass("warning");
+            $('#iName').addClass("warning");
+            $('#iEmpNo').addClass("warning");
+            $('#iIdCard').addClass("warning");
+            myViewModel.iGuid("");
+            myViewModel.iItemName('@HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode');
+            myViewModel.iCompany('-');
+            myViewModel.iWorkPlace("");
+            myViewModel.iEmpNo("");
+            myViewModel.iName("");
+            myViewModel.iIdCard("");
+            myViewModel.iSex("");
+            myViewModel.iBirthday("");
+            myViewModel.iRegistry("");
+            myViewModel.iNation("");
+            myViewModel.iResidenceProperty("");
+            myViewModel.iRegistryAddress("");
+            myViewModel.iIssuedBy("");
+            myViewModel.iIdCardValidate("");
+            myViewModel.iLivedIn("");
+            myViewModel.iPhone("");
+            myViewModel.iEmeContact("");
+            myViewModel.iEmeContactPhone("");
+            myViewModel.iEmail("");
+            myViewModel.iPostCode("");
+            myViewModel.iHeight("");
+            myViewModel.iWeight("");
+            myViewModel.iBloodType("");
+            myViewModel.iMariage("");
+            myViewModel.iAge("");
+            myViewModel.iHealthCheck("");
+            myViewModel.iPolitical("");
+            myViewModel.iEducationLevel("");
+            myViewModel.iMajor("");
+            myViewModel.iGraduatedSchool("");
+            myViewModel.iGraduatedDate("");
+            myViewModel.iWorkExperience("");
+            myViewModel.iWageBank("");
+            myViewModel.iWageBankName("");
+            myViewModel.iWageAccount("");
+            myViewModel.iSocialSecurityAccount("");
+            myViewModel.iProvidentAccount("");
+            myViewModel.iEmpType("");
+            myViewModel.iPosition("");
+            myViewModel.iManageLevel("");
+            myViewModel.iProjectGroup("");
+            myViewModel.iCompanyWorkYear("");
+            myViewModel.iFirstDep("");
+            myViewModel.iSecondDep("");
+            myViewModel.iThirdDep("");
+            myViewModel.iFourthDep("");
+            myViewModel.iFifthDep("");
+            myViewModel.iEmployeeStatus("");
+            myViewModel.iEmployeeDate("");
+            myViewModel.iPositiveDate("");
+            myViewModel.iContractType("");
+            myViewModel.iContractSignStatus("");
+            myViewModel.iContractTerm("");
+            myViewModel.iContractDeadLine("");
+            myViewModel.iResignType("");
+            myViewModel.iResignDate("");
+            myViewModel.iResignReason("");
+            myViewModel.iFileLocation("");
+            myViewModel.iIsReturnFee("");
+            myViewModel.iIsSocialInsurancePaid("");
+            myViewModel.iIsProvidentPaid("");
+            myViewModel.iIsCommercialInsurancePaid("");
+            myViewModel.iBasicInfoNote("");
+            myViewModel.iAccountInfoNote("");
+            myViewModel.iPositionInfoNote("");
+            myViewModel.iCreatedOn("");
+            myViewModel.iCreatedBy("");
+            myViewModel.iUpdatedOn("");
+            myViewModel.iUpdatedBy("");
+            myViewModel.iStatus("1");
+            myViewModel.iIsDeleted("0");
+
+            $("#addModalLabel").html("添加记录");
+
+        });
+        var myViewModel = new ViewModel();
+        ko.applyBindings(myViewModel);
+
+    })
+
+    function tableHeight() {
+        return $(window).height() * 0.85;
+    }
+
+    function infoFormatter(value, row, index) {
+        return "id:" + row.id + " name:" + row.name + " age:" + row.age;
+    }
+
+    //初始化fileinput
+    var FileInput = function () {
+        var oFile = new Object();
+        //初始化fileinput控件（第一次初始化）
+        oFile.Init = function (ctrlName, uploadUrl) {
+            var control = $('#' + ctrlName);
+            //初始化上传控件的样式
+            control.fileinput({
+                language: 'zh', //设置语言
+                uploadUrl: uploadUrl, //上传的地址
+                allowedFileExtensions: ['xls', 'xlsx'],//接收的文件后缀
+                showUpload: false, //是否显示上传按钮
+                showCaption: false,//是否显示标题
+                browseClass: "btn btn-primary", //按钮样式
+                //dropZoneEnabled: false,//是否显示拖拽区域
+                //minImageWidth: 50, //图片的最小宽度
+                //minImageHeight: 50,//图片的最小高度
+                //maxImageWidth: 1000,//图片的最大宽度
+                //maxImageHeight: 1000,//图片的最大高度
+                maxFileSize: 0,//单位为kb，如果为0表示不限制文件大小
+                //minFileCount: 0,
+                maxFileCount: 1, //表示允许同时上传的最大文件个数
+                enctype: 'multipart/form-data',
+                validateInitialCount: true,
+                previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
+                msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！",
+            });
+            //导入文件上传完成之后的事件
+            $("#txt_file").on("fileuploaded", function (event, data, previewId, index) {
+                $("#importModal").modal("hide");
+                if (!data.response.success) {
+                    toastr.error(data.response.msg);
+                    console.log(data.response.msg);
+                    return;
+                }
+                //刷新表格
+                $('#mytab').bootstrapTable('refresh');
+            });
+        }
+        return oFile;
+    };
+    var oFileInput = new FileInput();
+    oFileInput.Init("txt_file", "/HRAjax/ImportHRInfo");
+    function ExportData() {
+        var url = "/HRAjax/ExportAccount";
+        var params = {};
+        params.iItemName = $("#sItemName").val();
+        params.iCompany = $("#sCompanyCode").val();
+        params.iIdCard = $("#sIdCard").val();
+        params.iPhone = $("#SPhone").val();
+        params.iEmpNo = $("#sEmpNo").val();
+        params.iEmployeeStatus = $("#sEmpStatus").val();
+        params.iFileLocation = $("#sFileLocation").val();
+        params.iEmployeeDateFrom = $("#sEmployeeDate").val();
+        params.iEmployeeDateTo = $("#sEmployeeDate2").val();
+        params.iContractDeadLineFrom = $("#sContractDeadLine").val();
+        params.iContractDeadLineTo = $("#sContractDeadLine2").val();
+        params.iResignDateFrom = $("#sResignDate").val();
+        params.iResignDateTo = $("#sResignDate2").val();
+        params.iModifyOnFrom = $("#sUpdateOn").val();
+        params.iModifyOnTo = $("#sUpdateOn2").val();
+        var inputs = '<input type="hidden" name="searchpara" value="' + JSON.stringify(params).replace(new RegExp("\"", "gm"), "'") + '" />';
+        $('<form action="' + url + '" method="post" target="_blank">' + inputs + '</form>').appendTo('body').submit().remove();
+    }
+
+
+    function ViewModel() {
+        var self = this;
+        self.iGuid = ko.observable("");
+        self.iItemName = ko.observable('@HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode');
+        self.iCompany = ko.observable('-');
+        self.iWorkPlace = ko.observable("");
+        self.iEmpNo = ko.observable("");
+        self.iName = ko.observable("");
+        self.iIdCard = ko.observable("");
+        self.iSex = ko.observable("");
+        self.iBirthday = ko.observable("");
+        self.iRegistry = ko.observable("");
+        self.iNation = ko.observable("");
+        self.iResidenceProperty = ko.observable("");
+        self.iRegistryAddress = ko.observable("");
+        self.iIssuedBy = ko.observable("");
+        self.iIdCardValidate = ko.observable("");
+        self.iLivedIn = ko.observable("");
+        self.iPhone = ko.observable("");
+        self.iEmeContact = ko.observable("");
+        self.iEmeContactPhone = ko.observable("");
+        self.iEmail = ko.observable("");
+        self.iPostCode = ko.observable("");
+        self.iHeight = ko.observable("");
+        self.iWeight = ko.observable("");
+        self.iBloodType = ko.observable("");
+        self.iMariage = ko.observable("");
+        self.iAge = ko.observable("");
+        self.iHealthCheck = ko.observable("");
+        self.iPolitical = ko.observable("");
+        self.iEducationLevel = ko.observable("");
+        self.iMajor = ko.observable("");
+        self.iGraduatedSchool = ko.observable("");
+        self.iGraduatedDate = ko.observable("");
+        self.iWorkExperience = ko.observable("");
+        self.iWageBank = ko.observable("");
+        self.iWageBankName = ko.observable("");
+        self.iWageAccount = ko.observable("");
+        self.iSocialSecurityAccount = ko.observable("");
+        self.iProvidentAccount = ko.observable("");
+        self.iEmpType = ko.observable("");
+        self.iPosition = ko.observable("");
+        self.iManageLevel = ko.observable("");
+        self.iProjectGroup = ko.observable("");
+        self.iCompanyWorkYear = ko.observable("");
+        self.iFirstDep = ko.observable("");
+        self.iSecondDep = ko.observable("");
+        self.iThirdDep = ko.observable("");
+        self.iFourthDep = ko.observable("");
+        self.iFifthDep = ko.observable("");
+        self.iEmployeeStatus = ko.observable("");
+        self.iEmployeeDate = ko.observable("");
+        self.iPositiveDate = ko.observable("");
+        self.iContractType = ko.observable("");
+        self.iContractSignStatus = ko.observable("");
+        self.iContractTerm = ko.observable("");
+        self.iContractDeadLine = ko.observable("");
+        self.iResignType = ko.observable("");
+        self.iResignDate = ko.observable("");
+        self.iResignReason = ko.observable("");
+        self.iFileLocation = ko.observable("");
+        self.iIsReturnFee = ko.observable("");
+        self.iIsSocialInsurancePaid = ko.observable("");
+        self.iIsProvidentPaid = ko.observable("");
+        self.iIsCommercialInsurancePaid = ko.observable("");
+        self.iBasicInfoNote = ko.observable("");
+        self.iAccountInfoNote = ko.observable("");
+        self.iPositionInfoNote = ko.observable("");
+        self.iCreatedOn = ko.observable("");
+        self.iCreatedBy = ko.observable("");
+        self.iUpdatedOn = ko.observable("");
+        self.iUpdatedBy = ko.observable("");
+        self.iStatus = ko.observable("1");
+        self.iIsDeleted = ko.observable("0");
+    }
+
+
+</script>
+

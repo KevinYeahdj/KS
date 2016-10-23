@@ -372,10 +372,14 @@ namespace HRMS.Controllers
                 checkdic.Add("离职原因（公司）$iResignReason", resignressonArray);
 
 
-
-                if (projects.FirstOrDefault(pj => pj.iValue == en.iItemName) == null)
+                var currentItem = projects.FirstOrDefault(pj => pj.iValue == en.iItemName);
+                if (currentItem == null)
                 {
                     errorLog += "第【" + (i + 1).ToString() + "】行项目名称不存在；";
+                }
+                else
+                {
+                    en.iItemName = currentItem.iKey;
                 }
 
                 if (SessionHelper.CurrentUser.iUserType == "普通用户" && en.iItemName != SessionHelper.CurrentUser.iCompanyCode)
@@ -383,9 +387,14 @@ namespace HRMS.Controllers
                     errorLog += "第【" + (i + 1).ToString() + "】行项目名称不正确，只能导入项目" + SessionHelper.CurrentUser.iCompanyCode + "；";
                 }
 
-                if (companies.FirstOrDefault(pj => pj.iValue == en.iCompany) == null)
+                var currentCompany = companies.FirstOrDefault(pj => pj.iValue == en.iCompany);
+                if (currentCompany == null)
                 {
                     errorLog += "第【" + (i + 1).ToString() + "】行公司名称不存在；";
+                }
+                else
+                {
+                    en.iCompany = currentCompany.iKey;
                 }
                 if (string.IsNullOrEmpty(en.iEmpNo))
                 {
