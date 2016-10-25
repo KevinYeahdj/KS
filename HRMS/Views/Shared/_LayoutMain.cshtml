@@ -67,14 +67,14 @@
     </script>
 
 </head>
-<body class="white-bg">
-    <header class="header white-bg">
+<body style="font-weight:lighter; font-size:smaller; color:black">
+    <header class="header" style="background-color:yellow">
         <div class="sidebar-toggle-box">
             <div data-original-title="导航伸缩" data-placement="right" class="icon-reorder tooltips"></div>
         </div>
         <a href="/" class="logo"><span>人力资源管理</span>平台</a>
-
-        <div class="top-nav ">
+        <img src="/content/images/敏慧标识.jpg" height="50" width="200" style="margin-top:0px" />
+        <div class="top-nav " style="margin-top:-45px">
             <ul class="nav pull-right top-menu">
                 @{
                     if (HRMS.WEB.Utils.SessionHelper.CurrentUser.iUserType == "普通用户")
@@ -155,8 +155,8 @@
                         </li>
                     }
                     else
-                    { 
-                         <li class="sub-menu">
+                    {
+                        <li class="sub-menu">
                             <a href="javascript:;">
                                 <i class="icon-laptop"></i>
                                 <span>账号设置</span>
@@ -174,7 +174,7 @@
 
 
 
-    <section id="main-content" class="white-bg">
+    <section id="main-content" class="white-bg" style="background-color:lightyellow">
         <section class="wrapper">
             @RenderBody()
         </section>

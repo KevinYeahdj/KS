@@ -342,6 +342,10 @@ namespace HRMS.Controllers
                             else
                             {
                                 value = sheet.GetRow(i).GetCell(keycolumns[kvp.Value]).ToString().Trim();
+                                if (propertyName.Contains("datetime") && value != null)
+                                {
+                                    value = DateTime.Parse(value.ToString());
+                                }
                             }
                         }
                         en.GetType().GetProperty(kvp.Value).SetValue(en, value, null);

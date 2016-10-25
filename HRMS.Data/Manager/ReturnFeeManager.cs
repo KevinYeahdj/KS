@@ -138,10 +138,10 @@ namespace HRMS.Data.Manager
                 session.Dispose();
             }
         }
-        public ReturnFeeEntity GetFirstOrDefault(string id)
+        public ReturnFeeModel GetFirstOrDefault(string id)
         {
-            string sql = @"select * from returnfee where iguid=@id and iIsDeleted =0 and iStatus =1";
-            return Repository.Query<ReturnFeeEntity>(sql, new { id = id }).FirstOrDefault();
+            string sql = @"select * from returnfee fee inner join hrinfo hr on fee.ihrinfoguid = hr.iguid and hr.iisdeleted=0 and hr.istatus=1 where fee.iguid=@id and fee.iIsDeleted =0 and fee.iStatus =1";
+            return Repository.Query<ReturnFeeModel>(sql, new { id = id }).FirstOrDefault();
         }
 
         public List<ReturnFeeModel> GetSearch(string companyCode, Dictionary<string, string> para, string sort, string order, int offset, int pageSize, out int total)
@@ -167,7 +167,7 @@ namespace HRMS.Data.Manager
 
 
             string commonSql = commandsb.ToString();
-            string querySql = "select fee.*, hr.* " + commonSql + "order by {0} {1} offset {2} row fetch next {3} rows only";
+            string querySql = "select fee.*, hr.iItemName, hr.iCompany, hr.iEmpNo, hr.iName, hr.iIdCard,hr.iEmployeeDate, hr.iResignDate " + commonSql + "order by {0} {1} offset {2} row fetch next {3} rows only";
             querySql = string.Format(querySql, sort, order, offset, pageSize);
             string totalSql = "select cast(count(1) as varchar(8)) " + commonSql;
             total = int.Parse(Repository.Query<string>(totalSql).ToList()[0]);

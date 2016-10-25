@@ -55,7 +55,7 @@ namespace HRMS.Controllers
 
     public class FinanceAjaxController : Controller
     {
-        public void GetAllHRInfo()
+        public void GetAllReturnFee()
         {
             //用于序列化实体类的对象  
             JavaScriptSerializer jss = new JavaScriptSerializer();
@@ -69,42 +69,32 @@ namespace HRMS.Controllers
 
             Dictionary<string, string> bizParaDic = new Dictionary<string, string>();
             bizParaDic.Add("search", searchKey);
+            Dictionary<string, string> bizParaDicTemp = new Dictionary<string, string>();
 
-            string itemName = HttpContext.Request.Params["iItemName"];
-            string company = HttpContext.Request.Params["iCompany"];
-            string idcard = HttpContext.Request.Params["iIdCard"];
-            string tel = HttpContext.Request.Params["iPhone"];
-            string empId = HttpContext.Request.Params["iEmpNo"];
-            string status = HttpContext.Request.Params["iEmployeeStatus"];
-            string employeedate1 = HttpContext.Request.Params["iEmployeeDateFrom"];
-            string employeedate2 = HttpContext.Request.Params["iEmployeeDateTo"];
-
-            string contractdeadline1 = HttpContext.Request.Params["iContractDeadLineFrom"];
-            string contractdeadline2 = HttpContext.Request.Params["iContractDeadLineTo"];
-
-            string resigndate1 = HttpContext.Request.Params["iResignDateFrom"];
-            string resigndate2 = HttpContext.Request.Params["iResignDateTo"];
-
-            string filelocation = HttpContext.Request.Params["iFileLocation"];
-
-            string modifyon1 = HttpContext.Request.Params["iModifyOnFrom"];
-            string modifyon2 = HttpContext.Request.Params["iModifyOnTo"];
-
-            bizParaDic.Add("iItemName", itemName);
-            bizParaDic.Add("iCompany", company);
-            bizParaDic.Add("iIdCard", idcard);
-            bizParaDic.Add("iPhone", tel);
-            bizParaDic.Add("iEmpNo", empId);
-            bizParaDic.Add("iEmployeeStatus", status);
-            bizParaDic.Add("iEmployeeDate[d]", employeedate1 + "§" + employeedate2);
-            bizParaDic.Add("iContractDeadLine[d]", contractdeadline1 + "§" + contractdeadline2);
-            bizParaDic.Add("iResignDate[d]", resigndate1 + "§" + resigndate2);
-            bizParaDic.Add("iFileLocation", filelocation);
-            bizParaDic.Add("iUpdatedOn[d]", modifyon1 + "§" + modifyon2);
+            foreach (string para in HttpContext.Request.Params.Keys)
+            {
+                if (para.StartsWith("s") && (ReturnFeeManager.ReturnFeeDic.ContainsValue("i" + para.Substring(1, para.Length - 1)) || (para.Length > 2 && ReturnFeeManager.ReturnFeeDic.ContainsValue("i" + para.Substring(1, para.Length - 2)))))
+                {
+                    bizParaDicTemp.Add("i" + para.Substring(1, para.Length - 1), HttpContext.Request.Params[para]);
+                }
+            }
+            foreach (var item in bizParaDicTemp)
+            {
+                if (item.Key.EndsWith("2"))
+                    continue;
+                if (bizParaDicTemp.ContainsKey(item.Key + "2"))
+                {
+                    bizParaDic.Add(item.Key + "[d]", item.Value + "§" + bizParaDicTemp[item.Key + "2"]);
+                }
+                else
+                {
+                    bizParaDic.Add(item.Key, item.Value);
+                }
+            }
 
             int total = 0;
-            HRInfoManager service = new HRInfoManager();
-            List<HRInfoEntity> list = service.GetSearch(SessionHelper.CurrentUser.iCompanyCode, bizParaDic, sort, order, offset, pageSize, out total);
+            ReturnFeeManager service = new ReturnFeeManager();
+            List<ReturnFeeModel> list = service.GetSearch(SessionHelper.CurrentUser.iCompanyCode, bizParaDic, sort, order, offset, pageSize, out total);
 
             DicManager dm = new DicManager();
             List<DicEntity> companyDicE = dm.GetDicByType("公司");
@@ -119,7 +109,7 @@ namespace HRMS.Controllers
             }
 
             //给分页实体赋值  
-            PageModels<HRInfoEntity> model = new PageModels<HRInfoEntity>();
+            PageModels<ReturnFeeModel> model = new PageModels<ReturnFeeModel>();
             model.total = total;
             if (total % pageSize == 0)
                 model.page = total / pageSize;
@@ -132,12 +122,12 @@ namespace HRMS.Controllers
             HttpContext.Response.Write(jss.Serialize(model));
         }
 
-        public JsonResult GetHRInfo(string guid)
+        public JsonResult GetReturnFee(string guid)
         {
             try
             {
-                HRInfoManager service = new HRInfoManager();
-                HRInfoEntity entity = service.GetFirstOrDefault(guid);
+                ReturnFeeManager service = new ReturnFeeManager();
+                ReturnFeeModel entity = service.GetFirstOrDefault(guid);
                 return new JsonResult { Data = new { success = true, msg = "msg", data = entity }, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
 
             }
@@ -153,8 +143,8 @@ namespace HRMS.Controllers
             {
                 JsonSerializerSettings st = new JsonSerializerSettings();
                 st.DateTimeZoneHandling = DateTimeZoneHandling.Local;
-                HRInfoEntity entity = JsonConvert.DeserializeObject<HRInfoEntity>(jsonString, st);
-                HRInfoManager service = new HRInfoManager();
+                ReturnFeeEntity entity = JsonConvert.DeserializeObject<ReturnFeeEntity>(jsonString, st);
+                ReturnFeeManager service = new ReturnFeeManager();
                 if (entity.iGuid == "")
                 {
                     entity.iCreatedBy = SessionHelper.CurrentUser.iUserName;
@@ -174,37 +164,7 @@ namespace HRMS.Controllers
             }
         }
 
-        public void GetHRInfoLog()
-        {
-            //用于序列化实体类的对象  
-            JavaScriptSerializer jss = new JavaScriptSerializer();
-
-            //请求中携带的条件  
-            string order = HttpContext.Request.Params["order"];
-            string sort = HttpContext.Request.Params["sort"];
-            string searchKey = HttpContext.Request.Params["recordid"];
-            int offset = Convert.ToInt32(HttpContext.Request.Params["offset"]);  //0
-            int pageSize = Convert.ToInt32(HttpContext.Request.Params["limit"]);
-
-            int total = 0;
-            ModifyLogManager service = new ModifyLogManager();
-            List<ModifyLogEntity> list = service.GetSearch(searchKey, sort, order, offset, pageSize, out total);
-
-            //给分页实体赋值  
-            PageModels<ModifyLogEntity> model = new PageModels<ModifyLogEntity>();
-            model.total = total;
-            if (total % pageSize == 0)
-                model.page = total / pageSize;
-            else
-                model.page = (total / pageSize) + 1;
-
-            model.rows = list;
-
-            //将查询结果返回  
-            HttpContext.Response.Write(jss.Serialize(model));
-        }
-
-        public JsonResult ImportHRInfo()
+        public JsonResult ImportReturnFee()
         {
             try
             {
@@ -408,30 +368,6 @@ namespace HRMS.Controllers
             }
             return list;
         }
-
-        private void MergeToDBWithLog(List<HRInfoEntity> list)
-        {
-            HRInfoManager service = new HRInfoManager();
-            foreach (var item in list)
-            {
-                if (string.IsNullOrEmpty(item.iGuid))
-                {
-                    item.iCreatedBy = SessionHelper.CurrentUser.iUserName;
-                    item.iUpdatedBy = SessionHelper.CurrentUser.iUserName;
-                    service.Insert(item);
-                }
-                else
-                {
-                    item.iUpdatedBy = SessionHelper.CurrentUser.iUserName;
-                    service.Update(item);
-                }
-            }
-
-        }
-
-        /// <summary>  
-        /// 18位身份证号码验证  
-        /// </summary>  
         private bool CheckIDCard18(string idNumber)
         {
             long n = 0;
@@ -467,21 +403,31 @@ namespace HRMS.Controllers
             }
             return true;//符合GB11643-1999标准  
         }
+        private void MergeToDBWithLog(List<HRInfoEntity> list)
+        {
+            HRInfoManager service = new HRInfoManager();
+            foreach (var item in list)
+            {
+                if (string.IsNullOrEmpty(item.iGuid))
+                {
+                    item.iCreatedBy = SessionHelper.CurrentUser.iUserName;
+                    item.iUpdatedBy = SessionHelper.CurrentUser.iUserName;
+                    service.Insert(item);
+                }
+                else
+                {
+                    item.iUpdatedBy = SessionHelper.CurrentUser.iUserName;
+                    service.Update(item);
+                }
+            }
+
+        }
+
 
         public void ExportBasic()
         {
             string path = "人事基本信息导出" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
             ExExcel<HRInfoEntity>(GetExportData(), path, HRInfoManager.DicConvert(HRInfoManager.hrBasicDic));
-        }
-        public void ExportAccount()
-        {
-            string path = "人事账户信息导出" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
-            ExExcel<HRInfoEntity>(GetExportData(), path, HRInfoManager.DicConvert(HRInfoManager.hrAccountDic));
-        }
-        public void ExportPosition()
-        {
-            string path = "人事职位信息导出" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
-            ExExcel<HRInfoEntity>(GetExportData(), path, HRInfoManager.DicConvert(HRInfoManager.hrPositionDic));
         }
 
         private List<HRInfoEntity> GetExportData()
