@@ -621,7 +621,28 @@
 , { field: "iPosition", title: "岗位", sortable: true }
 , { field: "iManageLevel", title: "管理层级", sortable: true }
 , { field: "iProjectGroup", title: "所在项目组", sortable: true }
-, { field: "iCompanyWorkYear", title: "司龄", sortable: true }
+, {
+    field: "iCompanyWorkYear", title: "司龄", sortable: true, formatter: function (value, row, index) {
+        if (row.iEmployeeDate == null || row.iEmployeeDate == "")
+            return "";
+        var d2 = new Date();
+        var d1 = new Date(ChangeDateFormat(row.iEmployeeDate));
+        if (d1 > d2) {
+            return "";
+        }
+        var year = d2.getYear() - d1.getYear();
+        var month = d2.getMonth() - d1.getMonth();
+        var day = d2.getDate() - d1.getDate();
+        if (day < 0) {
+            month--;
+        }
+        if (month < 0) {
+            year--;
+            month = month + 12;
+        }
+        return year + "年" + month + "月";
+    }
+}
 , { field: "iFirstDep", title: "所属一级部门", sortable: true }
 , { field: "iSecondDep", title: "所属二级部门", sortable: true }
 , { field: "iThirdDep", title: "所属三级部门", sortable: true }
@@ -1022,7 +1043,6 @@
         self.iEmployeeDate = ko.observable("");
         self.iCompanyWorkYear = ko.computed({
             read: function () {
-                debugger;
                 if (self.iEmployeeDate() == null || self.iEmployeeDate() == "")
                     return "";
                 var d2 = new Date();
@@ -1044,7 +1064,6 @@
 
             },
             write: function (value) {
-                debugger;
             }
         });
         self.iPositiveDate = ko.observable("");

@@ -11,6 +11,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using ClinBrain.Data.Entity;
+using HRMS.Common;
 using HRMS.Data.Manager;
 using HRMS.WEB.Models;
 using HRMS.WEB.Utils;
@@ -161,6 +162,10 @@ namespace HRMS.Controllers
                 HRInfoManager service = new HRInfoManager();
                 if (entity.iGuid == "")
                 {
+                    if (service.GetUniqueFirstOrDefault(entity.iCompany, entity.iEmpNo, entity.iIdCard) != null)
+                    {
+                        return "已存在相同记录！";
+                    }
                     entity.iCreatedBy = SessionHelper.CurrentUser.iUserName;
                     entity.iUpdatedBy = SessionHelper.CurrentUser.iUserName;
                     service.Insert(entity);
@@ -268,7 +273,7 @@ namespace HRMS.Controllers
             //遍历数据行
             for (int i = (sheet.FirstRowNum + 1), len = sheet.LastRowNum + 1; i < len; i++)
             {
-                HRInfoEntity olden = new HRInfoEntity();
+                HRInfoEntity en = new HRInfoEntity();
                 try
                 {
                     if (keycolumns.ContainsKey("iGuid"))
@@ -276,15 +281,28 @@ namespace HRMS.Controllers
                         string iguid = sheet.GetRow(i).GetCell(keycolumns["iGuid"]).ToString();
                         if (!string.IsNullOrEmpty(iguid))
                         {
-                            olden = service.GetFirstOrDefault(iguid);
+                            en = service.GetFirstOrDefault(iguid);
                         }
                     }
-                    if (string.IsNullOrEmpty(olden.iGuid))
+                    if (string.IsNullOrEmpty(en.iGuid))
                     {
                         string company = sheet.GetRow(i).GetCell(keycolumns["iCompany"]).ToString();
                         string empcode = sheet.GetRow(i).GetCell(keycolumns["iEmpNo"]).ToString();
                         string idcard = sheet.GetRow(i).GetCell(keycolumns["iIdCard"]).ToString();
-                        olden = service.GetUniqueFirstOrDefault(company, empcode, idcard);
+                        var currentCompany = companies.FirstOrDefault(pj => pj.iValue == company);
+                        if (currentCompany == null)
+                        {
+                            errorLog += "第【" + (i + 1).ToString() + "】行公司名称不存在；";
+                        }
+                        else
+                        {
+                            en = service.GetUniqueFirstOrDefault(currentCompany.iKey, empcode, idcard);
+                            if (en == null)
+                            {
+                                en = new HRInfoEntity();
+                            }
+                        }
+                        
                     }
                 }
                 catch
@@ -292,43 +310,28 @@ namespace HRMS.Controllers
                     errorLog += "第【" + (i + 1).ToString() + "】行所在公司，工号，身份证号不能有缺失；";
                 }
 
-                HRInfoEntity en = new HRInfoEntity();
-                if (olden != null)
+
+                foreach (var kvp in keycolumns)
                 {
-                    en.iGuid = olden.iGuid;
-                }
-                foreach (var kvp in keycolumnp)
-                {
-                    if (kvp.Key == "iGuid")
+                    if (sheet.GetRow(i).GetCell(kvp.Value) == null || sheet.GetRow(i).GetCell(kvp.Value).ToString() == "")
                     {
-                        continue;
-                    }
-                    if (!keycolumns.ContainsKey(kvp.Value))
-                    {
-                        if (olden != null)
-                        {
-                            en.GetType().GetProperty(kvp.Value).SetValue(en, olden.GetType().GetProperty(kvp.Value).GetValue(olden), null);
-                        }
-                        continue;
-                    }
-                    if (sheet.GetRow(i).GetCell(keycolumns[kvp.Value]) == null || sheet.GetRow(i).GetCell(keycolumns[kvp.Value]).ToString() == "")
-                    {
-                        en.GetType().GetProperty(kvp.Value).SetValue(en, null, null);
+                        //en.GetType().GetProperty(kvp.Key).SetValue(en, null, null);
+                        //空的不填写，保持原数据不变
                     }
                     else
                     {
                         object value = null;
-                        ICell cell = sheet.GetRow(i).GetCell(keycolumns[kvp.Value]);
+                        ICell cell = sheet.GetRow(i).GetCell(kvp.Value);
                         if (cell.CellType == CellType.Blank)
                             value = "";
                         else
                         {
-                            string propertyName = en.GetType().GetProperty(kvp.Value).PropertyType.FullName.ToLower();
+                            string propertyName = en.GetType().GetProperty(kvp.Key).PropertyType.FullName.ToLower();
                             if (cell.CellType == CellType.Numeric && HSSFDateUtil.IsCellDateFormatted(cell))
                             {  
                                 try
                                 {
-                                    value = sheet.GetRow(i).GetCell(keycolumns[kvp.Value]).DateCellValue;
+                                    value = sheet.GetRow(i).GetCell(kvp.Value).DateCellValue;
                                 }
                                 catch (Exception ex)
                                 {
@@ -341,14 +344,14 @@ namespace HRMS.Controllers
                             }
                             else
                             {
-                                value = sheet.GetRow(i).GetCell(keycolumns[kvp.Value]).ToString().Trim();
+                                value = sheet.GetRow(i).GetCell(kvp.Value).ToString().Trim();
                                 if (propertyName.Contains("datetime") && value != null)
                                 {
                                     value = DateTime.Parse(value.ToString());
                                 }
                             }
                         }
-                        en.GetType().GetProperty(kvp.Value).SetValue(en, value, null);
+                        en.GetType().GetProperty(kvp.Key).SetValue(en, value, null);
                     }
                 }
                 string[] sexArray = { "男", "女" };
@@ -386,20 +389,16 @@ namespace HRMS.Controllers
                     en.iItemName = currentItem.iKey;
                 }
 
-                if (SessionHelper.CurrentUser.iUserType == "普通用户" && en.iItemName != SessionHelper.CurrentUser.iCompanyCode)
+                if (en.iItemName != SessionHelper.CurrentUser.iCompanyCode)
                 {
-                    errorLog += "第【" + (i + 1).ToString() + "】行项目名称不正确，只能导入项目" + SessionHelper.CurrentUser.iCompanyCode + "；";
+                    errorLog += "第【" + (i + 1).ToString() + "】行项目名称不正确，只能导入当前项目；";
+                }
+                var currCompany = companies.FirstOrDefault(co => co.iValue == en.iCompany);
+                if (currCompany != null)
+                {
+                    en.iCompany = currCompany.iKey;
                 }
 
-                var currentCompany = companies.FirstOrDefault(pj => pj.iValue == en.iCompany);
-                if (currentCompany == null)
-                {
-                    errorLog += "第【" + (i + 1).ToString() + "】行公司名称不存在；";
-                }
-                else
-                {
-                    en.iCompany = currentCompany.iKey;
-                }
                 if (string.IsNullOrEmpty(en.iEmpNo))
                 {
                     errorLog += "第【" + (i + 1).ToString() + "】行工号不能为空,临时工用-；";
@@ -498,17 +497,17 @@ namespace HRMS.Controllers
         public void ExportBasic()
         {
             string path = "人事基本信息导出" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
-            ExExcel<HRInfoEntity>(GetExportData(), path, HRInfoManager.DicConvert(HRInfoManager.hrBasicDic));
+            ExExcel<HRInfoEntity>(GetExportData(), path, ConvertHelper.DicConvert(HRInfoManager.hrBasicDic));
         }
         public void ExportAccount()
         {
             string path = "人事账户信息导出" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
-            ExExcel<HRInfoEntity>(GetExportData(), path, HRInfoManager.DicConvert(HRInfoManager.hrAccountDic));
+            ExExcel<HRInfoEntity>(GetExportData(), path, ConvertHelper.DicConvert(HRInfoManager.hrAccountDic));
         }
         public void ExportPosition()
         {
             string path = "人事职位信息导出" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
-            ExExcel<HRInfoEntity>(GetExportData(), path, HRInfoManager.DicConvert(HRInfoManager.hrPositionDic));
+            ExExcel<HRInfoEntity>(GetExportData(), path, ConvertHelper.DicConvert(HRInfoManager.hrPositionDic));
         }
 
         private List<HRInfoEntity> GetExportData()

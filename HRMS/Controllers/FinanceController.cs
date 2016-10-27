@@ -11,6 +11,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using ClinBrain.Data.Entity;
+using HRMS.Common;
 using HRMS.Data.Manager;
 using HRMS.WEB.Models;
 using HRMS.WEB.Utils;
@@ -66,9 +67,12 @@ namespace HRMS.Controllers
             string searchKey = HttpContext.Request.Params["search"];
             int offset = Convert.ToInt32(HttpContext.Request.Params["offset"]);  //0
             int pageSize = Convert.ToInt32(HttpContext.Request.Params["limit"]);
+            string editType = HttpContext.Request.Params["sEditType"];
 
             Dictionary<string, string> bizParaDic = new Dictionary<string, string>();
             bizParaDic.Add("search", searchKey);
+            bizParaDic.Add("editType", editType);
+            bizParaDic.Add("iItemName", SessionHelper.CurrentUser.iCompanyCode);
             Dictionary<string, string> bizParaDicTemp = new Dictionary<string, string>();
 
             foreach (string para in HttpContext.Request.Params.Keys)
@@ -122,12 +126,12 @@ namespace HRMS.Controllers
             HttpContext.Response.Write(jss.Serialize(model));
         }
 
-        public JsonResult GetReturnFee(string guid)
+        public JsonResult GetReturnFee(string hrguid)
         {
             try
             {
                 ReturnFeeManager service = new ReturnFeeManager();
-                ReturnFeeModel entity = service.GetFirstOrDefault(guid);
+                ReturnFeeModel entity = service.GetFirstOrDefault(hrguid);
                 return new JsonResult { Data = new { success = true, msg = "msg", data = entity }, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
 
             }
@@ -145,7 +149,7 @@ namespace HRMS.Controllers
                 st.DateTimeZoneHandling = DateTimeZoneHandling.Local;
                 ReturnFeeEntity entity = JsonConvert.DeserializeObject<ReturnFeeEntity>(jsonString, st);
                 ReturnFeeManager service = new ReturnFeeManager();
-                if (entity.iGuid == "")
+                if (string.IsNullOrEmpty(entity.iGuid))
                 {
                     entity.iCreatedBy = SessionHelper.CurrentUser.iUserName;
                     entity.iUpdatedBy = SessionHelper.CurrentUser.iUserName;
@@ -185,7 +189,7 @@ namespace HRMS.Controllers
                     return new JsonResult { Data = new { success = false, msg = "不是标准的Excel文件!" } };
                 }
                 string errorLog = "";
-                List<HRInfoEntity> list = ExcelSheetToEntityList(workbook.GetSheetAt(0), ref errorLog);
+                List<ReturnFeeEntity> list = ExcelSheetToEntityList(workbook.GetSheetAt(0), ref errorLog);
 
                 if (string.IsNullOrEmpty(errorLog))
                 {
@@ -205,16 +209,16 @@ namespace HRMS.Controllers
             }
         }
 
-        private List<HRInfoEntity> ExcelSheetToEntityList(ISheet sheet, ref string errorLog)
+        private List<ReturnFeeEntity> ExcelSheetToEntityList(ISheet sheet, ref string errorLog)
         {
+            //需要验证权限，如果是普通用户，不能导入已存在的返回信息。
             DicManager dm = new DicManager();
             var companies = dm.GetDicByType("公司");
-            var projects = dm.GetDicByType("项目");
-            HRInfoManager service = new HRInfoManager();
+            ReturnFeeManager service = new ReturnFeeManager();
 
-            List<HRInfoEntity> list = new List<HRInfoEntity>();
+            List<ReturnFeeEntity> list = new List<ReturnFeeEntity>();
 
-            Dictionary<string, string> keycolumnp = HRInfoManager.hrDic;
+            Dictionary<string, string> keycolumnp = ReturnFeeManager.ReturnFeeDic;
             Dictionary<string, int> keycolumns = new Dictionary<string, int>();
             for (int co = 0; co < sheet.GetRow(0).LastCellNum; co++)
             {
@@ -224,127 +228,103 @@ namespace HRMS.Controllers
             //遍历数据行
             for (int i = (sheet.FirstRowNum + 1), len = sheet.LastRowNum + 1; i < len; i++)
             {
-                HRInfoEntity olden = new HRInfoEntity();
+                ReturnFeeEntity en = new ReturnFeeEntity();
                 try
                 {
-                    if (keycolumns.ContainsKey("iGuid"))
+                    string company = sheet.GetRow(i).GetCell(keycolumns["iCompany"]).ToString();
+                    string empcode = sheet.GetRow(i).GetCell(keycolumns["iEmpNo"]).ToString();
+                    string idcard = sheet.GetRow(i).GetCell(keycolumns["iIdCard"]).ToString();
+                    if (string.IsNullOrEmpty(empcode))
                     {
-                        string iguid = sheet.GetRow(i).GetCell(keycolumns["iGuid"]).ToString();
-                        if (!string.IsNullOrEmpty(iguid))
-                        {
-                            olden = service.GetFirstOrDefault(iguid);
-                        }
+                        errorLog += "第【" + (i + 1).ToString() + "】行工号不能为空,临时工用-；";
                     }
-                    if (string.IsNullOrEmpty(olden.iGuid))
+                    if (!CheckIDCard18(idcard))
                     {
-                        string company = sheet.GetRow(i).GetCell(keycolumns["iCompany"]).ToString();
-                        string empcode = sheet.GetRow(i).GetCell(keycolumns["iEmpNo"]).ToString();
-                        string idcard = sheet.GetRow(i).GetCell(keycolumns["iIdCard"]).ToString();
-                        olden = service.GetUniqueFirstOrDefault(company, empcode, idcard);
+                        errorLog += "第【" + (i + 1).ToString() + "】行身份证号不合法；";
+                    }
+                    var companyNow = companies.FirstOrDefault(pj => pj.iValue == company);
+                    if (companyNow == null)
+                    {
+                        errorLog += "第【" + (i + 1).ToString() + "】行公司名称不存在；";
+                    }
+                    else
+                    {
+                        company = companyNow.iKey;
+                    }
+
+                    string hrId = service.GetValidReturnFeeHrId(company, empcode, idcard, SessionHelper.CurrentUser.iCompanyCode);
+                    if (string.IsNullOrEmpty(hrId))
+                    {
+                        errorLog += "第【" + (i + 1).ToString() + "】行在人事里的当前项目中没有给出返费信息；";
+                    }
+                    else
+                    {
+                        en = service.FirstOrDefault(hrId);
+                        if (en == null)
+                        {
+                            en = new ReturnFeeEntity();
+                            en.iHRInfoGuid = hrId;
+                        }
                     }
                 }
                 catch
                 {
                     errorLog += "第【" + (i + 1).ToString() + "】行所在公司，工号，身份证号不能有缺失；";
                 }
-
-                HRInfoEntity en = new HRInfoEntity();
-                if (olden != null)
+                foreach (var kvp in keycolumns)
                 {
-                    en.iGuid = olden.iGuid;
-                }
-                foreach (var kvp in keycolumnp)
-                {
-                    if (kvp.Key == "iGuid")
+                    if (sheet.GetRow(i).GetCell(kvp.Value) == null || sheet.GetRow(i).GetCell(kvp.Value).ToString() == "")
                     {
-                        continue;
-                    }
-                    if (!keycolumns.ContainsKey(kvp.Value))
-                    {
-                        if (olden != null)
-                        {
-                            en.GetType().GetProperty(kvp.Value).SetValue(en, olden.GetType().GetProperty(kvp.Value).GetValue(olden), null);
-                        }
-                        continue;
-                    }
-                    if (sheet.GetRow(i).GetCell(keycolumns[kvp.Value]) == null || sheet.GetRow(i).GetCell(keycolumns[kvp.Value]).ToString() == "")
-                    {
-                        en.GetType().GetProperty(kvp.Value).SetValue(en, null, null);
+                        //en.GetType().GetProperty(kvp.Key).SetValue(en, null, null);
+                        //空的不填写，保持原数据不变
                     }
                     else
                     {
                         object value = null;
-                        string propertyName = en.GetType().GetProperty(kvp.Value).PropertyType.FullName.ToLower();
-                        if (propertyName.Contains("datetime"))
-                        {
-                            try
-                            {
-                                value = sheet.GetRow(i).GetCell(keycolumns[kvp.Value]).DateCellValue;
-                            }
-                            catch (Exception ex)
-                            {
-                                errorLog += "第【" + (i + 1).ToString() + "】行不是标准日期格式；";
-                            }
-                        }
+                        ICell cell = sheet.GetRow(i).GetCell(kvp.Value);
+                        if (cell.CellType == CellType.Blank)
+                            value = "";
                         else
                         {
-                            value = sheet.GetRow(i).GetCell(keycolumns[kvp.Value]).ToString().Trim();
+                            string propertyName = en.GetType().GetProperty(kvp.Key).PropertyType.FullName.ToLower();
+                            if (cell.CellType == CellType.Numeric && HSSFDateUtil.IsCellDateFormatted(cell))
+                            {
+                                try
+                                {
+                                    value = sheet.GetRow(i).GetCell(kvp.Value).DateCellValue;
+                                }
+                                catch (Exception ex)
+                                {
+                                    errorLog += "第【" + (i + 1).ToString() + "】行不是标准日期格式；";
+                                }
+                                if (!propertyName.Contains("datetime") && value != null)
+                                {
+                                    value = ((DateTime)value).ToString("yyyy-MM-dd");
+                                }
+                            }
+                            else
+                            {
+                                value = sheet.GetRow(i).GetCell(kvp.Value).ToString().Trim();
+                                if (propertyName.Contains("datetime") && value != null)
+                                {
+                                    value = DateTime.Parse(value.ToString());
+                                }
+                            }
                         }
-                        en.GetType().GetProperty(kvp.Value).SetValue(en, value, null);
+                        en.GetType().GetProperty(kvp.Key).SetValue(en, value, null);
                     }
                 }
-                string[] sexArray = { "男", "女" };
-                string[] residencePropertyArray = { "农业户口", "非农业户口" };
-                string[] bloodTypeArray = { "A", "B", "AB", "O" };
-                string[] marriageArray = { "已婚", "未婚" };
-                string[] yesnoArray = { "是", "否" };
-                string[] poliArray = { "群众", "团员", "共产党员", "其它" };
-                string[] eduArray = { "小学", "初中", "中专", "高中", "大专", "本科", "硕士", "博士" };
-                string[] empstaArray = { "在职", "离职" };
-                string[] contratypeArray = { "派遣", "外包" };
-                string[] resigntypeArray = { "自离", "旷工", "辞职", "辞退", "开除" };
-                string[] resignressonArray = { "身体原因", "工作原因", "家族原因", "其他" };
+                
+
+                string[] paidArray = { "已付", "未付" };
                 Dictionary<string, string[]> checkdic = new Dictionary<string, string[]>();
-                checkdic.Add("性别$iSex", sexArray);
-                checkdic.Add("户口性质$iResidenceProperty", residencePropertyArray);
-                //checkdic.Add("血型$iBloodType", bloodTypeArray);
-                checkdic.Add("婚姻状况$iMariage", marriageArray);
-                checkdic.Add("体检$iHealthCheck|合同签订情况$iContractSignStatus|是否返费$iIsReturnFee|是否缴纳保险$iIsSocialInsurancePaid|是否缴纳公积金$iIsProvidentPaid|是否缴纳商业保险$iIsCommercialInsurancePaid", yesnoArray);
-                checkdic.Add("政治面貌$iPolitical", poliArray);
-                checkdic.Add("文化水平$iEducationLevel", eduArray);
-                checkdic.Add("员工状态$iEmployeeStatus", empstaArray);
-                checkdic.Add("合同类型$iContractType", contratypeArray);
-                checkdic.Add("离职类型$iResignType", resigntypeArray);
-                checkdic.Add("离职原因（公司）$iResignReason", resignressonArray);
+                checkdic.Add("一级付款情况$iFirstReturnFeePayment", paidArray);
+                checkdic.Add("二级付款情况$iSecondReturnFeePayment", paidArray);
+                checkdic.Add("三级付款情况$iThirdReturnFeePayment", paidArray);
+                checkdic.Add("四级付款情况$iFourthReturnFeePayment", paidArray);
+                checkdic.Add("五级付款情况$iFifthReturnFeePayment", paidArray);
 
-
-
-                if (projects.FirstOrDefault(pj => pj.iValue == en.iItemName) == null)
-                {
-                    errorLog += "第【" + (i + 1).ToString() + "】行项目名称不存在；";
-                }
-
-                if (SessionHelper.CurrentUser.iUserType == "普通用户" && en.iItemName != SessionHelper.CurrentUser.iCompanyCode)
-                {
-                    errorLog += "第【" + (i + 1).ToString() + "】行项目名称不正确，只能导入项目" + SessionHelper.CurrentUser.iCompanyCode + "；";
-                }
-
-                if (companies.FirstOrDefault(pj => pj.iValue == en.iCompany) == null)
-                {
-                    errorLog += "第【" + (i + 1).ToString() + "】行公司名称不存在；";
-                }
-                if (string.IsNullOrEmpty(en.iEmpNo))
-                {
-                    errorLog += "第【" + (i + 1).ToString() + "】行工号不能为空,临时工用-；";
-                }
-                if (string.IsNullOrEmpty(en.iName))
-                {
-                    errorLog += "第【" + (i + 1).ToString() + "】行姓名不能为空；";
-                }
-                if (!CheckIDCard18(en.iIdCard))
-                {
-                    errorLog += "第【" + (i + 1).ToString() + "】行身份证号不合法；";
-                }
+                
                 //是否有效校验
 
                 foreach (var item in checkdic)
@@ -403,9 +383,9 @@ namespace HRMS.Controllers
             }
             return true;//符合GB11643-1999标准  
         }
-        private void MergeToDBWithLog(List<HRInfoEntity> list)
+        private void MergeToDBWithLog(List<ReturnFeeEntity> list)
         {
-            HRInfoManager service = new HRInfoManager();
+            ReturnFeeManager service = new ReturnFeeManager();
             foreach (var item in list)
             {
                 if (string.IsNullOrEmpty(item.iGuid))
@@ -424,31 +404,37 @@ namespace HRMS.Controllers
         }
 
 
-        public void ExportBasic()
+        public void ExportReturnFee()
         {
-            string path = "人事基本信息导出" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
-            ExExcel<HRInfoEntity>(GetExportData(), path, HRInfoManager.DicConvert(HRInfoManager.hrBasicDic));
+            string path = "返费信息导出" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
+            ExExcel<ReturnFeeModel>(GetExportData(), path, ConvertHelper.DicConvert(ReturnFeeManager.ReturnFeeDic));
         }
 
-        private List<HRInfoEntity> GetExportData()
+        private List<ReturnFeeModel> GetExportData()
         {
             string paraString = Request.Params["searchpara"];
             Dictionary<string, string> paraDic = JsonConvert.DeserializeObject<Dictionary<string, string>>(paraString);
-            paraDic.Add("iEmployeeDate[d]", paraDic["iEmployeeDateFrom"] + "§" + paraDic["iEmployeeDateTo"]);
-            paraDic.Add("iContractDeadLine[d]", paraDic["iContractDeadLineFrom"] + "§" + paraDic["iContractDeadLineTo"]);
-            paraDic.Add("iResignDate[d]", paraDic["iResignDateFrom"] + "§" + paraDic["iResignDateTo"]);
-            paraDic.Add("iUpdatedOn[d]", paraDic["iModifyOnFrom"] + "§" + paraDic["iModifyOnTo"]);
-            paraDic.Remove("iEmployeeDateFrom");
-            paraDic.Remove("iEmployeeDateTo");
-            paraDic.Remove("iContractDeadLineFrom");
-            paraDic.Remove("iContractDeadLineTo");
-            paraDic.Remove("iResignDateFrom");
-            paraDic.Remove("iResignDateTo");
-            paraDic.Remove("iModifyOnFrom");
-            paraDic.Remove("iModifyOnTo");
 
-            HRInfoManager service = new HRInfoManager();
-            List<HRInfoEntity> list = service.GetSearchAll(SessionHelper.CurrentUser.iCompanyCode, paraDic);
+            Dictionary<string, string> bizParaDic = new Dictionary<string, string>();
+            bizParaDic.Add("editType", paraDic["sEditType"]);
+            paraDic.Remove("sEditType");
+
+            foreach (var item in paraDic)
+            {
+                if (item.Key.EndsWith("2"))
+                    continue;
+                if (paraDic.ContainsKey(item.Key + "2"))
+                {
+                    bizParaDic.Add("i" + item.Key.Substring(1, item.Key.Length - 1) + "[d]", item.Value + "§" + paraDic[item.Key + "2"]);
+                }
+                else
+                {
+                    bizParaDic.Add("i" + item.Key.Substring(1, item.Key.Length - 1), item.Value);
+                }
+            }
+
+            ReturnFeeManager service = new ReturnFeeManager();
+            List<ReturnFeeModel> list = service.GetSearchAll(SessionHelper.CurrentUser.iCompanyCode, bizParaDic);
             return list;
 
         }
@@ -462,6 +448,10 @@ namespace HRMS.Controllers
         /// <param name="columnInfo">列名信息</param> 
         private void ExExcel<T>(List<T> objList, string FileName, Dictionary<string, string> columnInfo)
         {
+            if (columnInfo.ContainsKey("iGuid"))  //不导出标识
+            {
+                columnInfo.Remove("iGuid");
+            }
             if (columnInfo.Count == 0) { return; }
             if (objList.Count == 0) { return; }
 

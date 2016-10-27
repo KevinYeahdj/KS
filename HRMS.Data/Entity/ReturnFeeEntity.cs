@@ -16,37 +16,36 @@ namespace ClinBrain.Data.Entity
         public string iLaborCampBank { get; set; } //劳务所银行支行
         public string iLaborCampBankAccount { get; set; } //劳务所账号
         public string iLaborCampBankPerson { get; set; } //劳务所人姓名
-        public string iInterviewDate { get; set; } //面试日期
-        public string iOnJobDays { get; set; } //在职天数
+        public DateTime? iInterviewDate { get; set; } //面试日期
         public string iFirstReturnFeeAmount { get; set; } //一级返费金额 
         public string iFirstReturnFeeDays { get; set; } //一级返费天数
-        public string iFirstReturnFeeDate { get; set; } //一级返费日期
+        public DateTime? iFirstReturnFeeDate { get; set; } //一级返费日期
         public string iFirstReturnFeePayment { get; set; } //一级付款情况 
-        public string iFirstReturnFeeActualPayDate { get; set; } //一级实际支付日期
+        public DateTime? iFirstReturnFeeActualPayDate { get; set; } //一级实际支付日期
 
         public string iSecondReturnFeeAmount { get; set; } //二级返费金额 
         public string iSecondReturnFeeDays { get; set; } //二级返费天数
-        public string iSecondReturnFeeDate { get; set; } //二级返费日期
+        public DateTime? iSecondReturnFeeDate { get; set; } //二级返费日期
         public string iSecondReturnFeePayment { get; set; } //二级付款情况 
-        public string iSecondReturnFeeActualPayDate { get; set; } //二级实际支付日期
+        public DateTime? iSecondReturnFeeActualPayDate { get; set; } //二级实际支付日期
 
         public string iThirdReturnFeeAmount { get; set; } //三级返费金额 
         public string iThirdReturnFeeDays { get; set; } //三级返费天数
-        public string iThirdReturnFeeDate { get; set; } //三级返费日期
+        public DateTime? iThirdReturnFeeDate { get; set; } //三级返费日期
         public string iThirdReturnFeePayment { get; set; } //三级付款情况 
-        public string iThirdReturnFeeActualPayDate { get; set; } //三级实际支付日期
+        public DateTime? iThirdReturnFeeActualPayDate { get; set; } //三级实际支付日期
 
         public string iFourthReturnFeeAmount { get; set; } //四级返费金额 
         public string iFourthReturnFeeDays { get; set; } //四级返费天数
-        public string iFourthReturnFeeDate { get; set; } //四级返费日期
+        public DateTime? iFourthReturnFeeDate { get; set; } //四级返费日期
         public string iFourthReturnFeePayment { get; set; } //四级付款情况 
-        public string iFourthReturnFeeActualPayDate { get; set; } //四级实际支付日期
+        public DateTime? iFourthReturnFeeActualPayDate { get; set; } //四级实际支付日期
 
         public string iFifthReturnFeeAmount { get; set; } //五级返费金额 
         public string iFifthReturnFeeDays { get; set; } //五级返费天数
-        public string iFifthReturnFeeDate { get; set; } //五级返费日期
+        public DateTime? iFifthReturnFeeDate { get; set; } //五级返费日期
         public string iFifthReturnFeePayment { get; set; } //五级付款情况 
-        public string iFifthReturnFeeActualPayDate { get; set; } //五级实际支付日期
+        public DateTime? iFifthReturnFeeActualPayDate { get; set; } //五级实际支付日期
 
         public string iReturnFeeNote { get; set; } // 返费信息备注
 
@@ -63,6 +62,10 @@ namespace ClinBrain.Data.Entity
     {
 
         public string iGuid { get; set; } //惟一标识
+
+        public string iHRInfoGuid { get; set; } //人事标识外键
+
+        public string iHRInfoGuid2 { get; set; } //人事标识
         public string iItemName { get; set; } //项目名称
         public string iCompany { get; set; } //所在公司 
         public string iEmpNo { get; set; } //工号 
@@ -73,44 +76,50 @@ namespace ClinBrain.Data.Entity
         public string iLaborCampBank { get; set; } //劳务所银行支行
         public string iLaborCampBankAccount { get; set; } //劳务所账号
         public string iLaborCampBankPerson { get; set; } //劳务所人姓名
-        public string iInterviewDate { get; set; } //面试日期
+        public DateTime? iInterviewDate { get; set; } //面试日期
 
-        public string iEmployeeDate { get; set; } //入职时间 
+        public DateTime? iEmployeeDate { get; set; } //入职时间 
 
-        public string iResignDate { get; set; } //离职日期 
+        public DateTime? iResignDate { get; set; } //离职日期 
 
         public string iOnJobDays { get; set; } //在职天数
         public string iFirstReturnFeeAmount { get; set; } //一级返费金额 
         public string iFirstReturnFeeDays { get; set; } //一级返费天数
-        public string iFirstReturnFeeDate { get; set; } //一级返费日期
+        public DateTime? iFirstReturnFeeDate { get; set; } //一级返费日期
         public string iFirstReturnFeePayment { get; set; } //一级付款情况 
-        public string iFirstReturnFeeActualPayDate { get; set; } //一级实际支付日期
+        public DateTime? iFirstReturnFeeActualPayDate { get; set; } //一级实际支付日期
 
         public string iSecondReturnFeeAmount { get; set; } //二级返费金额 
         public string iSecondReturnFeeDays { get; set; } //二级返费天数
-        public string iSecondReturnFeeDate { get; set; } //二级返费日期
+        public DateTime? iSecondReturnFeeDate { get; set; } //二级返费日期
         public string iSecondReturnFeePayment { get; set; } //二级付款情况 
-        public string iSecondReturnFeeActualPayDate { get; set; } //二级实际支付日期
+        public DateTime? iSecondReturnFeeActualPayDate { get; set; } //二级实际支付日期
 
         public string iThirdReturnFeeAmount { get; set; } //三级返费金额 
         public string iThirdReturnFeeDays { get; set; } //三级返费天数
-        public string iThirdReturnFeeDate { get; set; } //三级返费日期
+        public DateTime? iThirdReturnFeeDate { get; set; } //三级返费日期
         public string iThirdReturnFeePayment { get; set; } //三级付款情况 
-        public string iThirdReturnFeeActualPayDate { get; set; } //三级实际支付日期
+        public DateTime? iThirdReturnFeeActualPayDate { get; set; } //三级实际支付日期
 
         public string iFourthReturnFeeAmount { get; set; } //四级返费金额 
         public string iFourthReturnFeeDays { get; set; } //四级返费天数
-        public string iFourthReturnFeeDate { get; set; } //四级返费日期
+        public DateTime? iFourthReturnFeeDate { get; set; } //四级返费日期
         public string iFourthReturnFeePayment { get; set; } //四级付款情况 
-        public string iFourthReturnFeeActualPayDate { get; set; } //四级实际支付日期
+        public DateTime? iFourthReturnFeeActualPayDate { get; set; } //四级实际支付日期
 
         public string iFifthReturnFeeAmount { get; set; } //五级返费金额 
         public string iFifthReturnFeeDays { get; set; } //五级返费天数
-        public string iFifthReturnFeeDate { get; set; } //五级返费日期
+        public DateTime? iFifthReturnFeeDate { get; set; } //五级返费日期
         public string iFifthReturnFeePayment { get; set; } //五级付款情况 
-        public string iFifthReturnFeeActualPayDate { get; set; } //五级实际支付日期
+        public DateTime? iFifthReturnFeeActualPayDate { get; set; } //五级实际支付日期
 
         public string iReturnFeeNote { get; set; } // 返费信息备注
+        public DateTime? iCreatedOn { get; set; }  //创建时间
+        public string iCreatedBy { get; set; } //创建人
+        public DateTime? iUpdatedOn { get; set; } //修改时间
+        public string iUpdatedBy { get; set; } //修改人
+        public int iStatus { get; set; }  //状态
+        public int iIsDeleted { get; set; } //假删
         
     }
 }

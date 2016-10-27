@@ -25,16 +25,16 @@ namespace HRMS.Data.Manager
                 dic.Add("工号", "iEmpNo");
                 dic.Add("姓名", "iName");
                 dic.Add("身份证号", "iIdCard");
-
+                dic.Add("入职时间", "iEmployeeDate");
+                dic.Add("离职日期", "iResignDate");
+                dic.Add("在职天数", "iOnJobDays");
 
                 dic.Add("劳务名称", "iLaborName");
                 dic.Add("劳务所银行支行", "iLaborCampBank");
                 dic.Add("劳务所账号", "iLaborCampBankAccount");
                 dic.Add("劳务所人姓名", "iLaborCampBankPerson");
                 dic.Add("面试日期", "iInterviewDate");
-                dic.Add("入职时间", "iEmployeeDate");
-                dic.Add("离职日期", "iResignDate");
-                dic.Add("在职天数", "iOnJobDays");
+                
 
                 dic.Add("一级返费金额", "iFirstReturnFeeAmount");
                 dic.Add("一级返费天数", "iFirstReturnFeeDays");
@@ -67,27 +67,10 @@ namespace HRMS.Data.Manager
                 dic.Add("五级实际支付日期", "iFifthReturnFeeActualPayDate");
 
                 dic.Add("返费信息备注", "iReturnFeeNote");
-
-                dic.Add("iCreatedOn", "iCreatedOn");
-                dic.Add("iCreatedBy", "iCreatedBy");
-                dic.Add("iUpdatedOn", "iUpdatedOn");
-                dic.Add("iUpdatedBy", "iUpdatedBy");
-                dic.Add("iStatus", "iStatus");
-                dic.Add("iIsDeleted", "iIsDeleted");
                 return dic;
             }
         }
 
-
-        public static Dictionary<string, string> DicConvert(Dictionary<string, string> dicOri)
-        {
-            Dictionary<string, string> dic = new Dictionary<string, string>();
-            foreach (var item in dicOri)
-            {
-                dic.Add(item.Value, item.Key);
-            }
-            return dic;
-        }
         /// <summary>
         /// 插入一条记录
         /// </summary>
@@ -138,18 +121,32 @@ namespace HRMS.Data.Manager
                 session.Dispose();
             }
         }
-        public ReturnFeeModel GetFirstOrDefault(string id)
+        public ReturnFeeModel GetFirstOrDefault(string hrGuid)
         {
-            string sql = @"select * from returnfee fee inner join hrinfo hr on fee.ihrinfoguid = hr.iguid and hr.iisdeleted=0 and hr.istatus=1 where fee.iguid=@id and fee.iIsDeleted =0 and fee.iStatus =1";
-            return Repository.Query<ReturnFeeModel>(sql, new { id = id }).FirstOrDefault();
+            string sql = @"select DATEDIFF(day, hr.iEmployeeDate, hr.iResignDate)  as iOnJobDays, fee.*, hr.iItemName, hr.iCompany, hr.iEmpNo, hr.iName, hr.iIdCard,hr.iEmployeeDate, hr.iResignDate, hr.iGuid as iHRInfoGuid2  from returnfee fee right join hrinfo hr on fee.ihrinfoguid = hr.iguid and fee.iIsDeleted =0 and fee.iStatus =1 where hr.iIsReturnFee = '是' and hr.iisdeleted=0 and hr.istatus=1 and hr.iguid=@id ";
+            return Repository.Query<ReturnFeeModel>(sql, new { id = hrGuid }).FirstOrDefault();
+        }
+
+        public ReturnFeeEntity FirstOrDefault(string hrGuid)
+        {
+            string sql = @"select * from returnFee where iHRInfoGuid=@hrid and iIsDeleted =0 and iStatus =1";
+            return Repository.Query<ReturnFeeEntity>(sql, new { hrid = hrGuid }).FirstOrDefault();
         }
 
         public List<ReturnFeeModel> GetSearch(string companyCode, Dictionary<string, string> para, string sort, string order, int offset, int pageSize, out int total)
         {
-            //StringBuilder commandsb = new StringBuilder("from HRInfo where icompany='");
-            //commandsb.Append(companyCode);
-            //commandsb.Append("' ");
-            StringBuilder commandsb = new StringBuilder("from ReturnFee fee right join hrinfo hr on fee.iHRInfoGuid = hr.iguid and hr.iIsReturnFee = '是' where 1=1 ");
+            StringBuilder commandsb = new StringBuilder("from ReturnFee fee right join hrinfo hr on fee.iHRInfoGuid = hr.iguid and fee.iIsDeleted =0 and fee.iStatus =1  where hr.iIsReturnFee = '是' and hr.iisdeleted=0 and hr.istatus=1 and hr.iItemName= '" + para["iItemName"] +"' ");
+            if (para["editType"] == "已编辑")
+            {
+                commandsb.Append("and fee.iGuid is not null ");
+            }
+            else if (para["editType"] == "未编辑")
+            {
+                commandsb.Append("and fee.iGuid is null ");
+            }
+            para.Remove("editType");
+            para.Remove("iItemName");
+
             foreach (KeyValuePair<string, string> item in para)
             {
                 if (!string.IsNullOrEmpty(item.Value) && item.Value != "§")
@@ -167,7 +164,7 @@ namespace HRMS.Data.Manager
 
 
             string commonSql = commandsb.ToString();
-            string querySql = "select fee.*, hr.iItemName, hr.iCompany, hr.iEmpNo, hr.iName, hr.iIdCard,hr.iEmployeeDate, hr.iResignDate " + commonSql + "order by {0} {1} offset {2} row fetch next {3} rows only";
+            string querySql = "select DATEDIFF(day, hr.iEmployeeDate, hr.iResignDate)  as iOnJobDays, fee.*, hr.iItemName, hr.iCompany, hr.iEmpNo, hr.iName, hr.iIdCard,hr.iEmployeeDate, hr.iResignDate, hr.iGuid as iHRInfoGuid2 " + commonSql + "order by {0} {1} offset {2} row fetch next {3} rows only";
             querySql = string.Format(querySql, sort, order, offset, pageSize);
             string totalSql = "select cast(count(1) as varchar(8)) " + commonSql;
             total = int.Parse(Repository.Query<string>(totalSql).ToList()[0]);
@@ -177,10 +174,18 @@ namespace HRMS.Data.Manager
 
         public List<ReturnFeeModel> GetSearchAll(string companyCode, Dictionary<string, string> para)
         {
-            //StringBuilder commandsb = new StringBuilder("from HRInfo where icompany='");
-            //commandsb.Append(companyCode);
-            //commandsb.Append("' ");
-            StringBuilder commandsb = new StringBuilder("from ReturnFee fee right join hrinfo hr on fee.iHRInfoGuid = hr.iguid and hr.iIsReturnFee = '是' where 1=1 ");
+            StringBuilder commandsb = new StringBuilder("from ReturnFee fee right join hrinfo hr on fee.iHRInfoGuid = hr.iguid and fee.iIsDeleted =0 and fee.iStatus =1  where hr.iIsReturnFee = '是' and hr.iisdeleted=0 and hr.istatus=1 and hr.iItemName= '" + para["iItemName"] + "' ");
+            if (para["editType"] == "已编辑")
+            {
+                commandsb.Append("and fee.iGuid is not null ");
+            }
+            else if (para["editType"] == "未编辑")
+            {
+                commandsb.Append("and fee.iGuid is null ");
+            }
+            para.Remove("editType");
+            para.Remove("iItemName");
+
             foreach (KeyValuePair<string, string> item in para)
             {
                 if (!string.IsNullOrEmpty(item.Value) && item.Value != "§")
@@ -196,8 +201,22 @@ namespace HRMS.Data.Manager
                 }
             }
             string commonSql = commandsb.ToString();
-            string querySql = "select * " + commonSql + "order by iUpdatedOn desc";
+            string querySql = "select DATEDIFF(day, hr.iEmployeeDate, hr.iResignDate)  as iOnJobDays, fee.*, hr.iItemName, hr.iCompany, hr.iEmpNo, hr.iName, hr.iIdCard,hr.iEmployeeDate, hr.iResignDate, hr.iGuid as iHRInfoGuid2 " + commonSql + "order by fee.iUpdatedOn desc, hr.iUpdatedOn desc";
             return Repository.Query<ReturnFeeModel>(querySql).ToList();
+        }
+
+        public string GetValidReturnFeeHrId(string company, string empcode, string idcard, string itemName)
+        {
+            string sql = "select iGuid from HRInfo where iCompany='" + company + "' and iEmpNo = '" + empcode + "' and iIdCard ='" + idcard + "' and iIsReturnFee='是' and iIsDeleted =0 and iStatus=1 and iItemName = '" + itemName +"'";
+            DataTable dt = DbHelperSQL.Query(sql).Tables[0];
+            if(dt.Rows.Count==0)
+            {
+                return null;
+            }
+            else
+            {
+                return dt.Rows[0][0].ToString();
+            }
         }
 
     }

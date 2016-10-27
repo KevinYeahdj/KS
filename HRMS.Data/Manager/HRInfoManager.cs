@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data;
 using ClinBrain.Data.Entity;
+using HRMS.Common;
 
 namespace HRMS.Data.Manager
 {
@@ -310,15 +311,6 @@ namespace HRMS.Data.Manager
             }
         }
 
-        public static Dictionary<string, string> DicConvert(Dictionary<string, string> dicOri)
-        {
-            Dictionary<string, string> dic = new Dictionary<string, string>();
-            foreach (var item in dicOri)
-            {
-                dic.Add(item.Value, item.Key);
-            }
-            return dic;
-        }
         /// <summary>
         /// 插入一条记录
         /// </summary>
@@ -453,7 +445,7 @@ namespace HRMS.Data.Manager
                 string modifiedContent = string.Empty;
                 System.Reflection.PropertyInfo[] properties = entity.GetType().GetProperties(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
 
-                Dictionary<string, string> hrDicConvertTmp = DicConvert(hrDic);
+                Dictionary<string, string> hrDicConvertTmp = ConvertHelper.DicConvert(hrDic);
 
                 foreach (System.Reflection.PropertyInfo item in properties)
                 {

@@ -52,16 +52,25 @@
                     </div>
 
                 <div style="float: left; margin-left: 10px"><span>返费天数：</span></div>
-                <div style="float: left; margin-left: 10px;width:130px"><input id="sFirstReturnFeeDays" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px;width:150px"><input id="sFirstReturnFeeDays" class="form-control" /></div>
 
 
-                <div style="float:left;margin-left:10px"><span>返费日期：</span></div><div style="float: left; margin-left: 10px; width: 10%"><input id="sFirstReturnFeeDate" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 10%"><input id="sFirstReturnFeeDate2" class="form-control" /></div>
-                    <div style="float:left;margin-left:10px"><span>&nbsp;&nbsp;&nbsp;&nbsp;入职日期：</span></div><div style="float: left; margin-left: 10px;width:10%"><input id="sEmployeeDate" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 10%"><input id="sEmployeeDate2" class="form-control" /></div>
-                    <div style="float:left;margin-left:10px"><span>&nbsp;&nbsp;&nbsp;&nbsp;支付日期：</span></div><div style="float: left; margin-left: 10px; width: 10%"><input id="sFirstReturnFeeActualPayDate" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 10%"><input id="sFirstReturnFeeActualPayDate2" class="form-control" /></div>
-                   
+                <div style="float:left;margin-left:10px"><span>返费日期：</span></div><div style="float: left; margin-left: 10px; width: 8%"><input id="sFirstReturnFeeDate" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 8%"><input id="sFirstReturnFeeDate2" class="form-control" /></div>
+                    <div style="float:left;margin-left:10px"><span>&nbsp;&nbsp;&nbsp;&nbsp;入职日期：</span></div><div style="float: left; margin-left: 10px;width:8%"><input id="sEmployeeDate" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 8%"><input id="sEmployeeDate2" class="form-control" /></div>
+                    <div style="float:left;margin-left:10px"><span>&nbsp;&nbsp;&nbsp;&nbsp;支付日期：</span></div><div style="float: left; margin-left: 10px; width: 8%"><input id="sFirstReturnFeeActualPayDate" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 8%"><input id="sFirstReturnFeeActualPayDate2" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px">
+                    <span>编辑状态：</span>
+                </div>
+                <div style="float: left; margin-left: 10px">
+                    <select class="form-control" id="sEditType">
+                        <option value="所有">所有</option>
+                        <option value="已编辑">已编辑</option>
+                        <option value="未编辑">未编辑</option>
+
+                    </select>
+                </div>
                     <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" onclick="ExportData()">数据导出</div>
                     <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" data-toggle="modal" data-target="#importModal">数据导入</div>
-                    <div style="float: right; margin-left: 10px; margin-top: 5px; " class="btn btn-primary" data-toggle="modal" data-target="#addModal" id="NewRecord">添加记录</div>
                     <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" onclick="Search()">查询</div>
 
                 </div>
@@ -75,7 +84,7 @@
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
                                 &times;
                             </button>
-                            <h4 class="modal-title" id="addModalLabel">添加记录</h4>
+                            <h4 class="modal-title" id="addModalLabel">修改记录</h4>
                         </div>
                         <div class="modal-body">
                             <input style="visibility:hidden" type="hidden" id="iGuid" data-bind="value: iGuid">
@@ -103,15 +112,18 @@
                                     }
                                 </select>
                             </div>
-                            <div class="form-group"> 工号：<input type="text" class="form-control" id="iEmpNo" data-bind="value: iEmpNo" placeholder="请输入工号"></div>
-                            <div class="form-group"> 姓名：<input type="text" class="form-control" id="iName" data-bind="value: iName" placeholder="请输入姓名"></div>
-                            <div class="form-group"> 身份证号：<input maxlength="18" onkeyup="value=value.replace(/^[a-zA-Z]+\D*|^\d{0,16}[a-zA-Z]+|[^0-9Xx]/g,'') " type="text" class="form-control" id="iIdCard" data-bind="value: iIdCard" placeholder="请输入身份证号"></div>
+                            <div class="form-group"> 工号：<input type="text" class="form-control" id="iEmpNo" data-bind="value: iEmpNo" placeholder="" readonly="readonly"></div>
+                            <div class="form-group"> 姓名：<input type="text" class="form-control" id="iName" data-bind="value: iName" placeholder="" readonly="readonly"></div>
+                            <div class="form-group"> 身份证号：<input maxlength="18" onkeyup="value=value.replace(/^[a-zA-Z]+\D*|^\d{0,16}[a-zA-Z]+|[^0-9Xx]/g,'') " type="text" class="form-control" id="iIdCard" data-bind="value: iIdCard" placeholder="" readonly="readonly"></div>
+
+                            <div class="form-group"> 入职日期：<input type="text" class="form-control" id="iEmployeeDate" data-bind="value: iEmployeeDate" placeholder="" readonly="readonly"></div>
+                            <div class="form-group"> 离职日期：<input type="text" class="form-control" id="iResignDate" data-bind="value: iResignDate" placeholder="" readonly="readonly"></div>
+                            <div class="form-group"> 在职天数：<input type="text" class="form-control" id="iOnJobDays" data-bind="value: iOnJobDays" placeholder="" readonly="readonly"></div>
                             <div class="form-group"> 劳务名称：<input type="text" class="form-control" id="iLaborName" data-bind="value: iLaborName" placeholder="请输入劳务名称"></div>
                             <div class="form-group"> 劳务所银行支行：<input type="text" class="form-control" id="iLaborCampBank" data-bind="value: iLaborCampBank" placeholder="请输入劳务所银行支行"></div>
                             <div class="form-group"> 劳务所账号：<input type="text" class="form-control" id="iLaborCampBankAccount" data-bind="value: iLaborCampBankAccount" placeholder="请输入劳务所账号"></div>
                             <div class="form-group"> 劳务所人姓名：<input type="text" class="form-control" id="iLaborCampBankPerson" data-bind="value: iLaborCampBankPerson" placeholder="请输入劳务所人姓名"></div>
                             <div class="form-group"> 面试日期：<input type="text" class="form-control" id="iInterviewDate" data-bind="value: iInterviewDate" placeholder="请输入面试日期"></div> 
-                            <div class="form-group"> 在职天数：<input type="text" class="form-control" id="iOnJobDays" data-bind="value: iOnJobDays" placeholder="请输入在职天数"></div>
                             <div class="form-group"> 一级返费金额：<input type="text" class="form-control" id="iFirstReturnFeeAmount" data-bind="value: iFirstReturnFeeAmount" placeholder="请输入一级返费金额"></div>
                             <div class="form-group"> 一级返费天数：<input type="text" class="form-control" id="iFirstReturnFeeDays" data-bind="value: iFirstReturnFeeDays" placeholder="请输入一级返费天数"></div>
                             <div class="form-group"> 一级返费日期：<input type="text" class="form-control" id="iFirstReturnFeeDate" data-bind="value: iFirstReturnFeeDate" placeholder="请输入一级返费日期"></div>
@@ -171,13 +183,35 @@
     function Search() {
         $('#mytab').bootstrapTable('refresh');
     }
+    function ChangeDateFormat(jsondate) {
+        if (!jsondate) return "";
+        jsondate = jsondate.replace("/Date(", "").replace(")/", "");
+        if (jsondate.indexOf("+") > 0) {
+            jsondate = jsondate.substring(0, jsondate.indexOf("+"));
+        }
+        else if (jsondate.indexOf("-") > 0) {
+            jsondate = jsondate.substring(0, jsondate.indexOf("-"));
+        }
+
+        var date = new Date(parseInt(jsondate, 10));
+        var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+        var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+
+        return date.getFullYear()
+            + "-"
+            + month
+            + "-"
+            + currentDate;
+    }
 
     $(function () {
         if (window.userType == "普通用户") {
             $("#sItemName").val('@HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode');
             $("#sItemName").attr("disabled", true);
             $("#iItemName").attr("disabled", true);
+            $("#sEditType").val("未编辑");
         }
+
 
         if (window.menuRights == "r") {
             $("#DataExport").hide();
@@ -394,6 +428,7 @@
                 params.sEmployeeDate2 = $("#sEmployeeDate2").val();
                 params.sFirstReturnFeeActualPayDate = $("#sFirstReturnFeeActualPayDate").val();
                 params.sFirstReturnFeeActualPayDate2 = $("#sFirstReturnFeeActualPayDate2").val();
+                params.sEditType = $("#sEditType").val();
                 return params;
             },
             searchOnEnterKey: false,//回车搜索
@@ -403,7 +438,9 @@
             toolbar: "#toolbar",//指定工具栏
             toolbarAlign: "right",//工具栏对齐方式
             columns: [
-                , { field: "iGuid", title: "iGuid", visible: false }
+                 { field: "iGuid", title: "iGuid", visible: false }
+            , { field: "iHRInfoGuid", title: "iHRInfoGuid", visible: false }
+            , { field: "iHRInfoGuid2", title: "iHRInfoGuid2", visible: false }
 ,{ field: "iItemName", title: "项目名称", sortable: true } 
 ,{ field: "iCompany", title: "所在公司", sortable: true } 
 ,{ field: "iEmpNo", title: "工号", sortable: true } 
@@ -413,35 +450,87 @@
 ,{ field: "iLaborCampBank", title: "劳务所银行支行", sortable: true } 
 ,{ field: "iLaborCampBankAccount", title: "劳务所账号", sortable: true } 
 ,{ field: "iLaborCampBankPerson", title: "劳务所人姓名", sortable: true } 
-,{ field: "iInterviewDate", title: "面试日期", sortable: true } 
-,{ field: "iEmployeeDate", title: "入职时间", sortable: true } 
-,{ field: "iResignDate", title: "离职日期", sortable: true } 
+, {
+    field: "iInterviewDate", title: "面试日期", sortable: true, formatter: function (value, row, index) {
+        return ChangeDateFormat(value);
+    }
+}
+, {
+    field: "iEmployeeDate", title: "入职时间", sortable: true, formatter: function (value, row, index) {
+        return ChangeDateFormat(value);
+    }
+}
+, {
+    field: "iResignDate", title: "离职日期", sortable: true, formatter: function (value, row, index) {
+        return ChangeDateFormat(value);
+    }
+}
 ,{ field: "iOnJobDays", title: "在职天数", sortable: true } 
 ,{ field: "iFirstReturnFeeAmount", title: "一级返费金额", sortable: true } 
 ,{ field: "iFirstReturnFeeDays", title: "一级返费天数", sortable: true } 
-,{ field: "iFirstReturnFeeDate", title: "一级返费日期", sortable: true } 
+, {
+    field: "iFirstReturnFeeDate", title: "一级返费日期", sortable: true, formatter: function (value, row, index) {
+        return ChangeDateFormat(value);
+    }
+}
 ,{ field: "iFirstReturnFeePayment", title: "一级付款情况", sortable: true } 
-,{ field: "iFirstReturnFeeActualPayDate", title: "一级实际支付日期", sortable: true } 
+, {
+    field: "iFirstReturnFeeActualPayDate", title: "一级实际支付日期", sortable: true, formatter: function (value, row, index) {
+        return ChangeDateFormat(value);
+    }
+}
 ,{ field: "iSecondReturnFeeAmount", title: "二级返费金额", sortable: true } 
 ,{ field: "iSecondReturnFeeDays", title: "二级返费天数", sortable: true } 
-,{ field: "iSecondReturnFeeDate", title: "二级返费日期", sortable: true } 
+, {
+    field: "iSecondReturnFeeDate", title: "二级返费日期", sortable: true, formatter: function (value, row, index) {
+        return ChangeDateFormat(value);
+    }
+}
 ,{ field: "iSecondReturnFeePayment", title: "二级付款情况", sortable: true } 
-,{ field: "iSecondReturnFeeActualPayDate", title: "二级实际支付日期", sortable: true } 
+, {
+    field: "iSecondReturnFeeActualPayDate", title: "二级实际支付日期", sortable: true, formatter: function (value, row, index) {
+        return ChangeDateFormat(value);
+    }
+}
 ,{ field: "iThirdReturnFeeAmount", title: "三级返费金额", sortable: true } 
 ,{ field: "iThirdReturnFeeDays", title: "三级返费天数", sortable: true } 
-,{ field: "iThirdReturnFeeDate", title: "三级返费日期", sortable: true } 
+, {
+    field: "iThirdReturnFeeDate", title: "三级返费日期", sortable: true, formatter: function (value, row, index) {
+        return ChangeDateFormat(value);
+    }
+}
 ,{ field: "iThirdReturnFeePayment", title: "三级付款情况", sortable: true } 
-,{ field: "iThirdReturnFeeActualPayDate", title: "三级实际支付日期", sortable: true } 
+, {
+    field: "iThirdReturnFeeActualPayDate", title: "三级实际支付日期", sortable: true, formatter: function (value, row, index) {
+        return ChangeDateFormat(value);
+    }
+}
 ,{ field: "iFourthReturnFeeAmount", title: "四级返费金额", sortable: true } 
 ,{ field: "iFourthReturnFeeDays", title: "四级返费天数", sortable: true } 
-,{ field: "iFourthReturnFeeDate", title: "四级返费日期", sortable: true } 
+, {
+    field: "iFourthReturnFeeDate", title: "四级返费日期", sortable: true, formatter: function (value, row, index) {
+        return ChangeDateFormat(value);
+    }
+}
 ,{ field: "iFourthReturnFeePayment", title: "四级付款情况", sortable: true } 
-,{ field: "iFourthReturnFeeActualPayDate", title: "四级实际支付日期", sortable: true } 
+, {
+    field: "iFourthReturnFeeActualPayDate", title: "四级实际支付日期", sortable: true, formatter: function (value, row, index) {
+        return ChangeDateFormat(value);
+    }
+}
 ,{ field: "iFifthReturnFeeAmount", title: "五级返费金额", sortable: true } 
 ,{ field: "iFifthReturnFeeDays", title: "五级返费天数", sortable: true } 
-,{ field: "iFifthReturnFeeDate", title: "五级返费日期", sortable: true } 
+, {
+    field: "iFifthReturnFeeDate", title: "五级返费日期", sortable: true, formatter: function (value, row, index) {
+        return ChangeDateFormat(value);
+    }
+}
 ,{ field: "iFifthReturnFeePayment", title: "五级付款情况", sortable: true } 
-,{ field: "iFifthReturnFeeActualPayDate", title: "五级实际支付日期", sortable: true } 
+, {
+    field: "iFifthReturnFeeActualPayDate", title: "五级实际支付日期", sortable: true, formatter: function (value, row, index) {
+        return ChangeDateFormat(value);
+    }
+}
 ,{ field: "iReturnFeeNote", title: "返费信息备注", sortable: true } 
             ],
             onClickRow: function (row, $element) {
@@ -466,9 +555,18 @@
                 var $shade = $('<div id="waiting"></div>');
                 $shade.css({ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, background: '#fff url(/Content/images/waiting.gif) center center no-repeat', opacity: 0.4 });
                 $("#addModal").append($shade);
-                $.get("/FinanceAjax/GetReturnFee?guid=" + row.iGuid, function (result) {
+                if (row.iGuid != null && window.userType == "普通用户") {
+                    $('#addRecord').hide();
+                }
+                else {
+                    $('#addRecord').show();
+                }
+
+                $.get("/FinanceAjax/GetReturnFee?hrguid=" + row.iHRInfoGuid2, function (result) {
                     if (result.success) {
                         myViewModel.iGuid(result.data.iGuid);
+                        myViewModel.iHRInfoGuid(result.data.iHRInfoGuid2);
+                        myViewModel.iHRInfoGuid2(result.data.iHRInfoGuid2);
                         myViewModel.iItemName(result.data.iItemName);
                         myViewModel.iCompany(result.data.iCompany);
                         myViewModel.iEmpNo(result.data.iEmpNo);
@@ -478,35 +576,35 @@
                         myViewModel.iLaborCampBank(result.data.iLaborCampBank);
                         myViewModel.iLaborCampBankAccount(result.data.iLaborCampBankAccount);
                         myViewModel.iLaborCampBankPerson(result.data.iLaborCampBankPerson);
-                        myViewModel.iInterviewDate(result.data.iInterviewDate);
-                        myViewModel.iEmployeeDate(result.data.iEmployeeDate);
-                        myViewModel.iResignDate(result.data.iResignDate);
+                        myViewModel.iInterviewDate(ChangeDateFormat(result.data.iInterviewDate));
+                        myViewModel.iEmployeeDate(ChangeDateFormat(result.data.iEmployeeDate));
+                        myViewModel.iResignDate(ChangeDateFormat(result.data.iResignDate));
                         myViewModel.iOnJobDays(result.data.iOnJobDays);
                         myViewModel.iFirstReturnFeeAmount(result.data.iFirstReturnFeeAmount);
                         myViewModel.iFirstReturnFeeDays(result.data.iFirstReturnFeeDays);
-                        myViewModel.iFirstReturnFeeDate(result.data.iFirstReturnFeeDate);
+                        myViewModel.iFirstReturnFeeDate(ChangeDateFormat(result.data.iFirstReturnFeeDate));
                         myViewModel.iFirstReturnFeePayment(result.data.iFirstReturnFeePayment);
-                        myViewModel.iFirstReturnFeeActualPayDate(result.data.iFirstReturnFeeActualPayDate);
+                        myViewModel.iFirstReturnFeeActualPayDate(ChangeDateFormat(result.data.iFirstReturnFeeActualPayDate));
                         myViewModel.iSecondReturnFeeAmount(result.data.iSecondReturnFeeAmount);
                         myViewModel.iSecondReturnFeeDays(result.data.iSecondReturnFeeDays);
-                        myViewModel.iSecondReturnFeeDate(result.data.iSecondReturnFeeDate);
+                        myViewModel.iSecondReturnFeeDate(ChangeDateFormat(result.data.iSecondReturnFeeDate));
                         myViewModel.iSecondReturnFeePayment(result.data.iSecondReturnFeePayment);
-                        myViewModel.iSecondReturnFeeActualPayDate(result.data.iSecondReturnFeeActualPayDate);
+                        myViewModel.iSecondReturnFeeActualPayDate(ChangeDateFormat(result.data.iSecondReturnFeeActualPayDate));
                         myViewModel.iThirdReturnFeeAmount(result.data.iThirdReturnFeeAmount);
                         myViewModel.iThirdReturnFeeDays(result.data.iThirdReturnFeeDays);
-                        myViewModel.iThirdReturnFeeDate(result.data.iThirdReturnFeeDate);
+                        myViewModel.iThirdReturnFeeDate(ChangeDateFormat(result.data.iThirdReturnFeeDate));
                         myViewModel.iThirdReturnFeePayment(result.data.iThirdReturnFeePayment);
-                        myViewModel.iThirdReturnFeeActualPayDate(result.data.iThirdReturnFeeActualPayDate);
+                        myViewModel.iThirdReturnFeeActualPayDate(ChangeDateFormat(result.data.iThirdReturnFeeActualPayDate));
                         myViewModel.iFourthReturnFeeAmount(result.data.iFourthReturnFeeAmount);
                         myViewModel.iFourthReturnFeeDays(result.data.iFourthReturnFeeDays);
-                        myViewModel.iFourthReturnFeeDate(result.data.iFourthReturnFeeDate);
+                        myViewModel.iFourthReturnFeeDate(ChangeDateFormat(result.data.iFourthReturnFeeDate));
                         myViewModel.iFourthReturnFeePayment(result.data.iFourthReturnFeePayment);
-                        myViewModel.iFourthReturnFeeActualPayDate(result.data.iFourthReturnFeeActualPayDate);
+                        myViewModel.iFourthReturnFeeActualPayDate(ChangeDateFormat(result.data.iFourthReturnFeeActualPayDate));
                         myViewModel.iFifthReturnFeeAmount(result.data.iFifthReturnFeeAmount);
                         myViewModel.iFifthReturnFeeDays(result.data.iFifthReturnFeeDays);
-                        myViewModel.iFifthReturnFeeDate(result.data.iFifthReturnFeeDate);
+                        myViewModel.iFifthReturnFeeDate(ChangeDateFormat(result.data.iFifthReturnFeeDate));
                         myViewModel.iFifthReturnFeePayment(result.data.iFifthReturnFeePayment);
-                        myViewModel.iFifthReturnFeeActualPayDate(result.data.iFifthReturnFeeActualPayDate);
+                        myViewModel.iFifthReturnFeeActualPayDate(ChangeDateFormat(result.data.iFifthReturnFeeActualPayDate));
                         myViewModel.iReturnFeeNote(result.data.iReturnFeeNote);
                         myViewModel.iCreatedOn(result.data.iCreatedOn);
                         myViewModel.iCreatedBy(result.data.iCreatedBy);
@@ -514,7 +612,8 @@
                         myViewModel.iUpdatedBy(result.data.iUpdatedBy);
                         myViewModel.iStatus(result.data.iStatus);
                         myViewModel.iIsDeleted(result.data.iIsDeleted);
-                        $("#iIdCard").attr("readonly", "readonly");
+                        $("#iItemName").attr("disabled", true);
+                        $("#iCompany").attr("disabled", true);
                     }
                     else {
                         console.log(result.msg);
@@ -562,67 +661,6 @@
             });
         });
 
-        $("#NewRecord").click(function () {
-
-            $("#iIdCard").removeAttr("readonly");
-            if (window.userType != "普通用户") {
-                $("#iItemName").addClass("warning");
-            }
-            $('#iCompany').addClass("warning");
-            $('#iName').addClass("warning");
-            $('#iEmpNo').addClass("warning");
-            $('#iIdCard').addClass("warning");
-            myViewModel.iGuid("");
-            myViewModel.iItemName('@HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode');
-
-            myViewModel.iCompany("-");
-            myViewModel.iEmpNo("");
-            myViewModel.iName("");
-            myViewModel.iIdCard("");
-            myViewModel.iLaborName("");
-            myViewModel.iLaborCampBank("");
-            myViewModel.iLaborCampBankAccount("");
-            myViewModel.iLaborCampBankPerson("");
-            myViewModel.iInterviewDate("");
-            myViewModel.iEmployeeDate("");
-            myViewModel.iResignDate("");
-            myViewModel.iOnJobDays("");
-            myViewModel.iFirstReturnFeeAmount("");
-            myViewModel.iFirstReturnFeeDays("");
-            myViewModel.iFirstReturnFeeDate("");
-            myViewModel.iFirstReturnFeePayment("");
-            myViewModel.iFirstReturnFeeActualPayDate("");
-            myViewModel.iSecondReturnFeeAmount("");
-            myViewModel.iSecondReturnFeeDays("");
-            myViewModel.iSecondReturnFeeDate("");
-            myViewModel.iSecondReturnFeePayment("");
-            myViewModel.iSecondReturnFeeActualPayDate("");
-            myViewModel.iThirdReturnFeeAmount("");
-            myViewModel.iThirdReturnFeeDays("");
-            myViewModel.iThirdReturnFeeDate("");
-            myViewModel.iThirdReturnFeePayment("");
-            myViewModel.iThirdReturnFeeActualPayDate("");
-            myViewModel.iFourthReturnFeeAmount("");
-            myViewModel.iFourthReturnFeeDays("");
-            myViewModel.iFourthReturnFeeDate("");
-            myViewModel.iFourthReturnFeePayment("");
-            myViewModel.iFourthReturnFeeActualPayDate("");
-            myViewModel.iFifthReturnFeeAmount("");
-            myViewModel.iFifthReturnFeeDays("");
-            myViewModel.iFifthReturnFeeDate("");
-            myViewModel.iFifthReturnFeePayment("");
-            myViewModel.iFifthReturnFeeActualPayDate("");
-            myViewModel.iReturnFeeNote("");
-            myViewModel.iCreatedOn("");
-            myViewModel.iCreatedBy("");
-            myViewModel.iUpdatedOn("");
-            myViewModel.iUpdatedBy("");
-            myViewModel.iStatus("1");
-            myViewModel.iIsDeleted("0");
-
-            $("#addModalLabel").html("添加记录");
-
-        });
         var myViewModel = new ViewModel();
         ko.applyBindings(myViewModel);
 
@@ -678,9 +716,9 @@
         return oFile;
     };
     var oFileInput = new FileInput();
-    oFileInput.Init("txt_file", "/ReturnFeeAjax/ImportReturnFee");
+    oFileInput.Init("txt_file", "/FinanceAjax/ImportReturnFee");
     function ExportData() {
-        var url = "/ReturnFeeAjax/ExportReturnFee";
+        var url = "/FinanceAjax/ExportReturnFee";
         var params = {};
         params.sName = $("#sName").val();
         params.sIdCard = $("#sIdCard").val();
@@ -693,7 +731,7 @@
         params.sEmployeeDate2 = $("#sEmployeeDate2").val();
         params.sFirstReturnFeeActualPayDate = $("#sFirstReturnFeeActualPayDate").val();
         params.sFirstReturnFeeActualPayDate2 = $("#sFirstReturnFeeActualPayDate2").val();
-
+        params.sEditType = $("#sEditType").val();
         var inputs = '<input type="hidden" name="searchpara" value="' + JSON.stringify(params).replace(new RegExp("\"", "gm"), "'") + '" />';
         $('<form action="' + url + '" method="post" target="_blank">' + inputs + '</form>').appendTo('body').submit().remove();
     }
@@ -702,6 +740,8 @@
     function ViewModel() {
         var self = this;
         self.iGuid = ko.observable("");
+        self.iHRInfoGuid = ko.observable("");
+        self.iHRInfoGuid2 = ko.observable("");
         self.iItemName = ko.observable('@HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode');
         self.iCompany = ko.observable('-');
         self.iEmpNo = ko.observable("");

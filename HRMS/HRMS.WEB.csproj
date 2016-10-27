@@ -3603,6 +3603,7 @@
     <Content Include="UploadFiles\Template\员工职位信息导入模板.xlsx" />
     <Content Include="Views\Account\ChangePassword.cshtml" />
     <Content Include="Views\Finance\ReturnFeeIndex.cshtml" />
+    <Content Include="UploadFiles\Template\返费信息导入模板.xlsx" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -3613,6 +3614,10 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\HRMS.Common\HRMS.Common.csproj">
+      <Project>{ebbd1f29-d4d8-409d-a0c3-9b8ed0254b0e}</Project>
+      <Name>HRMS.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\HRMS.Data\HRMS.Data.csproj">
       <Project>{8dcad0cb-7995-459c-8afe-c1c7ca426393}</Project>
       <Name>HRMS.Data</Name>
