@@ -265,6 +265,13 @@ namespace HRMS.Controllers
                             en = new ReturnFeeEntity();
                             en.iHRInfoGuid = hrId;
                         }
+                        else
+                        {
+                            if (SessionHelper.CurrentUser.iUserType == "普通用户")
+                            {
+                                errorLog += "第【" + (i + 1).ToString() + "】行已编辑过，您无权限再修改，请联系管理员！；";
+                            }
+                        }
                     }
                 }
                 catch
