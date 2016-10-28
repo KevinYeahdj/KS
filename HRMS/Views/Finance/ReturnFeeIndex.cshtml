@@ -31,6 +31,33 @@
         <div class="col-*-12">
 
             <div id="toolbar">
+                <div style="float: left; margin-left: 10px"><span>项目名称：</span></div>
+                <div style="float: left; margin-left: 10px">
+                    <select class="form-control" id="sItemName">
+                        <option value="">请选择</option>
+                        @{
+                            foreach (var item in ViewBag.Projects)
+                            {
+                                <option value="@item.iKey">@item.iValue</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div style="float: left; margin-left: 10px;">
+                    <span>所在公司：</span>
+                </div>
+                <div style="float: left; margin-left: 10px; ">
+                    <select class="form-control" id="sCompany">
+                        <option value="">请选择</option>
+                        @{
+                            foreach (var item in ViewBag.Companies)
+                            {
+                                <option value="@item.iKey">@item.iValue</option>
+                            }
+                        }
+                    </select>
+                </div>
+
                 <div style="float: left; margin-left: 10px"><span>员工姓名：</span></div>
                 <div style="float: left; margin-left: 10px"><input id="sName" class="form-control" /></div>
                 <div style="float: left; margin-left: 10px"><span>身份证号：</span></div>
@@ -55,9 +82,9 @@
                 <div style="float: left; margin-left: 10px;width:150px"><input id="sFirstReturnFeeDays" class="form-control" /></div>
 
 
-                <div style="float:left;margin-left:10px"><span>返费日期：</span></div><div style="float: left; margin-left: 10px; width: 8%"><input id="sFirstReturnFeeDate" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 8%"><input id="sFirstReturnFeeDate2" class="form-control" /></div>
-                    <div style="float:left;margin-left:10px"><span>&nbsp;&nbsp;&nbsp;&nbsp;入职日期：</span></div><div style="float: left; margin-left: 10px;width:8%"><input id="sEmployeeDate" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 8%"><input id="sEmployeeDate2" class="form-control" /></div>
-                    <div style="float:left;margin-left:10px"><span>&nbsp;&nbsp;&nbsp;&nbsp;支付日期：</span></div><div style="float: left; margin-left: 10px; width: 8%"><input id="sFirstReturnFeeActualPayDate" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 8%"><input id="sFirstReturnFeeActualPayDate2" class="form-control" /></div>
+                <div style="float:left;margin-left:10px"><span>返费日期：</span></div><div style="float: left; margin-left: 10px; width: 10%"><input id="sFirstReturnFeeDate" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 10%"><input id="sFirstReturnFeeDate2" class="form-control" /></div>
+                    <div style="float:left;margin-left:10px"><span>&nbsp;&nbsp;&nbsp;&nbsp;入职日期：</span></div><div style="float: left; margin-left: 10px;width:10%"><input id="sEmployeeDate" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 10%"><input id="sEmployeeDate2" class="form-control" /></div>
+                    <div style="float:left;margin-left:10px"><span>&nbsp;&nbsp;&nbsp;&nbsp;支付日期：</span></div><div style="float: left; margin-left: 10px; width: 10%"><input id="sFirstReturnFeeActualPayDate" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 10%"><input id="sFirstReturnFeeActualPayDate2" class="form-control" /></div>
                 <div style="float: left; margin-left: 10px">
                     <span>编辑状态：</span>
                 </div>
@@ -127,27 +154,62 @@
                             <div class="form-group"> 一级返费金额：<input type="text" class="form-control" id="iFirstReturnFeeAmount" data-bind="value: iFirstReturnFeeAmount" placeholder="请输入一级返费金额"></div>
                             <div class="form-group"> 一级返费天数：<input type="text" class="form-control" id="iFirstReturnFeeDays" data-bind="value: iFirstReturnFeeDays" placeholder="请输入一级返费天数"></div>
                             <div class="form-group"> 一级返费日期：<input type="text" class="form-control" id="iFirstReturnFeeDate" data-bind="value: iFirstReturnFeeDate" placeholder="请输入一级返费日期"></div>
-                            <div class="form-group"> 一级付款情况：<input type="text" class="form-control" id="iFirstReturnFeePayment" data-bind="value: iFirstReturnFeePayment" placeholder="请输入一级付款情况"></div>
+                            <div class="form-group">
+                                一级付款情况：
+                                <select class="form-control" id="iFirstReturnFeePayment" data-bind="value: iFirstReturnFeePayment">
+                                    <option value="-">请选择</option>
+                                    <option value="已付">已付</option>
+                                    <option value="未付">未付</option>
+                                </select>
+                            </div>
                             <div class="form-group"> 一级实际支付日期：<input type="text" class="form-control" id="iFirstReturnFeeActualPayDate" data-bind="value: iFirstReturnFeeActualPayDate" placeholder="请输入一级实际支付日期"></div>
                             <div class="form-group"> 二级返费金额：<input type="text" class="form-control" id="iSecondReturnFeeAmount" data-bind="value: iSecondReturnFeeAmount" placeholder="请输入二级返费金额"></div>
                             <div class="form-group"> 二级返费天数：<input type="text" class="form-control" id="iSecondReturnFeeDays" data-bind="value: iSecondReturnFeeDays" placeholder="请输入二级返费天数"></div>
                             <div class="form-group"> 二级返费日期：<input type="text" class="form-control" id="iSecondReturnFeeDate" data-bind="value: iSecondReturnFeeDate" placeholder="请输入二级返费日期"></div>
-                            <div class="form-group"> 二级付款情况：<input type="text" class="form-control" id="iSecondReturnFeePayment" data-bind="value: iSecondReturnFeePayment" placeholder="请输入二级付款情况"></div>
+                            <div class="form-group">
+                                二级付款情况：
+                                <select class="form-control" id="iSecondReturnFeePayment" data-bind="value: iSecondReturnFeePayment">
+                                    <option value="-">请选择</option>
+                                    <option value="已付">已付</option>
+                                    <option value="未付">未付</option>
+                                </select>
+                            </div>
                             <div class="form-group"> 二级实际支付日期：<input type="text" class="form-control" id="iSecondReturnFeeActualPayDate" data-bind="value: iSecondReturnFeeActualPayDate" placeholder="请输入二级实际支付日期"></div>
                             <div class="form-group"> 三级返费金额：<input type="text" class="form-control" id="iThirdReturnFeeAmount" data-bind="value: iThirdReturnFeeAmount" placeholder="请输入三级返费金额"></div>
                             <div class="form-group"> 三级返费天数：<input type="text" class="form-control" id="iThirdReturnFeeDays" data-bind="value: iThirdReturnFeeDays" placeholder="请输入三级返费天数"></div>
                             <div class="form-group"> 三级返费日期：<input type="text" class="form-control" id="iThirdReturnFeeDate" data-bind="value: iThirdReturnFeeDate" placeholder="请输入三级返费日期"></div>
-                            <div class="form-group"> 三级付款情况：<input type="text" class="form-control" id="iThirdReturnFeePayment" data-bind="value: iThirdReturnFeePayment" placeholder="请输入三级付款情况"></div>
+                            <div class="form-group">
+                                三级付款情况：
+                                <select class="form-control" id="iThirdReturnFeePayment" data-bind="value: iThirdReturnFeePayment">
+                                    <option value="-">请选择</option>
+                                    <option value="已付">已付</option>
+                                    <option value="未付">未付</option>
+                                </select>
+                            </div>
                             <div class="form-group"> 三级实际支付日期：<input type="text" class="form-control" id="iThirdReturnFeeActualPayDate" data-bind="value: iThirdReturnFeeActualPayDate" placeholder="请输入三级实际支付日期"></div>
                             <div class="form-group"> 四级返费金额：<input type="text" class="form-control" id="iFourthReturnFeeAmount" data-bind="value: iFourthReturnFeeAmount" placeholder="请输入四级返费金额"></div>
                             <div class="form-group"> 四级返费天数：<input type="text" class="form-control" id="iFourthReturnFeeDays" data-bind="value: iFourthReturnFeeDays" placeholder="请输入四级返费天数"></div>
                             <div class="form-group"> 四级返费日期：<input type="text" class="form-control" id="iFourthReturnFeeDate" data-bind="value: iFourthReturnFeeDate" placeholder="请输入四级返费日期"></div>
-                            <div class="form-group"> 四级付款情况：<input type="text" class="form-control" id="iFourthReturnFeePayment" data-bind="value: iFourthReturnFeePayment" placeholder="请输入四级付款情况"></div>
+                            <div class="form-group">
+                                四级付款情况：
+                                <select class="form-control" id="iFourthReturnFeePayment" data-bind="value: iFourthReturnFeePayment">
+                                    <option value="-">请选择</option>
+                                    <option value="已付">已付</option>
+                                    <option value="未付">未付</option>
+                                </select>
+                            </div>
                             <div class="form-group"> 四级实际支付日期：<input type="text" class="form-control" id="iFourthReturnFeeActualPayDate" data-bind="value: iFourthReturnFeeActualPayDate" placeholder="请输入四级实际支付日期"></div>
                             <div class="form-group"> 五级返费金额：<input type="text" class="form-control" id="iFifthReturnFeeAmount" data-bind="value: iFifthReturnFeeAmount" placeholder="请输入五级返费金额"></div>
                             <div class="form-group"> 五级返费天数：<input type="text" class="form-control" id="iFifthReturnFeeDays" data-bind="value: iFifthReturnFeeDays" placeholder="请输入五级返费天数"></div>
                             <div class="form-group"> 五级返费日期：<input type="text" class="form-control" id="iFifthReturnFeeDate" data-bind="value: iFifthReturnFeeDate" placeholder="请输入五级返费日期"></div>
-                            <div class="form-group"> 五级付款情况：<input type="text" class="form-control" id="iFifthReturnFeePayment" data-bind="value: iFifthReturnFeePayment" placeholder="请输入五级付款情况"></div>
+                            <div class="form-group">
+                                五级付款情况：
+                                <select class="form-control" id="iFifthReturnFeePayment" data-bind="value: iFifthReturnFeePayment">
+                                    <option value="-">请选择</option>
+                                    <option value="已付">已付</option>
+                                    <option value="未付">未付</option>
+                                </select>
+                            </div>
                             <div class="form-group"> 五级实际支付日期：<input type="text" class="form-control" id="iFifthReturnFeeActualPayDate" data-bind="value: iFifthReturnFeeActualPayDate" placeholder="请输入五级实际支付日期"></div>
                             <div class="form-group"> 返费信息备注：<input type="text" class="form-control" id="iReturnFeeNote" data-bind="value: iReturnFeeNote" placeholder="请输入返费信息备注"></div> 
                         </div>
@@ -216,7 +278,6 @@
         if (window.menuRights == "r") {
             $("#DataExport").hide();
             $("#DataImport").hide();
-            $("#NewRecord").hide();
         }
         $("#sFirstReturnFeeDate").datetimepicker({
             language: 'zh-CN',
@@ -287,6 +348,130 @@
         }).on("click", function (ev) {
             $("#sFirstReturnFeeActualPayDate2").datetimepicker("setStartDate", $("#sFirstReturnFeeActualPayDate").val());
         });
+
+        $('#iInterviewDate').datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            clearBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 1,
+            format: 'yyyy-mm-dd'
+        });
+        $('#iFirstReturnFeeDate').datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            clearBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 1,
+            format: 'yyyy-mm-dd'
+        });
+        $('#iFirstReturnFeeActualPayDate').datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            clearBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 1,
+            format: 'yyyy-mm-dd'
+        });
+        $('#iSecondReturnFeeDate').datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            clearBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 1,
+            format: 'yyyy-mm-dd'
+        });
+        $('#iSecondReturnFeeActualPayDate').datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            clearBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 1,
+            format: 'yyyy-mm-dd'
+        });
+        $('#iThirdReturnFeeDate').datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            clearBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 1,
+            format: 'yyyy-mm-dd'
+        });
+        $('#iThirdReturnFeeActualPayDate').datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            clearBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 1,
+            format: 'yyyy-mm-dd'
+        });
+        $('#iFourthReturnFeeDate').datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            clearBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 1,
+            format: 'yyyy-mm-dd'
+        });
+        $('#iFourthReturnFeeActualPayDate').datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            clearBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 1,
+            format: 'yyyy-mm-dd'
+        });
+        $('#iFifthReturnFeeDate').datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            clearBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 1,
+            format: 'yyyy-mm-dd'
+        });
+        $('#iFifthReturnFeeActualPayDate').datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            clearBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 1,
+            format: 'yyyy-mm-dd'
+        });
+
+
 
         $("#iItemName").change(function () {
             var value = $("#iItemName").val();
@@ -417,6 +602,8 @@
             searchAlign: "left",//查询框对齐方式
             queryParamsType: "limit",//查询参数组织方式
             queryParams: function getParams(params) {
+                params.sItemName = $("#sItemName").val();
+                params.sCompany = $("#sCompany").val();
                 params.sName = $("#sName").val();
                 params.sIdCard = $("#sIdCard").val();
                 params.sLaborName = $("#sLaborName").val();
@@ -720,6 +907,8 @@
     function ExportData() {
         var url = "/FinanceAjax/ExportReturnFee";
         var params = {};
+        params.sItemName = $("#sItemName").val();
+        params.sCompany = $("#sCompany").val();
         params.sName = $("#sName").val();
         params.sIdCard = $("#sIdCard").val();
         params.sLaborName = $("#sLaborName").val();

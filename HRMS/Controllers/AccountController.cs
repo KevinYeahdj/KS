@@ -85,7 +85,7 @@ namespace HRMS.Controllers
             }
             if (model.UserName == "sa" && model.Password == "password")
             {
-                UserEntity sa = new UserEntity { iUserName = "超级管理员", iEmployeeCodeId = "sa", iUserType = "超级管理员", iCompanyCode = "上海敏慧" };
+                UserEntity sa = new UserEntity { iUserName = "超级管理员", iEmployeeCodeId = "sa", iUserType = "超级管理员", iCompanyCode = "-" };
                 Session[SessionHelper.CurrentUserKey] = sa;
                 return RedirectToLocal(returnUrl);
             }

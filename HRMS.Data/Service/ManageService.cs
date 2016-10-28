@@ -21,5 +21,14 @@ namespace HRMS.Data.Service
             }
             return result;
         }
+
+        public string GetUserDefaultProject(string userCode)
+        {
+            string sql = "SELECT top 1 n.ikey FROM [dbo].[SysUserMenu] m inner join dbo.SysDic n on n.itype='项目' and m.iprojectcode = n.iKey and m.iEmployeeCode = '" + userCode + "'";
+            DataSet ds = DbHelperSQL.Query(sql);
+            if (ds.Tables[0].Rows.Count == 0)
+                return "-";
+            else return ds.Tables[0].Rows[0][0].ToString();
+        }
     }
 }

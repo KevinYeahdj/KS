@@ -302,7 +302,7 @@ namespace HRMS.Controllers
                                 en = new HRInfoEntity();
                             }
                         }
-                        
+
                     }
                 }
                 catch
@@ -328,7 +328,7 @@ namespace HRMS.Controllers
                         {
                             string propertyName = en.GetType().GetProperty(kvp.Key).PropertyType.FullName.ToLower();
                             if (cell.CellType == CellType.Numeric && HSSFDateUtil.IsCellDateFormatted(cell))
-                            {  
+                            {
                                 try
                                 {
                                     value = sheet.GetRow(i).GetCell(kvp.Value).DateCellValue;
@@ -389,7 +389,7 @@ namespace HRMS.Controllers
                     en.iItemName = currentItem.iKey;
                 }
 
-                if (en.iItemName != SessionHelper.CurrentUser.iCompanyCode)
+                if (SessionHelper.CurrentUser.iUserType == "普通用户" && en.iItemName != SessionHelper.CurrentUser.iCompanyCode)
                 {
                     errorLog += "第【" + (i + 1).ToString() + "】行项目名称不正确，只能导入当前项目；";
                 }

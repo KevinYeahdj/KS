@@ -34,7 +34,7 @@ namespace HRMS.Data.Manager
                 dic.Add("劳务所账号", "iLaborCampBankAccount");
                 dic.Add("劳务所人姓名", "iLaborCampBankPerson");
                 dic.Add("面试日期", "iInterviewDate");
-                
+
 
                 dic.Add("一级返费金额", "iFirstReturnFeeAmount");
                 dic.Add("一级返费天数", "iFirstReturnFeeDays");
@@ -135,7 +135,8 @@ namespace HRMS.Data.Manager
 
         public List<ReturnFeeModel> GetSearch(string companyCode, Dictionary<string, string> para, string sort, string order, int offset, int pageSize, out int total)
         {
-            StringBuilder commandsb = new StringBuilder("from ReturnFee fee right join hrinfo hr on fee.iHRInfoGuid = hr.iguid and fee.iIsDeleted =0 and fee.iStatus =1  where hr.iIsReturnFee = '是' and hr.iisdeleted=0 and hr.istatus=1 and hr.iItemName= '" + para["iItemName"] +"' ");
+            StringBuilder commandsb = new StringBuilder("from ReturnFee fee right join hrinfo hr on fee.iHRInfoGuid = hr.iguid and fee.iIsDeleted =0 and fee.iStatus =1  where hr.iIsReturnFee = '是' and hr.iisdeleted=0 and hr.istatus=1 ");
+
             if (para["editType"] == "已编辑")
             {
                 commandsb.Append("and fee.iGuid is not null ");
@@ -145,19 +146,42 @@ namespace HRMS.Data.Manager
                 commandsb.Append("and fee.iGuid is null ");
             }
             para.Remove("editType");
-            para.Remove("iItemName");
 
             foreach (KeyValuePair<string, string> item in para)
             {
                 if (!string.IsNullOrEmpty(item.Value) && item.Value != "§")
                 {
-                    if (item.Key.EndsWith("[d]"))
+                    if (item.Key.StartsWith("iFirst"))
                     {
-                        commandsb.Append(" and " + item.Key.Replace("[d]", "") + " between '" + (string.IsNullOrEmpty(item.Value.Split('§')[0]) ? "1900-01-01" : item.Value.Split('§')[0]) + "' and '" + (string.IsNullOrEmpty(item.Value.Split('§')[1]) ? DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") : item.Value.Split('§')[1]) + "' ");
+                        commandsb.Append(" and (");
+                        if (item.Key.EndsWith("[d]"))
+                        {
+                            commandsb.Append(item.Key.Replace("[d]", "") + " between '" + (string.IsNullOrEmpty(item.Value.Split('§')[0]) ? "1900-01-01" : item.Value.Split('§')[0]) + "' and '" + (string.IsNullOrEmpty(item.Value.Split('§')[1]) ? DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") : item.Value.Split('§')[1]) + "' or ");
+                            commandsb.Append(item.Key.Replace("iFirst", "iSecond").Replace("[d]", "") + " between '" + (string.IsNullOrEmpty(item.Value.Split('§')[0]) ? "1900-01-01" : item.Value.Split('§')[0]) + "' and '" + (string.IsNullOrEmpty(item.Value.Split('§')[1]) ? DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") : item.Value.Split('§')[1]) + "' or ");
+                            commandsb.Append(item.Key.Replace("iFirst", "iThird").Replace("[d]", "") + " between '" + (string.IsNullOrEmpty(item.Value.Split('§')[0]) ? "1900-01-01" : item.Value.Split('§')[0]) + "' and '" + (string.IsNullOrEmpty(item.Value.Split('§')[1]) ? DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") : item.Value.Split('§')[1]) + "' or ");
+                            commandsb.Append(item.Key.Replace("iFirst", "iFourth").Replace("[d]", "") + " between '" + (string.IsNullOrEmpty(item.Value.Split('§')[0]) ? "1900-01-01" : item.Value.Split('§')[0]) + "' and '" + (string.IsNullOrEmpty(item.Value.Split('§')[1]) ? DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") : item.Value.Split('§')[1]) + "' or ");
+                            commandsb.Append(item.Key.Replace("iFirst", "iFifth").Replace("[d]", "") + " between '" + (string.IsNullOrEmpty(item.Value.Split('§')[0]) ? "1900-01-01" : item.Value.Split('§')[0]) + "' and '" + (string.IsNullOrEmpty(item.Value.Split('§')[1]) ? DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") : item.Value.Split('§')[1]) + "' ");
+                        }
+                        else
+                        {
+                            commandsb.Append(item.Key + " like '%" + item.Value + "%' or ");
+                            commandsb.Append(item.Key.Replace("iFirst", "iSecond") + " like '%" + item.Value + "%' or ");
+                            commandsb.Append(item.Key.Replace("iFirst", "iThird") + " like '%" + item.Value + "%' or ");
+                            commandsb.Append(item.Key.Replace("iFirst", "iFourth") + " like '%" + item.Value + "%' or ");
+                            commandsb.Append(item.Key.Replace("iFirst", "iFifth") + " like '%" + item.Value + "%' ");
+                        }
+                        commandsb.Append(" ) ");
                     }
                     else
                     {
-                        commandsb.Append(" and " + item.Key + " like '%" + item.Value + "%'");
+                        if (item.Key.EndsWith("[d]"))
+                        {
+                            commandsb.Append(" and " + item.Key.Replace("[d]", "") + " between '" + (string.IsNullOrEmpty(item.Value.Split('§')[0]) ? "1900-01-01" : item.Value.Split('§')[0]) + "' and '" + (string.IsNullOrEmpty(item.Value.Split('§')[1]) ? DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") : item.Value.Split('§')[1]) + "' ");
+                        }
+                        else
+                        {
+                            commandsb.Append(" and " + item.Key + " like '%" + item.Value + "%'");
+                        }
                     }
                 }
             }
@@ -174,7 +198,7 @@ namespace HRMS.Data.Manager
 
         public List<ReturnFeeModel> GetSearchAll(string companyCode, Dictionary<string, string> para)
         {
-            StringBuilder commandsb = new StringBuilder("from ReturnFee fee right join hrinfo hr on fee.iHRInfoGuid = hr.iguid and fee.iIsDeleted =0 and fee.iStatus =1  where hr.iIsReturnFee = '是' and hr.iisdeleted=0 and hr.istatus=1 and hr.iItemName= '" + para["iItemName"] + "' ");
+            StringBuilder commandsb = new StringBuilder("from ReturnFee fee right join hrinfo hr on fee.iHRInfoGuid = hr.iguid and fee.iIsDeleted =0 and fee.iStatus =1  where hr.iIsReturnFee = '是' and hr.iisdeleted=0 and hr.istatus=1 ");
             if (para["editType"] == "已编辑")
             {
                 commandsb.Append("and fee.iGuid is not null ");
@@ -184,19 +208,42 @@ namespace HRMS.Data.Manager
                 commandsb.Append("and fee.iGuid is null ");
             }
             para.Remove("editType");
-            para.Remove("iItemName");
 
             foreach (KeyValuePair<string, string> item in para)
             {
                 if (!string.IsNullOrEmpty(item.Value) && item.Value != "§")
                 {
-                    if (item.Key.EndsWith("[d]"))
+                    if (item.Key.StartsWith("iFirst"))
                     {
-                        commandsb.Append(" and " + item.Key.Replace("[d]", "") + " between '" + (string.IsNullOrEmpty(item.Value.Split('§')[0]) ? "1900-01-01" : item.Value.Split('§')[0]) + "' and '" + (string.IsNullOrEmpty(item.Value.Split('§')[1]) ? DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") : item.Value.Split('§')[1]) + "' ");
+                        commandsb.Append(" and (");
+                        if (item.Key.EndsWith("[d]"))
+                        {
+                            commandsb.Append(item.Key.Replace("[d]", "") + " between '" + (string.IsNullOrEmpty(item.Value.Split('§')[0]) ? "1900-01-01" : item.Value.Split('§')[0]) + "' and '" + (string.IsNullOrEmpty(item.Value.Split('§')[1]) ? DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") : item.Value.Split('§')[1]) + "' or ");
+                            commandsb.Append(item.Key.Replace("iFirst", "iSecond").Replace("[d]", "") + " between '" + (string.IsNullOrEmpty(item.Value.Split('§')[0]) ? "1900-01-01" : item.Value.Split('§')[0]) + "' and '" + (string.IsNullOrEmpty(item.Value.Split('§')[1]) ? DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") : item.Value.Split('§')[1]) + "' or ");
+                            commandsb.Append(item.Key.Replace("iFirst", "iThird").Replace("[d]", "") + " between '" + (string.IsNullOrEmpty(item.Value.Split('§')[0]) ? "1900-01-01" : item.Value.Split('§')[0]) + "' and '" + (string.IsNullOrEmpty(item.Value.Split('§')[1]) ? DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") : item.Value.Split('§')[1]) + "' or ");
+                            commandsb.Append(item.Key.Replace("iFirst", "iFourth").Replace("[d]", "") + " between '" + (string.IsNullOrEmpty(item.Value.Split('§')[0]) ? "1900-01-01" : item.Value.Split('§')[0]) + "' and '" + (string.IsNullOrEmpty(item.Value.Split('§')[1]) ? DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") : item.Value.Split('§')[1]) + "' or ");
+                            commandsb.Append(item.Key.Replace("iFirst", "iFifth").Replace("[d]", "") + " between '" + (string.IsNullOrEmpty(item.Value.Split('§')[0]) ? "1900-01-01" : item.Value.Split('§')[0]) + "' and '" + (string.IsNullOrEmpty(item.Value.Split('§')[1]) ? DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") : item.Value.Split('§')[1]) + "' ");
+                        }
+                        else
+                        {
+                            commandsb.Append(item.Key + " like '%" + item.Value + "%' or ");
+                            commandsb.Append(item.Key.Replace("iFirst", "iSecond") + " like '%" + item.Value + "%' or ");
+                            commandsb.Append(item.Key.Replace("iFirst", "iThird") + " like '%" + item.Value + "%' or ");
+                            commandsb.Append(item.Key.Replace("iFirst", "iFourth") + " like '%" + item.Value + "%' or ");
+                            commandsb.Append(item.Key.Replace("iFirst", "iFifth") + " like '%" + item.Value + "%' ");
+                        }
+                        commandsb.Append(" ) ");
                     }
                     else
                     {
-                        commandsb.Append(" and " + item.Key + " like '%" + item.Value + "%'");
+                        if (item.Key.EndsWith("[d]"))
+                        {
+                            commandsb.Append(" and " + item.Key.Replace("[d]", "") + " between '" + (string.IsNullOrEmpty(item.Value.Split('§')[0]) ? "1900-01-01" : item.Value.Split('§')[0]) + "' and '" + (string.IsNullOrEmpty(item.Value.Split('§')[1]) ? DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") : item.Value.Split('§')[1]) + "' ");
+                        }
+                        else
+                        {
+                            commandsb.Append(" and " + item.Key + " like '%" + item.Value + "%'");
+                        }
                     }
                 }
             }
@@ -207,9 +254,13 @@ namespace HRMS.Data.Manager
 
         public string GetValidReturnFeeHrId(string company, string empcode, string idcard, string itemName)
         {
-            string sql = "select iGuid from HRInfo where iCompany='" + company + "' and iEmpNo = '" + empcode + "' and iIdCard ='" + idcard + "' and iIsReturnFee='是' and iIsDeleted =0 and iStatus=1 and iItemName = '" + itemName +"'";
+            string sql = "select iGuid from HRInfo where iCompany='" + company + "' and iEmpNo = '" + empcode + "' and iIdCard ='" + idcard + "' and iIsReturnFee='是' and iIsDeleted =0 and iStatus=1 ";
+            if (itemName != "-")  //普通用户只能操作当前项目
+            {
+                sql += "and iItemName = '" + itemName + "'";
+            }
             DataTable dt = DbHelperSQL.Query(sql).Tables[0];
-            if(dt.Rows.Count==0)
+            if (dt.Rows.Count == 0)
             {
                 return null;
             }

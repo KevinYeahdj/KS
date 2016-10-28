@@ -68,7 +68,21 @@ namespace HRMS.Data.Manager
         public UserEntity GetUser(string employeeCode)
         {
             string sql = @"select * from SysUser where iemployeecodeId=@empcode and iIsDeleted =0 and iStatus =1";
-            return Repository.Query<UserEntity>(sql, new { empcode = employeeCode }).FirstOrDefault();
+            var user = Repository.Query<UserEntity>(sql, new { empcode = employeeCode }).FirstOrDefault();
+            if (user == null)
+            {
+                return null;
+            }
+            if (user.iUserType == "普通用户")  //为普通用户指定默认所在项目，目前普通用户项目存于 companycode, 超级用户及管理员都是-
+            {
+                HRMS.Data.Service.ManageService ms = new HRMS.Data.Service.ManageService();
+                user.iCompanyCode = ms.GetUserDefaultProject(employeeCode);
+            }
+            else
+            {
+                user.iCompanyCode = "-";
+            }
+            return user;
         }
 
         public List<UserEntity> GetSearch(string keyString, string sort, string order, int offset, int pageSize, out int total)

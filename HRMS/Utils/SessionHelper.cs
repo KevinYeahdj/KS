@@ -23,7 +23,7 @@ namespace HRMS.WEB.Utils
                 UserEntity userinfo = HttpContext.Current.Session[CurrentUserKey] as UserEntity;
                 if (userinfo == null && System.Net.Dns.GetHostName() == "ThinkPad-PC")
                 {                    
-                    return new UserEntity { iUserName = "超级管理员", iEmployeeCodeId = "sa", iUserType = "超级管理员", iCompanyCode = "上海敏慧" };
+                    return new UserEntity { iUserName = "超级管理员", iEmployeeCodeId = "sa", iUserType = "超级管理员", iCompanyCode = "-" };
                 }
                 return userinfo;
             }

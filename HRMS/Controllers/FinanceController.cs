@@ -72,7 +72,6 @@ namespace HRMS.Controllers
             Dictionary<string, string> bizParaDic = new Dictionary<string, string>();
             bizParaDic.Add("search", searchKey);
             bizParaDic.Add("editType", editType);
-            bizParaDic.Add("iItemName", SessionHelper.CurrentUser.iCompanyCode);
             Dictionary<string, string> bizParaDicTemp = new Dictionary<string, string>();
 
             foreach (string para in HttpContext.Request.Params.Keys)
@@ -193,7 +192,7 @@ namespace HRMS.Controllers
 
                 if (string.IsNullOrEmpty(errorLog))
                 {
-                    MergeToDBWithLog(list);
+                    MergeToDB(list);
                     return new JsonResult { Data = new { success = true, msg = "success" } };
                 }
                 else
@@ -280,10 +279,10 @@ namespace HRMS.Controllers
                 }
                 foreach (var kvp in keycolumns)
                 {
-                    if (sheet.GetRow(i).GetCell(kvp.Value) == null || sheet.GetRow(i).GetCell(kvp.Value).ToString() == "")
+                    if (sheet.GetRow(i).GetCell(kvp.Value) == null || sheet.GetRow(i).GetCell(kvp.Value).ToString() == "" || en.GetType().GetProperty(kvp.Key) == null)
                     {
                         //en.GetType().GetProperty(kvp.Key).SetValue(en, null, null);
-                        //空的不填写，保持原数据不变
+                        //空的不填写，保持原数据不变  ,没有该属性就忽略
                     }
                     else
                     {
@@ -390,7 +389,7 @@ namespace HRMS.Controllers
             }
             return true;//符合GB11643-1999标准  
         }
-        private void MergeToDBWithLog(List<ReturnFeeEntity> list)
+        private void MergeToDB(List<ReturnFeeEntity> list)
         {
             ReturnFeeManager service = new ReturnFeeManager();
             foreach (var item in list)
