@@ -58,71 +58,79 @@ namespace HRMS.Controllers
     {
         public void GetAllReturnFee()
         {
-            //用于序列化实体类的对象  
-            JavaScriptSerializer jss = new JavaScriptSerializer();
-
-            //请求中携带的条件  
-            string order = HttpContext.Request.Params["order"];
-            string sort = HttpContext.Request.Params["sort"];
-            string searchKey = HttpContext.Request.Params["search"];
-            int offset = Convert.ToInt32(HttpContext.Request.Params["offset"]);  //0
-            int pageSize = Convert.ToInt32(HttpContext.Request.Params["limit"]);
-            string editType = HttpContext.Request.Params["sEditType"];
-
-            Dictionary<string, string> bizParaDic = new Dictionary<string, string>();
-            bizParaDic.Add("search", searchKey);
-            bizParaDic.Add("editType", editType);
-            Dictionary<string, string> bizParaDicTemp = new Dictionary<string, string>();
-
-            foreach (string para in HttpContext.Request.Params.Keys)
+            try
             {
-                if (para.StartsWith("s") && (ReturnFeeManager.ReturnFeeDic.ContainsValue("i" + para.Substring(1, para.Length - 1)) || (para.Length > 2 && ReturnFeeManager.ReturnFeeDic.ContainsValue("i" + para.Substring(1, para.Length - 2)))))
+                //用于序列化实体类的对象  
+                JavaScriptSerializer jss = new JavaScriptSerializer();
+
+                //请求中携带的条件  
+                string order = HttpContext.Request.Params["order"];
+                string sort = HttpContext.Request.Params["sort"];
+                string searchKey = HttpContext.Request.Params["search"];
+                int offset = Convert.ToInt32(HttpContext.Request.Params["offset"]);  //0
+                int pageSize = Convert.ToInt32(HttpContext.Request.Params["limit"]);
+                string editType = HttpContext.Request.Params["sEditType"];
+
+                Dictionary<string, string> bizParaDic = new Dictionary<string, string>();
+                bizParaDic.Add("search", searchKey);
+                bizParaDic.Add("editType", editType);
+                Dictionary<string, string> bizParaDicTemp = new Dictionary<string, string>();
+
+                foreach (string para in HttpContext.Request.Params.Keys)
                 {
-                    bizParaDicTemp.Add("i" + para.Substring(1, para.Length - 1), HttpContext.Request.Params[para]);
+                    if (para.StartsWith("s") && (ReturnFeeManager.ReturnFeeDic.ContainsValue("i" + para.Substring(1, para.Length - 1)) || (para.Length > 2 && ReturnFeeManager.ReturnFeeDic.ContainsValue("i" + para.Substring(1, para.Length - 2)))))
+                    {
+                        bizParaDicTemp.Add("i" + para.Substring(1, para.Length - 1), HttpContext.Request.Params[para]);
+                    }
                 }
-            }
-            foreach (var item in bizParaDicTemp)
-            {
-                if (item.Key.EndsWith("2"))
-                    continue;
-                if (bizParaDicTemp.ContainsKey(item.Key + "2"))
+                foreach (var item in bizParaDicTemp)
                 {
-                    bizParaDic.Add(item.Key + "[d]", item.Value + "§" + bizParaDicTemp[item.Key + "2"]);
+                    if (item.Key.EndsWith("2"))
+                        continue;
+                    if (bizParaDicTemp.ContainsKey(item.Key + "2"))
+                    {
+                        bizParaDic.Add(item.Key + "[d]", item.Value + "§" + bizParaDicTemp[item.Key + "2"]);
+                    }
+                    else
+                    {
+                        bizParaDic.Add(item.Key, item.Value);
+                    }
                 }
+
+                int total = 0;
+                ReturnFeeManager service = new ReturnFeeManager();
+                List<ReturnFeeModel> list = service.GetSearch(SessionHelper.CurrentUser.iCompanyCode, bizParaDic, sort, order, offset, pageSize, out total);
+
+                DicManager dm = new DicManager();
+                List<DicEntity> companyDicE = dm.GetDicByType("公司");
+                Dictionary<string, string> companyDic = new Dictionary<string, string>();
+                foreach (var item in companyDicE)
+                {
+                    companyDic.Add(item.iKey, item.iValue);
+                }
+                foreach (var item in list)
+                {
+                    item.iCompany = companyDic.ContainsKey(item.iCompany) ? companyDic[item.iCompany] : "";
+                }
+
+                //给分页实体赋值  
+                PageModels<ReturnFeeModel> model = new PageModels<ReturnFeeModel>();
+                model.total = total;
+                if (total % pageSize == 0)
+                    model.page = total / pageSize;
                 else
-                {
-                    bizParaDic.Add(item.Key, item.Value);
-                }
+                    model.page = (total / pageSize) + 1;
+
+                model.rows = list;
+
+                //将查询结果返回  
+                HttpContext.Response.Write(jss.Serialize(model));
             }
-
-            int total = 0;
-            ReturnFeeManager service = new ReturnFeeManager();
-            List<ReturnFeeModel> list = service.GetSearch(SessionHelper.CurrentUser.iCompanyCode, bizParaDic, sort, order, offset, pageSize, out total);
-
-            DicManager dm = new DicManager();
-            List<DicEntity> companyDicE = dm.GetDicByType("公司");
-            Dictionary<string, string> companyDic = new Dictionary<string, string>();
-            foreach (var item in companyDicE)
+            catch (Exception ex)
             {
-                companyDic.Add(item.iKey, item.iValue);
+                log4net.ILog log = log4net.LogManager.GetLogger(this.GetType());
+                log.Error(ex);
             }
-            foreach (var item in list)
-            {
-                item.iCompany = companyDic.ContainsKey(item.iCompany) ? companyDic[item.iCompany] : "";
-            }
-
-            //给分页实体赋值  
-            PageModels<ReturnFeeModel> model = new PageModels<ReturnFeeModel>();
-            model.total = total;
-            if (total % pageSize == 0)
-                model.page = total / pageSize;
-            else
-                model.page = (total / pageSize) + 1;
-
-            model.rows = list;
-
-            //将查询结果返回  
-            HttpContext.Response.Write(jss.Serialize(model));
         }
 
         public JsonResult GetReturnFee(string hrguid)
@@ -136,6 +144,8 @@ namespace HRMS.Controllers
             }
             catch (Exception ex)
             {
+                log4net.ILog log = log4net.LogManager.GetLogger(this.GetType());
+                log.Error(ex);
                 return new JsonResult { Data = new { success = false, msg = ex.ToString() }, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
             }
         }
@@ -213,6 +223,7 @@ namespace HRMS.Controllers
             //需要验证权限，如果是普通用户，不能导入已存在的返回信息。
             DicManager dm = new DicManager();
             var companies = dm.GetDicByType("公司");
+            var projects = dm.GetDicByType("项目");
             ReturnFeeManager service = new ReturnFeeManager();
 
             List<ReturnFeeEntity> list = new List<ReturnFeeEntity>();
@@ -227,12 +238,16 @@ namespace HRMS.Controllers
             //遍历数据行
             for (int i = (sheet.FirstRowNum + 1), len = sheet.LastRowNum + 1; i < len; i++)
             {
+
+                DicEntity currentCompany = null;
+                DicEntity currentProject = null;
                 ReturnFeeEntity en = new ReturnFeeEntity();
                 try
                 {
-                    string company = sheet.GetRow(i).GetCell(keycolumns["iCompany"]).ToString();
-                    string empcode = sheet.GetRow(i).GetCell(keycolumns["iEmpNo"]).ToString();
-                    string idcard = sheet.GetRow(i).GetCell(keycolumns["iIdCard"]).ToString();
+                    string project = sheet.GetRow(i).GetCell(keycolumns["iItemName"]).ToString().Trim();
+                    string company = sheet.GetRow(i).GetCell(keycolumns["iCompany"]).ToString().Trim();
+                    string empcode = sheet.GetRow(i).GetCell(keycolumns["iEmpNo"]).ToString().Trim();
+                    string idcard = sheet.GetRow(i).GetCell(keycolumns["iIdCard"]).ToString().Trim();
                     if (string.IsNullOrEmpty(empcode))
                     {
                         errorLog += "第【" + (i + 1).ToString() + "】行工号不能为空,临时工用-；";
@@ -241,34 +256,45 @@ namespace HRMS.Controllers
                     {
                         errorLog += "第【" + (i + 1).ToString() + "】行身份证号不合法；";
                     }
-                    var companyNow = companies.FirstOrDefault(pj => pj.iValue == company);
-                    if (companyNow == null)
-                    {
-                        errorLog += "第【" + (i + 1).ToString() + "】行公司名称不存在；";
-                    }
-                    else
-                    {
-                        company = companyNow.iKey;
-                    }
+                    currentCompany = companies.FirstOrDefault(pj => pj.iValue == company);
+                    currentProject = projects.FirstOrDefault(pj => pj.iValue == project);
 
-                    string hrId = service.GetValidReturnFeeHrId(company, empcode, idcard, SessionHelper.CurrentUser.iCompanyCode);
-                    if (string.IsNullOrEmpty(hrId))
+                    if (currentCompany == null || currentProject == null)
                     {
-                        errorLog += "第【" + (i + 1).ToString() + "】行在人事里的当前项目中没有给出返费信息；";
+                        if (currentCompany == null)
+                        {
+                            errorLog += "第【" + (i + 1).ToString() + "】行公司名称不存在；";
+                        }
+                        if (currentProject == null)
+                        {
+                            errorLog += "第【" + (i + 1).ToString() + "】行项目名称不存在；";
+                        }
+                        if (SessionHelper.CurrentUser.iUserType == "普通用户" && currentProject.iValue != SessionHelper.CurrentUser.iCompanyCode)
+                        {
+                            errorLog += "第【" + (i + 1).ToString() + "】行只能导入您当前所在的项目；";
+                        }
                     }
                     else
                     {
-                        en = service.FirstOrDefault(hrId);
-                        if (en == null)
+                        string hrId = service.GetValidReturnFeeHrId(currentCompany.iKey, empcode, idcard, currentProject.iKey);
+                        if (string.IsNullOrEmpty(hrId))
                         {
-                            en = new ReturnFeeEntity();
-                            en.iHRInfoGuid = hrId;
+                            errorLog += "第【" + (i + 1).ToString() + "】行在人事里的当前项目中没有给出返费信息；";
                         }
                         else
                         {
-                            if (SessionHelper.CurrentUser.iUserType == "普通用户")
+                            en = service.FirstOrDefault(hrId);
+                            if (en == null)
                             {
-                                errorLog += "第【" + (i + 1).ToString() + "】行已编辑过，您无权限再修改，请联系管理员！；";
+                                en = new ReturnFeeEntity();
+                                en.iHRInfoGuid = hrId;
+                            }
+                            else
+                            {
+                                if (SessionHelper.CurrentUser.iUserType == "普通用户")
+                                {
+                                    errorLog += "第【" + (i + 1).ToString() + "】行已编辑过，您无权限再修改，请联系管理员！；";
+                                }
                             }
                         }
                     }
@@ -320,7 +346,7 @@ namespace HRMS.Controllers
                         en.GetType().GetProperty(kvp.Key).SetValue(en, value, null);
                     }
                 }
-                
+
 
                 string[] paidArray = { "已付", "未付" };
                 Dictionary<string, string[]> checkdic = new Dictionary<string, string[]>();
@@ -330,7 +356,7 @@ namespace HRMS.Controllers
                 checkdic.Add("四级付款情况$iFourthReturnFeePayment", paidArray);
                 checkdic.Add("五级付款情况$iFifthReturnFeePayment", paidArray);
 
-                
+
                 //是否有效校验
 
                 foreach (var item in checkdic)

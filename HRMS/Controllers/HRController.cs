@@ -162,7 +162,7 @@ namespace HRMS.Controllers
                 HRInfoManager service = new HRInfoManager();
                 if (entity.iGuid == "")
                 {
-                    if (service.GetUniqueFirstOrDefault(entity.iCompany, entity.iEmpNo, entity.iIdCard) != null)
+                    if (service.GetUniqueFirstOrDefault(entity.iItemName, entity.iCompany, entity.iEmpNo, entity.iIdCard) != null)
                     {
                         return "已存在相同记录！";
                     }
@@ -256,6 +256,30 @@ namespace HRMS.Controllers
 
         private List<HRInfoEntity> ExcelSheetToEntityList(ISheet sheet, ref string errorLog)
         {
+            string[] sexArray = { "男", "女" };
+            string[] residencePropertyArray = { "农业户口", "非农业户口" };
+            string[] bloodTypeArray = { "A", "B", "AB", "O" };
+            string[] marriageArray = { "已婚", "未婚" };
+            string[] yesnoArray = { "是", "否" };
+            string[] poliArray = { "群众", "团员", "共产党员", "其它" };
+            string[] eduArray = { "小学", "初中", "中专", "高中", "大专", "本科", "硕士", "博士" };
+            string[] empstaArray = { "在职", "离职" };
+            string[] contratypeArray = { "派遣", "外包" };
+            string[] resigntypeArray = { "自离", "旷工", "辞职", "辞退", "开除" };
+            string[] resignressonArray = { "身体原因", "工作原因", "家族原因", "其他" };
+            Dictionary<string, string[]> checkdic = new Dictionary<string, string[]>();
+            checkdic.Add("性别$iSex", sexArray);
+            checkdic.Add("户口性质$iResidenceProperty", residencePropertyArray);
+            //checkdic.Add("血型$iBloodType", bloodTypeArray);
+            checkdic.Add("婚姻状况$iMariage", marriageArray);
+            checkdic.Add("体检$iHealthCheck|合同签订情况$iContractSignStatus|是否返费$iIsReturnFee|是否缴纳保险$iIsSocialInsurancePaid|是否缴纳公积金$iIsProvidentPaid|是否缴纳商业保险$iIsCommercialInsurancePaid", yesnoArray);
+            checkdic.Add("政治面貌$iPolitical", poliArray);
+            checkdic.Add("文化水平$iEducationLevel", eduArray);
+            checkdic.Add("员工状态$iEmployeeStatus", empstaArray);
+            checkdic.Add("合同类型$iContractType", contratypeArray);
+            checkdic.Add("离职类型$iResignType", resigntypeArray);
+            checkdic.Add("离职原因（公司）$iResignReason", resignressonArray);
+
             DicManager dm = new DicManager();
             var companies = dm.GetDicByType("公司");
             var projects = dm.GetDicByType("项目");
@@ -273,6 +297,9 @@ namespace HRMS.Controllers
             //遍历数据行
             for (int i = (sheet.FirstRowNum + 1), len = sheet.LastRowNum + 1; i < len; i++)
             {
+                DicEntity currentCompany = null;
+                DicEntity currentProject = null;
+
                 HRInfoEntity en = new HRInfoEntity();
                 try
                 {
@@ -286,17 +313,30 @@ namespace HRMS.Controllers
                     }
                     if (string.IsNullOrEmpty(en.iGuid))
                     {
-                        string company = sheet.GetRow(i).GetCell(keycolumns["iCompany"]).ToString();
-                        string empcode = sheet.GetRow(i).GetCell(keycolumns["iEmpNo"]).ToString();
-                        string idcard = sheet.GetRow(i).GetCell(keycolumns["iIdCard"]).ToString();
-                        var currentCompany = companies.FirstOrDefault(pj => pj.iValue == company);
-                        if (currentCompany == null)
+                        string project = sheet.GetRow(i).GetCell(keycolumns["iItemName"]).ToString().Trim();
+                        string company = sheet.GetRow(i).GetCell(keycolumns["iCompany"]).ToString().Trim();
+                        string empcode = sheet.GetRow(i).GetCell(keycolumns["iEmpNo"]).ToString().Trim();
+                        string idcard = sheet.GetRow(i).GetCell(keycolumns["iIdCard"]).ToString().Trim();
+                        currentCompany = companies.FirstOrDefault(pj => pj.iValue == company);
+                        currentProject = projects.FirstOrDefault(pj=>pj.iValue == project);
+                        if (currentCompany == null || currentProject == null)
                         {
-                            errorLog += "第【" + (i + 1).ToString() + "】行公司名称不存在；";
+                            if (currentCompany == null)
+                            {
+                                errorLog += "第【" + (i + 1).ToString() + "】行公司名称不存在；";
+                            }
+                            if (currentProject == null)
+                            {
+                                errorLog += "第【" + (i + 1).ToString() + "】行项目名称不存在；";
+                            }
+                            if (SessionHelper.CurrentUser.iUserType == "普通用户" && currentProject.iValue != SessionHelper.CurrentUser.iCompanyCode)
+                            {
+                                errorLog += "第【" + (i + 1).ToString() + "】行只能导入您当前所在的项目；";
+                            }
                         }
                         else
                         {
-                            en = service.GetUniqueFirstOrDefault(currentCompany.iKey, empcode, idcard);
+                            en = service.GetUniqueFirstOrDefault(currentProject.iKey, currentCompany.iKey, empcode, idcard);
                             if (en == null)
                             {
                                 en = new HRInfoEntity();
@@ -354,51 +394,19 @@ namespace HRMS.Controllers
                         en.GetType().GetProperty(kvp.Key).SetValue(en, value, null);
                     }
                 }
-                string[] sexArray = { "男", "女" };
-                string[] residencePropertyArray = { "农业户口", "非农业户口" };
-                string[] bloodTypeArray = { "A", "B", "AB", "O" };
-                string[] marriageArray = { "已婚", "未婚" };
-                string[] yesnoArray = { "是", "否" };
-                string[] poliArray = { "群众", "团员", "共产党员", "其它" };
-                string[] eduArray = { "小学", "初中", "中专", "高中", "大专", "本科", "硕士", "博士" };
-                string[] empstaArray = { "在职", "离职" };
-                string[] contratypeArray = { "派遣", "外包" };
-                string[] resigntypeArray = { "自离", "旷工", "辞职", "辞退", "开除" };
-                string[] resignressonArray = { "身体原因", "工作原因", "家族原因", "其他" };
-                Dictionary<string, string[]> checkdic = new Dictionary<string, string[]>();
-                checkdic.Add("性别$iSex", sexArray);
-                checkdic.Add("户口性质$iResidenceProperty", residencePropertyArray);
-                //checkdic.Add("血型$iBloodType", bloodTypeArray);
-                checkdic.Add("婚姻状况$iMariage", marriageArray);
-                checkdic.Add("体检$iHealthCheck|合同签订情况$iContractSignStatus|是否返费$iIsReturnFee|是否缴纳保险$iIsSocialInsurancePaid|是否缴纳公积金$iIsProvidentPaid|是否缴纳商业保险$iIsCommercialInsurancePaid", yesnoArray);
-                checkdic.Add("政治面貌$iPolitical", poliArray);
-                checkdic.Add("文化水平$iEducationLevel", eduArray);
-                checkdic.Add("员工状态$iEmployeeStatus", empstaArray);
-                checkdic.Add("合同类型$iContractType", contratypeArray);
-                checkdic.Add("离职类型$iResignType", resigntypeArray);
-                checkdic.Add("离职原因（公司）$iResignReason", resignressonArray);
-
-
-                var currentItem = projects.FirstOrDefault(pj => pj.iValue == en.iItemName);
-                if (currentItem == null)
+                if (currentProject != null)
                 {
-                    errorLog += "第【" + (i + 1).ToString() + "】行项目名称不存在；";
+                    en.iItemName = currentProject.iKey;
                 }
-                else
+                if (currentCompany != null)
                 {
-                    en.iItemName = currentItem.iKey;
+                    en.iCompany = currentCompany.iKey;
                 }
 
                 if (SessionHelper.CurrentUser.iUserType == "普通用户" && en.iItemName != SessionHelper.CurrentUser.iCompanyCode)
                 {
                     errorLog += "第【" + (i + 1).ToString() + "】行项目名称不正确，只能导入当前项目；";
                 }
-                var currCompany = companies.FirstOrDefault(co => co.iValue == en.iCompany);
-                if (currCompany != null)
-                {
-                    en.iCompany = currCompany.iKey;
-                }
-
                 if (string.IsNullOrEmpty(en.iEmpNo))
                 {
                     errorLog += "第【" + (i + 1).ToString() + "】行工号不能为空,临时工用-；";

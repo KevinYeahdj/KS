@@ -254,11 +254,7 @@ namespace HRMS.Data.Manager
 
         public string GetValidReturnFeeHrId(string company, string empcode, string idcard, string itemName)
         {
-            string sql = "select iGuid from HRInfo where iCompany='" + company + "' and iEmpNo = '" + empcode + "' and iIdCard ='" + idcard + "' and iIsReturnFee='是' and iIsDeleted =0 and iStatus=1 ";
-            if (itemName != "-")  //普通用户只能操作当前项目
-            {
-                sql += "and iItemName = '" + itemName + "'";
-            }
+            string sql = "select iGuid from HRInfo where iCompany='" + company + "' and iEmpNo = '" + empcode + "' and iIdCard ='" + idcard + "' and iIsReturnFee='是' and iIsDeleted =0 and iStatus=1 and iItemName = '" + itemName + "'";
             DataTable dt = DbHelperSQL.Query(sql).Tables[0];
             if (dt.Rows.Count == 0)
             {

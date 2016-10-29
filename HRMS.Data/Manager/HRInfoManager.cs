@@ -372,10 +372,10 @@ namespace HRMS.Data.Manager
             return Repository.Query<HRInfoEntity>(sql, new { id = id }).FirstOrDefault();
         }
 
-        public HRInfoEntity GetUniqueFirstOrDefault(string company, string empcode, string idcard)
+        public HRInfoEntity GetUniqueFirstOrDefault(string project, string company, string empcode, string idcard)
         {
-            string sql = @"select * from hrinfo where icompany=@icompany and iempno = @iempno and iidcard=@iidcard and iIsDeleted =0 and iStatus =1";
-            return Repository.Query<HRInfoEntity>(sql, new { icompany = company, iempno = empcode, iidcard = idcard }).FirstOrDefault();
+            string sql = @"select * from hrinfo where iItemName=@iproject and icompany=@icompany and iempno = @iempno and iidcard=@iidcard and iIsDeleted =0 and iStatus =1";
+            return Repository.Query<HRInfoEntity>(sql, new { iproject = project, icompany = company, iempno = empcode, iidcard = idcard }).FirstOrDefault();
         }
         public List<HRInfoEntity> GetSearch(string companyCode, Dictionary<string, string> para, string sort, string order, int offset, int pageSize, out int total)
         {
