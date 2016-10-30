@@ -24,6 +24,11 @@
     .warning {
         border-color: red;
     }
+    /*强制不换行，chrome*/
+    table td {
+        word-break: keep-all;
+        white-space: nowrap;
+    }
 </style>
 
 <div>
@@ -593,7 +598,8 @@
 , { field: "iRegistry", title: "户籍", sortable: true }
 , { field: "iNation", title: "民族", sortable: true }
 , { field: "iResidenceProperty", title: "户口性质", sortable: true }
-, { field: "iRegistryAddress", title: "户籍地址", sortable: true }
+, {
+    field: "iRegistryAddress", title: "户籍地址", sortable: true}
 , { field: "iIssuedBy", title: "签发机关", sortable: true }
 , { field: "iIdCardValidate", title: "身份证有效期", sortable: true }
 , { field: "iLivedIn", title: "现住地", sortable: true }
