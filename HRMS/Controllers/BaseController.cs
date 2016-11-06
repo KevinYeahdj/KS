@@ -49,14 +49,14 @@ namespace HRMS.Controllers
 
         private string HasVisitRights(string url)
         {
-            if (SessionHelper.CurrentUser.iUserType == "超级管理员")
+            if (SessionHelper.CurrentUser.UserType == "超级管理员")
                 return "w";
             //if (SessionHelper.CurrentUser.iUserType == "超级用户")
             //    SessionHelper.CurrentUser.iCompanyCode = "-";
 
 
             string sql = "SELECT top 1 [iMenuRights] FROM [SysUserMenu] a inner join [SysMenu] b on a.iMenuId = b.iguid and iEmployeeCode = '{0}' and iProjectCode='{1}' and b.iUrl = '{2}'";
-            DataSet ds = DbHelperSQL.Query(string.Format(sql, SessionHelper.CurrentUser.iEmployeeCodeId, SessionHelper.CurrentUser.iCompanyCode, url));
+            DataSet ds = DbHelperSQL.Query(string.Format(sql, SessionHelper.CurrentUser.UserId, SessionHelper.CurrentUser.CurrentProject, url));
 
             if (ds.Tables[0].Rows.Count == 0)
                 return "deny";

@@ -6,6 +6,9 @@
     .search {
         width: auto;
     }
+    .form-control {
+        color: black;
+    }
 </style>
 
 <div>
@@ -30,10 +33,10 @@
                         <div class="modal-body">
                             <input type="hidden" id="editRowIndex" />
                             <div class="form-group">
-                                姓名：<input type="text" class="form-control" id="iUserName" placeholder="请输入姓名">
+                                工号：<input type="text" class="form-control" id="iEmployeeCodeId" placeholder="请输入工号">
                             </div>
                             <div class="form-group">
-                                工号：<input type="text" class="form-control" id="iEmployeeCodeId" placeholder="请输入工号">
+                                姓名：<input type="text" class="form-control" id="iUserName" placeholder="请输入姓名">
                             </div>
                             <div class="form-group">
                                 密码：<input type="text" class="form-control" id="iPassWord" placeholder="请输入密码">
@@ -49,6 +52,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-primary" id="removeRecord">删除</button>
                             <button type="button" class="btn btn-primary" id="SaveChanges">提交</button>
                         </div>
                     </div>
@@ -199,7 +203,7 @@
                 //$element.css("background-color", "green");
             },//单击row事件
             onDblClickRow: function (row, $element) {
-
+                $("#iEmployeeCodeId").attr("readonly", "readonly");
                 $("#addModalLabel").html("修改记录");
                 $("#iUserName").val(row.iUserName);
                 $("#iCompanyCode").val(row.iCompanyCode);
@@ -227,6 +231,32 @@
         });
         //MVVM绑定
         window.nodeObj = {};
+        
+        $("#removeRecord").click(function () {
+            if (confirm("确认要删除？")) {
+                var param = {};
+                nodeObj.iIsDeleted =1;
+                param.jsonString = JSON.stringify(nodeObj);
+                param.action = "update";
+                $.ajax({
+                    url: "/ManageAjax/UsersSaveChanges",
+                    type: "POST",
+                    data: param,
+                    dataType: 'text',
+                    success: function (data) {
+                        $('#addModal').modal('toggle');
+                        if (data == "success") {
+                            $('#mytab').bootstrapTable('refresh');
+                        }
+                        else {
+                            console.log(data);
+                        }
+                    }
+                });
+            }
+        });
+
+
         $('#iUserName').change(function () {
             nodeObj.iUserName = this.value;
         });

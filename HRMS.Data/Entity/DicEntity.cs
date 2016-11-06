@@ -13,6 +13,8 @@ namespace ClinBrain.Data.Entity
     public class DicEntity
     {
         public string iId { get; set; }
+
+        public string iCompanyCode { get; set; }
         public string iType { get; set; }
         public string iKey { get; set; }
         public string iValue { get; set; }

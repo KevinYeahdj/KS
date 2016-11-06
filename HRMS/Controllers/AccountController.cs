@@ -49,18 +49,26 @@ namespace HRMS.Controllers
             {
                 return View(model);
             }
-            if (SessionHelper.CurrentUser.iUserName == "sa")
+            if (SessionHelper.CurrentUser.UserId == "sa")
             {
                 ModelState.AddModelError("", "您无权修改超级管理员的密码!");
                 return View(model);
             }
             else
             {
-                if(model.NewPassword == model.RepeatNewPassword && model.OldPassword == SessionHelper.CurrentUser.iPassWord)
+                if (model.NewPassword == model.RepeatNewPassword && model.OldPassword == SessionHelper.CurrentUser.PassWord)
                 {
-                    SessionHelper.CurrentUser.iPassWord = model.NewPassword;
+                    SessionHelper.CurrentUser.PassWord = model.NewPassword;
                     UserManager um = new UserManager();
-                    um.Update(SessionHelper.CurrentUser);
+                    UserEntity ue = um.GetUser(SessionHelper.CurrentUser.UserId);
+                    ue.iPassWord = model.NewPassword;
+                    ue.iUpdatedBy = SessionHelper.CurrentUser.UserName;
+                    um.Update(ue);
+
+                    LoginUserInfo userinfo = SessionHelper.CurrentUser;
+                    userinfo.PassWord = model.NewPassword;
+                    Session[SessionHelper.CurrentUserKey] = userinfo;
+
                     ModelState.AddModelError("", "修改成功，即将进入系统！");
                     Response.Write("<script language='javascript'>setTimeout(\"window.opener=null;window.location.href=\'/Home/Index'\",1500);</script>");
                     //return RedirectToAction("Index", "Home");
@@ -85,7 +93,7 @@ namespace HRMS.Controllers
             }
             if (model.UserName == "sa" && model.Password == "password")
             {
-                UserEntity sa = new UserEntity { iUserName = "超级管理员", iEmployeeCodeId = "sa", iUserType = "超级管理员", iCompanyCode = "-" };
+                LoginUserInfo sa = new LoginUserInfo { UserId = "sa", UserName = "超级管理员", UserType = "超级管理员", CurrentCompany = "-", CurrentProject = "-", PassWord = "password" };
                 Session[SessionHelper.CurrentUserKey] = sa;
                 return RedirectToLocal(returnUrl);
             }
@@ -94,7 +102,6 @@ namespace HRMS.Controllers
                 string userName = model.UserName;
                 UserManager um = new UserManager();
                 UserEntity ui = um.GetUser(userName);
-                Session[SessionHelper.CurrentUserKey] = ui;
                 if (ui == null)
                 {
                     ModelState.AddModelError("", "用户名不存在!");
@@ -104,6 +111,8 @@ namespace HRMS.Controllers
                 {
                     if (ui.iPassWord == model.Password)
                     {
+                        LoginUserInfo user = new LoginUserInfo { CurrentCompany = "-", CurrentProject = "-", UserId = ui.iEmployeeCodeId, UserName = ui.iUserName, UserType = ui.iUserType, PassWord = ui.iPassWord };
+                        Session[SessionHelper.CurrentUserKey] = user;
                         return RedirectToLocal(returnUrl);
                     }
                     else

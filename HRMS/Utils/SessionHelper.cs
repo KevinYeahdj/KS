@@ -15,18 +15,35 @@ namespace HRMS.WEB.Utils
         /// <summary>
         /// 获取当前登录用户
         /// </summary>
-        public static UserEntity CurrentUser
+
+        public static LoginUserInfo CurrentUser
         {
             get
             {
 
-                UserEntity userinfo = HttpContext.Current.Session[CurrentUserKey] as UserEntity;
+                LoginUserInfo userinfo = HttpContext.Current.Session[CurrentUserKey] as LoginUserInfo;
                 if (userinfo == null && System.Net.Dns.GetHostName() == "ThinkPad-PC")
-                {                    
-                    return new UserEntity { iUserName = "超级管理员", iEmployeeCodeId = "sa", iUserType = "超级管理员", iCompanyCode = "-" };
+                {
+                    LoginUserInfo sa = new LoginUserInfo { UserId = "sa", UserName = "超级管理员", UserType = "超级管理员", CurrentCompany = "-", CurrentProject = "-", PassWord = "password" };
+                    return sa;
                 }
                 return userinfo;
             }
+            set
+            {
+                HttpContext.Current.Session[SessionHelper.CurrentUserKey] = value;
+            }
+
         }
+    }
+
+    public class LoginUserInfo
+    {
+        public string UserId { get; set; }
+        public string UserName { get; set; }
+        public string CurrentCompany { get; set; }
+        public string CurrentProject { get; set; }
+        public string UserType { get; set; }
+        public string PassWord { get; set; }
     }
 }

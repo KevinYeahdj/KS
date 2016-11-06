@@ -45,8 +45,6 @@ namespace HRMS.Data.Manager
         public void Update(UserEntity entity)
         {
             entity.iUpdatedOn = DateTime.Now;
-            entity.iStatus = 1;
-            entity.iIsDeleted = 0;
             IDbSession session = SessionFactory.CreateSession();
             try
             {

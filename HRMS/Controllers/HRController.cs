@@ -109,7 +109,7 @@ namespace HRMS.Controllers
 
             int total = 0;
             HRInfoManager service = new HRInfoManager();
-            List<HRInfoEntity> list = service.GetSearch(SessionHelper.CurrentUser.iCompanyCode, bizParaDic, sort, order, offset, pageSize, out total);
+            List<HRInfoEntity> list = service.GetSearch(SessionHelper.CurrentUser.CurrentCompany, bizParaDic, sort, order, offset, pageSize, out total);
 
             DicManager dm = new DicManager();
             List<DicEntity> companyDicE = dm.GetDicByType("公司");
@@ -166,13 +166,13 @@ namespace HRMS.Controllers
                     {
                         return "已存在相同记录！";
                     }
-                    entity.iCreatedBy = SessionHelper.CurrentUser.iUserName;
-                    entity.iUpdatedBy = SessionHelper.CurrentUser.iUserName;
+                    entity.iCreatedBy = SessionHelper.CurrentUser.UserName;
+                    entity.iUpdatedBy = SessionHelper.CurrentUser.UserName;
                     service.Insert(entity);
                 }
                 else
                 {
-                    entity.iUpdatedBy = SessionHelper.CurrentUser.iUserName;
+                    entity.iUpdatedBy = SessionHelper.CurrentUser.UserName;
                     service.Update(entity);
                 }
                 return "success";
@@ -329,7 +329,7 @@ namespace HRMS.Controllers
                             {
                                 errorLog += "第【" + (i + 1).ToString() + "】行项目名称不存在；";
                             }
-                            if (SessionHelper.CurrentUser.iUserType == "普通用户" && currentProject.iValue != SessionHelper.CurrentUser.iCompanyCode)
+                            if (SessionHelper.CurrentUser.UserType == "普通用户" && currentProject.iValue != SessionHelper.CurrentUser.CurrentProject)
                             {
                                 errorLog += "第【" + (i + 1).ToString() + "】行只能导入您当前所在的项目；";
                             }
@@ -403,7 +403,7 @@ namespace HRMS.Controllers
                     en.iCompany = currentCompany.iKey;
                 }
 
-                if (SessionHelper.CurrentUser.iUserType == "普通用户" && en.iItemName != SessionHelper.CurrentUser.iCompanyCode)
+                if (SessionHelper.CurrentUser.UserType == "普通用户" && en.iItemName != SessionHelper.CurrentUser.CurrentProject)
                 {
                     errorLog += "第【" + (i + 1).ToString() + "】行项目名称不正确，只能导入当前项目；";
                 }
@@ -450,13 +450,13 @@ namespace HRMS.Controllers
             {
                 if (string.IsNullOrEmpty(item.iGuid))
                 {
-                    item.iCreatedBy = SessionHelper.CurrentUser.iUserName;
-                    item.iUpdatedBy = SessionHelper.CurrentUser.iUserName;
+                    item.iCreatedBy = SessionHelper.CurrentUser.UserName;
+                    item.iUpdatedBy = SessionHelper.CurrentUser.UserName;
                     service.Insert(item);
                 }
                 else
                 {
-                    item.iUpdatedBy = SessionHelper.CurrentUser.iUserName;
+                    item.iUpdatedBy = SessionHelper.CurrentUser.UserName;
                     service.Update(item);
                 }
             }
@@ -536,7 +536,7 @@ namespace HRMS.Controllers
             paraDic.Remove("iModifyOnTo");
 
             HRInfoManager service = new HRInfoManager();
-            List<HRInfoEntity> list = service.GetSearchAll(SessionHelper.CurrentUser.iCompanyCode, paraDic);
+            List<HRInfoEntity> list = service.GetSearchAll(SessionHelper.CurrentUser.CurrentCompany, paraDic);
             return list;
 
         }

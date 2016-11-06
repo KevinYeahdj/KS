@@ -45,8 +45,6 @@ namespace HRMS.Data.Manager
         public void Update(DicEntity entity)
         {
             entity.iUpdatedOn = DateTime.Now;
-            entity.iStatus = 1;
-            entity.iIsDeleted = 0;
             IDbSession session = SessionFactory.CreateSession();
             try
             {
@@ -76,12 +74,29 @@ namespace HRMS.Data.Manager
             return Repository.Query<DicEntity>(sql, new { type = type }).ToList();
         }
 
-        public List<DicEntity> GetSearch(string keyString, string sort, string order, int offset, int pageSize, out int total)
+        public List<DicEntity> GetSearch(Dictionary<string, string> para, string sort, string order, int offset, int pageSize, out int total)
         {
-            string commonSql = "from SysDic where iIsDeleted =0 and iStatus =1 and iKey like '%{0}%' ";
-            string querySql = "select * " + commonSql + "order by {1} {2} offset {3} row fetch next {4} rows only";
-            querySql = string.Format(querySql, keyString, sort, order, offset, pageSize);
-            string totalSql = string.Format("select cast(count(1) as varchar(8)) " + commonSql, keyString);
+            StringBuilder commandsb = new StringBuilder("from SysDic where iIsDeleted =0 and iStatus =1 ");
+
+            foreach (KeyValuePair<string, string> item in para)
+            {
+                if (!string.IsNullOrEmpty(item.Value) && item.Value != "§")
+                {
+                    if (item.Key == "search")
+                    {
+                        commandsb.Append(" and iValue like '%" + item.Value + "%'");
+                    }
+                    else
+                    {
+                        commandsb.Append(" and " + item.Key + " like '%" + item.Value + "%'");
+                    }
+                }
+            }
+
+            string commonSql = commandsb.ToString();
+            string querySql = "select * " + commonSql + "order by {0} {1} offset {2} row fetch next {3} rows only";
+            querySql = string.Format(querySql, sort, order, offset, pageSize);
+            string totalSql = "select cast(count(1) as varchar(8)) " + commonSql;
             total = int.Parse(Repository.Query<string>(totalSql).ToList()[0]);
             return Repository.Query<DicEntity>(querySql).ToList();
 

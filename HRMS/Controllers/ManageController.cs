@@ -37,6 +37,9 @@ namespace HRMS.Controllers
         }
         public ActionResult DicIndex()
         {
+            DicManager dm = new DicManager();
+            var companies = dm.GetDicByType("公司");
+            ViewBag.Companies = companies;
             return View();
         }
 
@@ -110,16 +113,20 @@ namespace HRMS.Controllers
                 UserManager pm = new UserManager();
                 if (action == "add")
                 {
-                    ue.iCreatedBy = SessionHelper.CurrentUser.iUserName;
-                    ue.iUpdatedBy = SessionHelper.CurrentUser.iUserName;
+                    ue.iCreatedBy = SessionHelper.CurrentUser.UserName;
+                    ue.iUpdatedBy = SessionHelper.CurrentUser.UserName;
                     pm.Insert(ue);
                 }
                 else
                 {
                     UserEntity ueOld = pm.GetUser(ue.iEmployeeCodeId);
-                    ue.iUpdatedBy = SessionHelper.CurrentUser.iUserName;
+                    ue.iUpdatedBy = SessionHelper.CurrentUser.UserName;
                     ue.iCreatedBy = ueOld.iCreatedBy;
                     ue.iCreatedOn = ueOld.iCreatedOn;
+                    if (ue.iIsDeleted != 1)
+                    {
+                        ue.iStatus = 1;
+                    }
                     pm.Update(ue);
                 }
                 return "success";
@@ -145,14 +152,22 @@ namespace HRMS.Controllers
             string searchKey = HttpContext.Request.Params["search"];
             int offset = Convert.ToInt32(HttpContext.Request.Params["offset"]);  //0
             int pageSize = Convert.ToInt32(HttpContext.Request.Params["limit"]);
+            string iCompanyCode = HttpContext.Request.Params["iCompanyCode"];
+            string iType = HttpContext.Request.Params["iType"];
+            Dictionary<string, string> bizParaDic = new Dictionary<string, string>();
+            bizParaDic.Add("search", searchKey);
+            bizParaDic.Add("iCompanyCode", iCompanyCode);
+            bizParaDic.Add("iType", iType);
 
             int total = 0;
             DicManager dm = new DicManager();
-            List<DicEntity> list = dm.GetSearch(searchKey, sort, order, offset, pageSize, out total);
+            List<DicEntity> list = dm.GetSearch(bizParaDic, sort, order, offset, pageSize, out total);
             List<DicViewModel> listView = new List<DicViewModel>();
+            var companies = dm.GetDicByType("公司");
             foreach (var item in list)
             {
-                listView.Add(new DicViewModel { iId = item.iId, iKey = item.iKey, iValue = item.iValue, iType = item.iType, iUpdatedOn = item.iUpdatedOn.ToString("yyyyMMdd HH:mm") });
+                var currentCompany = companies.FirstOrDefault(i => i.iKey == item.iCompanyCode);
+                listView.Add(new DicViewModel { iId = item.iId, iKey = item.iKey, iValue = item.iValue, iType = item.iType, iCompanyCode = item.iCompanyCode, iCompanyName = currentCompany == null ? "" : currentCompany.iValue, iUpdatedOn = item.iUpdatedOn.ToString("yyyyMMdd HH:mm") });
             }
 
             //给分页实体赋值  
@@ -180,17 +195,21 @@ namespace HRMS.Controllers
                 {
                     ue.iId = Guid.NewGuid().ToString();
                     ue.iKey = ue.iValue;
-                    ue.iCreatedBy = SessionHelper.CurrentUser.iUserName;
-                    ue.iUpdatedBy = SessionHelper.CurrentUser.iUserName;
+                    ue.iCreatedBy = SessionHelper.CurrentUser.UserName;
+                    ue.iUpdatedBy = SessionHelper.CurrentUser.UserName;
                     dm.Insert(ue);
                 }
                 else
                 {
                     DicEntity ueOld = dm.GetDic(ue.iId);
-                    ue.iUpdatedBy = SessionHelper.CurrentUser.iUserName;
+                    ue.iUpdatedBy = SessionHelper.CurrentUser.UserName;
                     ue.iKey = ueOld.iKey;
                     ue.iCreatedBy = ueOld.iCreatedBy;
                     ue.iCreatedOn = ueOld.iCreatedOn;
+                    if (ue.iIsDeleted != 1)
+                    {
+                        ue.iStatus = 1;
+                    }
                     dm.Update(ue);
                 }
                 return "success";
@@ -204,7 +223,7 @@ namespace HRMS.Controllers
         #endregion
 
         #region 公用方法
-        public ActionResult ChangeProject(string newProject)
+        public ActionResult ChangeProject(string newCompany, string newProject)
         {
             if (SessionHelper.CurrentUser == null)
             {
@@ -212,11 +231,33 @@ namespace HRMS.Controllers
             }
             else
             {
-                UserEntity userinfo = SessionHelper.CurrentUser;
-                userinfo.iCompanyCode = newProject;
+                LoginUserInfo userinfo = SessionHelper.CurrentUser;
+                userinfo.CurrentCompany = newCompany;
+                userinfo.CurrentProject = newProject;
                 Session[SessionHelper.CurrentUserKey] = userinfo;
                 return Content("success");
             }
+        }
+
+        public JsonResult GetCompanyProjects(string companyCode)
+        {
+            try
+            {
+                string sql = "select distinct iKey, iValue from [SysDic] where iType='项目' and iStatus = 1 and iIsDeleted=0 and icompanycode = '" + companyCode + "' ";
+                DataSet ds = DbHelperSQL.Query(sql);
+                Dictionary<string, string> projectsDic = new Dictionary<string, string>();
+                foreach (DataRow dr in ds.Tables[0].Rows)
+                {
+                    projectsDic.Add(dr[0].ToString(), dr[1].ToString());
+                }
+                return new JsonResult { Data = new { success = true, msg = "msg", data = projectsDic }, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult { Data = new { success = false, msg = ex.ToString() }, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+            }
+
         }
 
         #endregion
@@ -236,7 +277,7 @@ namespace HRMS.Controllers
 
             int total = 0;
             LaborInfoManager lim = new LaborInfoManager();
-            List<LaborInfoEntity> list = lim.GetSearch(SessionHelper.CurrentUser.iCompanyCode, searchKey, sort, order, offset, pageSize, out total);
+            List<LaborInfoEntity> list = lim.GetSearch(SessionHelper.CurrentUser.CurrentCompany, searchKey, sort, order, offset, pageSize, out total);
 
             //给分页实体赋值  
             PageModels<LaborInfoEntity> model = new PageModels<LaborInfoEntity>();
@@ -495,7 +536,7 @@ namespace HRMS.Controllers
                 IRow tempRow = sheet.GetRow(i);
                 DataRow dataRow = dt.NewRow();
                 dataRow[0] = Guid.NewGuid();
-                dataRow[1] = SessionHelper.CurrentUser.iCompanyCode;
+                dataRow[1] = SessionHelper.CurrentUser.CurrentCompany;
 
                 //遍历一行的每一个单元格
                 for (int r = 2, j = tempRow.FirstCellNum, len2 = tempRow.LastCellNum; j < len2; j++, r++)
@@ -699,13 +740,9 @@ namespace HRMS.Controllers
 
         public string GetMenuHtml()
         {
-            if (SessionHelper.CurrentUser.iUserType == "超级用户")
-            {
-                SessionHelper.CurrentUser.iCompanyCode = "-";
-            }
-            string querySql = "select iguid, iparentid, iname, iUrl from  [sysMenu] a inner join [sysUserMenu] b on a.iguid = b.imenuid and b.iemployeecode='" + SessionHelper.CurrentUser.iEmployeeCodeId + "' and b.iProjectCode='" + SessionHelper.CurrentUser.iCompanyCode + "' ";
+            string querySql = "select iguid, iparentid, iname, iUrl from  [sysMenu] a inner join [sysUserMenu] b on a.iguid = b.imenuid and b.iemployeecode='" + SessionHelper.CurrentUser.UserId + "' and b.iProjectCode='" + ((SessionHelper.CurrentUser.UserType == "超级用户") ? "-" : SessionHelper.CurrentUser.CurrentProject) + "' ";
 
-            if (SessionHelper.CurrentUser.iUserType == "超级管理员")
+            if (SessionHelper.CurrentUser.UserType == "超级管理员")
             {
                 querySql = "select iguid, iparentid, iname, iUrl from  [sysMenu]";
             }

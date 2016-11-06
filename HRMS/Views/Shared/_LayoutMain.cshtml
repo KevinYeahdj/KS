@@ -45,15 +45,47 @@
     <script src="~/FlatLab/id_card_area.js" charset="gbk"></script>
 
     @RenderSection("scripts", required: false)
+
+    <style>
+        .search {
+            width: auto;
+        }
+
+        .form-control {
+            color: black;
+        }
+    </style>
     <script>
-        function ChangeProject(newProject) {
+        function ChangeCompany(newCompany) {
             $.ajax({
-                url: "/ManageAjax/ChangeProject?newProject=" + newProject,
+                url: "/ManageAjax/GetCompanyProjects?companyCode=" + newCompany,
+                type: "GET",
+                dataType: 'json',
+                success: function (result) {
+                    if (result.success) {
+                        $("select[name='projects']").empty();
+                        var option = $("<option>").val("-").text("请选择项目");
+                        $("select[name='projects']").append(option);
+                        for (var key in result.data) {
+                            var option = $("<option>").val(key).text(result.data[key]);
+                            $("select[name='projects']").append(option);
+                        }
+                        result.data;
+                    }
+                    else {
+                        console.log(result.msg);
+                    }
+                }
+            });
+        }
+        function ChangeProject(newCompany, newProject) {
+            $.ajax({
+                url: "/ManageAjax/ChangeProject?newCompany=" + newCompany + "&newProject=" + newProject,
                 type: "GET",
                 dataType: 'text',
                 success: function (data) {
                     if (data == "success") {
-                        location.reload();
+                        //
                     }
                     else {
                         console.log(data);
@@ -63,7 +95,7 @@
         }
 
         window.menuRights = "@ViewBag.CurrentPageRights";
-        window.userType = "@HRMS.WEB.Utils.SessionHelper.CurrentUser.iUserType";
+        window.userType = "@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserType";
     </script>
 
 </head>
@@ -76,33 +108,25 @@
         <img src="/content/images/敏慧标识.jpg" height="50" width="200" style="margin-top:0px" />
         <div class="top-nav " style="margin-top:-45px">
             <ul class="nav pull-right top-menu">
-                @{
-                    if (HRMS.WEB.Utils.SessionHelper.CurrentUser.iUserType == "普通用户")
-                    {
-                        <select onchange="ChangeProject(this.value)" class="form-control" style="width:150px;height:42.9px;float:left;">
-                            @{
-                        HRMS.Data.Service.ManageService ms = new HRMS.Data.Service.ManageService();
-                        Dictionary<string, string> pros = ms.GetUserProjects(HRMS.WEB.Utils.SessionHelper.CurrentUser.iEmployeeCodeId);
-                        foreach (KeyValuePair<string, string> item in pros)
+                <select onchange="ChangeCompany(this.value)" class="form-control" style="width:150px;height:42.9px;float:left;">
+                    <option value="-">请选择公司</option>
+                    @{
+                        HRMS.Data.Manager.DicManager dm = new HRMS.Data.Manager.DicManager();
+                        var companies = dm.GetDicByType("公司");
+                        foreach (var item in companies)
                         {
-                            if (item.Key == HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode)
-                            {
-                                <option value="@item.Key" selected="selected">@item.Value</option>
-                            }
-                            else
-                            {
-                                <option value="@item.Key">@item.Value</option>
-                            }
+                            <option value="@item.iKey">@item.iValue</option>
                         }
-                            }
-                        </select>
                     }
-                }
+                </select>
+                <select name="projects" onchange="ChangeProject(this.value)" class="form-control" style="width:150px;height:42.9px;float:left; margin-left:10px">
+                    <option value="-">请选择项目</option>
+                </select>
 
                 <li class="dropdown">
                     <a data-toggle="dropdown" class="dropdown-toggle" href="#">
                         <img alt="" src="~/Flatlab/img/avatar1_small.jpg">
-                        <span class="username">@HRMS.WEB.Utils.SessionHelper.CurrentUser.iUserName</span>
+                        <span class="username">@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserName</span>
                         <b class="caret"></b>
                     </a>
                     <ul class="dropdown-menu extended logout" style="width: 56px !important; min-width: 56px !important">
@@ -131,7 +155,7 @@
                 @{
                     HRMS.Controllers.ManageAjaxController mc = new HRMS.Controllers.ManageAjaxController();
                     @Html.Raw(mc.GetMenuHtml())
-                    if (HRMS.WEB.Utils.SessionHelper.CurrentUser.iUserType == "超级管理员")
+                    if (HRMS.WEB.Utils.SessionHelper.CurrentUser.UserType == "超级管理员")
                     {
                         <li class="sub-menu">
                             <a href="javascript:;">

@@ -382,7 +382,7 @@ namespace HRMS.Data.Manager
             //StringBuilder commandsb = new StringBuilder("from HRInfo where icompany='");
             //commandsb.Append(companyCode);
             //commandsb.Append("' ");
-            StringBuilder commandsb = new StringBuilder("from HRInfo where 1=1 ");
+            StringBuilder commandsb = new StringBuilder("from HRInfo where iIsDeleted =0 and iStatus =1 ");
             foreach (KeyValuePair<string, string> item in para)
             {
                 if (!string.IsNullOrEmpty(item.Value) && item.Value != "§")
@@ -413,7 +413,7 @@ namespace HRMS.Data.Manager
             //StringBuilder commandsb = new StringBuilder("from HRInfo where icompany='");
             //commandsb.Append(companyCode);
             //commandsb.Append("' ");
-            StringBuilder commandsb = new StringBuilder("from HRInfo where 1=1 ");
+            StringBuilder commandsb = new StringBuilder("from HRInfo where iIsDeleted =0 and iStatus =1 ");
             foreach (KeyValuePair<string, string> item in para)
             {
                 if (!string.IsNullOrEmpty(item.Value) && item.Value != "§")

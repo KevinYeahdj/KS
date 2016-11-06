@@ -13,5 +13,7 @@ namespace HRMS.WEB.Models
         public string iKey { get; set; }
         public string iValue { get; set; }
         public string iUpdatedOn { get; set; }
+        public string iCompanyCode { get; set; }
+        public string iCompanyName { get; set; }
     }
 }

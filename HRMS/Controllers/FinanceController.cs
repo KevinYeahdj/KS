@@ -99,7 +99,7 @@ namespace HRMS.Controllers
 
                 int total = 0;
                 ReturnFeeManager service = new ReturnFeeManager();
-                List<ReturnFeeModel> list = service.GetSearch(SessionHelper.CurrentUser.iCompanyCode, bizParaDic, sort, order, offset, pageSize, out total);
+                List<ReturnFeeModel> list = service.GetSearch(SessionHelper.CurrentUser.CurrentCompany, bizParaDic, sort, order, offset, pageSize, out total);
 
                 DicManager dm = new DicManager();
                 List<DicEntity> companyDicE = dm.GetDicByType("公司");
@@ -160,13 +160,13 @@ namespace HRMS.Controllers
                 ReturnFeeManager service = new ReturnFeeManager();
                 if (string.IsNullOrEmpty(entity.iGuid))
                 {
-                    entity.iCreatedBy = SessionHelper.CurrentUser.iUserName;
-                    entity.iUpdatedBy = SessionHelper.CurrentUser.iUserName;
+                    entity.iCreatedBy = SessionHelper.CurrentUser.UserName;
+                    entity.iUpdatedBy = SessionHelper.CurrentUser.UserName;
                     service.Insert(entity);
                 }
                 else
                 {
-                    entity.iUpdatedBy = SessionHelper.CurrentUser.iUserName;
+                    entity.iUpdatedBy = SessionHelper.CurrentUser.UserName;
                     service.Update(entity);
                 }
                 return "success";
@@ -269,7 +269,7 @@ namespace HRMS.Controllers
                         {
                             errorLog += "第【" + (i + 1).ToString() + "】行项目名称不存在；";
                         }
-                        if (SessionHelper.CurrentUser.iUserType == "普通用户" && currentProject.iValue != SessionHelper.CurrentUser.iCompanyCode)
+                        if (SessionHelper.CurrentUser.UserType == "普通用户" && currentProject.iValue != SessionHelper.CurrentUser.CurrentProject)
                         {
                             errorLog += "第【" + (i + 1).ToString() + "】行只能导入您当前所在的项目；";
                         }
@@ -291,7 +291,7 @@ namespace HRMS.Controllers
                             }
                             else
                             {
-                                if (SessionHelper.CurrentUser.iUserType == "普通用户")
+                                if (SessionHelper.CurrentUser.UserType == "普通用户")
                                 {
                                     errorLog += "第【" + (i + 1).ToString() + "】行已编辑过，您无权限再修改，请联系管理员！；";
                                 }
@@ -422,13 +422,13 @@ namespace HRMS.Controllers
             {
                 if (string.IsNullOrEmpty(item.iGuid))
                 {
-                    item.iCreatedBy = SessionHelper.CurrentUser.iUserName;
-                    item.iUpdatedBy = SessionHelper.CurrentUser.iUserName;
+                    item.iCreatedBy = SessionHelper.CurrentUser.UserName;
+                    item.iUpdatedBy = SessionHelper.CurrentUser.UserName;
                     service.Insert(item);
                 }
                 else
                 {
-                    item.iUpdatedBy = SessionHelper.CurrentUser.iUserName;
+                    item.iUpdatedBy = SessionHelper.CurrentUser.UserName;
                     service.Update(item);
                 }
             }
@@ -466,7 +466,7 @@ namespace HRMS.Controllers
             }
 
             ReturnFeeManager service = new ReturnFeeManager();
-            List<ReturnFeeModel> list = service.GetSearchAll(SessionHelper.CurrentUser.iCompanyCode, bizParaDic);
+            List<ReturnFeeModel> list = service.GetSearchAll(SessionHelper.CurrentUser.CurrentCompany, bizParaDic);
             return list;
 
         }

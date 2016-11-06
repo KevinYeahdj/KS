@@ -265,6 +265,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-primary" id="removeRecord">删除</button>
                             <button type="button" class="btn btn-primary" id="addRecord">提交</button>
                         </div>
                     </div>
@@ -298,7 +299,7 @@
 
     $(function () {
         if (window.userType == "普通用户") {
-            $("#sItemName").val('@HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode');
+            $("#sItemName").val('@HRMS.WEB.Utils.SessionHelper.CurrentUser.CurrentProject');
             $("#sItemName").attr("disabled", true);
             $("#iItemName").attr("disabled", true);
         }
@@ -633,7 +634,9 @@
                 }
                 $("#addModalLabel").html("修改记录");
                 $('#addModal').modal('toggle');
-
+                if (window.userType != "普通用户") {
+                    $("#removeRecord").show();
+                }
                 $("#iItemName").removeClass("warning");
                 $('#iCompany').removeClass("warning");
                 $('#iName').removeClass("warning");
@@ -769,7 +772,32 @@
             });
         });
 
+        $("#removeRecord").click(function () {
+            if (confirm("确认要删除？")) {
+                var param = {};
+                myViewModel.iIsDeleted("1");
+                param.jsonString = ko.toJSON(myViewModel);
+                $.ajax({
+                    url: "/HRAjax/SaveChanges",
+                    type: "POST",
+                    data: param,
+                    dataType: 'text',
+                    success: function (data) {
+                        if (data == "success") {
+                            toastr.success('删除成功！');
+                            $('#mytab').bootstrapTable('refresh');
+                        }
+                        else {
+                            console.log(data);
+                            toastr.error('删除数据失败！');
+                        }
+                        $('#addModal').modal('toggle');
+                    }
+                });
+            }
+        });
         $("#NewRecord").click(function () {
+            $("#removeRecord").hide();
 
             $("#iIdCard").removeAttr("readonly");
             if (window.userType != "普通用户") {
@@ -780,7 +808,7 @@
             $('#iEmpNo').addClass("warning");
             $('#iIdCard').addClass("warning");
             myViewModel.iGuid("");
-            myViewModel.iItemName('@HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode');
+            myViewModel.iItemName('@HRMS.WEB.Utils.SessionHelper.CurrentUser.CurrentProject');
             myViewModel.iCompany('-');
             myViewModel.iWorkPlace("");
             myViewModel.iEmpNo("");
@@ -937,7 +965,7 @@
     function ViewModel() {
         var self = this;
         self.iGuid = ko.observable("");
-        self.iItemName = ko.observable('@HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode');
+        self.iItemName = ko.observable('@HRMS.WEB.Utils.SessionHelper.CurrentUser.CurrentProject');
         self.iCompany = ko.observable('-');
         self.iWorkPlace = ko.observable("");
         self.iEmpNo = ko.observable("");
