@@ -29,13 +29,19 @@
         word-break: keep-all;
         white-space: nowrap;
     }
+    .bars {
+        margin-top: -28px !important;
+    }
+    .toolbar div {
+        height: 34px;
+    }
 </style>
 
 <div>
     <div>
         <div class="col-*-12">
 
-            <div id="toolbar">
+            <div id="toolbar" class="toolbar">
                 <div style="float: left; margin-left: 10px"><span>身份证号：</span></div>
                 <div style="float: left; margin-left: 10px"><input id="idcard" class="form-control" /></div>
                 <div style="float: left; margin-left: 10px"><span>修改日期：</span></div>
@@ -166,8 +172,8 @@
                 return params;
             },
             searchOnEnterKey: false,//回车搜索
-            showRefresh: true,//刷新按钮
-            showColumns: true,//列选择按钮
+            showRefresh: false,//刷新按钮
+            showColumns: false,//列选择按钮
             buttonsAlign: "left",//按钮对齐方式
             toolbar: "#toolbar",//指定工具栏
             toolbarAlign: "right",//工具栏对齐方式
@@ -178,9 +184,9 @@
     }
 }
 , { field: "iGuid", title: "iGuid", visible: false }
-, { field: "iItemName", title: "项目名称", sortable: true }
-, { field: "iCompany", title: "所在公司", sortable: true }
-, { field: "iWorkPlace", title: "所在工作地", sortable: true }
+, { field: "iItemName", title: "项目名称", visible: false }
+, { field: "iCompany", title: "所在公司", visible: false }
+, { field: "iWorkPlace", title: "所在工作地", visible: false }
 , { field: "iEmpNo", title: "工号", sortable: true }
 , { field: "iName", title: "姓名", sortable: true }
 , { field: "iIdCard", title: "身份证号", sortable: true }

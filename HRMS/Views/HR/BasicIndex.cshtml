@@ -29,69 +29,47 @@
         word-break: keep-all;
         white-space: nowrap;
     }
+    .bars {
+        margin-top: -38px !important;
+    }
+    .toolbar div {
+        height: 34px;
+    }
 </style>
 
 <div>
     <div>
         <div class="col-*-12">
 
-            <div id="toolbar">
-                <div style="float: left; margin-left: 10px"><span>项目名称：</span></div>
-                <div style="float: left; margin-left: 10px">
-                    <select class="form-control" id="sItemName">
-                        <option value="">请选择</option>
-                        @{
-                            foreach (var item in ViewBag.Projects)
-                            {
-                                <option value="@item.iKey">@item.iValue</option>
-                            }
-                        }
-                    </select>
-                </div>
-                <div style="float: left; margin-left: 10px">
-                    <span>所在公司：</span>
-                </div>
-                <div style="float: left; margin-left: 10px">
-                    <select class="form-control" id="sCompanyCode">
-                        <option value="">请选择</option>
-                        @{
-                            foreach (var item in ViewBag.Companies)
-                            {
-                                <option value="@item.iKey">@item.iValue</option>
-                            }
-                        }
-                    </select>
-                </div>
-                <div style="float: left; margin-left: 10px"><span>身份证号：</span></div>
-                <div style="float: left; margin-left: 10px"><input id="sIdCard" class="form-control" /></div>
-                <div style="float: left; margin-left: 10px">
-                    <span>联系电话：</span>
-                </div>
-                <div style="float: left; margin-left: 10px"><input id="SPhone" class="form-control" /></div>
-                <div style="float: left; margin-left: 10px">&nbsp;</div>
-                <div style="float: left; margin-left: 10px">
-                    <span>工号：</span>
-                </div>
-                <div style="float: left; margin-left: 10px"><input id="sEmpNo" class="form-control" /></div>
+            <div id="toolbar" class="toolbar">
                 <div style="float: left; margin-left: 10px">
                     <span>员工状态：</span>
                 </div>
                 <div style="float: left; margin-left: 10px">
                     <select class="form-control" id="sEmpStatus">
                         <option value="">请选择</option>
-                        <option value="在职">在职</option>
+                        <option value="在职" selected="selected">在职</option>
                         <option value="离职">离职</option>
 
                     </select>
                 </div>
-                <div style="float: left; margin-left: 10px"><span>档案位置：</span></div><div style="float: left; margin-left: 10px"><input id="sFileLocation" class="form-control" /></div>
-                <div style="float:left;margin-left:10px"><span>入职时间：</span></div><div style="float: left; margin-left: 10px;width:10%"><input id="sEmployeeDate" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 10%"><input id="sEmployeeDate2" class="form-control" /></div>
-                <div style="float:left;margin-left:10px"><span>合同到期日期：</span></div><div style="float: left; margin-left: 10px; width: 10%"><input id="sContractDeadLine" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 10%"><input id="sContractDeadLine2" class="form-control" /></div>
-                <div style="float:left;margin-left:10px"><span>离职日期：</span></div><div style="float: left; margin-left: 10px; width: 10%"><input id="sResignDate" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 10%"><input id="sResignDate2" class="form-control" /></div>
-                <div style="float:left;margin-left:10px"><span>修改日期：</span></div><div style="float: left; margin-left: 10px; width: 10%"><input id="sUpdateOn" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 10%"><input id="sUpdateOn2" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px"><span>姓名：</span></div>
+                <div style="float: left; margin-left: 10px; width: 8%"><input id="sName" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px;"><span>身份证号：</span></div>
+                <div style="float: left; margin-left: 10px; width: 13%; "><input id="sIdCard" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px">
+                    <span>工号：</span>
+                </div>
+                <div style="float: left; margin-left: 10px; width: 8%"><input id="sEmpNo" class="form-control" /></div>
 
-                <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" onclick="ExportData()" id="DataExport">数据导出</div>
-                <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" data-toggle="modal" data-target="#importModal" id="DataImport">数据导入</div>
+                <div style="float:left;margin-left:10px"><span>入职时间：</span></div><div style="float: left; margin-left: 10px;width:8%"><input id="sEmployeeDate" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 8%"><input id="sEmployeeDate2" class="form-control" /></div>
+                <div style="float:left;margin-left:10px"><span>合同到期日期：</span></div><div style="float: left; margin-left: 10px; width: 8%"><input id="sContractDeadLine" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 8%"><input id="sContractDeadLine2" class="form-control" /></div>
+                <div style="float:left;margin-left:10px"><span>离职日期：</span></div><div style="float: left; margin-left: 10px; width: 8%"><input id="sResignDate" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 8%"><input id="sResignDate2" class="form-control" /></div>
+                <div style="float:left;margin-left:10px"><span>修改日期：</span></div><div style="float: left; margin-left: 10px; width: 8%"><input id="sUpdateOn" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 8%"><input id="sUpdateOn2" class="form-control" /></div>
+
+                <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" onclick="ExportFullData()">完整导出</div>
+                <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" onclick="ExportData()">数据导出</div>
+                <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" data-toggle="modal" data-target="#importModal">数据导入</div>
                 <div style="float: right; margin-left: 10px; margin-top: 5px; " class="btn btn-primary" data-toggle="modal" data-target="#addModal" id="NewRecord">添加记录</div>
                 <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" onclick="Search()">查询</div>
 
@@ -136,7 +114,6 @@
                                     }
                                 </select>
                             </div>
-                            <div class="form-group"> 所在工作地：<input type="text" class="form-control" id="iWorkPlace" data-bind="value: iWorkPlace" placeholder="请输入所在工作地"></div>
                             <div class="form-group"> 工号：<input type="text" class="form-control" id="iEmpNo" data-bind="value: iEmpNo" placeholder="请输入工号"></div>
                             <div class="form-group"> 姓名：<input type="text" class="form-control" id="iName" data-bind="value: iName" placeholder="请输入姓名"></div>
                             <div class="form-group"> 身份证号：<input maxlength="18" onkeyup="value=value.replace(/^[a-zA-Z]+\D*|^\d{0,16}[a-zA-Z]+|[^0-9Xx]/g,'') " type="text" class="form-control" id="iIdCard" data-bind="value: iIdCard" placeholder="请输入身份证号"></div>
@@ -298,11 +275,8 @@
     }
 
     $(function () {
-        if (window.userType == "普通用户") {
-            $("#sItemName").val('@HRMS.WEB.Utils.SessionHelper.CurrentUser.CurrentProject');
-            $("#sItemName").attr("disabled", true);
-            $("#iItemName").attr("disabled", true);
-        }
+        $("#iItemName").attr("disabled", true);
+        $("#iCompany").attr("disabled", true);
 
         if (window.menuRights == "r") {
             $("#DataExport").hide();
@@ -563,13 +537,12 @@
             searchAlign: "left",//查询框对齐方式
             queryParamsType: "limit",//查询参数组织方式
             queryParams: function getParams(params) {
-                params.iItemName = $("#sItemName").val();
-                params.iCompany = $("#sCompanyCode").val();
+                params.iItemName = $("#projectSelect").val();
+                params.iCompany = $("#companySelect").val();
                 params.iIdCard = $("#sIdCard").val();
-                params.iPhone = $("#SPhone").val();
+                params.iName = $("#sName").val();
                 params.iEmpNo = $("#sEmpNo").val();
                 params.iEmployeeStatus = $("#sEmpStatus").val();
-                params.iFileLocation = $("#sFileLocation").val();
                 params.iEmployeeDateFrom = $("#sEmployeeDate").val();
                 params.iEmployeeDateTo = $("#sEmployeeDate2").val();
                 params.iContractDeadLineFrom = $("#sContractDeadLine").val();
@@ -588,9 +561,9 @@
             toolbarAlign: "right",//工具栏对齐方式
             columns: [
                 { field: "iGuid", title: "iGuid", visible: false }
-                 , { field: "iItemName", title: "项目名称", sortable: true }
-, { field: "iCompany", title: "所在公司", sortable: true }
-, { field: "iWorkPlace", title: "所在工作地", sortable: true }
+                 , { field: "iItemName", title: "项目名称", visible: false }
+, { field: "iCompany", title: "所在公司", visible: false }
+, { field: "iWorkPlace", title: "所在工作地", visible: false }
 , { field: "iEmpNo", title: "工号", sortable: true }
 , { field: "iName", title: "姓名", sortable: true }
 , { field: "iIdCard", title: "身份证号", sortable: true }
@@ -798,18 +771,19 @@
         });
         $("#NewRecord").click(function () {
             $("#removeRecord").hide();
-
-            $("#iIdCard").removeAttr("readonly");
-            if (window.userType != "普通用户") {
-                $("#iItemName").addClass("warning");
+            if ($("#iItemName").val() == "-") {
+                $('#iItemName').addClass("warning");
             }
-            $('#iCompany').addClass("warning");
+            if ($("#iCompany").val() == "-") {
+                $('#iCompany').addClass("warning");
+            }
+            $("#iIdCard").removeAttr("readonly");
             $('#iName').addClass("warning");
             $('#iEmpNo').addClass("warning");
             $('#iIdCard').addClass("warning");
             myViewModel.iGuid("");
             myViewModel.iItemName('@HRMS.WEB.Utils.SessionHelper.CurrentUser.CurrentProject');
-            myViewModel.iCompany('-');
+            myViewModel.iCompany('@HRMS.WEB.Utils.SessionHelper.CurrentUser.CurrentCompany');
             myViewModel.iWorkPlace("");
             myViewModel.iEmpNo("");
             myViewModel.iName("");
@@ -942,13 +916,33 @@
     function ExportData() {
         var url = "/HRAjax/ExportBasic";
         var params = {};
-        params.iItemName = $("#sItemName").val();
-        params.iCompany = $("#sCompanyCode").val();
+        params.iItemName = $("#projectSelect").val();
+        params.iCompany = $("#companySelect").val();
         params.iIdCard = $("#sIdCard").val();
-        params.iPhone = $("#SPhone").val();
+        params.iName = $("#sName").val();
         params.iEmpNo = $("#sEmpNo").val();
         params.iEmployeeStatus = $("#sEmpStatus").val();
-        params.iFileLocation = $("#sFileLocation").val();
+        params.iEmployeeDateFrom = $("#sEmployeeDate").val();
+        params.iEmployeeDateTo = $("#sEmployeeDate2").val();
+        params.iContractDeadLineFrom = $("#sContractDeadLine").val();
+        params.iContractDeadLineTo = $("#sContractDeadLine2").val();
+        params.iResignDateFrom = $("#sResignDate").val();
+        params.iResignDateTo = $("#sResignDate2").val();
+        params.iModifyOnFrom = $("#sUpdateOn").val();
+        params.iModifyOnTo = $("#sUpdateOn2").val();
+        var inputs = '<input type="hidden" name="searchpara" value="' + JSON.stringify(params).replace(new RegExp("\"", "gm"), "'") + '" />';
+        $('<form action="' + url + '" method="post" target="_blank">' + inputs + '</form>').appendTo('body').submit().remove();
+    }
+
+    function ExportFullData() {
+        var url = "/HRAjax/ExportFull";
+        var params = {};
+        params.iItemName = $("#projectSelect").val();
+        params.iCompany = $("#companySelect").val();
+        params.iIdCard = $("#sIdCard").val();
+        params.iName = $("#sName").val();
+        params.iEmpNo = $("#sEmpNo").val();
+        params.iEmployeeStatus = $("#sEmpStatus").val();
         params.iEmployeeDateFrom = $("#sEmployeeDate").val();
         params.iEmployeeDateTo = $("#sEmployeeDate2").val();
         params.iContractDeadLineFrom = $("#sContractDeadLine").val();
@@ -966,7 +960,7 @@
         var self = this;
         self.iGuid = ko.observable("");
         self.iItemName = ko.observable('@HRMS.WEB.Utils.SessionHelper.CurrentUser.CurrentProject');
-        self.iCompany = ko.observable('-');
+        self.iCompany = ko.observable('@HRMS.WEB.Utils.SessionHelper.CurrentUser.CurrentCompany');
         self.iWorkPlace = ko.observable("");
         self.iEmpNo = ko.observable("");
         self.iName = ko.observable("");

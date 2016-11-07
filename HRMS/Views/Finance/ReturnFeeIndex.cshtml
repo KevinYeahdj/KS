@@ -29,67 +29,21 @@
         word-break: keep-all;
         white-space: nowrap;
     }
+
+    .bars {
+        margin-top: -38px !important;
+    }
+
+    .toolbar div {
+        height: 34px;
+    }
 </style>
 
 <div>
     <div>
         <div class="col-*-12">
 
-            <div id="toolbar">
-                <div style="float: left; margin-left: 10px"><span>项目名称：</span></div>
-                <div style="float: left; margin-left: 10px">
-                    <select class="form-control" id="sItemName">
-                        <option value="">请选择</option>
-                        @{
-                            foreach (var item in ViewBag.Projects)
-                            {
-                                <option value="@item.iKey">@item.iValue</option>
-                            }
-                        }
-                    </select>
-                </div>
-                <div style="float: left; margin-left: 10px;">
-                    <span>所在公司：</span>
-                </div>
-                <div style="float: left; margin-left: 10px; ">
-                    <select class="form-control" id="sCompany">
-                        <option value="">请选择</option>
-                        @{
-                            foreach (var item in ViewBag.Companies)
-                            {
-                                <option value="@item.iKey">@item.iValue</option>
-                            }
-                        }
-                    </select>
-                </div>
-
-                <div style="float: left; margin-left: 10px"><span>员工姓名：</span></div>
-                <div style="float: left; margin-left: 10px"><input id="sName" class="form-control" /></div>
-                <div style="float: left; margin-left: 10px"><span>身份证号：</span></div>
-                    <div style="float: left; margin-left: 10px"><input id="sIdCard" class="form-control" /></div>
-                <div style="float: left; margin-left: 10px">
-                    <span>劳务所名称：</span></div>
-                    <div style="float: left; margin-left: 10px"><input id="sLaborName" class="form-control" /></div>
-                
-                    <div style="float: left; margin-left: 10px">
-                        <span>付款情况：</span>
-                    </div>
-                    <div style="float: left; margin-left: 10px">
-                        <select class="form-control" id="sFirstReturnFeePayment">
-                            <option value="">请选择</option>
-                            <option value="已付">已付</option>
-                            <option value="未付">未付</option>
-
-                        </select>
-                    </div>
-
-                <div style="float: left; margin-left: 10px"><span>返费天数：</span></div>
-                <div style="float: left; margin-left: 10px;width:150px"><input id="sFirstReturnFeeDays" class="form-control" /></div>
-
-
-                <div style="float:left;margin-left:10px"><span>返费日期：</span></div><div style="float: left; margin-left: 10px; width: 10%"><input id="sFirstReturnFeeDate" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 10%"><input id="sFirstReturnFeeDate2" class="form-control" /></div>
-                    <div style="float:left;margin-left:10px"><span>&nbsp;&nbsp;&nbsp;&nbsp;入职日期：</span></div><div style="float: left; margin-left: 10px;width:10%"><input id="sEmployeeDate" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 10%"><input id="sEmployeeDate2" class="form-control" /></div>
-                    <div style="float:left;margin-left:10px"><span>&nbsp;&nbsp;&nbsp;&nbsp;支付日期：</span></div><div style="float: left; margin-left: 10px; width: 10%"><input id="sFirstReturnFeeActualPayDate" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 10%"><input id="sFirstReturnFeeActualPayDate2" class="form-control" /></div>
+            <div id="toolbar" class="toolbar">
                 <div style="float: left; margin-left: 10px">
                     <span>编辑状态：</span>
                 </div>
@@ -101,11 +55,42 @@
 
                     </select>
                 </div>
-                    <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" onclick="ExportData()">数据导出</div>
-                    <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" data-toggle="modal" data-target="#importModal">数据导入</div>
-                    <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" onclick="Search()">查询</div>
-
+                <div style="float: left; margin-left: 10px">
+                    <span>付款情况：</span>
                 </div>
+                <div style="float: left; margin-left: 10px">
+                    <select class="form-control" id="sFirstReturnFeePayment">
+                        <option value="">请选择</option>
+                        <option value="已付">已付</option>
+                        <option value="未付">未付</option>
+
+                    </select>
+                </div>
+                <div style="float: left; margin-left: 10px"><span>姓名：</span></div>
+                <div style="float: left; margin-left: 10px; width: 8%"><input id="sName" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px"><span>身份证号：</span></div>
+                <div style="float: left; margin-left: 10px; width: 13%"><input id="sIdCard" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px">
+                    <span>劳务所名称：</span>
+                </div>
+                <div style="float: left; margin-left: 10px; width: 8%"><input id="sLaborName" class="form-control" /></div>
+
+                <div style="float: left; margin-left: 10px"><span>返费天数：</span></div>
+                <div style="float: left; margin-left: 10px; width: 8%"><input id="sFirstReturnFeeDays" class="form-control" /></div>
+
+                <div style="float: left; margin-left: 10px;"><span>返费日期：</span></div>
+                <div style="float: left; margin-left: 10px; width: 8%"><input id="sFirstReturnFeeDate" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px;"><span>至</span></div><div style="float: left; margin-left: 10px; width: 8%"><input id="sFirstReturnFeeDate2" class="form-control" /></div>
+                <div style="float:left;margin-left:10px"><span>入职日期：</span></div><div style="float: left; margin-left: 10px;width:8%"><input id="sEmployeeDate" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 8%"><input id="sEmployeeDate2" class="form-control" /></div>
+                <div style="float:left;margin-left:10px"><span>支付日期：</span></div><div style="float: left; margin-left: 10px; width: 8%"><input id="sFirstReturnFeeActualPayDate" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 8%"><input id="sFirstReturnFeeActualPayDate2" class="form-control" /></div>
+
+                <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" onclick="ExportData()">数据导出</div>
+                <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" data-toggle="modal" data-target="#importModal">数据导入</div>
+                <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" onclick="Search()">查询</div>
+
+            </div>
 
             <table id="mytab" class="table table-hover"></table>
 
@@ -155,7 +140,7 @@
                             <div class="form-group"> 劳务所银行支行：<input type="text" class="form-control" id="iLaborCampBank" data-bind="value: iLaborCampBank" placeholder="请输入劳务所银行支行"></div>
                             <div class="form-group"> 劳务所账号：<input type="text" class="form-control" id="iLaborCampBankAccount" data-bind="value: iLaborCampBankAccount" placeholder="请输入劳务所账号"></div>
                             <div class="form-group"> 劳务所人姓名：<input type="text" class="form-control" id="iLaborCampBankPerson" data-bind="value: iLaborCampBankPerson" placeholder="请输入劳务所人姓名"></div>
-                            <div class="form-group"> 面试日期：<input type="text" class="form-control" id="iInterviewDate" data-bind="value: iInterviewDate" placeholder="请输入面试日期"></div> 
+                            <div class="form-group"> 面试日期：<input type="text" class="form-control" id="iInterviewDate" data-bind="value: iInterviewDate" placeholder="请输入面试日期"></div>
                             <div class="form-group"> 一级返费金额：<input type="text" class="form-control" id="iFirstReturnFeeAmount" data-bind="value: iFirstReturnFeeAmount" placeholder="请输入一级返费金额"></div>
                             <div class="form-group"> 一级返费天数：<input type="text" class="form-control" id="iFirstReturnFeeDays" data-bind="value: iFirstReturnFeeDays" placeholder="请输入一级返费天数"></div>
                             <div class="form-group"> 一级返费日期：<input type="text" class="form-control" id="iFirstReturnFeeDate" data-bind="value: iFirstReturnFeeDate" placeholder="请输入一级返费日期"></div>
@@ -216,7 +201,7 @@
                                 </select>
                             </div>
                             <div class="form-group"> 五级实际支付日期：<input type="text" class="form-control" id="iFifthReturnFeeActualPayDate" data-bind="value: iFifthReturnFeeActualPayDate" placeholder="请输入五级实际支付日期"></div>
-                            <div class="form-group"> 返费信息备注：<input type="text" class="form-control" id="iReturnFeeNote" data-bind="value: iReturnFeeNote" placeholder="请输入返费信息备注"></div> 
+                            <div class="form-group"> 返费信息备注：<input type="text" class="form-control" id="iReturnFeeNote" data-bind="value: iReturnFeeNote" placeholder="请输入返费信息备注"></div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
@@ -273,7 +258,7 @@
 
     $(function () {
         if (window.userType == "普通用户") {
-            $("#sItemName").val('@HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode');
+            $("#sItemName").val('@HRMS.WEB.Utils.SessionHelper.CurrentUser.CurrentProject');
             $("#sItemName").attr("disabled", true);
             $("#iItemName").attr("disabled", true);
             $("#sEditType").val("未编辑");
@@ -329,7 +314,7 @@
         }).on("click", function (ev) {
             $("#sEmployeeDate2").datetimepicker("setStartDate", $("#sEmployeeDate").val());
         });
-        
+
 
         $("#sFirstReturnFeeActualPayDate").datetimepicker({
             language: 'zh-CN',
@@ -607,8 +592,8 @@
             searchAlign: "left",//查询框对齐方式
             queryParamsType: "limit",//查询参数组织方式
             queryParams: function getParams(params) {
-                params.sItemName = $("#sItemName").val();
-                params.sCompany = $("#sCompany").val();
+                params.sItemName = $("#projectSelect").val();
+                params.sCompany = $("#companySelect").val();
                 params.sName = $("#sName").val();
                 params.sIdCard = $("#sIdCard").val();
                 params.sLaborName = $("#sLaborName").val();
@@ -633,15 +618,15 @@
                  { field: "iGuid", title: "iGuid", visible: false }
             , { field: "iHRInfoGuid", title: "iHRInfoGuid", visible: false }
             , { field: "iHRInfoGuid2", title: "iHRInfoGuid2", visible: false }
-,{ field: "iItemName", title: "项目名称", sortable: true } 
-,{ field: "iCompany", title: "所在公司", sortable: true } 
-,{ field: "iEmpNo", title: "工号", sortable: true } 
-,{ field: "iName", title: "姓名", sortable: true } 
-,{ field: "iIdCard", title: "身份证号", sortable: true } 
-,{ field: "iLaborName", title: "劳务名称", sortable: true } 
-,{ field: "iLaborCampBank", title: "劳务所银行支行", sortable: true } 
-,{ field: "iLaborCampBankAccount", title: "劳务所账号", sortable: true } 
-,{ field: "iLaborCampBankPerson", title: "劳务所人姓名", sortable: true } 
+            , { field: "iItemName", title: "项目名称", visible: false }
+, { field: "iCompany", title: "所在公司", visible: false }
+, { field: "iEmpNo", title: "工号", sortable: true }
+, { field: "iName", title: "姓名", sortable: true }
+, { field: "iIdCard", title: "身份证号", sortable: true }
+, { field: "iLaborName", title: "劳务名称", sortable: true }
+, { field: "iLaborCampBank", title: "劳务所银行支行", sortable: true }
+, { field: "iLaborCampBankAccount", title: "劳务所账号", sortable: true }
+, { field: "iLaborCampBankPerson", title: "劳务所人姓名", sortable: true }
 , {
     field: "iInterviewDate", title: "面试日期", sortable: true, formatter: function (value, row, index) {
         return ChangeDateFormat(value);
@@ -657,73 +642,73 @@
         return ChangeDateFormat(value);
     }
 }
-,{ field: "iOnJobDays", title: "在职天数", sortable: true } 
-,{ field: "iFirstReturnFeeAmount", title: "一级返费金额", sortable: true } 
-,{ field: "iFirstReturnFeeDays", title: "一级返费天数", sortable: true } 
+, { field: "iOnJobDays", title: "在职天数", sortable: true }
+, { field: "iFirstReturnFeeAmount", title: "一级返费金额", sortable: true }
+, { field: "iFirstReturnFeeDays", title: "一级返费天数", sortable: true }
 , {
     field: "iFirstReturnFeeDate", title: "一级返费日期", sortable: true, formatter: function (value, row, index) {
         return ChangeDateFormat(value);
     }
 }
-,{ field: "iFirstReturnFeePayment", title: "一级付款情况", sortable: true } 
+, { field: "iFirstReturnFeePayment", title: "一级付款情况", sortable: true }
 , {
     field: "iFirstReturnFeeActualPayDate", title: "一级实际支付日期", sortable: true, formatter: function (value, row, index) {
         return ChangeDateFormat(value);
     }
 }
-,{ field: "iSecondReturnFeeAmount", title: "二级返费金额", sortable: true } 
-,{ field: "iSecondReturnFeeDays", title: "二级返费天数", sortable: true } 
+, { field: "iSecondReturnFeeAmount", title: "二级返费金额", sortable: true }
+, { field: "iSecondReturnFeeDays", title: "二级返费天数", sortable: true }
 , {
     field: "iSecondReturnFeeDate", title: "二级返费日期", sortable: true, formatter: function (value, row, index) {
         return ChangeDateFormat(value);
     }
 }
-,{ field: "iSecondReturnFeePayment", title: "二级付款情况", sortable: true } 
+, { field: "iSecondReturnFeePayment", title: "二级付款情况", sortable: true }
 , {
     field: "iSecondReturnFeeActualPayDate", title: "二级实际支付日期", sortable: true, formatter: function (value, row, index) {
         return ChangeDateFormat(value);
     }
 }
-,{ field: "iThirdReturnFeeAmount", title: "三级返费金额", sortable: true } 
-,{ field: "iThirdReturnFeeDays", title: "三级返费天数", sortable: true } 
+, { field: "iThirdReturnFeeAmount", title: "三级返费金额", sortable: true }
+, { field: "iThirdReturnFeeDays", title: "三级返费天数", sortable: true }
 , {
     field: "iThirdReturnFeeDate", title: "三级返费日期", sortable: true, formatter: function (value, row, index) {
         return ChangeDateFormat(value);
     }
 }
-,{ field: "iThirdReturnFeePayment", title: "三级付款情况", sortable: true } 
+, { field: "iThirdReturnFeePayment", title: "三级付款情况", sortable: true }
 , {
     field: "iThirdReturnFeeActualPayDate", title: "三级实际支付日期", sortable: true, formatter: function (value, row, index) {
         return ChangeDateFormat(value);
     }
 }
-,{ field: "iFourthReturnFeeAmount", title: "四级返费金额", sortable: true } 
-,{ field: "iFourthReturnFeeDays", title: "四级返费天数", sortable: true } 
+, { field: "iFourthReturnFeeAmount", title: "四级返费金额", sortable: true }
+, { field: "iFourthReturnFeeDays", title: "四级返费天数", sortable: true }
 , {
     field: "iFourthReturnFeeDate", title: "四级返费日期", sortable: true, formatter: function (value, row, index) {
         return ChangeDateFormat(value);
     }
 }
-,{ field: "iFourthReturnFeePayment", title: "四级付款情况", sortable: true } 
+, { field: "iFourthReturnFeePayment", title: "四级付款情况", sortable: true }
 , {
     field: "iFourthReturnFeeActualPayDate", title: "四级实际支付日期", sortable: true, formatter: function (value, row, index) {
         return ChangeDateFormat(value);
     }
 }
-,{ field: "iFifthReturnFeeAmount", title: "五级返费金额", sortable: true } 
-,{ field: "iFifthReturnFeeDays", title: "五级返费天数", sortable: true } 
+, { field: "iFifthReturnFeeAmount", title: "五级返费金额", sortable: true }
+, { field: "iFifthReturnFeeDays", title: "五级返费天数", sortable: true }
 , {
     field: "iFifthReturnFeeDate", title: "五级返费日期", sortable: true, formatter: function (value, row, index) {
         return ChangeDateFormat(value);
     }
 }
-,{ field: "iFifthReturnFeePayment", title: "五级付款情况", sortable: true } 
+, { field: "iFifthReturnFeePayment", title: "五级付款情况", sortable: true }
 , {
     field: "iFifthReturnFeeActualPayDate", title: "五级实际支付日期", sortable: true, formatter: function (value, row, index) {
         return ChangeDateFormat(value);
     }
 }
-,{ field: "iReturnFeeNote", title: "返费信息备注", sortable: true } 
+, { field: "iReturnFeeNote", title: "返费信息备注", sortable: true }
             ],
             onClickRow: function (row, $element) {
                 //$element是当前tr的jquery对象
@@ -912,8 +897,8 @@
     function ExportData() {
         var url = "/FinanceAjax/ExportReturnFee";
         var params = {};
-        params.sItemName = $("#sItemName").val();
-        params.sCompany = $("#sCompany").val();
+        params.sItemName = $("#projectSelect").val();
+        params.sCompany = $("#companySelect").val();
         params.sName = $("#sName").val();
         params.sIdCard = $("#sIdCard").val();
         params.sLaborName = $("#sLaborName").val();
@@ -936,7 +921,7 @@
         self.iGuid = ko.observable("");
         self.iHRInfoGuid = ko.observable("");
         self.iHRInfoGuid2 = ko.observable("");
-        self.iItemName = ko.observable('@HRMS.WEB.Utils.SessionHelper.CurrentUser.iCompanyCode');
+        self.iItemName = ko.observable('@HRMS.WEB.Utils.SessionHelper.CurrentUser.CurrentProject');
         self.iCompany = ko.observable('-');
         self.iEmpNo = ko.observable("");
         self.iName = ko.observable("");

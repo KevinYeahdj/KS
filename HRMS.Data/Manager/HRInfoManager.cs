@@ -210,10 +210,8 @@ namespace HRMS.Data.Manager
             get
             {
                 Dictionary<string, string> dic = new Dictionary<string, string>();
-                dic.Add("iGuid", "iGuid");
                 dic.Add("项目名称", "iItemName");
                 dic.Add("所在公司", "iCompany");
-                dic.Add("所在工作地", "iWorkPlace");
                 dic.Add("工号", "iEmpNo");
                 dic.Add("姓名", "iName");
                 dic.Add("身份证号", "iIdCard");
@@ -253,10 +251,8 @@ namespace HRMS.Data.Manager
             get
             {
                 Dictionary<string, string> dic = new Dictionary<string, string>();
-                dic.Add("iGuid", "iGuid");
                 dic.Add("项目名称", "iItemName");
                 dic.Add("所在公司", "iCompany");
-                dic.Add("所在工作地", "iWorkPlace");
                 dic.Add("工号", "iEmpNo");
                 dic.Add("姓名", "iName");
                 dic.Add("身份证号", "iIdCard");
@@ -274,13 +270,87 @@ namespace HRMS.Data.Manager
             get
             {
                 Dictionary<string, string> dic = new Dictionary<string, string>();
-                dic.Add("iGuid", "iGuid");
                 dic.Add("项目名称", "iItemName");
                 dic.Add("所在公司", "iCompany");
-                dic.Add("所在工作地", "iWorkPlace");
                 dic.Add("工号", "iEmpNo");
                 dic.Add("姓名", "iName");
                 dic.Add("身份证号", "iIdCard");
+                dic.Add("人员类别", "iEmpType");
+                dic.Add("岗位", "iPosition");
+                dic.Add("管理层级", "iManageLevel");
+                dic.Add("所在项目组", "iProjectGroup");
+                dic.Add("司龄", "iCompanyWorkYear");
+                dic.Add("所属一级部门", "iFirstDep");
+                dic.Add("所属二级部门", "iSecondDep");
+                dic.Add("所属三级部门", "iThirdDep");
+                dic.Add("所属四级部门", "iFourthDep");
+                dic.Add("所属五级部门", "iFifthDep");
+                dic.Add("员工状态", "iEmployeeStatus");
+                dic.Add("入职时间", "iEmployeeDate");
+                dic.Add("转正时间", "iPositiveDate");
+                dic.Add("合同类型", "iContractType");
+                dic.Add("合同签订情况", "iContractSignStatus");
+                dic.Add("合同/协议期限", "iContractTerm");
+                dic.Add("合同到期日期", "iContractDeadLine");
+                dic.Add("离职类型", "iResignType");
+                dic.Add("离职日期", "iResignDate");
+                dic.Add("离职原因（公司）", "iResignReason");
+                dic.Add("档案位置", "iFileLocation");
+                dic.Add("是否返费", "iIsReturnFee");
+                dic.Add("是否缴纳保险", "iIsSocialInsurancePaid");
+                dic.Add("是否缴纳公积金", "iIsProvidentPaid");
+                dic.Add("是否缴纳商业保险", "iIsCommercialInsurancePaid");
+                dic.Add("职位信息备注", "iPositionInfoNote");
+                return dic;
+            }
+        }
+
+
+        public static Dictionary<string, string> hrFullDic
+        {
+            get
+            {
+                Dictionary<string, string> dic = new Dictionary<string, string>();
+                dic.Add("项目名称", "iItemName");
+                dic.Add("所在公司", "iCompany");
+                dic.Add("工号", "iEmpNo");
+                dic.Add("姓名", "iName");
+                dic.Add("身份证号", "iIdCard");
+                dic.Add("性别", "iSex");
+                dic.Add("出生日期", "iBirthday");
+                dic.Add("户籍", "iRegistry");
+                dic.Add("民族", "iNation");
+                dic.Add("户口性质", "iResidenceProperty");
+                dic.Add("户籍地址", "iRegistryAddress");
+                dic.Add("签发机关", "iIssuedBy");
+                dic.Add("身份证有效期", "iIdCardValidate");
+                dic.Add("现住地", "iLivedIn");
+                dic.Add("联系电话", "iPhone");
+                dic.Add("紧急联系人", "iEmeContact");
+                dic.Add("紧急联系人电话", "iEmeContactPhone");
+                dic.Add("邮箱", "iEmail");
+                dic.Add("邮编", "iPostCode");
+                dic.Add("身高（cm）", "iHeight");
+                dic.Add("体重", "iWeight");
+                dic.Add("血型", "iBloodType");
+                dic.Add("婚姻状况", "iMariage");
+                dic.Add("年龄", "iAge");
+                dic.Add("体检", "iHealthCheck");
+                dic.Add("政治面貌", "iPolitical");
+                dic.Add("文化水平", "iEducationLevel");
+                dic.Add("专业", "iMajor");
+                dic.Add("毕业学校", "iGraduatedSchool");
+                dic.Add("毕业时间", "iGraduatedDate");
+                dic.Add("工作经历", "iWorkExperience");
+                dic.Add("基本信息备注", "iBasicInfoNote");
+
+                dic.Add("开户行", "iWageBank");
+                dic.Add("开户行名称", "iWageBankName");
+                dic.Add("工资帐号", "iWageAccount");
+                dic.Add("社保账号", "iSocialSecurityAccount");
+                dic.Add("公积金账号", "iProvidentAccount");
+                dic.Add("账户信息备注", "iAccountInfoNote");
+
                 dic.Add("人员类别", "iEmpType");
                 dic.Add("岗位", "iPosition");
                 dic.Add("管理层级", "iManageLevel");

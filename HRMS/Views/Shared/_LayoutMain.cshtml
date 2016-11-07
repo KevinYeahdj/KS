@@ -56,6 +56,13 @@
         }
     </style>
     <script>
+        $(function () {
+            var companySelected = $("#companySelect").val();
+            if (companySelect != "-") {
+                ChangeCompany(companySelected);
+            }
+        });
+
         function ChangeCompany(newCompany) {
             $.ajax({
                 url: "/ManageAjax/GetCompanyProjects?companyCode=" + newCompany,
@@ -68,6 +75,8 @@
                         $("select[name='projects']").append(option);
                         for (var key in result.data) {
                             var option = $("<option>").val(key).text(result.data[key]);
+                            if (key == "@HRMS.WEB.Utils.SessionHelper.CurrentUser.CurrentProject")
+                                option = $("<option selected = 'selected'>").val(key).text(result.data[key]);
                             $("select[name='projects']").append(option);
                         }
                         result.data;
@@ -78,14 +87,17 @@
                 }
             });
         }
-        function ChangeProject(newCompany, newProject) {
+        function ChangeProject(newProject) {
+            var newCompany = $("#companySelect").val();
+            if (newCompany == "-" || newProject == "-")
+                return;
             $.ajax({
                 url: "/ManageAjax/ChangeProject?newCompany=" + newCompany + "&newProject=" + newProject,
                 type: "GET",
                 dataType: 'text',
                 success: function (data) {
                     if (data == "success") {
-                        //
+                        location.reload();
                     }
                     else {
                         console.log(data);
@@ -100,32 +112,49 @@
 
 </head>
 <body style="font-weight:lighter; font-size:smaller; color:black">
-    <header class="header" style="background-color:yellow">
-        <div class="sidebar-toggle-box">
+    <header class="header" style="background-color:yellow;min-height:initial;">
+        <div class="sidebar-toggle-box" style="margin-top:5px;">
             <div data-original-title="导航伸缩" data-placement="right" class="icon-reorder tooltips"></div>
         </div>
-        <a href="/" class="logo"><span>人力资源管理</span>平台</a>
-        <img src="/content/images/敏慧标识.jpg" height="50" width="200" style="margin-top:0px" />
-        <div class="top-nav " style="margin-top:-45px">
+        <a href="/" class="logo" style="margin-top:2px;"><span>人力资源管理</span>平台</a>
+        <img src="/content/images/敏慧标识.jpg" height="30" width="200" style="margin-top:0px;visibility:hidden" />
+        <div class="top-nav " style="margin-top:-35px">
             <ul class="nav pull-right top-menu">
-                <select onchange="ChangeCompany(this.value)" class="form-control" style="width:150px;height:42.9px;float:left;">
+                <select onchange="ChangeCompany(this.value)" class="form-control" style="width:150px;float:left;" id="companySelect">
                     <option value="-">请选择公司</option>
                     @{
                         HRMS.Data.Manager.DicManager dm = new HRMS.Data.Manager.DicManager();
                         var companies = dm.GetDicByType("公司");
                         foreach (var item in companies)
                         {
-                            <option value="@item.iKey">@item.iValue</option>
+                            if (item.iKey == HRMS.WEB.Utils.SessionHelper.CurrentUser.CurrentCompany)
+                            {
+                                <option selected="selected" value="@item.iKey">@item.iValue</option>
+                            }
+                            else
+                            {
+                                <option value="@item.iKey">@item.iValue</option>
+                            }
                         }
                     }
                 </select>
-                <select name="projects" onchange="ChangeProject(this.value)" class="form-control" style="width:150px;height:42.9px;float:left; margin-left:10px">
+                <select name="projects" onchange="ChangeProject(this.value)" class="form-control" style="width:150px;float:left; margin-left:10px" id="projectSelect">
                     <option value="-">请选择项目</option>
+                    @{
+                        if (HRMS.WEB.Utils.SessionHelper.CurrentUser.CurrentProject != "-")
+                        {
+                            <option selected="selected" value="@HRMS.WEB.Utils.SessionHelper.CurrentUser.CurrentProject">请选择项目</option>
+                        }
+                        else
+                        {
+                            <option value="-">请选择项目</option>
+                        }
+                    }
                 </select>
 
                 <li class="dropdown">
                     <a data-toggle="dropdown" class="dropdown-toggle" href="#">
-                        <img alt="" src="~/Flatlab/img/avatar1_small.jpg">
+                        <img style="height:20px" alt="" src="~/Flatlab/img/avatar1_small.jpg">
                         <span class="username">@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserName</span>
                         <b class="caret"></b>
                     </a>
@@ -198,7 +227,7 @@
             @RenderBody()
         </section>
     </section>
-    <footer class="site-footer" style="position:absolute;bottom:0;background:#2a3542">
+    <footer class="site-footer" style="position:absolute;bottom:0;background:#2a3542;height:30px">
         <div class="text-center">
             Copyright <span style="font-family: Arial, Helvetica, sans-serif;">©</span> 2016 上海敏慧劳务派遣有限公司 HRMS
         </div>

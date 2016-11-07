@@ -78,7 +78,7 @@ namespace HRMS.Controllers
             string itemName = HttpContext.Request.Params["iItemName"];
             string company = HttpContext.Request.Params["iCompany"];
             string idcard = HttpContext.Request.Params["iIdCard"];
-            string tel = HttpContext.Request.Params["iPhone"];
+            string name = HttpContext.Request.Params["iName"];
             string empId = HttpContext.Request.Params["iEmpNo"];
             string status = HttpContext.Request.Params["iEmployeeStatus"];
             string employeedate1 = HttpContext.Request.Params["iEmployeeDateFrom"];
@@ -90,21 +90,18 @@ namespace HRMS.Controllers
             string resigndate1 = HttpContext.Request.Params["iResignDateFrom"];
             string resigndate2 = HttpContext.Request.Params["iResignDateTo"];
 
-            string filelocation = HttpContext.Request.Params["iFileLocation"];
-
             string modifyon1 = HttpContext.Request.Params["iModifyOnFrom"];
             string modifyon2 = HttpContext.Request.Params["iModifyOnTo"];
 
             bizParaDic.Add("iItemName", itemName);
             bizParaDic.Add("iCompany", company);
             bizParaDic.Add("iIdCard", idcard);
-            bizParaDic.Add("iPhone", tel);
+            bizParaDic.Add("iName", name);
             bizParaDic.Add("iEmpNo", empId);
             bizParaDic.Add("iEmployeeStatus", status);
             bizParaDic.Add("iEmployeeDate[d]", employeedate1 + "§" + employeedate2);
             bizParaDic.Add("iContractDeadLine[d]", contractdeadline1 + "§" + contractdeadline2);
             bizParaDic.Add("iResignDate[d]", resigndate1 + "§" + resigndate2);
-            bizParaDic.Add("iFileLocation", filelocation);
             bizParaDic.Add("iUpdatedOn[d]", modifyon1 + "§" + modifyon2);
 
             int total = 0;
@@ -516,6 +513,12 @@ namespace HRMS.Controllers
         {
             string path = "人事职位信息导出" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
             ExExcel<HRInfoEntity>(GetExportData(), path, ConvertHelper.DicConvert(HRInfoManager.hrPositionDic));
+        }
+
+        public void ExportFull()
+        {
+            string path = "人事完整信息导出" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
+            ExExcel<HRInfoEntity>(GetExportData(), path, ConvertHelper.DicConvert(HRInfoManager.hrFullDic));
         }
 
         private List<HRInfoEntity> GetExportData()
