@@ -447,11 +447,13 @@ namespace HRMS.Data.Manager
             string sql = @"select * from hrinfo where iItemName=@iproject and icompany=@icompany and iempno = @iempno and iidcard=@iidcard and iIsDeleted =0 and iStatus =1";
             return Repository.Query<HRInfoEntity>(sql, new { iproject = project, icompany = company, iempno = empcode, iidcard = idcard }).FirstOrDefault();
         }
-        public List<HRInfoEntity> GetSearch(string companyCode, Dictionary<string, string> para, string sort, string order, int offset, int pageSize, out int total)
+        public List<HRInfoEntity> GetSearch(string userType, Dictionary<string, string> para, string sort, string order, int offset, int pageSize, out int total)
         {
-            //StringBuilder commandsb = new StringBuilder("from HRInfo where icompany='");
-            //commandsb.Append(companyCode);
-            //commandsb.Append("' ");
+            if (userType != "普通用户")
+            {
+                para["iCompany"] = para["iCompany"] == "-" ? "" : para["iCompany"];
+                para["iItemName"] = para["iItemName"] == "-" ? "" : para["iItemName"];
+            }
             StringBuilder commandsb = new StringBuilder("from HRInfo where iIsDeleted =0 and iStatus =1 ");
             foreach (KeyValuePair<string, string> item in para)
             {
@@ -478,11 +480,13 @@ namespace HRMS.Data.Manager
 
         }
 
-        public List<HRInfoEntity> GetSearchAll(string companyCode, Dictionary<string, string> para)
+        public List<HRInfoEntity> GetSearchAll(string userType, Dictionary<string, string> para)
         {
-            //StringBuilder commandsb = new StringBuilder("from HRInfo where icompany='");
-            //commandsb.Append(companyCode);
-            //commandsb.Append("' ");
+            if (userType != "普通用户")
+            {
+                para["iCompany"] = para["iCompany"] == "-" ? "" : para["iCompany"];
+                para["iItemName"] = para["iItemName"] == "-" ? "" : para["iItemName"];
+            }
             StringBuilder commandsb = new StringBuilder("from HRInfo where iIsDeleted =0 and iStatus =1 ");
             foreach (KeyValuePair<string, string> item in para)
             {

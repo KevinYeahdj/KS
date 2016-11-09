@@ -106,7 +106,7 @@ namespace HRMS.Controllers
 
             int total = 0;
             HRInfoManager service = new HRInfoManager();
-            List<HRInfoEntity> list = service.GetSearch(SessionHelper.CurrentUser.CurrentCompany, bizParaDic, sort, order, offset, pageSize, out total);
+            List<HRInfoEntity> list = service.GetSearch(SessionHelper.CurrentUser.UserType, bizParaDic, sort, order, offset, pageSize, out total);
 
             DicManager dm = new DicManager();
             List<DicEntity> companyDicE = dm.GetDicByType("公司");
@@ -539,7 +539,7 @@ namespace HRMS.Controllers
             paraDic.Remove("iModifyOnTo");
 
             HRInfoManager service = new HRInfoManager();
-            List<HRInfoEntity> list = service.GetSearchAll(SessionHelper.CurrentUser.CurrentCompany, paraDic);
+            List<HRInfoEntity> list = service.GetSearchAll(SessionHelper.CurrentUser.UserType, paraDic);
             return list;
 
         }
@@ -588,7 +588,14 @@ namespace HRMS.Controllers
                 {
                     ICell cell = rowInner.CreateCell(p.Value, CellType.String);
                     cell.CellStyle = cellStyle;
-                    cell.SetCellValue(p.Key.GetValue(obj, null) == null ? "" : p.Key.GetValue(obj, null).ToString());
+                    if (p.Key.PropertyType.FullName.ToLower().Contains("datetime"))
+                    {
+                        cell.SetCellValue(p.Key.GetValue(obj, null) == null ? "" : ((DateTime)p.Key.GetValue(obj, null)).ToString("yyyy-MM-dd"));
+                    }
+                    else
+                    {
+                        cell.SetCellValue(p.Key.GetValue(obj, null) == null ? "" : p.Key.GetValue(obj, null).ToString());
+                    }
                 }
                 rowIndex++;
             }

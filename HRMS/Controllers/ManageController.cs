@@ -166,8 +166,22 @@ namespace HRMS.Controllers
             var companies = dm.GetDicByType("公司");
             foreach (var item in list)
             {
-                var currentCompany = companies.FirstOrDefault(i => i.iKey == item.iCompanyCode);
-                listView.Add(new DicViewModel { iId = item.iId, iKey = item.iKey, iValue = item.iValue, iType = item.iType, iCompanyCode = item.iCompanyCode, iCompanyName = currentCompany == null ? "" : currentCompany.iValue, iUpdatedOn = item.iUpdatedOn.ToString("yyyyMMdd HH:mm") });
+                string companiesNameString = "";
+                if (item.iCompanyCode != null)
+                {
+                    string[] companiesArray = item.iCompanyCode.Trim('[', ']').Split(',');
+                    foreach (string com in companiesArray)
+                    {
+                        var currentCompany = companies.FirstOrDefault(i => i.iKey == com.Trim('\''));
+                        if (currentCompany != null)
+                        {
+                            companiesNameString += currentCompany.iValue + ",";
+                        }
+                    }
+                    companiesNameString = companiesNameString.Trim(',');
+                }
+
+                listView.Add(new DicViewModel { iId = item.iId, iKey = item.iKey, iValue = item.iValue, iType = item.iType, iCompanyCode = item.iCompanyCode, iCompanyName = companiesNameString, iUpdatedOn = item.iUpdatedOn.ToString("yyyyMMdd HH:mm") });
             }
 
             //给分页实体赋值  
@@ -243,7 +257,7 @@ namespace HRMS.Controllers
         {
             try
             {
-                string sql = "select distinct iKey, iValue from [SysDic] where iType='项目' and iStatus = 1 and iIsDeleted=0 and icompanycode = '" + companyCode + "' ";
+                string sql = "select distinct iKey, iValue from [SysDic] where iType='项目' and iStatus = 1 and iIsDeleted=0 and icompanycode like '%''" + companyCode + "''%' ";
                 DataSet ds = DbHelperSQL.Query(sql);
                 Dictionary<string, string> projectsDic = new Dictionary<string, string>();
                 foreach (DataRow dr in ds.Tables[0].Rows)

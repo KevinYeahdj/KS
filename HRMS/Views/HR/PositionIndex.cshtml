@@ -779,7 +779,10 @@
                 return html;
             }
         });
-
+        if (window.userType != "普通用户") {
+            $('#mytab').bootstrapTable('showColumn', 'iCompany');
+            $('#mytab').bootstrapTable('showColumn', 'iItemName');
+        }
         $("#addRecord").click(function () {
             var warnings = $(".warning");
             if (warnings && warnings.length > 0) {
@@ -980,8 +983,8 @@
     function ExportData() {
         var url = "/HRAjax/ExportPosition";
         var params = {};
-        params.iItemName = $("#sItemName").val();
-        params.iCompany = $("#sCompanyCode").val();
+        params.iItemName = $("#projectSelect").val();
+        params.iCompany = $("#companySelect").val();
         params.iIdCard = $("#sIdCard").val();
         params.iPhone = $("#SPhone").val();
         params.iEmpNo = $("#sEmpNo").val();

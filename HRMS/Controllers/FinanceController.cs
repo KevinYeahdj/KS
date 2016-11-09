@@ -99,7 +99,7 @@ namespace HRMS.Controllers
 
                 int total = 0;
                 ReturnFeeManager service = new ReturnFeeManager();
-                List<ReturnFeeModel> list = service.GetSearch(SessionHelper.CurrentUser.CurrentCompany, bizParaDic, sort, order, offset, pageSize, out total);
+                List<ReturnFeeModel> list = service.GetSearch(SessionHelper.CurrentUser.UserType, bizParaDic, sort, order, offset, pageSize, out total);
 
                 DicManager dm = new DicManager();
                 List<DicEntity> companyDicE = dm.GetDicByType("公司");
@@ -466,7 +466,7 @@ namespace HRMS.Controllers
             }
 
             ReturnFeeManager service = new ReturnFeeManager();
-            List<ReturnFeeModel> list = service.GetSearchAll(SessionHelper.CurrentUser.CurrentCompany, bizParaDic);
+            List<ReturnFeeModel> list = service.GetSearchAll(SessionHelper.CurrentUser.UserType, bizParaDic);
             return list;
 
         }

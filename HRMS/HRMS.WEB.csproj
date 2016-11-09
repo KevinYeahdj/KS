@@ -1734,6 +1734,8 @@
     <Content Include="FlatLab\bootstrap-fileinput\js\plugins\sortable.min.js" />
     <Content Include="FlatLab\bootstrap-fileinput\themes\fa\theme.js" />
     <Content Include="FlatLab\bootstrap-fileinput\themes\gly\theme.js" />
+    <Content Include="FlatLab\bootstrap-multiselect\css\bootstrap-multiselect.css" />
+    <Content Include="FlatLab\bootstrap-multiselect\js\bootstrap-multiselect.js" />
     <Content Include="FlatLab\bootstrap-table\dist\bootstrap-table.min.css" />
     <Content Include="FlatLab\bootstrap-table\dist\bootstrap-table.min.js" />
     <Content Include="FlatLab\bootstrap-table\dist\extensions\editable\bootstrap-table-editable.min.js" />

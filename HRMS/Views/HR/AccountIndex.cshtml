@@ -550,6 +550,11 @@
             }
         });
 
+        if (window.userType != "普通用户") {
+            $('#mytab').bootstrapTable('showColumn', 'iCompany');
+            $('#mytab').bootstrapTable('showColumn', 'iItemName');
+        }
+
         $("#addRecord").click(function () {
             var warnings = $(".warning");
             if (warnings && warnings.length > 0) {

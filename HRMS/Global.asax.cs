@@ -54,16 +54,9 @@ namespace HRMS
             //第一次访问网站时记录根地址，为之后程序池释放后自动刷新页面来保持程序池活力做准备
             if (string.IsNullOrEmpty(SystemStatic.serverUrl) || string.IsNullOrEmpty(SystemStatic.serverUrlFull))
             {
-                SystemStatic.serverUrl = Request.ApplicationPath.TrimEnd('/') + "/";  //相对的
-                if (Request.ApplicationPath == "/")
-                {
-                    SystemStatic.serverUrlFull = "http://" + Request.Url.Authority + "/";
-                }
-                else
-                {
-                    SystemStatic.serverUrlFull = Request.Url.ToString().ToLower().Substring(0, Request.Url.ToString().ToLower().IndexOf(Request.ApplicationPath.ToLower()) + Request.ApplicationPath.Length).TrimEnd('/') + "/";
-
-                }
+                UrlHelper url = new UrlHelper(Request.RequestContext);
+                SystemStatic.serverUrl = url.Content("~");
+                SystemStatic.serverUrlFull = "http://" + Request.Url.Authority + SystemStatic.serverUrl;
 
             }
             if (HttpContext.Current.Request.Url.ToString() == SystemStatic.serverUrlFull + "Account/Login")

@@ -6,6 +6,7 @@
     .search {
         width: auto;
     }
+
     .form-control {
         color: black;
     }
@@ -60,24 +61,26 @@
                             <input type="hidden" id="iId" />
                             <div class="form-group">
                                 类型：<select class="form-control" id="iType">
-                                         <option value="-">请选择</option>
-                                         <option value="公司">公司</option>
-                                         <option value="项目">项目</option>
+                                    <option value="-">请选择</option>
+                                    <option value="公司">公司</option>
+                                    <option value="项目">项目</option>
                                 </select>
                             </div>
                             <div class="form-group">
                                 名称：<input type="text" class="form-control" id="iValue" placeholder="请输入名称">
                             </div>
                             <div class="form-group" id="companyDiv">
-                                所属公司：<select class="form-control" id="iCompanyCode">
-                                    <option value="-">请选择</option>
+                                所属公司：<select class="form-control" id="iCompanyCode" multiple="multiple" style="width:100%">
                                     @{
-                                      foreach (var item in ViewBag.Companies)
-                                      {
-                                           <option value="@item.iKey">@item.iValue</option>
-                                       }
-                                       }
+                                        foreach (var item in ViewBag.Companies)
+                                        {
+                                            <option value="@item.iKey">@item.iValue</option>
+                                        }
+                                    }
                                 </select>
+
+
+
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -97,6 +100,7 @@
         $('#mytab').bootstrapTable('refresh');
     }
     $(function () {
+        $('#iCompanyCode').multiselect();
         $("div.icon-reorder").click(function () {
             $('#mytab').bootstrapTable('resetView', {
                 height: tableHeight()
@@ -192,6 +196,12 @@
                 $("#iId").val(row.iId);
                 $("#iType").val(row.iType);
                 $("#iValue").val(row.iValue);
+                $("#iCompanyCode option:selected").each(function () {
+                    $(this).removeAttr('selected').prop('selected', false);
+                });
+                $("#iCompanyCode").multiselect("select", eval(row.iCompanyCode));
+                $("#iCompanyCode").multiselect("refresh");
+                //$("#iCompanyCode").val(row.iCompanyCode);
                 $("#editRowIndex").val(this.data.indexOf(row));
                 nodeObj.iId = row.iId;
                 nodeObj.iType = row.iType;
@@ -230,9 +240,7 @@
         $('#iValue').change(function () {
             nodeObj.iValue = this.value;
         });
-        $('#iCompanyCode').change(function () {
-            nodeObj.iCompanyCode = this.value;
-        });
+
         //删除事件
         $("#removeRecord").click(function () {
             if (confirm("确认要删除？")) {
@@ -260,7 +268,15 @@
 
         //保存事件
         $("#SaveChanges").click(function () {
-
+            var selected = "[";
+            $("#iCompanyCode option:selected").each(function () {
+                selected = selected + "'" + $(this).val() + "',";
+            });
+            if (selected.length > 1) {
+                selected = selected.substr(0, selected.length - 1);
+            }
+            selected += "]";
+            nodeObj.iCompanyCode = selected;
             var param = {};
             param.jsonString = JSON.stringify(nodeObj);
             param.action = $("#editRowIndex").val() == "" ? "add" : "update";
@@ -293,6 +309,7 @@
                 }
             });
         });
+
     })
 
     function tableHeight() {
@@ -309,11 +326,15 @@
             $(this).val("");
         });
         $("#iType").val("-");
-        $("#iCompanyCode").val("-");
+        $("#iCompanyCode option:selected").each(function () {
+            $(this).removeAttr('selected').prop('selected', false);
+        });
+        $("#iCompanyCode").multiselect("select", []);
+        $("#iCompanyCode").multiselect("refresh");
         nodeObj.iId = "";
         nodeObj.iValue = "";
         nodeObj.iType = "-";
-        nodeObj.iCompanyCode = "-";
+        nodeObj.iCompanyCode = "[]";
         $("#companyDiv").hide();
         $("#addModalLabel").html("添加记录");
     }

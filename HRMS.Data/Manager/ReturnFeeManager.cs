@@ -133,8 +133,13 @@ namespace HRMS.Data.Manager
             return Repository.Query<ReturnFeeEntity>(sql, new { hrid = hrGuid }).FirstOrDefault();
         }
 
-        public List<ReturnFeeModel> GetSearch(string companyCode, Dictionary<string, string> para, string sort, string order, int offset, int pageSize, out int total)
+        public List<ReturnFeeModel> GetSearch(string userType, Dictionary<string, string> para, string sort, string order, int offset, int pageSize, out int total)
         {
+            if (userType != "普通用户")
+            {
+                para["iCompany"] = para["iCompany"] == "-" ? "" : para["iCompany"];
+                para["iItemName"] = para["iItemName"] == "-" ? "" : para["iItemName"];
+            }
             StringBuilder commandsb = new StringBuilder("from ReturnFee fee right join hrinfo hr on fee.iHRInfoGuid = hr.iguid and fee.iIsDeleted =0 and fee.iStatus =1  where hr.iIsReturnFee = '是' and hr.iisdeleted=0 and hr.istatus=1 ");
 
             if (para["editType"] == "已编辑")
@@ -196,8 +201,13 @@ namespace HRMS.Data.Manager
 
         }
 
-        public List<ReturnFeeModel> GetSearchAll(string companyCode, Dictionary<string, string> para)
+        public List<ReturnFeeModel> GetSearchAll(string userType, Dictionary<string, string> para)
         {
+            if (userType != "普通用户")
+            {
+                para["iCompany"] = para["iCompany"] == "-" ? "" : para["iCompany"];
+                para["iItemName"] = para["iItemName"] == "-" ? "" : para["iItemName"];
+            }
             StringBuilder commandsb = new StringBuilder("from ReturnFee fee right join hrinfo hr on fee.iHRInfoGuid = hr.iguid and fee.iIsDeleted =0 and fee.iStatus =1  where hr.iIsReturnFee = '是' and hr.iisdeleted=0 and hr.istatus=1 ");
             if (para["editType"] == "已编辑")
             {
