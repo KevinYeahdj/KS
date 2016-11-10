@@ -80,15 +80,19 @@ namespace HRMS.Data.Manager
 
             foreach (KeyValuePair<string, string> item in para)
             {
-                if (!string.IsNullOrEmpty(item.Value) && item.Value != "§")
+                if (!string.IsNullOrEmpty(item.Value))
                 {
                     if (item.Key == "search")
                     {
                         commandsb.Append(" and iValue like '%" + item.Value + "%'");
                     }
-                    else
+                    else if(item.Key == "iType")
                     {
-                        commandsb.Append(" and " + item.Key + " like '%" + item.Value + "%'");
+                        commandsb.Append(" and iType ='" + item.Value + "'");
+                    }
+                    else if (item.Key == "iCompanyCode")
+                    {
+                        commandsb.Append(" and iCompanyCode like '%''" + item.Value + "''%'");
                     }
                 }
             }
