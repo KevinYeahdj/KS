@@ -327,7 +327,7 @@ namespace HRMS.Controllers
                                 }
                                 catch (Exception ex)
                                 {
-                                    errorLog += "第【" + (i + 1).ToString() + "】行不是标准日期格式；";
+                                    errorLog += "第【" + (i + 1).ToString() + "】行,第【" + (kvp.Value + 1).ToString() + "】列不是标准日期格式；";
                                 }
                                 if (!propertyName.Contains("datetime") && value != null)
                                 {
@@ -339,7 +339,15 @@ namespace HRMS.Controllers
                                 value = sheet.GetRow(i).GetCell(kvp.Value).ToString().Trim();
                                 if (propertyName.Contains("datetime") && value != null)
                                 {
-                                    value = DateTime.Parse(value.ToString());
+                                    DateTime dt = DateTime.Now;
+                                    if (DateTime.TryParse(value.ToString(), out dt))
+                                    {
+                                        value = dt;
+                                    }
+                                    else
+                                    {
+                                        errorLog += "第【" + (i + 1).ToString() + "】行,第【" + (kvp.Value + 1).ToString() + "】列不是标准日期格式；";
+                                    }
                                 }
                             }
                         }
