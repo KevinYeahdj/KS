@@ -62,76 +62,87 @@ namespace HRMS.Controllers
     {
         public void GetAllHRInfo()
         {
-            //用于序列化实体类的对象  
-            JavaScriptSerializer jss = new JavaScriptSerializer();
-
-            //请求中携带的条件  
-            string order = HttpContext.Request.Params["order"];
-            string sort = HttpContext.Request.Params["sort"];
-            string searchKey = HttpContext.Request.Params["search"];
-            int offset = Convert.ToInt32(HttpContext.Request.Params["offset"]);  //0
-            int pageSize = Convert.ToInt32(HttpContext.Request.Params["limit"]);
-
-            Dictionary<string, string> bizParaDic = new Dictionary<string, string>();
-            bizParaDic.Add("search", searchKey);
-
-            string itemName = HttpContext.Request.Params["iItemName"];
-            string company = HttpContext.Request.Params["iCompany"];
-            string idcard = HttpContext.Request.Params["iIdCard"];
-            string name = HttpContext.Request.Params["iName"];
-            string empId = HttpContext.Request.Params["iEmpNo"];
-            string status = HttpContext.Request.Params["iEmployeeStatus"];
-            string employeedate1 = HttpContext.Request.Params["iEmployeeDateFrom"];
-            string employeedate2 = HttpContext.Request.Params["iEmployeeDateTo"];
-
-            string contractdeadline1 = HttpContext.Request.Params["iContractDeadLineFrom"];
-            string contractdeadline2 = HttpContext.Request.Params["iContractDeadLineTo"];
-
-            string resigndate1 = HttpContext.Request.Params["iResignDateFrom"];
-            string resigndate2 = HttpContext.Request.Params["iResignDateTo"];
-
-            string modifyon1 = HttpContext.Request.Params["iModifyOnFrom"];
-            string modifyon2 = HttpContext.Request.Params["iModifyOnTo"];
-
-            bizParaDic.Add("iItemName", itemName);
-            bizParaDic.Add("iCompany", company);
-            bizParaDic.Add("iIdCard", idcard);
-            bizParaDic.Add("iName", name);
-            bizParaDic.Add("iEmpNo", empId);
-            bizParaDic.Add("iEmployeeStatus", status);
-            bizParaDic.Add("iEmployeeDate[d]", employeedate1 + "§" + employeedate2);
-            bizParaDic.Add("iContractDeadLine[d]", contractdeadline1 + "§" + contractdeadline2);
-            bizParaDic.Add("iResignDate[d]", resigndate1 + "§" + resigndate2);
-            bizParaDic.Add("iUpdatedOn[d]", modifyon1 + "§" + modifyon2);
-
-            int total = 0;
-            HRInfoManager service = new HRInfoManager();
-            List<HRInfoEntity> list = service.GetSearch(SessionHelper.CurrentUser.UserType, bizParaDic, sort, order, offset, pageSize, out total);
-
-            DicManager dm = new DicManager();
-            List<DicEntity> companyDicE = dm.GetDicByType("公司");
-            Dictionary<string, string> companyDic = new Dictionary<string, string>();
-            foreach (var item in companyDicE)
+            try
             {
-                companyDic.Add(item.iKey, item.iValue);
+
+
+                //用于序列化实体类的对象  
+                JavaScriptSerializer jss = new JavaScriptSerializer();
+                jss.MaxJsonLength = Int32.MaxValue;
+
+                //请求中携带的条件  
+                string order = HttpContext.Request.Params["order"];
+                string sort = HttpContext.Request.Params["sort"];
+                string searchKey = HttpContext.Request.Params["search"];
+                int offset = Convert.ToInt32(HttpContext.Request.Params["offset"]);  //0
+                int pageSize = Convert.ToInt32(HttpContext.Request.Params["limit"]);
+
+                Dictionary<string, string> bizParaDic = new Dictionary<string, string>();
+                bizParaDic.Add("search", searchKey);
+
+                string itemName = HttpContext.Request.Params["iItemName"];
+                string company = HttpContext.Request.Params["iCompany"];
+                string idcard = HttpContext.Request.Params["iIdCard"];
+                string name = HttpContext.Request.Params["iName"];
+                string empId = HttpContext.Request.Params["iEmpNo"];
+                string status = HttpContext.Request.Params["iEmployeeStatus"];
+                string employeedate1 = HttpContext.Request.Params["iEmployeeDateFrom"];
+                string employeedate2 = HttpContext.Request.Params["iEmployeeDateTo"];
+
+                string contractdeadline1 = HttpContext.Request.Params["iContractDeadLineFrom"];
+                string contractdeadline2 = HttpContext.Request.Params["iContractDeadLineTo"];
+
+                string resigndate1 = HttpContext.Request.Params["iResignDateFrom"];
+                string resigndate2 = HttpContext.Request.Params["iResignDateTo"];
+
+                string modifyon1 = HttpContext.Request.Params["iModifyOnFrom"];
+                string modifyon2 = HttpContext.Request.Params["iModifyOnTo"];
+
+                bizParaDic.Add("iItemName", itemName);
+                bizParaDic.Add("iCompany", company);
+                bizParaDic.Add("iIdCard", idcard);
+                bizParaDic.Add("iName", name);
+                bizParaDic.Add("iEmpNo", empId);
+                bizParaDic.Add("iEmployeeStatus", status);
+                bizParaDic.Add("iEmployeeDate[d]", employeedate1 + "§" + employeedate2);
+                bizParaDic.Add("iContractDeadLine[d]", contractdeadline1 + "§" + contractdeadline2);
+                bizParaDic.Add("iResignDate[d]", resigndate1 + "§" + resigndate2);
+                bizParaDic.Add("iUpdatedOn[d]", modifyon1 + "§" + modifyon2);
+
+                int total = 0;
+                HRInfoManager service = new HRInfoManager();
+                List<HRInfoEntity> list = service.GetSearch(SessionHelper.CurrentUser.UserType, bizParaDic, sort, order, offset, pageSize, out total);
+
+                DicManager dm = new DicManager();
+                List<DicEntity> companyDicE = dm.GetDicByType("公司");
+                Dictionary<string, string> companyDic = new Dictionary<string, string>();
+                foreach (var item in companyDicE)
+                {
+                    companyDic.Add(item.iKey, item.iValue);
+                }
+                foreach (var item in list)
+                {
+                    item.iCompany = companyDic.ContainsKey(item.iCompany) ? companyDic[item.iCompany] : "";
+                }
+
+                //给分页实体赋值  
+                PageModels<HRInfoEntity> model = new PageModels<HRInfoEntity>();
+                model.total = total;
+                if (total % pageSize == 0)
+                    model.page = total / pageSize;
+                else
+                    model.page = (total / pageSize) + 1;
+
+                model.rows = list;
+
+                //将查询结果返回  
+                HttpContext.Response.Write(jss.Serialize(model));
             }
-            foreach (var item in list)
+            catch (Exception e)
             {
-                item.iCompany = companyDic.ContainsKey(item.iCompany) ? companyDic[item.iCompany] : "";
+                log4net.ILog log = log4net.LogManager.GetLogger(this.GetType());
+                log.Error(e);
             }
-
-            //给分页实体赋值  
-            PageModels<HRInfoEntity> model = new PageModels<HRInfoEntity>();
-            model.total = total;
-            if (total % pageSize == 0)
-                model.page = total / pageSize;
-            else
-                model.page = (total / pageSize) + 1;
-
-            model.rows = list;
-
-            //将查询结果返回  
-            HttpContext.Response.Write(jss.Serialize(model));
         }
 
         public JsonResult GetHRInfo(string guid)
@@ -184,6 +195,7 @@ namespace HRMS.Controllers
         {
             //用于序列化实体类的对象  
             JavaScriptSerializer jss = new JavaScriptSerializer();
+            jss.MaxJsonLength = Int32.MaxValue;
 
             //请求中携带的条件  
             string order = HttpContext.Request.Params["order"];

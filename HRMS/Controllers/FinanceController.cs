@@ -62,7 +62,7 @@ namespace HRMS.Controllers
             {
                 //用于序列化实体类的对象  
                 JavaScriptSerializer jss = new JavaScriptSerializer();
-
+                jss.MaxJsonLength = Int32.MaxValue;
                 //请求中携带的条件  
                 string order = HttpContext.Request.Params["order"];
                 string sort = HttpContext.Request.Params["sort"];

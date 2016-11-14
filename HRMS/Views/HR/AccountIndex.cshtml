@@ -29,9 +29,11 @@
         word-break: keep-all;
         white-space: nowrap;
     }
-    .bars{
-        margin-top:-38px !important;
+
+    .bars {
+        margin-top: -38px !important;
     }
+
     .toolbar div {
         height: 34px;
     }
@@ -153,6 +155,12 @@
 </div>
 
 <script type="text/javascript">
+    document.onkeydown = function (e) {
+        e = e || window.event;
+        if (e.keyCode == 13) {
+            Search();
+        }
+    }
     function Search() {
         $('#mytab').bootstrapTable('refresh');
     }
@@ -381,7 +389,7 @@
             pagination: true,//是否分页
             pageSize: 15,//单页记录数
             pageNumber: 1,//起始页
-            pageList: [15, 20, 30, 50, 100, 10000],//分页步进值
+            pageList: [15, 20, 30, 50, 100, 1000, 10000],//分页步进值
             sidePagination: "server",//服务端分页
             contentType: "application/x-www-form-urlencoded",//请求数据内容格式 默认是 application/json 自己根据格式自行服务端处理
             dataType: "json",//期待返回数据类型
@@ -413,6 +421,13 @@
             toolbar: "#toolbar",//指定工具栏
             toolbarAlign: "right",//工具栏对齐方式
             columns: [
+                 {
+                     field: 'Number',
+                     title: '序号',
+                     formatter: function (value, row, index) {
+                         return ($('#mytab').bootstrapTable('getOptions').pageNumber - 1) * $('#mytab').bootstrapTable('getOptions').pageSize + index + 1;
+                     }
+                 },
                  { field: "iGuid", title: "iGuid", visible: false }
                  , { field: "iItemName", title: "项目名称", visible: false }
 , { field: "iCompany", title: "所在公司", visible: false }
@@ -610,8 +625,7 @@
 
         $("#NewRecord").click(function () {
             $("#removeRecord").hide();
-            if ($("#iItemName").val() == "-")
-            {
+            if ($("#iItemName").val() == "-") {
                 $('#iItemName').addClass("warning");
             }
             if ($("#iCompany").val() == "-") {

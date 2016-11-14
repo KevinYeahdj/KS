@@ -25,7 +25,6 @@ namespace HRMS
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             log4net.Config.XmlConfigurator.Configure();
-            RegisterCacheEntry();
         }
 
         // 注册一缓存条目在10分钟内到期，到期后触发的调事件  
@@ -46,8 +45,17 @@ namespace HRMS
         // 模拟点击网站网页  
         private void HitPage()
         {
-            System.Net.WebClient client = new System.Net.WebClient();
-            client.DownloadData(SystemStatic.serverUrlFull + "Account/Login");
+            log4net.ILog log = log4net.LogManager.GetLogger(this.GetType());
+            try
+            {
+                System.Net.WebClient client = new System.Net.WebClient();
+                client.DownloadData(SystemStatic.serverUrlFull + "Account/Login");
+                log.Info("模拟点击成功：模拟地址" + SystemStatic.serverUrlFull + "Account/Login");
+            }
+            catch (Exception e)
+            {
+                log.Info("模拟点击失败：模拟地址" + SystemStatic.serverUrlFull ?? "" + "Account/Login" + e.ToString());
+            }
         }
         protected void Application_BeginRequest(Object sender, EventArgs e)
         {
@@ -57,12 +65,15 @@ namespace HRMS
                 UrlHelper url = new UrlHelper(Request.RequestContext);
                 SystemStatic.serverUrl = url.Content("~");
                 SystemStatic.serverUrlFull = "http://" + Request.Url.Authority + SystemStatic.serverUrl;
-
-            }
-            if (HttpContext.Current.Request.Url.ToString() == SystemStatic.serverUrlFull + "Account/Login")
-            {
                 RegisterCacheEntry();
             }
-        }  
+            else
+            {
+                if (HttpContext.Current.Request.Url.ToString() == SystemStatic.serverUrlFull + "Account/Login")
+                {
+                    RegisterCacheEntry();
+                }
+            }
+        }
     }
 }
