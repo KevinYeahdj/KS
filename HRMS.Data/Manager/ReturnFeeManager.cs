@@ -152,6 +152,9 @@ namespace HRMS.Data.Manager
             }
             para.Remove("editType");
 
+            string searchKey = para["search"];
+            para.Remove("search");
+
             foreach (KeyValuePair<string, string> item in para)
             {
                 if (!string.IsNullOrEmpty(item.Value) && item.Value != "§")
@@ -190,7 +193,17 @@ namespace HRMS.Data.Manager
                     }
                 }
             }
-
+            if (!string.IsNullOrEmpty(searchKey))
+            {
+                commandsb.Append(" and (");
+                foreach (var item in Common.ConvertHelper.DicConvert(ReturnFeeDic))
+                {
+                    if (item.Key == "iGuid" || item.Key == "iOnJobDays") continue; 
+                    commandsb.Append(item.Key + " like '%" + searchKey + "%' or ");
+                }
+                commandsb.Remove(commandsb.Length - 3, 3);
+                commandsb.Append(")");
+            }
 
             string commonSql = commandsb.ToString();
             string querySql = "select DATEDIFF(day, hr.iEmployeeDate, hr.iResignDate)  as iOnJobDays, fee.*, hr.iItemName, hr.iCompany, hr.iEmpNo, hr.iName, hr.iIdCard,hr.iEmployeeDate, hr.iResignDate, hr.iGuid as iHRInfoGuid2 " + commonSql + "order by {0} {1} offset {2} row fetch next {3} rows only";
@@ -218,6 +231,8 @@ namespace HRMS.Data.Manager
                 commandsb.Append("and fee.iGuid is null ");
             }
             para.Remove("editType");
+            string searchKey = para["search"];
+            para.Remove("search");
 
             foreach (KeyValuePair<string, string> item in para)
             {
@@ -257,6 +272,19 @@ namespace HRMS.Data.Manager
                     }
                 }
             }
+
+            if (!string.IsNullOrEmpty(searchKey))
+            {
+                commandsb.Append(" and (");
+                foreach (var item in Common.ConvertHelper.DicConvert(ReturnFeeDic))
+                {
+                    if (item.Key == "iGuid" || item.Key == "iOnJobDays") continue; 
+                    commandsb.Append(item.Key + " like '%" + searchKey + "%' or ");
+                }
+                commandsb.Remove(commandsb.Length - 3, 3);
+                commandsb.Append(")");
+            }
+
             string commonSql = commandsb.ToString();
             string querySql = "select DATEDIFF(day, hr.iEmployeeDate, hr.iResignDate)  as iOnJobDays, fee.*, hr.iItemName, hr.iCompany, hr.iEmpNo, hr.iName, hr.iIdCard,hr.iEmployeeDate, hr.iResignDate, hr.iGuid as iHRInfoGuid2 " + commonSql + "order by fee.iUpdatedOn desc, hr.iUpdatedOn desc";
             return Repository.Query<ReturnFeeModel>(querySql).ToList();

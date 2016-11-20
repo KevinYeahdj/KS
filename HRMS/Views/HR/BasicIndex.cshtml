@@ -35,6 +35,17 @@
     .toolbar div {
         height: 34px;
     }
+    .search {
+        margin-top: -15px !important;
+    }
+
+    .columns-left {
+        margin-top: -15px !important;
+    }
+
+    .fixed-table-body {
+        margin-top: -5px !important;
+    }
 </style>
 
 <div>
@@ -493,7 +504,7 @@
 
                 var areainfo = id_card_area.getAreaByIdCard(cardid)
                 myViewModel.iRegistry(areainfo.split('|')[0]);
-                myViewModel.iRegistryAddress(areainfo.replace("|", ""));
+                //myViewModel.iRegistryAddress(areainfo.replace("|", ""));
 
                 var date = new Date();
                 var year = date.getFullYear();
@@ -531,7 +542,7 @@
             clickToSelect: true,//选择行即选择checkbox
             searchOnEnterKey: true,//ENTER键搜索
             height: tableHeight(),//高度调整
-            search: false,//是否搜索
+            search: true,//是否搜索
             pagination: true,//是否分页
             pageSize: 15,//单页记录数
             pageNumber: 1,//起始页
@@ -561,7 +572,7 @@
             },
             searchOnEnterKey: false,//回车搜索
             showRefresh: false,//刷新按钮
-            showColumns: false,//列选择按钮
+            showColumns: true,//列选择按钮
             buttonsAlign: "left",//按钮对齐方式
             toolbar: "#toolbar",//指定工具栏
             toolbarAlign: "right",//工具栏对齐方式
@@ -573,7 +584,7 @@
                          return ($('#mytab').bootstrapTable('getOptions').pageNumber - 1) * $('#mytab').bootstrapTable('getOptions').pageSize + index + 1;
                      }
                  },
-                { field: "iGuid", title: "iGuid", visible: false }
+                { field: "iGuid", title: "iGuid", visible: false, switchable: false }
                  , { field: "iItemName", title: "项目名称", visible: false }
 , { field: "iCompany", title: "所在公司", visible: false }
 , { field: "iWorkPlace", title: "所在工作地", visible: false }
@@ -932,6 +943,7 @@
     function ExportData() {
         var url = "/HRAjax/ExportBasic";
         var params = {};
+        params.search = $(".search input[type='text']").first().val();
         params.iItemName = $("#projectSelect").val();
         params.iCompany = $("#companySelect").val();
         params.iIdCard = $("#sIdCard").val();
@@ -953,6 +965,7 @@
     function ExportFullData() {
         var url = "/HRAjax/ExportFull";
         var params = {};
+        params.search = $(".search input[type='text']").first().val();
         params.iItemName = $("#projectSelect").val();
         params.iCompany = $("#companySelect").val();
         params.iIdCard = $("#sIdCard").val();

@@ -456,6 +456,8 @@ namespace HRMS.Controllers
             Dictionary<string, string> paraDic = JsonConvert.DeserializeObject<Dictionary<string, string>>(paraString);
 
             Dictionary<string, string> bizParaDic = new Dictionary<string, string>();
+            bizParaDic.Add("search", paraDic["search"]);
+            paraDic.Remove("search");
             bizParaDic.Add("editType", paraDic["sEditType"]);
             paraDic.Remove("sEditType");
 

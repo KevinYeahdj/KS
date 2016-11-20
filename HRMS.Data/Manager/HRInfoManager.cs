@@ -454,6 +454,9 @@ namespace HRMS.Data.Manager
                 para["iCompany"] = para["iCompany"] == "-" ? "" : para["iCompany"];
                 para["iItemName"] = para["iItemName"] == "-" ? "" : para["iItemName"];
             }
+            string searchKey = para["search"];
+            para.Remove("search");
+
             StringBuilder commandsb = new StringBuilder("from HRInfo where iIsDeleted =0 and iStatus =1 ");
             foreach (KeyValuePair<string, string> item in para)
             {
@@ -469,7 +472,16 @@ namespace HRMS.Data.Manager
                     }
                 }
             }
-
+            if (!string.IsNullOrEmpty(searchKey))
+            {
+                commandsb.Append(" and (");
+                foreach (var item in Common.ConvertHelper.DicConvert(hrFullDic))
+                {
+                    commandsb.Append(item.Key + " like '%" + searchKey + "%' or ");
+                }
+                commandsb.Remove(commandsb.Length - 3, 3);
+                commandsb.Append(")");
+            }
 
             string commonSql = commandsb.ToString();
             string querySql = "select * " + commonSql + "order by {0} {1} offset {2} row fetch next {3} rows only";
@@ -487,6 +499,8 @@ namespace HRMS.Data.Manager
                 para["iCompany"] = para["iCompany"] == "-" ? "" : para["iCompany"];
                 para["iItemName"] = para["iItemName"] == "-" ? "" : para["iItemName"];
             }
+            string searchKey = para["search"];
+            para.Remove("search");
             StringBuilder commandsb = new StringBuilder("from HRInfo where iIsDeleted =0 and iStatus =1 ");
             foreach (KeyValuePair<string, string> item in para)
             {
@@ -502,6 +516,17 @@ namespace HRMS.Data.Manager
                     }
                 }
             }
+            if (!string.IsNullOrEmpty(searchKey))
+            {
+                commandsb.Append(" and (");
+                foreach (var item in Common.ConvertHelper.DicConvert(hrFullDic))
+                {
+                    commandsb.Append(item.Key + " like '%" + searchKey + "%' or ");
+                }
+                commandsb.Remove(commandsb.Length - 3, 3);
+                commandsb.Append(")");
+            }
+
             string commonSql = commandsb.ToString();
             string querySql = "select * " + commonSql + "order by iUpdatedOn desc";
             return Repository.Query<HRInfoEntity>(querySql).ToList();
