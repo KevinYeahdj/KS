@@ -56,6 +56,19 @@
         .form-control {
             color: black;
         }
+        .warning {
+            border-color: red;
+        }
+        /*强制不换行，chrome*/
+        table td {
+            word-break: keep-all;
+            white-space: nowrap;
+        }
+        .form-group {
+            width: 24%;
+            margin-left: 1%;
+            float: left;
+        }
     </style>
     <script>
         $(function () {
@@ -224,16 +237,16 @@
 
 
 
-    <section id="main-content" class="white-bg" style="background-color:lightyellow">
-        <section class="wrapper">
+    <section id="main-content" class="white-bg" style="background-color:lightyellow;">
+        <section class="wrapper" style="margin-top:28px">
             @RenderBody()
         </section>
     </section>
-    <footer class="site-footer" style="position:absolute;bottom:0;background:#2a3542;height:30px">
+    @*<footer class="site-footer" style="position:absolute;bottom:0;background:#2a3542;height:30px">
         <div class="text-center">
             Copyright <span style="font-family: Arial, Helvetica, sans-serif;">©</span> 2016 上海敏慧劳务派遣有限公司 HRMS
         </div>
-    </footer>
+    </footer>*@
 
     <!--common script for all pages-->
     <script src="~/FlatLab/js/common-scripts.js?v=267"></script>

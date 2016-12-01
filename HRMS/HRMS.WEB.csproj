@@ -151,6 +151,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\FinanceController.cs" />
+    <Compile Include="Controllers\FundController.cs" />
     <Compile Include="Controllers\HRController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
@@ -3606,6 +3607,7 @@
     <Content Include="Views\Account\ChangePassword.cshtml" />
     <Content Include="Views\Finance\ReturnFeeIndex.cshtml" />
     <Content Include="UploadFiles\Template\返费信息导入模板.xlsx" />
+    <Content Include="Views\Fund\SocialSecurityIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

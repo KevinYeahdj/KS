@@ -25,8 +25,124 @@ namespace HRMS.Controllers
     {
         public ActionResult Index()
         {
+            //StringBuilder sb = new StringBuilder();
+            //Dictionary<string, string> dic = SocialSecurityManager.SocialSecurityDic;
+            //sb.AppendLine(CreateSql(dic, "SocialSecurity"));
+            //sb.AppendLine(CreateClass(dic));
+            //sb.AppendLine(CreateTableColumn(dic));
+            //sb.AppendLine(CreateMvvmModel(dic));
+            //sb.AppendLine(CreateMvvmBinding(dic));
+            //sb.AppendLine(CreateInputs(dic));
+            //ErrorLog(sb.ToString());
             return View();
         }
+
+        //生成sql
+        public string CreateSql(Dictionary<string, string> dic, string tableName)
+        {
+            StringBuilder sb = new StringBuilder("CREATE TABLE [dbo].[" + tableName + "]( \r\n");
+            foreach (KeyValuePair<string, string> kvp in dic)
+            {
+                sb.Append(kvp.Value);
+                sb.Append(" [nvarchar](4000) NULL, \r\n");
+            }
+            return sb.ToString();
+        }
+
+        //生成class
+        public string CreateClass(Dictionary<string, string> dic)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (KeyValuePair<string, string> kvp in dic)
+            {
+                sb.Append(string.Format("public string {0} {2} get; set; {3} //{1} \r\n", kvp.Value, kvp.Key, "{", "}"));
+            }
+            return sb.ToString();
+        }
+
+        //生成bootstraptable column
+        public string CreateTableColumn(Dictionary<string, string> dic)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (KeyValuePair<string, string> kvp in dic)
+            {
+                sb.AppendFormat(",{0} field: \"{2}\", title: \"{3}\", sortable: true {1} \r\n", "{", "}", kvp.Value, kvp.Key);
+            }
+            return sb.ToString();
+        }
+
+        //生成Mvvm model
+        public string CreateMvvmModel(Dictionary<string, string> dic)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (KeyValuePair<string, string> kvp in dic)
+            {
+                sb.AppendFormat("myViewModel.{0}(\"\"); \r\n", kvp.Value);
+            }
+            sb.AppendLine();
+            foreach (KeyValuePair<string, string> kvp in dic)
+            {
+                sb.AppendFormat("myViewModel.{0}(result.data.{0}); \r\n", kvp.Value);
+            }
+            return sb.ToString(); 
+        }
+
+        //生成Mvvm modelbinding
+        public string CreateMvvmBinding(Dictionary<string, string> dic)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (KeyValuePair<string, string> kvp in dic)
+            {
+                sb.AppendFormat("self.{0} = ko.observable(\"\"); \r\n", kvp.Value);
+            }
+            return sb.ToString();
+        }
+
+        //生成input
+        public string CreateInputs(Dictionary<string, string> dic)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (KeyValuePair<string, string> kvp in dic)
+            {
+                sb.AppendFormat("<div class=\"form-group\"> {0}：<input type=\"text\" class=\"form-control\" id=\"{1}\" data-bind=\"value: {1}\" placeholder=\"请输入{0}\"></div> \r\n", kvp.Key, kvp.Value);
+            }
+            return sb.ToString();
+        }
+
+        public static void ErrorLog(string msg)
+        {
+            string logFolderPath = System.AppDomain.CurrentDomain.BaseDirectory + "/log";
+            string FilePath = logFolderPath + "/ErrorLog_" + DateTime.Now.ToString("yyyyMMdd") + ".txt";
+
+            try
+            {
+                if (Directory.Exists(logFolderPath) == false)//如果不存在就创建file文件夹
+                {
+                    Directory.CreateDirectory(logFolderPath);
+                }
+
+                if (System.IO.File.Exists(FilePath))
+                {
+                    using (StreamWriter tw = System.IO.File.AppendText(FilePath))
+                    {
+                        tw.WriteLine(DateTime.Now.ToString() + "> " + msg);
+                    }  //END using
+
+                }  //END if
+                else
+                {
+                    FileStream fs = new FileStream(FilePath, FileMode.Create, FileAccess.Write);
+                    using (StreamWriter tw = new StreamWriter(fs))
+                    {
+                        tw.WriteLine(DateTime.Now.ToString() + "> " + msg);
+                    }  //END using
+                    fs.Close();
+                }
+            }
+            catch (Exception ex)
+            { } //END Catch   
+
+        }  // END ErrorLog
 
         /*测试代码
          

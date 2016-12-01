@@ -3,50 +3,8 @@
     Layout = "~/Views/Shared/_LayoutMain.cshtml";
 }
 <style>
-    .search {
-        width: auto;
-    }
-
-    .form-control {
-        color: black;
-    }
-
-    .form-group {
-        width: 24%;
-        margin-left: 1%;
-        float: left;
-    }
-
     .modal-body {
         height: 230px;
-    }
-
-    .warning {
-        border-color: red;
-    }
-    /*强制不换行，chrome*/
-    table td {
-        word-break: keep-all;
-        white-space: nowrap;
-    }
-
-    .bars {
-        margin-top: -38px !important;
-    }
-
-    .toolbar div {
-        height: 34px;
-    }
-    .search {
-        margin-top: -15px !important;
-    }
-
-    .columns-left {
-        margin-top: -15px !important;
-    }
-
-    .fixed-table-body {
-        margin-top: -5px !important;
     }
 </style>
 
@@ -177,9 +135,10 @@
     }
 
     $(function () {
-
-        $("#iItemName").attr("disabled", true);
-        $("#iCompany").attr("disabled", true);
+        if (window.userType != "超级管理员") {
+            $("#iItemName").attr("disabled", true);
+            $("#iCompany").attr("disabled", true);
+        }
 
         if (window.menuRights == "r") {
             $("#DataExport").hide();
@@ -400,7 +359,7 @@
             pagination: true,//是否分页
             pageSize: 15,//单页记录数
             pageNumber: 1,//起始页
-            pageList: [15, 20, 30, 50, 100, 1000, 10000],//分页步进值
+            pageList: [15, 100, 500, 1000, 10000],//分页步进值
             sidePagination: "server",//服务端分页
             contentType: "application/x-www-form-urlencoded",//请求数据内容格式 默认是 application/json 自己根据格式自行服务端处理
             dataType: "json",//期待返回数据类型
