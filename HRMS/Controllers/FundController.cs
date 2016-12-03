@@ -176,7 +176,7 @@ namespace HRMS.Controllers
             }
         }
 
-        public JsonResult ImportReturnFee()
+        public JsonResult ImportSocialSecurity()
         {
             try
             {
@@ -197,7 +197,7 @@ namespace HRMS.Controllers
                     return new JsonResult { Data = new { success = false, msg = "不是标准的Excel文件!" } };
                 }
                 string errorLog = "";
-                List<ReturnFeeEntity> list = ExcelSheetToEntityList(workbook.GetSheetAt(0), ref errorLog);
+                List<SocialSecurityModel> list = ExcelSheetToEntityList(workbook.GetSheetAt(0), ref errorLog);
 
                 if (string.IsNullOrEmpty(errorLog))
                 {
@@ -217,30 +217,31 @@ namespace HRMS.Controllers
             }
         }
 
-        private List<ReturnFeeEntity> ExcelSheetToEntityList(ISheet sheet, ref string errorLog)
+        private List<SocialSecurityModel> ExcelSheetToEntityList(ISheet sheet, ref string errorLog)
         {
             //需要验证权限，如果是普通用户，不能导入已存在的返回信息。
             DicManager dm = new DicManager();
             var companies = dm.GetDicByType("公司");
             var projects = dm.GetDicByType("项目");
-            ReturnFeeManager service = new ReturnFeeManager();
+            SocialSecurityManager service = new SocialSecurityManager();
 
-            List<ReturnFeeEntity> list = new List<ReturnFeeEntity>();
+            List<SocialSecurityModel> list = new List<SocialSecurityModel>();
 
-            Dictionary<string, string> keycolumnp = ReturnFeeManager.ReturnFeeDic;
+            Dictionary<string, string> keycolumnp = SocialSecurityManager.SocialSecurityViewDic;
             Dictionary<string, int> keycolumns = new Dictionary<string, int>();
             for (int co = 0; co < sheet.GetRow(0).LastCellNum; co++)
             {
                 if (keycolumnp.ContainsKey(sheet.GetRow(0).GetCell(co).ToString().Trim()))
                     keycolumns.Add(keycolumnp[sheet.GetRow(0).GetCell(co).ToString().Trim()], co);
             }
+            keycolumns.Remove("iTotal");  //总计自动计算处理，不用接受,也不存入数据库,这里去掉以免读取时报错
             //遍历数据行
             for (int i = (sheet.FirstRowNum + 1), len = sheet.LastRowNum + 1; i < len; i++)
             {
 
                 DicEntity currentCompany = null;
                 DicEntity currentProject = null;
-                ReturnFeeEntity en = new ReturnFeeEntity();
+                SocialSecurityModel en = new SocialSecurityModel();
                 try
                 {
                     string project = sheet.GetRow(i).GetCell(keycolumns["iItemName"]).ToString().Trim();
@@ -275,24 +276,24 @@ namespace HRMS.Controllers
                     }
                     else
                     {
-                        string hrId = service.GetValidReturnFeeHrId(currentCompany.iKey, empcode, idcard, currentProject.iKey);
+                        string hrId = service.GetValidSocialSecurityHrId(currentCompany.iKey, empcode, idcard, currentProject.iKey);
                         if (string.IsNullOrEmpty(hrId))
                         {
                             errorLog += "第【" + (i + 1).ToString() + "】行在人事里的当前项目中没有给出返费信息；";
                         }
                         else
                         {
-                            en = service.FirstOrDefault(hrId);
-                            if (en == null)
+                            en = service.GetFirstOrDefault(hrId);
+                            if (en.iGuid == null) //en 不可能为空
                             {
-                                en = new ReturnFeeEntity();
                                 en.iHRInfoGuid = hrId;
                             }
                             else
                             {
                                 if (SessionHelper.CurrentUser.UserType == "普通用户")
                                 {
-                                    errorLog += "第【" + (i + 1).ToString() + "】行已编辑过，您无权限再修改，请联系管理员！；";
+                                    //普通用户过期不能再导入编辑了 mark todo
+                                    //errorLog += "第【" + (i + 1).ToString() + "】行已编辑过，您无权限再修改，请联系管理员！；";
                                 }
                             }
                         }
@@ -347,6 +348,25 @@ namespace HRMS.Controllers
                                     {
                                         errorLog += "第【" + (i + 1).ToString() + "】行,第【" + (kvp.Value + 1).ToString() + "】列不是标准日期格式；";
                                     }
+                                } 
+                                else if (propertyName.Contains("decimal"))
+                                {
+                                    if (string.IsNullOrEmpty(value.ToString()))
+                                        value = null;
+                                    else
+                                    {
+                                        Decimal de = new Decimal();
+                                        if (Decimal.TryParse(value.ToString(), out de))
+                                        {
+                                            value = de;
+                                        }
+                                        else
+                                        {
+                                            errorLog += "第【" + (i + 1).ToString() + "】行,第【" + (kvp.Value + 1).ToString() + "】列不是标准数字格式；";
+                                        }
+
+                                    }
+
                                 }
                             }
                         }
@@ -355,13 +375,14 @@ namespace HRMS.Controllers
                 }
 
 
-                string[] paidArray = { "已付", "未付" };
+
+                string[] residencePropertyArray = { "农业户口", "非农业户口" };
+                string[] empstaArray = { "在职", "离职" };
+                string[] yesnoArray = { "是", "否" };
                 Dictionary<string, string[]> checkdic = new Dictionary<string, string[]>();
-                checkdic.Add("一级付款情况$iFirstReturnFeePayment", paidArray);
-                checkdic.Add("二级付款情况$iSecondReturnFeePayment", paidArray);
-                checkdic.Add("三级付款情况$iThirdReturnFeePayment", paidArray);
-                checkdic.Add("四级付款情况$iFourthReturnFeePayment", paidArray);
-                checkdic.Add("五级付款情况$iFifthReturnFeePayment", paidArray);
+                checkdic.Add("员工意愿$iEmployeeWilling|是否缴纳$iIsSocialInsurancePaid", yesnoArray);
+                checkdic.Add("户籍类型$iResidenceProperty", residencePropertyArray);
+                checkdic.Add("员工状态$iEmployeeStatus", empstaArray);
 
 
                 //是否有效校验
@@ -422,63 +443,90 @@ namespace HRMS.Controllers
             }
             return true;//符合GB11643-1999标准  
         }
-        private void MergeToDB(List<ReturnFeeEntity> list)
+        private void MergeToDB(List<SocialSecurityModel> list)
         {
-            ReturnFeeManager service = new ReturnFeeManager();
+            SocialSecurityManager service = new SocialSecurityManager();
+            HRInfoManager hrService = new HRInfoManager();
+
             foreach (var item in list)
             {
+                HRInfoEntity hrEntity = hrService.GetFirstOrDefault(item.iHRInfoGuid2);
+                if (item.iEmployeeDate != null)
+                    hrEntity.iEmployeeDate = item.iEmployeeDate;
+                if (item.iResignDate != null)
+                    hrEntity.iResignDate = item.iResignDate;
+                if (item.iEmployeeStatus != null)
+                    hrEntity.iEmployeeStatus = item.iEmployeeStatus;
+                if (item.iResidenceProperty != null)
+                    hrEntity.iResidenceProperty = item.iResidenceProperty;
+                if (item.iIsSocialInsurancePaid != null)
+                    hrEntity.iIsSocialInsurancePaid = item.iIsSocialInsurancePaid;
+                hrService.Update(hrEntity);
+
+                SocialSecurityEntity en = new SocialSecurityEntity();
+                foreach (System.Reflection.PropertyInfo info in en.GetType().GetProperties())
+                {
+                    en.GetType().GetProperty(info.Name).SetValue(en, item.GetType().GetProperty(info.Name).GetValue(item), null);
+                }
+                en.iUpdatedBy = SessionHelper.CurrentUser.UserName;
+
                 if (string.IsNullOrEmpty(item.iGuid))
                 {
-                    item.iCreatedBy = SessionHelper.CurrentUser.UserName;
-                    item.iUpdatedBy = SessionHelper.CurrentUser.UserName;
-                    service.Insert(item);
+                    en.iCreatedBy = SessionHelper.CurrentUser.UserName;
+                    service.Insert(en);
                 }
                 else
                 {
-                    item.iUpdatedBy = SessionHelper.CurrentUser.UserName;
-                    service.Update(item);
+                    service.Update(en);
                 }
             }
 
         }
 
 
-        public void ExportReturnFee()
+        public void ExportSocialSecurity()
         {
-            string path = "返费信息导出" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
-            ExExcel<ReturnFeeModel>(GetExportData(), path, ConvertHelper.DicConvert(ReturnFeeManager.ReturnFeeDic));
+            string path = "社保信息导出" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
+            ExExcel<SocialSecurityModel>(GetExportData(), path, ConvertHelper.DicConvert(SocialSecurityManager.SocialSecurityViewDic));
         }
 
-        private List<ReturnFeeModel> GetExportData()
+        private List<SocialSecurityModel> GetExportData()
         {
             string paraString = Request.Params["searchpara"];
             Dictionary<string, string> paraDic = JsonConvert.DeserializeObject<Dictionary<string, string>>(paraString);
-
+            //查询使用的是bootstrap table 的parameters， 导出一个para反序列出来的参数
             Dictionary<string, string> bizParaDic = new Dictionary<string, string>();
             bizParaDic.Add("search", paraDic["search"]);
             paraDic.Remove("search");
-            bizParaDic.Add("editType", paraDic["sEditType"]);
-            paraDic.Remove("sEditType");
-
             foreach (var item in paraDic)
             {
                 if (item.Key.EndsWith("2"))
                     continue;
                 if (paraDic.ContainsKey(item.Key + "2"))
                 {
-                    bizParaDic.Add("i" + item.Key.Substring(1, item.Key.Length - 1) + "[d]", item.Value + "§" + paraDic[item.Key + "2"]);
+                    bizParaDic.Add("i" + item.Key.Substring(1, item.Key.Length - 1), item.Value + "§" + paraDic[item.Key + "2"]);
                 }
                 else
                 {
                     bizParaDic.Add("i" + item.Key.Substring(1, item.Key.Length - 1), item.Value);
                 }
             }
-
-            ReturnFeeManager service = new ReturnFeeManager();
-            List<ReturnFeeModel> list = service.GetSearchAll(SessionHelper.CurrentUser.UserType, bizParaDic);
+            SocialSecurityManager service = new SocialSecurityManager();
+            List<SocialSecurityModel> list = service.GetSearchAll(SessionHelper.CurrentUser.UserType, bizParaDic);
+            DicManager dm = new DicManager();
+            var companies = dm.GetDicByType("公司");
+            var projects = dm.GetDicByType("项目");
+            Dictionary<string, string> comDic = companies.ToDictionary(i => i.iKey, i => i.iValue);
+            Dictionary<string, string> proDic = projects.ToDictionary(i => i.iKey, i => i.iValue);
+            foreach (var item in list)
+            {
+                item.iCompany = comDic[item.iCompany];
+                item.iItemName = proDic[item.iItemName];
+            }
             return list;
 
         }
+
 
         /// <summary> 
         /// 将一组对象导出成EXCEL 
@@ -489,10 +537,6 @@ namespace HRMS.Controllers
         /// <param name="columnInfo">列名信息</param> 
         private void ExExcel<T>(List<T> objList, string FileName, Dictionary<string, string> columnInfo)
         {
-            if (columnInfo.ContainsKey("iGuid"))  //不导出标识
-            {
-                columnInfo.Remove("iGuid");
-            }
             if (columnInfo.Count == 0) { return; }
             if (objList.Count == 0) { return; }
 
@@ -528,7 +572,14 @@ namespace HRMS.Controllers
                 {
                     ICell cell = rowInner.CreateCell(p.Value, CellType.String);
                     cell.CellStyle = cellStyle;
-                    cell.SetCellValue(p.Key.GetValue(obj, null) == null ? "" : p.Key.GetValue(obj, null).ToString());
+                    if (p.Key.PropertyType.FullName.ToLower().Contains("datetime"))
+                    {
+                        cell.SetCellValue(p.Key.GetValue(obj, null) == null ? "" : ((DateTime)p.Key.GetValue(obj, null)).ToString("yyyy-MM-dd"));
+                    }
+                    else
+                    {
+                        cell.SetCellValue(p.Key.GetValue(obj, null) == null ? "" : p.Key.GetValue(obj, null).ToString());
+                    }
                 }
                 rowIndex++;
             }

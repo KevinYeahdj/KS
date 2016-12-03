@@ -159,11 +159,11 @@ namespace HRMS.Data.Manager
 
         }
 
-        public List<ReturnFeeModel> GetSearchAll(string userType, Dictionary<string, string> para)
+        public List<SocialSecurityModel> GetSearchAll(string userType, Dictionary<string, string> para)
         {
             string commonSql = GenerateQuerySql(userType, para);
             string querySql = "select ss.iIndividualAmount + ss.iCompanyAmount + iAdditionalAmount  as iTotal, ss.*, hr.iItemName, hr.iCompany, hr.iName, hr.iIdCard, hr.iEmpNo, hr.iEmployeeDate,  hr.iResignDate, hr.iEmployeeStatus, hr.iResidenceProperty, hr.iIsSocialInsurancePaid, hr.iGuid as iHRInfoGuid2 " + commonSql + "order by ss.iUpdatedOn desc, hr.iUpdatedOn desc";
-            return Repository.Query<ReturnFeeModel>(querySql).ToList();
+            return Repository.Query<SocialSecurityModel>(querySql).ToList();
         }
 
         //生成通用查询前面部分

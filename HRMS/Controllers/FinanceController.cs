@@ -477,6 +477,17 @@ namespace HRMS.Controllers
 
             ReturnFeeManager service = new ReturnFeeManager();
             List<ReturnFeeModel> list = service.GetSearchAll(SessionHelper.CurrentUser.UserType, bizParaDic);
+
+            DicManager dm = new DicManager();
+            var companies = dm.GetDicByType("公司");
+            var projects = dm.GetDicByType("项目");
+            Dictionary<string, string> comDic = companies.ToDictionary(i => i.iKey, i => i.iValue);
+            Dictionary<string, string> proDic = projects.ToDictionary(i => i.iKey, i => i.iValue);
+            foreach (var item in list)
+            {
+                item.iCompany = comDic[item.iCompany];
+                item.iItemName = proDic[item.iItemName];
+            }
             return list;
 
         }
