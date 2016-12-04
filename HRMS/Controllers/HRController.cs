@@ -114,15 +114,14 @@ namespace HRMS.Controllers
                 List<HRInfoEntity> list = service.GetSearch(SessionHelper.CurrentUser.UserType, bizParaDic, sort, order, offset, pageSize, out total);
 
                 DicManager dm = new DicManager();
-                List<DicEntity> companyDicE = dm.GetDicByType("公司");
-                Dictionary<string, string> companyDic = new Dictionary<string, string>();
-                foreach (var item in companyDicE)
-                {
-                    companyDic.Add(item.iKey, item.iValue);
-                }
+                var companies = dm.GetDicByType("公司");
+                var projects = dm.GetDicByType("项目");
+                Dictionary<string, string> comDic = companies.ToDictionary(i => i.iKey, i => i.iValue);
+                Dictionary<string, string> proDic = projects.ToDictionary(i => i.iKey, i => i.iValue);
                 foreach (var item in list)
                 {
-                    item.iCompany = companyDic.ContainsKey(item.iCompany) ? companyDic[item.iCompany] : "";
+                    item.iCompany = comDic[item.iCompany];
+                    item.iItemName = proDic[item.iItemName];
                 }
 
                 //给分页实体赋值  

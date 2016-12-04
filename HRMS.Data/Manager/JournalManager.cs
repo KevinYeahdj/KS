@@ -20,10 +20,12 @@ namespace HRMS.Data.Manager
             {
                 Dictionary<string, string> dic = new Dictionary<string, string>();
                 dic.Add("iGuid", "iGuid");
+                dic.Add("公司", "iCompanyId");
                 dic.Add("项目", "iProjectId");
                 dic.Add("日期", "iDate");
                 dic.Add("事项", "iEvent");
                 dic.Add("科目", "iType");
+                dic.Add("提报人", "iApplicant");
                 dic.Add("金额", "iAmount");
                 dic.Add("是否核销", "iChecked");
                 dic.Add("支付日期", "iPaidDate");
@@ -44,7 +46,7 @@ namespace HRMS.Data.Manager
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public void Insert(ReturnFeeEntity entity)
+        public void Insert(JournalEntity entity)
         {
             if (string.IsNullOrEmpty(entity.iGuid))
                 entity.iGuid = Guid.NewGuid().ToString();
@@ -56,7 +58,7 @@ namespace HRMS.Data.Manager
             try
             {
                 session.BeginTrans();
-                Repository.Insert<ReturnFeeEntity>(session.Connection, entity, session.Transaction);
+                Repository.Insert<JournalEntity>(session.Connection, entity, session.Transaction);
                 session.Commit();
             }
             catch (System.Exception)
@@ -69,14 +71,14 @@ namespace HRMS.Data.Manager
                 session.Dispose();
             }
         }
-        public void Update(ReturnFeeEntity entity)
+        public void Update(JournalEntity entity)
         {
             entity.iUpdatedOn = DateTime.Now;
             IDbSession session = SessionFactory.CreateSession();
             try
             {
                 session.BeginTrans();
-                Repository.Update<ReturnFeeEntity>(session.Connection, entity, session.Transaction);
+                Repository.Update<JournalEntity>(session.Connection, entity, session.Transaction);
                 session.Commit();
             }
             catch (System.Exception)
@@ -89,16 +91,58 @@ namespace HRMS.Data.Manager
                 session.Dispose();
             }
         }
-        public ReturnFeeModel GetFirstOrDefault(string hrGuid)
+
+        public List<JournalEntity> GetSearch(string userType, Dictionary<string, string> para, string sort, string order, int offset, int pageSize, out int total)
         {
-            string sql = @"select DATEDIFF(day, hr.iEmployeeDate, hr.iResignDate)  as iOnJobDays, fee.*, hr.iItemName, hr.iCompany, hr.iEmpNo, hr.iName, hr.iIdCard,hr.iEmployeeDate, hr.iResignDate, hr.iGuid as iHRInfoGuid2  from returnfee fee right join hrinfo hr on fee.ihrinfoguid = hr.iguid and fee.iIsDeleted =0 and fee.iStatus =1 where hr.iIsReturnFee = '是' and hr.iisdeleted=0 and hr.istatus=1 and hr.iguid=@id ";
-            return Repository.Query<ReturnFeeModel>(sql, new { id = hrGuid }).FirstOrDefault();
+            if (userType != "普通用户")
+            {
+                para["iCompanyId"] = para["iCompanyId"] == "-" ? "" : para["iCompanyId"];
+                para["iProjectId"] = para["iProjectId"] == "-" ? "" : para["iProjectId"];
+            }
+            StringBuilder commandsb = new StringBuilder("from Journal where iisdeleted=0 and istatus=1 ");
+
+            string searchKey = para["search"];
+            para.Remove("search");
+
+            foreach (KeyValuePair<string, string> item in para)
+            {
+                if (!string.IsNullOrEmpty(item.Value) && item.Value != "§")
+                {
+                    if (item.Key.EndsWith("[d]"))
+                    {
+                        commandsb.Append(" and " + item.Key.Replace("[d]", "") + " between '" + (string.IsNullOrEmpty(item.Value.Split('§')[0]) ? "1900-01-01" : item.Value.Split('§')[0]) + "' and '" + (string.IsNullOrEmpty(item.Value.Split('§')[1]) ? DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") : item.Value.Split('§')[1]) + "' ");
+                    }
+                    else
+                    {
+                        commandsb.Append(" and " + item.Key + " like '%" + item.Value + "%'");
+                    }
+                }
+            }
+            if (!string.IsNullOrEmpty(searchKey))
+            {
+                commandsb.Append(" and (");
+                foreach (var item in Common.ConvertHelper.DicConvert(JournalDic))
+                {
+                    if (item.Value.StartsWith("i")) continue;  //去年不必要的比对
+                    commandsb.Append(item.Key + " like '%" + searchKey + "%' or ");
+                }
+                commandsb.Remove(commandsb.Length - 3, 3);
+                commandsb.Append(")");
+            }
+
+            string commonSql = commandsb.ToString();
+            string querySql = "select * " + commonSql + "order by {0} {1} offset {2} row fetch next {3} rows only";
+            querySql = string.Format(querySql, sort, order, offset, pageSize);
+            string totalSql = "select cast(count(1) as varchar(8)) " + commonSql;
+            total = int.Parse(Repository.Query<string>(totalSql).ToList()[0]);
+            return Repository.Query<JournalEntity>(querySql).ToList();
+
         }
 
-        public ReturnFeeEntity FirstOrDefault(string hrGuid)
+        public JournalEntity FirstOrDefault(string guid)
         {
-            string sql = @"select * from returnFee where iHRInfoGuid=@hrid and iIsDeleted =0 and iStatus =1";
-            return Repository.Query<ReturnFeeEntity>(sql, new { hrid = hrGuid }).FirstOrDefault();
+            string sql = @"select * from Journal where iGuid=@id and iIsDeleted =0 and iStatus =1";
+            return Repository.Query<JournalEntity>(sql, new { id = guid }).FirstOrDefault();
         }
 
     }
