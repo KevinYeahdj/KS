@@ -227,7 +227,7 @@ namespace HRMS.Data.Manager
         public List<ProvidentFundDetailModel> GetDetailSearch(string userType, Dictionary<string, string> para, string sort, string order, int offset, int pageSize, out int total)
         {
             string commonSql = GenerateDetailQuerySql(userType, para);
-            string querySql = "select pf.iIndividualAmount + pf.iCompanyAmount + pf.iAdditionalAmount  as iTotal, pf.*, hr.iItemName, hr.iCompany, hr.iName, hr.iIdCard, hr.iEmpNo" + commonSql + "order by {0} {1} offset {2} row fetch next {3} rows only";
+            string querySql = "select pf.iIndividualAmount + pf.iCompanyAmount + pf.iAdditionalAmount  as iTotal, pf.*, hr.iItemName, hr.iCompany, hr.iName, hr.iIdCard, hr.iEmpNo " + commonSql + "order by {0} {1} offset {2} row fetch next {3} rows only";
             querySql = string.Format(querySql, sort, order, offset, pageSize);
             string totalSql = "select cast(count(1) as varchar(8)) " + commonSql;
             total = int.Parse(Repository.Query<string>(totalSql).ToList()[0]);
@@ -312,7 +312,7 @@ namespace HRMS.Data.Manager
             if (!string.IsNullOrEmpty(searchKey))
             {
                 commandsb.Append(" and (");
-                foreach (var item in Common.ConvertHelper.DicConvert(ProvidentFundViewDic))
+                foreach (var item in Common.ConvertHelper.DicConvert(ProvidentFundDetailViewDic))
                 {
                     if (item.Key == "iGuid" || item.Key == "iTotal") continue;
                     commandsb.Append(item.Key + " like '%" + searchKey + "%' or ");
