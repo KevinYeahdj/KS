@@ -47,7 +47,7 @@
     <Compile Include="DbHelperSQL.cs" />
     <Compile Include="Entity\JournalEntity.cs" />
     <Compile Include="Entity\ProvidentFundEntity.cs" />
-    <Compile Include="Entity\SocialSecurityFund.cs" />
+    <Compile Include="Entity\SocialSecurityEntity.cs" />
     <Compile Include="Entity\ReturnFeeEntity.cs" />
     <Compile Include="Entity\ModifyLogEntity.cs" />
     <Compile Include="Entity\HRInfoEntity.cs" />

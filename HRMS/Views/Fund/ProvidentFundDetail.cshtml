@@ -1,0 +1,399 @@
+﻿@{
+    ViewBag.Title = "ProvidentFundDetail";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+}
+<style>
+    .modal-body {
+        height: 230px;
+    }
+</style>
+<div>
+    <div>
+        <div class="col-*-12">
+
+            <div id="toolbar" class="toolbar">
+                <div style="float:left;"><span>月份：</span></div><div style="float: left; margin-left: 10px;width:8%"><input id="sPayMonth" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 8%"><input id="sPayMonth2" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px; width: 8%"><input id="sPayMonth" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px"><span>姓名：</span></div>
+                <div style="float: left; margin-left: 10px; width: 8%"><input id="sName" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px;"><span>身份证号：</span></div>
+                <div style="float: left; margin-left: 10px; width: 13%; "><input id="sIdCard" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px"><span>工号：</span></div>
+                <div style="float: left; margin-left: 10px; width: 8%"><input id="sEmpNo" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px;"><span>缴纳地：</span></div>
+                <div style="float: left; margin-left: 10px; width: 8%; "><input id="sPayPlace" class="form-control" /></div>
+                <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" onclick="Search()">查询</div>
+            </div>
+
+            <table id="mytab" class="table table-hover"></table>
+            <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog" style="width:90%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                &times;
+                            </button>
+                            <h4 class="modal-title" id="addModalLabel">修改记录</h4>
+                        </div>
+                        <div class="modal-body">
+                            <input style="visibility:hidden" type="hidden" id="iGuid" data-bind="value: iGuid">
+                            <div class="form-group"> 月份：<input type="text" class="form-control" id="iPayMonth" data-bind="value: iPayMonth" placeholder="请输入月份"></div>
+                            <div class="form-group">
+                                所在公司：
+                                <select class="form-control" id="iCompany" data-bind="value: iCompany">
+                                    <option value="-">请选择</option>
+                                    @{
+                                        foreach (var item in ViewBag.Companies)
+                                        {
+                                            <option value="@item.iKey">@item.iValue</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                项目名称：
+                                <select class="form-control" id="iItemName" data-bind="value: iItemName">
+                                    <option value="-">请选择</option>
+                                    @{
+                                        foreach (var item in ViewBag.Projects)
+                                        {
+                                            <option value="@item.iKey">@item.iValue</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group"> 工号：<input type="text" class="form-control" id="iEmpNo" data-bind="value: iEmpNo" placeholder="请输入工号"></div>
+                            <div class="form-group"> 姓名：<input type="text" class="form-control" id="iName" data-bind="value: iName" placeholder="请输入姓名"></div>
+                            <div class="form-group"> 身份证号：<input maxlength="18" onkeyup="value=value.replace(/^[a-zA-Z]+\D*|^\d{0,16}[a-zA-Z]+|[^0-9Xx]/g,'') " type="text" class="form-control" id="iIdCard" data-bind="value: iIdCard" placeholder="请输入身份证号"></div>
+                            <div class="form-group"> 缴纳地：<input type="text" class="form-control" id="iPayPlace" data-bind="value: iPayPlace" placeholder="请输入缴纳地"></div>
+                            <div class="form-group"> 缴费基数：<input type="text" class="form-control" id="iPayBase" data-bind="value: iPayBase" placeholder="请输入缴费基数" onkeyup="clearNoNum(this)" onblur="clearNoNum(this)" maxlength="11"></div>
+                            <div class="form-group"> 个人缴费金额：<input type="text" class="form-control" id="iIndividualAmount" data-bind="value: iIndividualAmount" placeholder="请输入个人缴费金额" onkeyup="clearNoNum(this)" maxlength="11"></div>
+                            <div class="form-group"> 公司缴费金额：<input type="text" class="form-control" id="iCompanyAmount" data-bind="value: iCompanyAmount" placeholder="请输入公司缴费金额" onkeyup="clearNoNum(this)"  maxlength="11"></div>
+                            <div class="form-group"> 补缴金额：<input type="text" class="form-control" id="iAdditionalAmount" data-bind="value: iAdditionalAmount" placeholder="请输入补缴金额" onkeyup="clearNoNum(this)"  maxlength="11"></div>
+                            <div class="form-group"> 补缴月数：<input type="text" class="form-control" id="iAdditionalMonths" data-bind="value: iAdditionalMonths" placeholder="请输入补缴月数" onkeyup="clearNoNum(this)" onblur="clearNoNum(this)" maxlength="11"></div>
+                            <div class="form-group"> 公积金总计：<input type="text" class="form-control" id="iTotal" data-bind="value: iTotal" placeholder="请输入社保总计"></div>
+                            
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-primary" id="removeRecord">删除</button>
+                            <button type="button" class="btn btn-primary" id="submit">提交</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    //正则校验两位小数
+    function clearNoNum(obj) {
+        //先把非数字的都替换掉，除了数字和.    
+        obj.value = obj.value.replace(/[^\d.]/g, "");
+        //保证只有出现一个.而没有多个.    
+        obj.value = obj.value.replace(/\.{2,}/g, ".");
+        //必须保证第一个为数字而不是.    
+        obj.value = obj.value.replace(/^\./g, "");
+        //保证.只出现一次，而不能出现两次以上    
+        obj.value = obj.value.replace(".", "$#$").replace(/\./g, "").replace("$#$", ".");
+        //只能输入两个小数  
+        obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3');
+        $(obj).trigger("change");
+    }
+
+    //bootstraptable 高度
+    function tableHeight() {
+        return $(window).height() * 0.86;
+    }
+
+    //json 日期转字符串
+    function ChangeDateFormat(jsondate) {
+        if (!jsondate) return "";
+        jsondate = jsondate.replace("/Date(", "").replace(")/", "");
+        if (jsondate.indexOf("+") > 0) {
+            jsondate = jsondate.substring(0, jsondate.indexOf("+"));
+        }
+        else if (jsondate.indexOf("-") > 0) {
+            jsondate = jsondate.substring(0, jsondate.indexOf("-"));
+        }
+
+        var date = new Date(parseInt(jsondate, 10));
+        var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+        var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+
+        return date.getFullYear()
+            + "-"
+            + month
+            + "-"
+            + currentDate;
+    }
+
+    //查询
+    function Search() {
+        $('#mytab').bootstrapTable('refresh');
+    }
+    function ViewModel() {
+        var self = this;
+        self.iGuid = ko.observable("");
+        self.iPayMonth = ko.observable("");
+        self.iHRInfoGuid = ko.observable("");
+        self.iCompany = ko.observable("");
+        self.iItemName = ko.observable("");
+        self.iEmpNo = ko.observable("");
+        self.iName = ko.observable("");
+        self.iIdCard = ko.observable("");
+        self.iPayPlace = ko.observable("");
+        self.iPayBase = ko.observable("");
+        self.iIndividualAmount = ko.observable("");
+        self.iCompanyAmount = ko.observable("");
+        self.iAdditionalAmount = ko.observable("");
+        self.iAdditionalMonths = ko.observable("");
+        self.iTotal = ko.computed({
+            read: function () {
+                if (self.iIndividualAmount() == null || self.iCompanyAmount() == null || self.iAdditionalAmount() == null || self.iIndividualAmount() == "" || self.iCompanyAmount() == null || self.iAdditionalAmount() == "")
+                    return "";
+                return Number(self.iIndividualAmount()) + Number(self.iCompanyAmount()) + Number(self.iAdditionalAmount());
+
+            },
+            write: function (value) {
+            }
+        });
+        self.iCreatedOn = ko.observable("");
+        self.iCreatedBy = ko.observable("");
+        self.iUpdatedOn = ko.observable("");
+        self.iUpdatedBy = ko.observable("");
+        self.iStatus = ko.observable("");
+        self.iIsDeleted = ko.observable("");
+    }
+    $(function () {
+        //重置函数
+        $("div.icon-reorder").click(function () {
+            $('#mytab').bootstrapTable('resetView', {
+                height: tableHeight()
+            })
+        })
+        //根据窗口调整表格高度
+        $(window).resize(function () {
+            $('#mytab').bootstrapTable('resetView', {
+                height: tableHeight()
+            })
+        })
+        //Enter 键函数
+        document.onkeydown = function (e) {
+            e = e || window.event;
+            if (e.keyCode == 13) {
+                Search();
+            }
+        }
+        //禁用功能
+        $("#iItemName").attr("disabled", true);
+        $("#iCompany").attr("disabled", true);
+        $("#iEmpNo").attr("readonly", "readonly");
+        $("#iName").attr("readonly", "readonly");
+        $("#iIdCard").attr("readonly", "readonly");
+        $("#iTotal").attr("readonly", "readonly");
+
+        //权限判定
+        //此页面只有超级管理员可修改
+
+        //查询日期选择绑定
+        $("#sPayMonth").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyymm",
+            autoclose: true,
+            minView: "month",
+            maxView: "decade",
+            todayBtn: true,
+            pickerPosition: "bottom-left"
+        }).on("click", function (ev) {
+            $("#sPayMonth").datetimepicker("setEndDate", $("#sPayMonth2").val());
+        });
+        $("#sPayMonth").val('@DateTime.Now.ToString("yyyyMM")');
+        $("#sPayMonth2").val('@DateTime.Now.ToString("yyyyMM")');
+        //弹窗日期绑定
+        $('#iPayMonth').datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            clearBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 1,
+            format: 'yyyymm'
+        });
+        //必填校验
+        $("#iCompany").change(function () {
+            var value = $("#iCompany").val();
+            if (value != "-") {
+                $('#iCompany').removeClass("warning");
+            }
+            else {
+                $('#iCompany').addClass("warning");
+            }
+        });
+        $("#iItemName").change(function () {
+            var value = $("#iItemName").val();
+            if (value != "-") {
+                $('#iItemName').removeClass("warning");
+            }
+            else {
+                $('#iItemName').addClass("warning");
+            }
+        });
+        $('#mytab').bootstrapTable({
+            url: "/FundAjax/GetAllProvidentFundDetail",//数据源
+            dataField: "rows",//服务端返回数据键值 就是说记录放的键值是rows，分页时使用总记录数的键值为total
+            sortName: "iUpdatedOn",//排序列
+            sortOrder: "desc",
+            cache: false,
+            striped: true,//條紋行
+            clickToSelect: true,//选择行即选择checkbox
+            searchOnEnterKey: false,//ENTER键搜索
+            height: tableHeight(),//高度调整
+            search: true,//是否搜索
+            pagination: true,//是否分页
+            pageSize: 15,//单页记录数
+            pageNumber: 1,//起始页
+            pageList: [15, 100, 500, 1000, 10000],//分页步进值
+            sidePagination: "server",//服务端分页
+            contentType: "application/x-www-form-urlencoded",//请求数据内容格式 默认是 application/json 自己根据格式自行服务端处理
+            dataType: "json",//期待返回数据类型
+            method: "post",//请求方式
+            searchAlign: "left",//查询框对齐方式
+            queryParamsType: "limit",//查询参数组织方式
+            showRefresh: false,//刷新按钮
+            showColumns: true,//列选择按钮
+            buttonsAlign: "left",//按钮对齐方式
+            toolbar: "#toolbar",//指定工具栏
+            toolbarAlign: "right",//工具栏对齐方式
+            queryParams: function getParams(params) {
+                params.sItemName = $("#projectSelect").val();
+                params.sCompany = $("#companySelect").val();
+                params.sEmpNo = $("#sEmpNo").val();
+                params.sName = $("#sName").val();
+                params.sIdCard = $("#sIdCard").val();
+                params.sPayPlace = $("#sPayPlace").val();
+                params.sPayMonth = $("#sPayMonth").val();
+                params.sPayMonth2 = $("#sPayMonth2").val();
+                return params;
+            },
+            columns: [
+                 {
+                     field: 'Number',
+                     title: '序号',
+                     formatter: function (value, row, index) {
+                         return ($('#mytab').bootstrapTable('getOptions').pageNumber - 1) * $('#mytab').bootstrapTable('getOptions').pageSize + index + 1;
+                     }
+                 }
+                 , { field: "iGuid", title: "iGuid", visible: false, switchable: false }
+                 , { field: "iHRInfoGuid", title: "iHRInfoGuid", visible: false, switchable: false }
+                 , { field: "iPayMonth", title: "月份", visible: false }
+                 , { field: "iItemName", title: "项目名称", visible: false }
+                 , { field: "iCompany", title: "所在公司", visible: false }
+                 , { field: "iEmpNo", title: "工号", sortable: true }
+                 , { field: "iName", title: "姓名", sortable: true }
+                 , { field: "iIdCard", title: "身份证号", sortable: true }
+                 , { field: "iPayPlace", title: "缴纳地", sortable: true }
+                 , { field: "iPayBase", title: "缴费基数", sortable: true }
+                 , { field: "iIndividualAmount", title: "个人缴费金额", sortable: true }
+                 , { field: "iCompanyAmount", title: "公司缴费金额", sortable: true }
+                 , { field: "iAdditionalAmount", title: "补缴金额", sortable: true }
+                 , { field: "iAdditionalMonths", title: "补缴月数", sortable: true }
+                 , { field: "iTotal", title: "公积金总计", sortable: true }
+            ],
+            onClickRow: function (row, $element) {
+                //$element是当前tr的jquery对象
+                //$element.css("background-color", "green");
+            },//单击row事件
+            onDblClickRow: function (row, $element) {
+                if (window.userType != "超级管理员") {
+                    return;
+                }
+                $('#addModal').modal('toggle');
+
+                var width = $("#addModal").width();
+                var height = $("#addModal").height();
+                var $shade = $('<div id="waiting"></div>');
+                $shade.css({ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, background: '#fff url(/Content/images/waiting.gif) center center no-repeat', opacity: 0.4 });
+                $("#addModal").append($shade);
+                $.get("/FundAjax/GetProvidentFundDetail?iguid=" + row.iGuid, function (result) {
+                    if (result.success) {
+                        //hr表信息
+                        myViewModel.iItemName(result.data.iItemName);
+                        myViewModel.iCompany(result.data.iCompany);
+                        myViewModel.iEmpNo(result.data.iEmpNo);
+                        myViewModel.iName(result.data.iName);
+                        myViewModel.iIdCard(result.data.iIdCard);
+
+                        myViewModel.iGuid(result.data.iGuid);
+                        myViewModel.iHRInfoGuid(result.data.iHRInfoGuid);
+                        myViewModel.iPayPlace(result.data.iPayPlace);
+                        myViewModel.iPayBase(result.data.iPayBase);
+                        myViewModel.iIndividualAmount(result.data.iIndividualAmount);
+                        myViewModel.iCompanyAmount(result.data.iCompanyAmount);
+                        myViewModel.iAdditionalAmount(result.data.iAdditionalAmount);
+                        myViewModel.iAdditionalMonths(result.data.iAdditionalMonths);
+                        myViewModel.iCreatedOn(result.data.iCreatedOn);
+                        myViewModel.iCreatedBy(result.data.iCreatedBy);
+                        myViewModel.iUpdatedOn(result.data.iUpdatedOn);
+                        myViewModel.iUpdatedBy(result.data.iUpdatedBy);
+                        myViewModel.iStatus(result.data.iStatus);
+                        myViewModel.iIsDeleted(result.data.iIsDeleted);
+                    }
+                    else {
+                        console.log(result.msg);
+                        toastr.error('获取数据失败！');
+                    }
+                    $shade.remove();
+                });
+            },
+            locale: "zh-CN",//中文支持,
+            detailView: false, //是否显示详情折叠
+            detailFormatter: function (index, row, element) {
+                var html = '';
+                $.each(row, function (key, val) {
+                    html += "<p>" + key + ":" + val + "</p>"
+                });
+                return html;
+            }
+        });
+
+        if (window.userType != "普通用户") {
+            $('#mytab').bootstrapTable('showColumn', 'iCompany');
+            $('#mytab').bootstrapTable('showColumn', 'iItemName');
+        }
+
+        $("#submit").click(function () {
+            var warnings = $(".warning");
+            if (warnings && warnings.length > 0) {
+                toastr.error('数据验证未通过！');
+                return;
+            }
+
+            var param = {};
+            param.jsonString = ko.toJSON(myViewModel);
+            $.ajax({
+                url: "/FundAjax/ProvidentFundDetailSaveChanges",
+                type: "POST",
+                data: param,
+                dataType: 'text',
+                success: function (data) {
+                    if (data == "success") {
+                        toastr.success('保存成功！');
+                        $('#mytab').bootstrapTable('refresh');
+                    }
+                    else {
+                        console.log(data);
+                        toastr.error('保存数据失败！');
+                    }
+                    $('#addModal').modal('toggle');
+                }
+            });
+        });
+
+        var myViewModel = new ViewModel();
+        ko.applyBindings(myViewModel);
+    })
+</script>

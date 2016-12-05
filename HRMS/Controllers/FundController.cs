@@ -33,7 +33,25 @@ namespace HRMS.Controllers
             ViewBag.Projects = projects;
             return View();
         }
+        public ActionResult SocialSecurityDetail()
+        {
+            DicManager dm = new DicManager();
+            var companies = dm.GetDicByType("公司");
+            ViewBag.Companies = companies;
+            var projects = dm.GetDicByType("项目");
+            ViewBag.Projects = projects;
+            return View();
+        }
         public ActionResult ProvidentFundIndex()
+        {
+            DicManager dm = new DicManager();
+            var companies = dm.GetDicByType("公司");
+            ViewBag.Companies = companies;
+            var projects = dm.GetDicByType("项目");
+            ViewBag.Projects = projects;
+            return View();
+        }
+        public ActionResult ProvidentFundDetail()
         {
             DicManager dm = new DicManager();
             var companies = dm.GetDicByType("公司");
@@ -102,6 +120,80 @@ namespace HRMS.Controllers
 
                 //给分页实体赋值  
                 PageModels<SocialSecurityModel> model = new PageModels<SocialSecurityModel>();
+                model.total = total;
+                if (total % pageSize == 0)
+                    model.page = total / pageSize;
+                else
+                    model.page = (total / pageSize) + 1;
+
+                model.rows = list;
+
+                //将查询结果返回  
+                HttpContext.Response.Write(jss.Serialize(model));
+            }
+            catch (Exception ex)
+            {
+                log4net.ILog log = log4net.LogManager.GetLogger(this.GetType());
+                log.Error(ex);
+            }
+        }
+
+        public void GetAllSocialSecurityDetail()
+        {
+            try
+            {
+                //用于序列化实体类的对象  
+                JavaScriptSerializer jss = new JavaScriptSerializer();
+                jss.MaxJsonLength = Int32.MaxValue;
+                //请求中携带的条件  
+                string order = HttpContext.Request.Params["order"];
+                string sort = HttpContext.Request.Params["sort"];
+                string searchKey = HttpContext.Request.Params["search"];
+                int offset = Convert.ToInt32(HttpContext.Request.Params["offset"]);  //0
+                int pageSize = Convert.ToInt32(HttpContext.Request.Params["limit"]);
+
+                Dictionary<string, string> bizParaDic = new Dictionary<string, string>();
+                bizParaDic.Add("search", searchKey);
+                Dictionary<string, string> bizParaDicTemp = new Dictionary<string, string>();
+
+                foreach (string para in HttpContext.Request.Params.Keys)
+                {
+                    if (para.StartsWith("s") && (SocialSecurityManager.SocialSecurityDetailViewDic.ContainsValue("i" + para.Substring(1, para.Length - 1)) || (para.Length > 2 && SocialSecurityManager.SocialSecurityDetailViewDic.ContainsValue("i" + para.Substring(1, para.Length - 2)))))
+                    {
+                        bizParaDicTemp.Add("i" + para.Substring(1, para.Length - 1), HttpContext.Request.Params[para]);
+                    }
+                }
+                foreach (var item in bizParaDicTemp)
+                {
+                    if (item.Key.EndsWith("2"))
+                        continue;
+                    if (bizParaDicTemp.ContainsKey(item.Key + "2"))
+                    {
+                        bizParaDic.Add(item.Key + "[i]", item.Value + "§" + bizParaDicTemp[item.Key + "2"]);
+                    }
+                    else
+                    {
+                        bizParaDic.Add(item.Key, item.Value);
+                    }
+                }
+
+                int total = 0;
+                SocialSecurityManager service = new SocialSecurityManager();
+                List<SocialSecurityDetailModel> list = service.GetDetailSearch(SessionHelper.CurrentUser.UserType, bizParaDic, sort, order, offset, pageSize, out total);
+
+                DicManager dm = new DicManager();
+                var companies = dm.GetDicByType("公司");
+                var projects = dm.GetDicByType("项目");
+                Dictionary<string, string> comDic = companies.ToDictionary(i => i.iKey, i => i.iValue);
+                Dictionary<string, string> proDic = projects.ToDictionary(i => i.iKey, i => i.iValue);
+                foreach (var item in list)
+                {
+                    item.iCompany = comDic[item.iCompany];
+                    item.iItemName = proDic[item.iItemName];
+                }
+
+                //给分页实体赋值  
+                PageModels<SocialSecurityDetailModel> model = new PageModels<SocialSecurityDetailModel>();
                 model.total = total;
                 if (total % pageSize == 0)
                     model.page = total / pageSize;
@@ -192,6 +284,80 @@ namespace HRMS.Controllers
                 log.Error(ex);
             }
         }
+
+        public void GetAllProvidentFundDetail()
+        {
+            try
+            {
+                //用于序列化实体类的对象  
+                JavaScriptSerializer jss = new JavaScriptSerializer();
+                jss.MaxJsonLength = Int32.MaxValue;
+                //请求中携带的条件  
+                string order = HttpContext.Request.Params["order"];
+                string sort = HttpContext.Request.Params["sort"];
+                string searchKey = HttpContext.Request.Params["search"];
+                int offset = Convert.ToInt32(HttpContext.Request.Params["offset"]);  //0
+                int pageSize = Convert.ToInt32(HttpContext.Request.Params["limit"]);
+
+                Dictionary<string, string> bizParaDic = new Dictionary<string, string>();
+                bizParaDic.Add("search", searchKey);
+                Dictionary<string, string> bizParaDicTemp = new Dictionary<string, string>();
+
+                foreach (string para in HttpContext.Request.Params.Keys)
+                {
+                    if (para.StartsWith("s") && (SocialSecurityManager.SocialSecurityViewDic.ContainsValue("i" + para.Substring(1, para.Length - 1)) || (para.Length > 2 && SocialSecurityManager.SocialSecurityViewDic.ContainsValue("i" + para.Substring(1, para.Length - 2)))))
+                    {
+                        bizParaDicTemp.Add("i" + para.Substring(1, para.Length - 1), HttpContext.Request.Params[para]);
+                    }
+                }
+                foreach (var item in bizParaDicTemp)
+                {
+                    if (item.Key.EndsWith("2"))
+                        continue;
+                    if (bizParaDicTemp.ContainsKey(item.Key + "2"))
+                    {
+                        bizParaDic.Add(item.Key + "[i]", item.Value + "§" + bizParaDicTemp[item.Key + "2"]);
+                    }
+                    else
+                    {
+                        bizParaDic.Add(item.Key, item.Value);
+                    }
+                }
+
+                int total = 0;
+                ProvidentFundManager service = new ProvidentFundManager();
+                List<ProvidentFundDetailModel> list = service.GetDetailSearch(SessionHelper.CurrentUser.UserType, bizParaDic, sort, order, offset, pageSize, out total);
+
+                DicManager dm = new DicManager();
+                var companies = dm.GetDicByType("公司");
+                var projects = dm.GetDicByType("项目");
+                Dictionary<string, string> comDic = companies.ToDictionary(i => i.iKey, i => i.iValue);
+                Dictionary<string, string> proDic = projects.ToDictionary(i => i.iKey, i => i.iValue);
+                foreach (var item in list)
+                {
+                    item.iCompany = comDic[item.iCompany];
+                    item.iItemName = proDic[item.iItemName];
+                }
+
+                //给分页实体赋值  
+                PageModels<ProvidentFundDetailModel> model = new PageModels<ProvidentFundDetailModel>();
+                model.total = total;
+                if (total % pageSize == 0)
+                    model.page = total / pageSize;
+                else
+                    model.page = (total / pageSize) + 1;
+
+                model.rows = list;
+
+                //将查询结果返回  
+                HttpContext.Response.Write(jss.Serialize(model));
+            }
+            catch (Exception ex)
+            {
+                log4net.ILog log = log4net.LogManager.GetLogger(this.GetType());
+                log.Error(ex);
+            }
+        }
         public JsonResult GetSocialSecurity(string hrguid)
         {
             try
@@ -208,12 +374,45 @@ namespace HRMS.Controllers
                 return new JsonResult { Data = new { success = false, msg = ex.ToString() }, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
             }
         }
+        public JsonResult GetSocialSecurityDetail(string iguid)
+        {
+            try
+            {
+                SocialSecurityManager service = new SocialSecurityManager();
+                SocialSecurityDetailModel entity = service.GetDetailFirstOrDefault(iguid);
+                return new JsonResult { Data = new { success = true, msg = "msg", data = entity }, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+
+            }
+            catch (Exception ex)
+            {
+                log4net.ILog log = log4net.LogManager.GetLogger(this.GetType());
+                log.Error(ex);
+                return new JsonResult { Data = new { success = false, msg = ex.ToString() }, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+            }
+        }
         public JsonResult GetProvidentFund(string hrguid)
         {
             try
             {
                 ProvidentFundManager service = new ProvidentFundManager();
                 ProvidentFundModel entity = service.GetFirstOrDefault(hrguid);
+                return new JsonResult { Data = new { success = true, msg = "msg", data = entity }, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+
+            }
+            catch (Exception ex)
+            {
+                log4net.ILog log = log4net.LogManager.GetLogger(this.GetType());
+                log.Error(ex);
+                return new JsonResult { Data = new { success = false, msg = ex.ToString() }, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+            }
+        }
+
+        public JsonResult GetProvidentFundDetail(string iguid)
+        {
+            try
+            {
+                ProvidentFundManager service = new ProvidentFundManager();
+                ProvidentFundDetailModel entity = service.GetDetailFirstOrDefault(iguid);
                 return new JsonResult { Data = new { success = true, msg = "msg", data = entity }, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
 
             }
@@ -262,6 +461,31 @@ namespace HRMS.Controllers
                 return e.ToString();
             }
         }
+        public string SocialSecurityDetailSaveChanges(string jsonString)
+        {
+
+            try
+            {
+                JsonSerializerSettings st = new JsonSerializerSettings();
+                st.DateTimeZoneHandling = DateTimeZoneHandling.Local;
+                SocialSecurityDetailEntity entity = JsonConvert.DeserializeObject<SocialSecurityDetailEntity>(jsonString, st);
+                if (string.IsNullOrEmpty(entity.iGuid))
+                {
+                    //不可能
+                }
+                else
+                {
+                    SocialSecurityManager service = new SocialSecurityManager();
+                    entity.iUpdatedBy = SessionHelper.CurrentUser.UserName;
+                    service.UpdateDetail(entity);
+                }
+                return "success";
+            }
+            catch (Exception e)
+            {
+                return e.ToString();
+            }
+        }
         public string ProvidentFundSaveChanges(string jsonString)
         {
 
@@ -293,6 +517,31 @@ namespace HRMS.Controllers
                 {
                     _entity.iUpdatedBy = SessionHelper.CurrentUser.UserName;
                     service.Update(_entity);
+                }
+                return "success";
+            }
+            catch (Exception e)
+            {
+                return e.ToString();
+            }
+        }
+        public string ProvidentFundDetailSaveChanges(string jsonString)
+        {
+
+            try
+            {
+                JsonSerializerSettings st = new JsonSerializerSettings();
+                st.DateTimeZoneHandling = DateTimeZoneHandling.Local;
+                ProvidentFundDetailEntity entity = JsonConvert.DeserializeObject<ProvidentFundDetailEntity>(jsonString, st);
+                if (string.IsNullOrEmpty(entity.iGuid))
+                {
+                    //不可能
+                }
+                else
+                {
+                    ProvidentFundManager service = new ProvidentFundManager();
+                    entity.iUpdatedBy = SessionHelper.CurrentUser.UserName;
+                    service.UpdateDetail(entity);
                 }
                 return "success";
             }
@@ -515,7 +764,7 @@ namespace HRMS.Controllers
                                     {
                                         errorLog += "第【" + (i + 1).ToString() + "】行,第【" + (kvp.Value + 1).ToString() + "】列不是标准日期格式；";
                                     }
-                                } 
+                                }
                                 else if (propertyName.Contains("decimal"))
                                 {
                                     if (string.IsNullOrEmpty(value.ToString()))

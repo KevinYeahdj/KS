@@ -94,4 +94,51 @@ namespace ClinBrain.Data.Entity
         public int iIsDeleted { get; set; } //假删
         
     }
+
+    //社保明细 信息
+    [Table("SocialSecurityDetail")]
+    public class SocialSecurityDetailEntity
+    {
+        public string iGuid { get; set; } //惟一标识
+        public int? iPayMonth { get; set; } //缴纳月份
+        public string iHRInfoGuid { get; set; } //人事信息标识
+        public string iPayPlace { get; set; } //缴纳地
+        public Decimal? iPayBase { get; set; } //缴费基数
+        public Decimal? iIndividualAmount { get; set; } //个人缴费金额
+        public Decimal? iCompanyAmount { get; set; } //公司缴费金额 
+        public Decimal? iAdditionalAmount { get; set; } //补缴金额
+        public int? iAdditionalMonths { get; set; } //补缴月数
+        public DateTime? iCreatedOn { get; set; }  //创建时间
+        public string iCreatedBy { get; set; } //创建人
+        public DateTime? iUpdatedOn { get; set; } //修改时间
+        public string iUpdatedBy { get; set; } //修改人
+        public int iStatus { get; set; }  //状态
+        public int iIsDeleted { get; set; } //假删
+
+    }
+    public class SocialSecurityDetailModel
+    {
+        public string iGuid { get; set; } //惟一标识
+        public int? iPayMonth { get; set; } //缴纳月份
+        public string iHRInfoGuid { get; set; } //人事标识外键
+        public string iItemName { get; set; } //项目名称
+        public string iCompany { get; set; } //所在公司 
+        public string iEmpNo { get; set; } //工号 
+        public string iName { get; set; } //姓名 
+        public string iIdCard { get; set; } //身份证号 
+        public string iPayPlace { get; set; } //缴纳地
+        public Decimal? iPayBase { get; set; } //缴费基数
+        public Decimal? iIndividualAmount { get; set; } //个人缴费金额
+        public Decimal? iCompanyAmount { get; set; } //公司缴费金额 
+        public Decimal? iAdditionalAmount { get; set; } //补缴金额
+        public int? iAdditionalMonths { get; set; } //补缴月数
+        public Decimal? iTotal { get; set; } //社保总计
+        public DateTime? iCreatedOn { get; set; }  //创建时间
+        public string iCreatedBy { get; set; } //创建人
+        public DateTime? iUpdatedOn { get; set; } //修改时间
+        public string iUpdatedBy { get; set; } //修改人
+        public int iStatus { get; set; }  //状态
+        public int iIsDeleted { get; set; } //假删
+
+    }
 }

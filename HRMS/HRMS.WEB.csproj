@@ -3612,6 +3612,8 @@
     <Content Include="Views\Fund\ProvidentFundIndex.cshtml" />
     <Content Include="UploadFiles\Template\公积金信息导入模板.xlsx" />
     <Content Include="Views\Finance\JournalIndex.cshtml" />
+    <Content Include="Views\Fund\SocialSecurityDetail.cshtml" />
+    <Content Include="Views\Fund\ProvidentFundDetail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

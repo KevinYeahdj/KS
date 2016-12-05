@@ -305,6 +305,64 @@
             forceParse: 1,
             format: 'yyyy-mm-dd'
         });
+        //必填校验
+        $("#iCompanyId").change(function () {
+            var value = $("#iCompanyId").val();
+            if (value != "-") {
+                $('#iCompanyId').removeClass("warning");
+            }
+            else {
+                $('#iCompanyId').addClass("warning");
+            }
+        });
+        $("#iProjectId").change(function () {
+            var value = $("#iProjectId").val();
+            if (value != "-") {
+                $('#iProjectId').removeClass("warning");
+            }
+            else {
+                $('#iProjectId').addClass("warning");
+            }
+        });
+
+        $("#iDate").change(function () {
+            var value = $("#iDate").val();
+            if (value.length > 0) {
+                $('#iDate').removeClass("warning");
+            }
+            else {
+                $('#iDate').addClass("warning");
+            }
+        });
+        $("#iEvent").blur(function () {
+            var value = $("#iEvent").val();
+            if (value.length > 0) {
+                $('#iEvent').removeClass("warning");
+            }
+            else {
+                $('#iEvent').addClass("warning");
+            }
+        });
+        $("#iType").blur(function () {
+            var value = $("#iType").val();
+            if (value.length > 0) {
+                $('#iType').removeClass("warning");
+            }
+            else {
+                $('#iType').addClass("warning");
+            }
+        });
+        $("#iAmount").blur(function () {
+            var value = $("#iType").val();
+            if (value.length > 0) {
+                $('#iAmount').removeClass("warning");
+            }
+            else {
+                $('#iAmount').addClass("warning");
+            }
+        });
+
+
         $('#mytab').bootstrapTable({
             url: "/FinanceAjax/GetAllJournal",//数据源
             dataField: "rows",//服务端返回数据键值 就是说记录放的键值是rows，分页时使用总记录数的键值为total
@@ -390,6 +448,10 @@
                 }
                 $("#iProjectId").removeClass("warning");
                 $('#iCompanyId').removeClass("warning");
+                $("#iDate").removeClass("warning");
+                $('#iEvent').removeClass("warning");
+                $('#iType').removeClass("warning");
+                $('#iAmount').removeClass("warning");
 
                 var width = $("#addModal").width();
                 var height = $("#addModal").height();
@@ -457,6 +519,11 @@
             if ($("#iProjectId").val() == "-") {
                 $('#iProjectId').addClass("warning");
             }
+            $('#iDate').addClass("warning");
+            $('#iEvent').addClass("warning");
+            $('#iType').addClass("warning");
+            $('#iAmount').addClass("warning");
+
             myViewModel.iGuid("");
             myViewModel.iProjectId('@HRMS.WEB.Utils.SessionHelper.CurrentUser.CurrentProject');
             myViewModel.iCompanyId('@HRMS.WEB.Utils.SessionHelper.CurrentUser.CurrentCompany');
