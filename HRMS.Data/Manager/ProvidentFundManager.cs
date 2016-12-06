@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data;
 using ClinBrain.Data.Entity;
+using System.Data.SqlClient;
+using System.Configuration;
 
 namespace HRMS.Data.Manager
 {
@@ -201,7 +203,17 @@ namespace HRMS.Data.Manager
             string sql = @"select pf.iIndividualAmount + pf.iCompanyAmount + pf.iAdditionalAmount  as iTotal, pf.*, hr.iItemName, hr.iCompany, hr.iName, hr.iIdCard, hr.iEmpNo, hr.iEmployeeDate,  hr.iResignDate, hr.iEmployeeStatus, hr.iResidenceProperty, hr.iIsProvidentPaid, hr.iIsCommercialInsurancePaid, hr.iGuid as iHRInfoGuid2  from ProvidentFund pf right join hrinfo hr on pf.iHRInfoGuid = hr.iguid and pf.iIsDeleted =0 and pf.iStatus =1  where hr.iisdeleted=0 and hr.istatus=1 and hr.iguid=@id ";
             return Repository.Query<ProvidentFundModel>(sql, new { id = hrGuid }).FirstOrDefault();
         }
-
+        public int GenerateSocialSecurityDetailMonthly(int payMonth)
+        {
+            int affectedRowCount = 0;
+            string sql = @"insert into ProvidentFundDetail select newid()," + payMonth.ToString() + ",iHRInfoGuid, iPayPlace, iPayBase, iIndividualAmount, iCompanyAmount, iAdditionalAmount, iAdditionalMonths,GETDATE(),'超级管理员',GETDATE(),'超级管理员',1,0 from ProvidentFund where iIndividualAmount is not null and iCompanyAmount is not null and iAdditionalAmount is not null and iIsDeleted =0 and iStatus =1";
+            using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSDBConnectionString"].ConnectionString))
+            {
+                Repository.Execute(conn, "delete from ProvidentFundDetail where iPayMonth =" + payMonth.ToString());
+                affectedRowCount = Repository.Execute(conn, sql);
+            }
+            return affectedRowCount;
+        }
         public ProvidentFundDetailModel GetDetailFirstOrDefault(string iguid)
         {
             string sql = @"select pf.iIndividualAmount + pf.iCompanyAmount + pf.iAdditionalAmount  as iTotal, pf.*, hr.iItemName, hr.iCompany, hr.iName, hr.iIdCard, hr.iEmpNo from ProvidentFundDetail pf inner join hrinfo hr on pf.iHRInfoGuid = hr.iguid and pf.iIsDeleted =0 and pf.iStatus =1  where hr.iisdeleted=0 and hr.istatus=1 and pf.iguid=@id ";

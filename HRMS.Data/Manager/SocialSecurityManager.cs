@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data;
 using ClinBrain.Data.Entity;
+using System.Data.SqlClient;
+using System.Configuration;
 
 namespace HRMS.Data.Manager
 {
@@ -219,6 +221,18 @@ namespace HRMS.Data.Manager
         {
             string sql = @"select * from SocialSecurity where iHRInfoGuid=@hrid and iIsDeleted =0 and iStatus =1";
             return Repository.Query<SocialSecurityEntity>(sql, new { hrid = hrGuid }).FirstOrDefault();
+        }
+
+        public int GenerateSocialSecurityDetailMonthly(int payMonth)
+        {
+            int affectedRowCount = 0;
+            string sql = @"insert into SocialSecurityDetail select newid()," + payMonth.ToString() + ",iHRInfoGuid, iPayPlace, iPayBase, iIndividualAmount, iCompanyAmount, iAdditionalAmount, iAdditionalMonths,GETDATE(),'超级管理员',GETDATE(),'超级管理员',1,0 from SocialSecurity where iIndividualAmount is not null and iCompanyAmount is not null and iAdditionalAmount is not null and iIsDeleted =0 and iStatus =1";
+            using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSDBConnectionString"].ConnectionString))
+            {
+                Repository.Execute(conn, "delete from SocialSecurityDetail where iPayMonth =" + payMonth.ToString());
+                affectedRowCount = Repository.Execute(conn, sql);
+            }
+            return affectedRowCount;
         }
 
         public List<SocialSecurityModel> GetSearch(string userType, Dictionary<string, string> para, string sort, string order, int offset, int pageSize, out int total)
