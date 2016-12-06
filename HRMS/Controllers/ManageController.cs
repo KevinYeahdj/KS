@@ -56,6 +56,19 @@ namespace HRMS.Controllers
             ViewBag.treeNodes = JsonConvert.SerializeObject(contents);
             return View();
         }
+
+        public ActionResult CompanyIndex()
+        {
+            return View();
+        }
+
+        public ActionResult ProjectIndex()
+        {
+            DicManager service = new DicManager();
+            List<CompanyEntity> companies = service.GetAllCompanies();
+            ViewBag.Companies = companies;
+            return View();
+        }
     }
     public class ManageAjaxController : Controller
     {
@@ -778,6 +791,184 @@ namespace HRMS.Controllers
                 sb.AppendLine("</li>");
             }
             return sb.ToString();
+        }
+        #endregion
+
+        #region 公司方法
+        public void GetAllCompanies()
+        {
+            //用于序列化实体类的对象  
+            JavaScriptSerializer jss = new JavaScriptSerializer();
+
+            //请求中携带的条件  
+            string order = HttpContext.Request.Params["order"];
+            string sort = HttpContext.Request.Params["sort"];
+            int offset = Convert.ToInt32(HttpContext.Request.Params["offset"]);  //0
+            int pageSize = Convert.ToInt32(HttpContext.Request.Params["limit"]);
+            string searchKey = HttpContext.Request.Params["search"];
+            Dictionary<string, string> bizParaDic = new Dictionary<string, string>();
+            bizParaDic.Add("search", searchKey);
+
+            int total = 0;
+            DicManager dm = new DicManager();
+            List<CompanyEntity> list = dm.CompanyGetSearch(bizParaDic, sort, order, offset, pageSize, out total);
+            //给分页实体赋值  
+            PageModels<CompanyEntity> model = new PageModels<CompanyEntity>();
+            model.total = total;
+            if (total % pageSize == 0)
+                model.page = total / pageSize;
+            else
+                model.page = (total / pageSize) + 1;
+
+            model.rows = list;
+
+            //将查询结果返回  
+            HttpContext.Response.Write(jss.Serialize(model));
+        }
+        public string CheckCompanyValid(string iName)
+        {
+            DicManager dm = new DicManager();
+            if (dm.CheckCompanyValid(iName))
+            {
+                return "valid";
+            }
+            return "invalid";
+
+        }
+        public string CompanySaveChanges(string jsonString)
+        {
+            try
+            {
+                CompanyEntity en = JsonConvert.DeserializeObject<CompanyEntity>(jsonString);
+                DicManager dm = new DicManager();
+                if (string.IsNullOrEmpty(en.iGuid))
+                {
+                    en.iGuid = Guid.NewGuid().ToString();
+                    en.iCreatedBy = SessionHelper.CurrentUser.UserName;
+                    en.iUpdatedBy = SessionHelper.CurrentUser.UserName;
+                    dm.Insert(en);
+                }
+                else
+                {
+                    CompanyEntity enOld = dm.CompanyFirstOrDefault(en.iGuid);
+                    enOld.iName = en.iName;
+                    enOld.iIsDeleted = en.iIsDeleted;
+                    enOld.iUpdatedBy = SessionHelper.CurrentUser.UserName;
+                    dm.Update(enOld);
+                }
+                return "success";
+            }
+            catch (Exception e)
+            {
+                return e.ToString();
+            }
+        }
+
+        #endregion
+
+        #region 项目方法
+        public void GetAllProjects()
+        {
+            //用于序列化实体类的对象  
+            JavaScriptSerializer jss = new JavaScriptSerializer();
+
+            //请求中携带的条件  
+            string order = HttpContext.Request.Params["order"];
+            string sort = HttpContext.Request.Params["sort"];
+            int offset = Convert.ToInt32(HttpContext.Request.Params["offset"]);  //0
+            int pageSize = Convert.ToInt32(HttpContext.Request.Params["limit"]);
+            string searchKey = HttpContext.Request.Params["search"];
+            Dictionary<string, string> bizParaDic = new Dictionary<string, string>();
+            bizParaDic.Add("search", searchKey);
+
+            int total = 0;
+            DicManager dm = new DicManager();
+            List<ProjectEntity> list = dm.ProjectGetSearch(bizParaDic, sort, order, offset, pageSize, out total);
+            //给分页实体赋值  
+            PageModels<ProjectEntity> model = new PageModels<ProjectEntity>();
+            model.total = total;
+            if (total % pageSize == 0)
+                model.page = total / pageSize;
+            else
+                model.page = (total / pageSize) + 1;
+
+            model.rows = list;
+
+            //将查询结果返回  
+            HttpContext.Response.Write(jss.Serialize(model));
+        }
+        public string CheckProjectValid(string iName)
+        {
+            DicManager dm = new DicManager();
+            if (dm.CheckProjectValid(iName))
+            {
+                return "valid";
+            }
+            return "invalid";
+
+        }
+        public string ProjectSaveChanges(string jsonString)
+        {
+            try
+            {
+                ProjectEntity en = JsonConvert.DeserializeObject<ProjectEntity>(jsonString);
+                DicManager dm = new DicManager();
+                if (string.IsNullOrEmpty(en.iGuid))
+                {
+                    en.iGuid = Guid.NewGuid().ToString();
+                    en.iCreatedBy = SessionHelper.CurrentUser.UserName;
+                    en.iUpdatedBy = SessionHelper.CurrentUser.UserName;
+                    dm.Insert(en);
+                }
+                else
+                {
+                    ProjectEntity enOld = dm.ProjectFirstOrDefault(en.iGuid);
+                    enOld.iName = en.iName;
+                    enOld.iIsDeleted = en.iIsDeleted;
+                    enOld.iUpdatedBy = SessionHelper.CurrentUser.UserName;
+                    dm.Update(enOld);
+                }
+                return "success";
+            }
+            catch (Exception e)
+            {
+                return e.ToString();
+            }
+        }
+
+        #endregion
+
+        #region 项目公司对应关系
+        public JsonResult GetCompaniesOfProject(string projectid)
+        {
+            try
+            {
+                DicManager service = new DicManager();
+                List<string> result = service.GetCompaniesOfProject(projectid);
+                return new JsonResult { Data = new { success = true, msg = "msg", data = result }, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+            }
+            catch (Exception ex)
+            {
+                log4net.ILog log = log4net.LogManager.GetLogger(this.GetType());
+                log.Error(ex);
+                return new JsonResult { Data = new { success = false, msg = ex.ToString() }, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+            }
+        }
+
+        public string CompanyProjectRelationSaveChanges(string checkedStr)
+        {
+            try
+            {
+                string projectId = checkedStr.Split('$')[0];
+                List<string> checkedCompanyIdList = checkedStr.Split('$')[1].TrimEnd('|').Split('|').ToList();
+                DicManager dm = new DicManager();
+                dm.SaveCompanyProjectRelation(projectId, checkedCompanyIdList, SessionHelper.CurrentUser.UserName);
+                return "success";
+            }
+            catch (Exception e)
+            {
+                return e.ToString();
+            }
         }
         #endregion
     }

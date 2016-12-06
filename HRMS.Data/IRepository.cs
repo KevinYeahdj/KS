@@ -56,7 +56,7 @@ namespace HRMS.Data
 
         //insert, update, delete
         dynamic Insert<T>(IDbConnection conn, T entity, IDbTransaction transaction = null) where T : class;
-        void InsertBatch<T>(IDbConnection conn, IEnumerable<T> entityList, IDbTransaction transaction = null) where T : class;
+        void InsertBatch<T>(IDbConnection conn, IEnumerable<T> entityList, IDbTransaction transaction = null, string tableName = null) where T : class;
         bool Update<T>(IDbConnection conn, T entity, IDbTransaction transaction = null) where T : class;
         bool UpdateBatch<T>(IDbConnection conn, IEnumerable<T> entityList, IDbTransaction transaction = null) where T : class;
         bool Delete<T>(IDbConnection conn, dynamic primaryId, IDbTransaction transaction = null) where T : class;

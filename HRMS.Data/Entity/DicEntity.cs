@@ -27,4 +27,51 @@ namespace ClinBrain.Data.Entity
         public int iStatus { get; set; }
         public int iIsDeleted { get; set; }
     }
+    /// <summary>
+    /// 公司对象
+    /// </summary>
+    [Table("SysCompany")]
+    public class CompanyEntity
+    {
+        public string iGuid { get; set; }
+        public string iName { get; set; }
+        public DateTime? iCreatedOn { get; set; }
+        public string iCreatedBy { get; set; }
+        public DateTime? iUpdatedOn { get; set; }
+        public string iUpdatedBy { get; set; }
+        public int iStatus { get; set; }
+        public int iIsDeleted { get; set; }
+    }
+    /// <summary>
+    /// 项目对象
+    /// </summary>
+    [Table("SysProject")]
+    public class ProjectEntity
+    {
+        public string iGuid { get; set; }
+        public string iName { get; set; }
+        public DateTime? iCreatedOn { get; set; }
+        public string iCreatedBy { get; set; }
+        public DateTime? iUpdatedOn { get; set; }
+        public string iUpdatedBy { get; set; }
+        public int iStatus { get; set; }
+        public int iIsDeleted { get; set; }
+    }
+
+    /// <summary>
+    /// 项目对应公司关系对象
+    /// </summary>
+    [Table("SysCompanyProjectRelation")]
+    public class CompanyProjectRelationEntity
+    {
+        public string iGuid { get; set; }
+        public string iCompanyId { get; set; }
+        public string iProjectId { get; set; }
+        public DateTime? iCreatedOn { get; set; }
+        public string iCreatedBy { get; set; }
+        public DateTime? iUpdatedOn { get; set; }
+        public string iUpdatedBy { get; set; }
+        public int iStatus { get; set; }
+        public int iIsDeleted { get; set; }
+    }
 }

@@ -3,12 +3,8 @@
     Layout = "~/Views/Shared/_LayoutMain.cshtml";
 }
 <style>
-    .search {
-        width: auto;
-    }
-
-    .form-control {
-        color: black;
+    .modal-body {
+        height: 230px;
     }
 </style>
 
@@ -48,7 +44,7 @@
             <table id="mytab" class="table table-hover"></table>
 
             <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-hidden="true">
-                <div class="modal-dialog">
+                <div class="modal-dialog" style="width:90%">
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">

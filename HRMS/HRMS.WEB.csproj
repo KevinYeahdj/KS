@@ -3614,6 +3614,8 @@
     <Content Include="Views\Finance\JournalIndex.cshtml" />
     <Content Include="Views\Fund\SocialSecurityDetail.cshtml" />
     <Content Include="Views\Fund\ProvidentFundDetail.cshtml" />
+    <Content Include="Views\Manage\CompanyIndex.cshtml" />
+    <Content Include="Views\Manage\ProjectIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

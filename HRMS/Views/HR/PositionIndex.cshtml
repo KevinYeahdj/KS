@@ -515,6 +515,42 @@
             }
         });
 
+        $("input[name=iEmployeeStatus]").click(function () {
+            if ($('input[name="iEmployeeStatus"]:checked ').val() == "在职") {
+                if ($('#iEmployeeDate').val() == "") {
+                    $('#iEmployeeDate').addClass("warning");
+                }
+                if ($('#iResignDate').hasClass("warning")) {
+                    $('#iResignDate').removeClass("warning");
+                }
+            }
+            else {
+                if ($('#iResignDate').val() == "") {
+                    $('#iResignDate').addClass("warning");
+                }
+                if ($('#iEmployeeDate').hasClass("warning")) {
+                    $('#iEmployeeDate').removeClass("warning");
+                }
+            }
+        });
+        $("#iEmployeeDate").change(function () {
+            if ($("#iEmployeeDate").hasClass("warning")) {
+                var value = $("#iEmployeeDate").val();
+                if (value != "") {
+                    $('#iEmployeeDate').removeClass("warning");
+                }
+            }
+        });
+        $("#iResignDate").change(function () {
+            if ($("#iResignDate").hasClass("warning")) {
+                var value = $("#iResignDate").val();
+                if (value != "") {
+                    $('#iResignDate').removeClass("warning");
+                }
+            }
+        });
+
+
         $("div.icon-reorder").click(function () {
             $('#mytab').bootstrapTable('resetView', {
                 height: tableHeight()
