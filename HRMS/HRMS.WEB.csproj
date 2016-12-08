@@ -3593,7 +3593,7 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Shared\_LayoutMain.cshtml" />
-    <Content Include="Views\Manage\UserIndex.cshtml" />
+    <Content Include="Views\Manage\UserIndex_old.cshtml" />
     <Content Include="Views\Manage\DicIndex.cshtml" />
     <Content Include="Views\Manage\PeopleIndex.cshtml" />
     <Content Include="Views\Manage\MenuIndex.cshtml" />
@@ -3616,6 +3616,7 @@
     <Content Include="Views\Fund\ProvidentFundDetail.cshtml" />
     <Content Include="Views\Manage\CompanyIndex.cshtml" />
     <Content Include="Views\Manage\ProjectIndex.cshtml" />
+    <Content Include="Views\Manage\UserIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
