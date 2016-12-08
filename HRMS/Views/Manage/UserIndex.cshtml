@@ -271,7 +271,7 @@
         });
         //保存事件
         $("#SaveChanges").click(function () {
-
+            $(this).disabled();
             var param = {};
             param.jsonString = JSON.stringify(nodeObj);
             param.action = $("#editRowIndex").val() == "" ? "add" : "update";
@@ -281,7 +281,6 @@
                 data: param,
                 dataType: 'text',
                 success: function (data) {
-                    $('#addModal').modal('toggle');
                     if (data == "success") {
                         if ($("#editRowIndex").val() == "") {
                             //新增
@@ -304,7 +303,10 @@
                     }
                     else {
                         console.log(data);
+                        toastr.error('保存数据失败！');
                     }
+                    $('#addModal').modal('toggle');
+                    $(this).enabled();
                 }
             });
         });

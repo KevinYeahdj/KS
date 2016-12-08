@@ -670,6 +670,7 @@
                 toastr.error('数据验证未通过！');
                 return;
             }
+            $(this).disabled();
 
             var param = {};
             param.jsonString = ko.toJSON(myViewModel);
@@ -688,6 +689,7 @@
                         toastr.error('保存数据失败！');
                     }
                     $('#addModal').modal('toggle');
+                    $(this).enabled();
                 }
             });
         });
