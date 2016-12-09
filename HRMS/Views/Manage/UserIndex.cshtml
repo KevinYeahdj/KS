@@ -28,7 +28,7 @@
                         </div>
                         <div class="modal-body">
                             <div class="form-group">
-                                工号：<input type="text" class="form-control" id="iEmployeeCodeId" data-bind="value: iEmployeeCodeId" placeholder="请输入工号">
+                                用户名(工号)：<input type="text" class="form-control" id="iEmployeeCodeId" data-bind="value: iEmployeeCodeId" placeholder="请输入工号">
                             </div>
                             <div class="form-group">
                                 姓名：<input type="text" class="form-control" id="iUserName" data-bind="value: iUserName" placeholder="请输入姓名">
@@ -38,12 +38,15 @@
                             </div>
                             <div class="form-group">
                                 用户类型：【尽量不要下放超级管理员权限】<select class="form-control" id="iUserType" data-bind="value: iUserType">
-                                    <option value="-">请选择</option>
                                     <option value="普通用户">普通用户</option>
                                     <option value="超级用户">超级用户</option>
                                     <option value="超级管理员">超级管理员</option>
                                 </select>
                             </div>
+                            <div class="form-group">
+                                <h5>说明：普通用户需要被授权公司项目及可使用的功能，只能访问限定公司项目的限定功能。超级用户需要授权可使用的功能，可以访问所有公司所有项目的限定的功能。超级管理员可使用本系统所有公司项目及所有功能。</h5>
+                            </div>
+
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
@@ -53,6 +56,59 @@
                     </div>
                 </div>
             </div>
+
+            <div class="modal fade" id="companyProjectModal" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog" style="width:90%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                &times;
+                            </button>
+                            <h4 class="modal-title" id="menuModalLabel">公司项目修改</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <div class="zTreeDemoBackground left">
+                                    <ul id="companyProjectWriteTree" class="ztree"></ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-primary" id="companyProjectSaveChanges">提交</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="menuModal" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog" style="width:90%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                &times;
+                            </button>
+                            <h4 class="modal-title" id="menuModalLabel">菜单权限修改</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <div class="zTreeDemoBackground left">
+                                    <ul id="companyProjectReadTree" class="ztree"></ul>
+                                </div>
+                                <div class="zTreeDemoBackground right">
+                                    <ul id="menuTree" class="ztree"></ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-primary" id="MenuSaveChanges">提交</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <input type="hidden" id="editUserId" />
         </div>
     </div>
 </div>
@@ -177,7 +233,7 @@
                 },
                 {
                     field: "iEmployeeCodeId",
-                    title: "用户名",
+                    title: "用户名(工号)",
                     sortable: true
                 },
                 {
@@ -201,12 +257,12 @@
                 {
                     field: "operation1",
                     title: "公司项目",
-                    formatter: 'infoFormatter',//对本列数据做格式化
+                    formatter: 'SettingCompanyProject',//对本列数据做格式化
                 },
                 {
                     field: "operation2",
                     title: "菜单权限",
-                    formatter: 'infoFormatter',//对本列数据做格式化
+                    formatter: 'SettingMenu',//对本列数据做格式化
                 }
             ],
             onClickRow: function (row, $element) {
@@ -220,6 +276,12 @@
                 myViewModel.iUserName(row.iUserName);
                 myViewModel.iPassWord(row.iPassWord);
                 myViewModel.iUserType(row.iUserType);
+                myViewModel.iCreatedOn(row.iCreatedOn);
+                myViewModel.iCreatedBy(row.iCreatedBy);
+                myViewModel.iUpdatedOn(row.iUpdatedOn);
+                myViewModel.iUpdatedBy(row.iUpdatedBy);
+                myViewModel.iStatus(row.iStatus);
+                myViewModel.iIsDeleted(row.iIsDeleted);
                 $('#addModal').modal('toggle');
             },
             locale: "zh-CN",//中文支持,
@@ -239,7 +301,7 @@
             myViewModel.iEmployeeCodeId("");
             myViewModel.iUserName("");
             myViewModel.iPassWord("");
-            myViewModel.iUserType("");
+            myViewModel.iUserType("普通用户");
             myViewModel.iCreatedOn("");
             myViewModel.iCreatedBy("");
             myViewModel.iUpdatedOn("");
@@ -255,7 +317,7 @@
                 toastr.error('数据验证未通过！');
                 return;
             }
-            $(this).disabled();
+            $(this).attr({"disabled":"disabled"});
 
             var param = {};
             param.jsonString = ko.toJSON(myViewModel);
@@ -274,7 +336,7 @@
                         toastr.error('保存数据失败！');
                     }
                     $('#addModal').modal('toggle');
-                    $(this).enabled();
+                    $("#SaveChanges").removeAttr("disabled");
                 }
             });
         });
@@ -301,7 +363,119 @@
                     }
                 });
             }
-            $(this).enabled();
         });
+
+        //绑定 公司项目设置树,菜单树,公司项目只读树动态加载
+        var companyProjectWriteSetting = {
+            check: {
+                enable: true,
+                chkStyle: "checkbox",
+                chkboxType: { "Y": "ps", "N": "ps" }
+            },
+            data: {
+                simpleData: {
+                    enable: true
+                }
+            },
+            callback : {
+            }
+        };
+        var companyProjectNodes = @(Html.Raw(ViewBag.companyProjectNodes));
+        $.fn.zTree.init($("#companyProjectWriteTree"), companyProjectWriteSetting, companyProjectNodes);
+
+        var menuSetting = {
+            check: {
+                enable: true,
+                chkStyle: "checkbox",
+                chkboxType: { "Y": "ps", "N": "ps" }
+            },
+            data: {
+                simpleData: {
+                    enable: true
+                }
+            },
+            callback : {
+                //onClick : changeRight
+            }
+        };
+        var menuNodes = @(Html.Raw(ViewBag.treeNodes));
+        $.fn.zTree.init($("#menuTree"), menuSetting, menuNodes);
+
+        $("#companyProjectSaveChanges").click(function () {
+            $(this).attr({ "disabled": "disabled" });
+            var zTree = $.fn.zTree.getZTreeObj("companyProjectWriteTree");
+            var nodes = zTree.getCheckedNodes();
+            var checkNodeIds =[];
+            for (var n in nodes){
+                checkNodeIds.push(nodes[n].id);
+            }
+            var userid = $("#editUserId").val();
+            var param = {};
+            param.jsonString = JSON.stringify(checkNodeIds);
+            param.userid = userid;
+            $.ajax({
+                url: "/ManageAjax/UserCompanyProjectSaveChanges",
+                type: "POST",
+                data: param,
+                dataType: 'text',
+                success: function (data) {
+                    if (data == "success") {
+                        toastr.success('保存成功！');               
+                        $('#companyProjectModal').modal('toggle');
+                        $("#companyProjectSaveChanges").removeAttr("disabled");
+
+                    }
+                    else {
+                        toastr.error('保存失败！');
+                        console.log(data);
+                    }
+                }
+            });
+        });
+
     })
+
+    function SettingCompanyProject(value, row, index) {
+        $("#editUserId").val(row.iEmployeeCodeId);
+        if (row.iUserType == "普通用户") {
+            return '<a href="#" onclick="SetCompanyProject(\'' + row.iEmployeeCodeId + '\')">点击设定</a>';
+        }
+    }
+    function SettingMenu(value, row, index) {
+        $("#editUserId").val(row.iEmployeeCodeId);
+        if (row.iUserType != "超级管理员") {
+            return '<a href="#" onclick="SetMenu(\'' + row.iEmployeeCodeId + '\')">点击设定</a>';
+        }
+    }
+    function SetCompanyProject(iEmployeeCodeId) {
+        $('#companyProjectModal').modal('toggle');       
+        var width = $("#companyProjectModal").width();
+        var height = $("#companyProjectModal").height();
+        var $shade = $('<div id="waiting"></div>');
+        $shade.css({ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, background: '#fff url(/Content/images/waiting.gif) center center no-repeat', opacity: 0.4 });
+        $("#companyProjectModal").append($shade);
+        $.get("/ManageAjax/GetUserCompanyProjectTree?userid=" + iEmployeeCodeId, function(result){
+            var treeObj = $.fn.zTree.getZTreeObj("companyProjectWriteTree");
+            treeObj.checkAllNodes(false);
+            treeObj.setting.check.chkboxType.Y = "";  //清除上下级全选影响
+            var data = result.data;
+            for (var x in data)
+            {
+                var node = treeObj.getNodeByParam("id", data[x], null);
+                if(node){
+                    treeObj.checkNode(node, true, true);
+                }
+                else{
+                    console.log("未找到结点id为" + x);
+                }
+            }
+            treeObj.setting.check.chkboxType.Y = "ps"; //还原上下级全选影响
+            $shade.remove();
+        });
+    }
+    function SetMenu(iEmployeeCodeId) {
+        $('#menuModal').modal('toggle');
+    }
+
+
 </script>

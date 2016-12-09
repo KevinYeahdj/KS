@@ -272,5 +272,6 @@ namespace HRMS.Data.Manager
             }
             return affectedRowCount;
         }
+
     }
 }

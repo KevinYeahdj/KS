@@ -25,14 +25,12 @@ namespace HRMS.Controllers
     {
         public ActionResult UserIndex()
         {
-            DicManager dm = new DicManager();
-            var projects = dm.GetDicByType("项目");
-            ViewBag.Projects = projects;
             ManageAjaxController ma = new ManageAjaxController();
-
             var contents = ma.GetStandardMenuTree(false);
             ViewBag.treeNodes = JsonConvert.SerializeObject(contents);
 
+            var companyProjectNodes = ma.GetCompanyProjectTree();
+            ViewBag.companyProjectNodes = JsonConvert.SerializeObject(companyProjectNodes);
             return View();
         }
 
@@ -77,7 +75,7 @@ namespace HRMS.Controllers
     }
     public class ManageAjaxController : Controller
     {
-
+        /*
         #region 用户方法
         public void GetAllUsers_old()
         {
@@ -156,7 +154,7 @@ namespace HRMS.Controllers
         }
 
         #endregion
-
+        */
         #region 新用户方法
         public void GetAllUsers()
         {
@@ -174,57 +172,38 @@ namespace HRMS.Controllers
             UserManager um = new UserManager();
             List<UserEntity> list = um.GetSearch(searchKey, sort, order, offset, pageSize, out total);
 
-            DicManager dm = new DicManager();
-            List<DicEntity> companyDicE = dm.GetDicByType("公司");
-            Dictionary<string, string> companyDic = new Dictionary<string, string>();
-            foreach (var item in companyDicE)
-            {
-                companyDic.Add(item.iKey, item.iValue);
-            }
-            List<UserViewModel> listView = new List<UserViewModel>();
-            foreach (var item in list)
-            {
-                listView.Add(new UserViewModel { iCompanyCode = item.iCompanyCode, iCompanyName = item.iCompanyCode, iEmployeeCodeId = item.iEmployeeCodeId, iPassWord = item.iPassWord, iUserName = item.iUserName, iUserType = item.iUserType, iUpdatedOn = item.iUpdatedOn.ToString("yyyyMMdd HH:mm") });
-            }
-
             //给分页实体赋值  
-            PageModels<UserViewModel> model = new PageModels<UserViewModel>();
+            PageModels<UserEntity> model = new PageModels<UserEntity>();
             model.total = total;
             if (total % pageSize == 0)
                 model.page = total / pageSize;
             else
                 model.page = (total / pageSize) + 1;
 
-            model.rows = listView;
+            model.rows = list;
 
             //将查询结果返回  
             HttpContext.Response.Write(jss.Serialize(model));
         }
 
-        public string UserSaveChanges(string jsonString, string action)
+        public string UserSaveChanges(string jsonString)
         {
 
             try
             {
                 UserEntity ue = JsonConvert.DeserializeObject<UserEntity>(jsonString);
-                UserManager pm = new UserManager();
-                if (action == "add")
+                UserManager service = new UserManager();
+                UserEntity ueOld = service.GetUser(ue.iEmployeeCodeId);
+                if (ueOld == null)
                 {
                     ue.iCreatedBy = SessionHelper.CurrentUser.UserName;
                     ue.iUpdatedBy = SessionHelper.CurrentUser.UserName;
-                    pm.Insert(ue);
+                    service.Insert(ue);
                 }
                 else
                 {
-                    UserEntity ueOld = pm.GetUser(ue.iEmployeeCodeId);
                     ue.iUpdatedBy = SessionHelper.CurrentUser.UserName;
-                    ue.iCreatedBy = ueOld.iCreatedBy;
-                    ue.iCreatedOn = ueOld.iCreatedOn;
-                    if (ue.iIsDeleted != 1)
-                    {
-                        ue.iStatus = 1;
-                    }
-                    pm.Update(ue);
+                    service.Update(ue);
                 }
                 return "success";
             }
@@ -236,7 +215,12 @@ namespace HRMS.Controllers
 
         public string CheckUserValid(string iEmployeeCodeId)
         {
-            return "valid";
+            UserManager service = new UserManager();
+            if (service.CheckUserValid(iEmployeeCodeId))
+            {
+                return "valid";
+            }
+            return "invalid";
         }
 
         #endregion
@@ -1057,6 +1041,66 @@ namespace HRMS.Controllers
             catch (Exception e)
             {
                 return e.ToString();
+            }
+        }
+
+        public List<ItemContent> GetCompanyProjectTree()
+        {
+            string querySql = "SELECT [iGuid], '' pid, [iName] FROM [SysCompany] where iStatus=1 and iIsDeleted=0 union all select icompanyid+'|'+iprojectid, icompanyid, iname from [SysCompanyProjectRelation] a inner join [SysProject] b on a.iProjectId = b.iGuid  and a.iStatus = 1 and a.iIsDeleted=0 and b.iStatus =1 and b.iIsDeleted=0";
+            DataSet ds = DbHelperSQL.Query(querySql);
+            List<ItemContent> contents = new List<ItemContent>();
+            foreach (DataRow dr in ds.Tables[0].Rows)
+            {
+                contents.Add(new ItemContent { id = dr[0].ToString(), pId = dr[1].ToString(), name = dr[2].ToString(), open = true });
+
+            }
+            return contents;
+        }
+
+        public string UserCompanyProjectSaveChanges(string jsonString, string userid)
+        {
+            try
+            {
+                List<string> treeIds = JsonConvert.DeserializeObject<List<string>>(jsonString);
+                DataTable dt = new DataTable("SysUserCompanyProjectTree");
+                dt.Columns.Add("iEmployeeCodeId");
+                dt.Columns.Add("iId");
+                dt.Columns.Add("iPid");
+                foreach (string node in treeIds)
+                {
+                    DataRow dataRow = dt.NewRow();
+                    dataRow[0] = userid;
+                    dataRow[1] = node;
+                    dataRow[2] = node.Split('|')[0];   //保存了公司
+                    dt.Rows.Add(dataRow);
+                }
+                string deleteSql = "delete from [SysUserCompanyProjectTree] where iEmployeeCodeId = '" + userid + "'";
+                DbHelperSQL.ExecuteSql(deleteSql);
+                WriteDataTableToServer(dt, "SysUserCompanyProjectTree", ConfigurationManager.ConnectionStrings["HRMSDBConnectionString"].ConnectionString);
+                return "success";
+            }
+            catch (Exception e)
+            {
+                return e.ToString();
+            }
+        }
+
+        public JsonResult GetUserCompanyProjectTree(string userid)
+        {
+            try
+            {
+                string querySql = "select iId from SysUserCompanyProjectTree where iEmployeeCodeId = '{0}' ";
+                DataSet ds = DbHelperSQL.Query(string.Format(querySql, userid));
+                List<string> contents = new List<string>();
+                foreach (DataRow dr in ds.Tables[0].Rows)
+                {
+                    contents.Add(dr[0].ToString());
+                }
+                return new JsonResult { Data = new { success = true, data = contents }, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult { Data = new { success = false, data = "", msg = ex.ToString() }, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
             }
         }
         #endregion

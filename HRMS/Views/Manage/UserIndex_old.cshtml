@@ -271,7 +271,7 @@
         });
         //保存事件
         $("#SaveChanges").click(function () {
-            $(this).disabled();
+            $(this).attr({"disabled":"disabled"});
             var param = {};
             param.jsonString = JSON.stringify(nodeObj);
             param.action = $("#editRowIndex").val() == "" ? "add" : "update";
@@ -306,7 +306,7 @@
                         toastr.error('保存数据失败！');
                     }
                     $('#addModal').modal('toggle');
-                    $(this).enabled();
+                    $("#SaveChanges").removeAttr("disabled");
                 }
             });
         });

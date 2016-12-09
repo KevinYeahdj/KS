@@ -386,7 +386,7 @@
                 toastr.error('数据验证未通过！');
                 return;
             }
-            $(this).disabled();
+            $(this).attr({ "disabled": "disabled" });
 
             var param = {};
             param.jsonString = ko.toJSON(myViewModel);
@@ -404,8 +404,8 @@
                         console.log(data);
                         toastr.error('保存数据失败！');
                     }
-                    $('#addModal').modal('toggle');
-                    $(this).enabled();
+                    $('#addModal').modal('toggle'); 
+                    $("#submit").removeAttr("disabled");
                 }
             });
         });

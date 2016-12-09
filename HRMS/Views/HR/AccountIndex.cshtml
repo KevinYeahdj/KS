@@ -547,7 +547,7 @@
                 return;
             }
 
-            $(this).disabled();
+            $(this).attr({ "disabled": "disabled" });
             var param = {};
             param.jsonString = ko.toJSON(myViewModel);
             $.ajax({
@@ -565,7 +565,7 @@
                         toastr.error('保存数据失败！');
                     }
                     $('#addModal').modal('toggle');
-                    $(this).enabled();
+                    $("#addRecord").removeAttr("disabled");
                 }
             });
         });
