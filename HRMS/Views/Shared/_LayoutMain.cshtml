@@ -80,7 +80,7 @@
 
         function ChangeCompany(newCompany) {
             $.ajax({
-                url: "/ManageAjax/GetCompanyProjects?companyCode=" + newCompany,
+                url: "/ManageAjax/GetAuthorisedProjectDic?companyCode=" + newCompany,
                 type: "GET",
                 dataType: 'json',
                 success: function (result) {
@@ -139,16 +139,16 @@
                     <option value="-">请选择公司</option>
                     @{
                         HRMS.Data.Manager.DicManager dm = new HRMS.Data.Manager.DicManager();
-                        var companies = dm.GetDicByType("公司");
+                        var companies = dm.GetAuthorisedCompanyDic(HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId, HRMS.WEB.Utils.SessionHelper.CurrentUser.UserType);
                         foreach (var item in companies)
                         {
-                            if (item.iKey == HRMS.WEB.Utils.SessionHelper.CurrentUser.CurrentCompany)
+                            if (item.Key == HRMS.WEB.Utils.SessionHelper.CurrentUser.CurrentCompany)
                             {
-                                <option selected="selected" value="@item.iKey">@item.iValue</option>
+                                <option selected="selected" value="@item.Key">@item.Value</option>
                             }
                             else
                             {
-                                <option value="@item.iKey">@item.iValue</option>
+                                <option value="@item.Key">@item.Value</option>
                             }
                         }
                     }

@@ -69,7 +69,7 @@
                                     @{
                                         foreach (var item in ViewBag.Projects)
                                         {
-                                            <option value="@item.iKey">@item.iValue</option>
+                                            <option value="@item.iGuid">@item.iName</option>
                                         }
                                     }
                                 </select>
@@ -81,7 +81,7 @@
                                     @{
                                         foreach (var item in ViewBag.Companies)
                                         {
-                                            <option value="@item.iKey">@item.iValue</option>
+                                            <option value="@item.iGuid">@item.iName</option>
                                         }
                                     }
                                 </select>

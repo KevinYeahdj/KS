@@ -360,6 +360,24 @@ namespace HRMS.Controllers
 
         }
 
+        public JsonResult GetAuthorisedProjectDic(string companyCode)
+        {
+            try
+            {
+                Dictionary<string, string> projectsDic = new Dictionary<string, string>();
+                DicManager service = new DicManager();
+                projectsDic = service.GetAuthorisedProjectDic(SessionHelper.CurrentUser.UserId, SessionHelper.CurrentUser.UserType, companyCode);
+                
+                return new JsonResult { Data = new { success = true, msg = "msg", data = projectsDic }, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult { Data = new { success = false, msg = ex.ToString() }, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+            }
+
+        }
+
         #endregion
 
         #region 人力方法
@@ -924,6 +942,7 @@ namespace HRMS.Controllers
             }
             return sb.ToString();
         }
+
         #endregion
 
         #region 公司方法
@@ -1162,6 +1181,8 @@ namespace HRMS.Controllers
                 return new JsonResult { Data = new { success = false, data = "", msg = ex.ToString() }, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
             }
         }
+
+
         #endregion
     }
 }

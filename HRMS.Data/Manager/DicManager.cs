@@ -239,6 +239,11 @@ namespace HRMS.Data.Manager
             return true;
         }
 
+        public List<ProjectEntity> GetAllProjects()
+        {
+            return Repository.GetAll<ProjectEntity>().Where(i => i.iStatus == 1 && i.iIsDeleted == 0).ToList();
+        }
+
         public List<ProjectEntity> ProjectGetSearch(Dictionary<string, string> para, string sort, string order, int offset, int pageSize, out int total)
         {
             string commonSql = string.Format(" from SysProject where iIsDeleted =0 and iStatus =1 {0} ", string.IsNullOrEmpty(para["search"]) ? "" : " and iName like '%" + para["search"] + "%' ");
@@ -271,6 +276,50 @@ namespace HRMS.Data.Manager
                 affectedRowCount = list.Count();
             }
             return affectedRowCount;
+        }
+
+        //授权相关
+        public Dictionary<string, string> GetAuthorisedCompanyDic(string empNo, string userType)
+        {
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            if (userType == "普通用户")
+            {
+                string querySql = "SELECT distinct ipid, iName FROM [SysUserCompanyProjectTree] a inner join [SysCompany] b on a.iPid= b.iGuid and b.iIsDeleted =0 and b.iStatus=1 where iEmployeeCodeId='" + empNo + "'";
+                DataSet ds = DbHelperSQL.Query(querySql);
+                foreach (DataRow dr in ds.Tables[0].Rows)
+                {
+                    dic.Add(dr[0].ToString(), dr[1].ToString());
+                }
+            }
+            else
+            {
+                dic = GetAllCompanies().ToDictionary(i => i.iGuid, i => i.iName);
+            }
+            return dic;
+        }
+
+        public Dictionary<string, string> GetAuthorisedProjectDic(string empNo, string userType, string companyId)
+        {
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            if (userType == "普通用户")
+            {
+                string querySql = "SELECT distinct iGuid, iName FROM [SysUserCompanyProjectTree] a inner join [SysProject] b on REPLACE(a.iId,a.iPid+'|','')= b.iGuid and b.iIsDeleted =0 and b.iStatus=1 and a.iId<>a.iPid where iEmployeeCodeId='" + empNo + "' and a.Pid ='" + companyId + "'";
+                DataSet ds = DbHelperSQL.Query(querySql);
+                foreach (DataRow dr in ds.Tables[0].Rows)
+                {
+                    dic.Add(dr[0].ToString(), dr[1].ToString());
+                }
+            }
+            else
+            {
+                string querySql = "SELECT b.iguid,b.iname FROM [SysCompanyProjectRelation] a inner join [SysProject] b on a.iProjectId= b.iGuid and a.iStatus=1 and a.iIsDeleted=0 and b.iStatus=1 and b.iIsDeleted=0 and a.iCompanyId='" + companyId + "'";
+                DataSet ds = DbHelperSQL.Query(querySql);
+                foreach (DataRow dr in ds.Tables[0].Rows)
+                {
+                    dic.Add(dr[0].ToString(), dr[1].ToString());
+                }
+            }
+            return dic;
         }
 
     }

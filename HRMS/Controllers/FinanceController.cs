@@ -28,27 +28,27 @@ namespace HRMS.Controllers
         public ActionResult SalaryIndex()
         {
             DicManager dm = new DicManager();
-            var companies = dm.GetDicByType("公司");
+            var companies = dm.GetAllCompanies();
             ViewBag.Companies = companies;
-            var projects = dm.GetDicByType("项目");
+            var projects = dm.GetAllProjects();
             ViewBag.Projects = projects;
             return View();
         }
         public ActionResult JournalIndex()
         {
             DicManager dm = new DicManager();
-            var companies = dm.GetDicByType("公司");
+            var companies = dm.GetAllCompanies();
             ViewBag.Companies = companies;
-            var projects = dm.GetDicByType("项目");
+            var projects = dm.GetAllProjects();
             ViewBag.Projects = projects;
             return View();
         }
         public ActionResult ReturnFeeIndex()
         {
             DicManager dm = new DicManager();
-            var companies = dm.GetDicByType("公司");
+            var companies = dm.GetAllCompanies();
             ViewBag.Companies = companies;
-            var projects = dm.GetDicByType("项目");
+            var projects = dm.GetAllProjects();
             ViewBag.Projects = projects;
             return View();
         }
@@ -102,10 +102,10 @@ namespace HRMS.Controllers
                 List<ReturnFeeModel> list = service.GetSearch(SessionHelper.CurrentUser.UserType, bizParaDic, sort, order, offset, pageSize, out total);
                 
                 DicManager dm = new DicManager();
-                var companies = dm.GetDicByType("公司");
-                var projects = dm.GetDicByType("项目");
-                Dictionary<string, string> comDic = companies.ToDictionary(i => i.iKey, i => i.iValue);
-                Dictionary<string, string> proDic = projects.ToDictionary(i => i.iKey, i => i.iValue);
+                var companies = dm.GetAllCompanies();
+                var projects = dm.GetAllProjects();
+                Dictionary<string, string> comDic = companies.ToDictionary(i => i.iGuid, i => i.iName);
+                Dictionary<string, string> proDic = projects.ToDictionary(i => i.iGuid, i => i.iName);
                 foreach (var item in list)
                 {
                     item.iCompany = comDic[item.iCompany];
@@ -221,8 +221,8 @@ namespace HRMS.Controllers
         {
             //需要验证权限，如果是普通用户，不能导入已存在的返回信息。
             DicManager dm = new DicManager();
-            var companies = dm.GetDicByType("公司");
-            var projects = dm.GetDicByType("项目");
+            var companies = dm.GetAllCompanies();
+            var projects = dm.GetAllProjects();
             ReturnFeeManager service = new ReturnFeeManager();
 
             List<ReturnFeeEntity> list = new List<ReturnFeeEntity>();
@@ -238,8 +238,8 @@ namespace HRMS.Controllers
             for (int i = (sheet.FirstRowNum + 1), len = sheet.LastRowNum + 1; i < len; i++)
             {
 
-                DicEntity currentCompany = null;
-                DicEntity currentProject = null;
+                CompanyEntity currentCompany = null;
+                ProjectEntity currentProject = null;
                 ReturnFeeEntity en = new ReturnFeeEntity();
                 try
                 {
@@ -255,8 +255,8 @@ namespace HRMS.Controllers
                     {
                         errorLog += "第【" + (i + 1).ToString() + "】行身份证号不合法；";
                     }
-                    currentCompany = companies.FirstOrDefault(pj => pj.iValue == company);
-                    currentProject = projects.FirstOrDefault(pj => pj.iValue == project);
+                    currentCompany = companies.FirstOrDefault(pj => pj.iName == company);
+                    currentProject = projects.FirstOrDefault(pj => pj.iName == project);
 
                     if (currentCompany == null || currentProject == null)
                     {
@@ -268,14 +268,14 @@ namespace HRMS.Controllers
                         {
                             errorLog += "第【" + (i + 1).ToString() + "】行项目名称不存在；";
                         }
-                        if (SessionHelper.CurrentUser.UserType == "普通用户" && currentProject.iValue != SessionHelper.CurrentUser.CurrentProject)
+                        if (SessionHelper.CurrentUser.UserType == "普通用户" && currentProject.iGuid != SessionHelper.CurrentUser.CurrentProject)
                         {
                             errorLog += "第【" + (i + 1).ToString() + "】行只能导入您当前所在的项目；";
                         }
                     }
                     else
                     {
-                        string hrId = service.GetValidReturnFeeHrId(currentCompany.iKey, empcode, idcard, currentProject.iKey);
+                        string hrId = service.GetValidReturnFeeHrId(currentCompany.iGuid, empcode, idcard, currentProject.iGuid);
                         if (string.IsNullOrEmpty(hrId))
                         {
                             errorLog += "第【" + (i + 1).ToString() + "】行在人事里的当前项目中没有给出返费信息；";
@@ -478,10 +478,10 @@ namespace HRMS.Controllers
             List<ReturnFeeModel> list = service.GetSearchAll(SessionHelper.CurrentUser.UserType, bizParaDic);
 
             DicManager dm = new DicManager();
-            var companies = dm.GetDicByType("公司");
-            var projects = dm.GetDicByType("项目");
-            Dictionary<string, string> comDic = companies.ToDictionary(i => i.iKey, i => i.iValue);
-            Dictionary<string, string> proDic = projects.ToDictionary(i => i.iKey, i => i.iValue);
+            var companies = dm.GetAllCompanies();
+            var projects = dm.GetAllProjects();
+            Dictionary<string, string> comDic = companies.ToDictionary(i => i.iGuid, i => i.iName);
+            Dictionary<string, string> proDic = projects.ToDictionary(i => i.iGuid, i => i.iName);
             foreach (var item in list)
             {
                 item.iCompany = comDic[item.iCompany];
@@ -603,10 +603,10 @@ namespace HRMS.Controllers
                 List<JournalEntity> list = service.GetSearch(SessionHelper.CurrentUser.UserType, bizParaDic, sort, order, offset, pageSize, out total);
 
                 DicManager dm = new DicManager();
-                var companies = dm.GetDicByType("公司");
-                var projects = dm.GetDicByType("项目");
-                Dictionary<string, string> comDic = companies.ToDictionary(i => i.iKey, i => i.iValue);
-                Dictionary<string, string> proDic = projects.ToDictionary(i => i.iKey, i => i.iValue);
+                var companies = dm.GetAllCompanies();
+                var projects = dm.GetAllProjects();
+                Dictionary<string, string> comDic = companies.ToDictionary(i => i.iGuid, i => i.iName);
+                Dictionary<string, string> proDic = projects.ToDictionary(i => i.iGuid, i => i.iName);
                 foreach (var item in list)
                 {
                     item.iCompanyId = comDic[item.iCompanyId];
