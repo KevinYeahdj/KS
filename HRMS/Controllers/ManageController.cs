@@ -765,12 +765,35 @@ namespace HRMS.Controllers
             }
         }
 
-        public JsonResult GetUserMenuTree(string userId, string projectid)
+        public JsonResult GetUserMenuTree_old(string userId, string projectid)
         {
             try
             {
                 string querySql = "select iMenuId+'|'+iMenuRights from sysUserMenu where iemployeecode = '{0}' and iProjectCode= '{1}'";
                 DataSet ds = DbHelperSQL.Query(string.Format(querySql, userId, projectid));
+                List<string> contents = new List<string>();
+                foreach (DataRow dr in ds.Tables[0].Rows)
+                {
+                    contents.Add(dr[0].ToString());
+                }
+                return new JsonResult { Data = new { success = true, data = contents }, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult { Data = new { success = false, data = "", msg = ex.ToString() }, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+            }
+
+        }
+
+        public JsonResult GetUserMenuTree(string userId, string companyProjectTreeNodeId)
+        {
+            try
+            {
+                string[] array = companyProjectTreeNodeId.Split('|');
+                string companyId = array[0];
+                string projectId = array.Length > 1 ? array[1] : "-";
+                string querySql = "select iMenuId+'|'+iMenuRights from sysUserMenuTree where iemployeecodeid = '{0}' and iCompanyId= '{1}' and iProjectId = '{2}'";
+                DataSet ds = DbHelperSQL.Query(string.Format(querySql, userId, companyId, projectId));
                 List<string> contents = new List<string>();
                 foreach (DataRow dr in ds.Tables[0].Rows)
                 {
@@ -809,6 +832,42 @@ namespace HRMS.Controllers
                 string deleteSql = "delete from [sysUserMenu] where iemployeecode = '{0}' and iProjectCode = '{1}' ";
                 DbHelperSQL.ExecuteSql(string.Format(deleteSql, userid, projectid));
                 WriteDataTableToServer(dt, "sysUserMenu", ConfigurationManager.ConnectionStrings["HRMSDBConnectionString"].ConnectionString);
+                return "success";
+            }
+            catch (Exception e)
+            {
+                return e.ToString();
+            }
+        }
+        public string UserMenuTreeSaveChanges(string jsonString, string userid, string companyProjectTreeNodeId)
+        {
+            //在超级用户与普通用户变更时会有冗余数据出现，不过并不影响，可清可不清
+            try
+            {
+                List<string> menuIds = JsonConvert.DeserializeObject<List<string>>(jsonString);
+                string[] array = companyProjectTreeNodeId.Split('|');
+                string companyId = array[0];
+                string projectId = array.Length > 1 ? array[1] : "-";
+
+                DataTable dt = new DataTable("sysUserMenuTree");
+                dt.Columns.Add("iEmployeeCodeId");
+                dt.Columns.Add("iCompanyId");
+                dt.Columns.Add("iProjectId");
+                dt.Columns.Add("iMenuId");
+                dt.Columns.Add("iMenuRights");
+                foreach (string menuid in menuIds)
+                {
+                    DataRow dataRow = dt.NewRow();
+                    dataRow[0] = userid;
+                    dataRow[1] = companyId;
+                    dataRow[2] = projectId;
+                    dataRow[3] = menuid.Split('|')[0];
+                    dataRow[4] = menuid.Split('|')[1];
+                    dt.Rows.Add(dataRow);
+                }
+                string deleteSql = "delete from [sysUserMenuTree] where iemployeecodeId = '{0}' and iCompanyId='{1}' and iProjectId = '{2}' ";
+                DbHelperSQL.ExecuteSql(string.Format(deleteSql, userid, companyId, projectId));
+                WriteDataTableToServer(dt, "sysUserMenuTree", ConfigurationManager.ConnectionStrings["HRMSDBConnectionString"].ConnectionString);
                 return "success";
             }
             catch (Exception e)

@@ -4,7 +4,7 @@
 }
 <style>
     .modal-body {
-        height: 230px;
+        height: 530px;
     }
 </style>
 
@@ -95,10 +95,13 @@
                                 <div class="zTreeDemoBackground left">
                                     <ul id="companyProjectReadTree" class="ztree"></ul>
                                 </div>
+                            </div>
+                            <div class="form-group"></div>
+                            <div class="form-group">
                                 <div class="zTreeDemoBackground right">
                                     <ul id="menuTree" class="ztree"></ul>
                                 </div>
-                            </div>
+                            </div><div class="form-group"><p>超级用户可以查看所有公司项目，只需要设置其能访问的功能权限即可。</p><p>普通用户点击对选中的项目进行权限设置，点击公司会对该公司下所有项目进行默认设置，即如果该公司下某个项目未设置，则取其公司的设置。</p></div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
@@ -381,7 +384,25 @@
             }
         };
         var companyProjectNodes = @(Html.Raw(ViewBag.companyProjectNodes));
+        window.companyProjectNodes = companyProjectNodes;
         $.fn.zTree.init($("#companyProjectWriteTree"), companyProjectWriteSetting, companyProjectNodes);
+
+        var companyProjectReadSetting = {
+            check: {
+                enable: false
+            },
+            data: {
+                simpleData: {
+                    enable: true
+                }
+            },
+            callback : {
+                onClick : loadMenuTree
+            }
+        };
+        
+        window.companyProjectReadSetting = companyProjectReadSetting;
+        //$.fn.zTree.init($("#companyProjectReadTree"), companyProjectReadSetting, companyProjectNodes);
 
         var menuSetting = {
             check: {
@@ -395,7 +416,7 @@
                 }
             },
             callback : {
-                //onClick : changeRight
+                onClick : changeRight
             }
         };
         var menuNodes = @(Html.Raw(ViewBag.treeNodes));
@@ -420,10 +441,50 @@
                 dataType: 'text',
                 success: function (data) {
                     if (data == "success") {
-                        toastr.success('保存成功！');               
+                        toastr.success('保存成功！');
                         $('#companyProjectModal').modal('toggle');
                         $("#companyProjectSaveChanges").removeAttr("disabled");
 
+                    }
+                    else {
+                        toastr.error('保存失败！');
+                        console.log(data);
+                    }
+                }
+            });
+        });
+        $("#MenuSaveChanges").click(function () {
+            var zTree = $.fn.zTree.getZTreeObj("menuTree");
+            var nodes = zTree.getCheckedNodes();
+            var checkNodeIds =[];
+            for (var n in nodes){
+                checkNodeIds.push(nodes[n].id + "|"+ (nodes[n].name.indexOf("只读") >-1 ?"r":"w"));
+            }
+            var userid = $("#editUserId").val();
+            var companyProjectTreeNodeId ="-|-";
+            if(userid.indexOf('|')>-1){ //超级用户
+                userid = userid.split('|')[0];
+                companyProjectTreeNodeId = "-|-";
+            }
+            else
+            {
+                var treeObj = $.fn.zTree.getZTreeObj("companyProjectReadTree");
+                var nodes = treeObj.getSelectedNodes();
+                companyProjectTreeNodeId = nodes[0].id;
+            }
+            var param = {};
+            param.jsonString = JSON.stringify(checkNodeIds);
+            param.userid = userid;
+            param.companyProjectTreeNodeId = companyProjectTreeNodeId;
+            $.ajax({
+                url: "/ManageAjax/UserMenuTreeSaveChanges",
+                type: "POST",
+                data: param,
+                dataType: 'text',
+                success: function (data) {
+                    if (data == "success") {
+                        toastr.success('保存成功！');
+                        $('#menuModal').modal('toggle');
                     }
                     else {
                         toastr.error('保存失败！');
@@ -436,19 +497,21 @@
     })
 
     function SettingCompanyProject(value, row, index) {
-        $("#editUserId").val(row.iEmployeeCodeId);
         if (row.iUserType == "普通用户") {
             return '<a href="#" onclick="SetCompanyProject(\'' + row.iEmployeeCodeId + '\')">点击设定</a>';
         }
     }
     function SettingMenu(value, row, index) {
-        $("#editUserId").val(row.iEmployeeCodeId);
-        if (row.iUserType != "超级管理员") {
+        if (row.iUserType == "普通用户") {
             return '<a href="#" onclick="SetMenu(\'' + row.iEmployeeCodeId + '\')">点击设定</a>';
+        }
+        else if (row.iUserType == "超级用户") {
+            return '<a href="#" onclick="SetMenuS(\'' + row.iEmployeeCodeId + '\')">点击设定</a>';
         }
     }
     function SetCompanyProject(iEmployeeCodeId) {
-        $('#companyProjectModal').modal('toggle');       
+        $("#editUserId").val(iEmployeeCodeId);
+        $('#companyProjectModal').modal('toggle');
         var width = $("#companyProjectModal").width();
         var height = $("#companyProjectModal").height();
         var $shade = $('<div id="waiting"></div>');
@@ -474,8 +537,107 @@
         });
     }
     function SetMenu(iEmployeeCodeId) {
+        $("#editUserId").val(iEmployeeCodeId);
+        $("#companyProjectReadTree").show();
+        //每次要重置只读公司项目树
+        $.fn.zTree.init($("#companyProjectReadTree"), window.companyProjectReadSetting, window.companyProjectNodes);
+        var treeObj = $.fn.zTree.getZTreeObj("companyProjectReadTree");
+        treeObj.cancelSelectedNode();
+
+        var width = $("#menuModal").width();
+        var height = $("#menuModal").height();
+        var $shade = $('<div id="waiting"></div>');
+        $shade.css({ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, background: '#fff url(/Content/images/waiting.gif) center center no-repeat', opacity: 0.4 });
+        $("#menuModal").append($shade);
+        resetMenuTree();
+        $.get("/ManageAjax/GetUserCompanyProjectTree?userid=" + iEmployeeCodeId, function(result){
+            var treeObj = $.fn.zTree.getZTreeObj("companyProjectReadTree");
+            var data = result.data;
+            var removeNodes = [];
+            $.each(treeObj.getNodes(), function(i, value) {
+                $.each(value.children, function(j, jvalue) {
+                    if(data.indexOf(jvalue.id) == -1)
+                        removeNodes.push(jvalue);
+                });
+                if(data.indexOf(value.id) == -1)
+                    removeNodes.push(value);
+            });
+            $.each(removeNodes, function(i, item) {
+                treeObj.removeNode(item);
+            });
+
+            $shade.remove();
+        });
         $('#menuModal').modal('toggle');
     }
-
-
+    function SetMenuS(iEmployeeCodeId) {
+        $("#editUserId").val(iEmployeeCodeId + "|超级用户");
+        $("#companyProjectReadTree").hide();
+        var width = $("#menuModal").width();
+        var height = $("#menuModal").height();
+        var $shade = $('<div id="waiting"></div>');
+        $shade.css({ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, background: '#fff url(/Content/images/waiting.gif) center center no-repeat', opacity: 0.4 });
+        $("#menuModal").append($shade);
+        resetMenuTree();
+        reloadMenuTree("-|-", $shade);
+        $('#menuModal').modal('toggle');
+    }
+    function changeRight(event, treeId, treeNode) {
+        if(treeNode.isParent == true){
+            return;
+        }
+        if(treeNode.name.indexOf('[只读]') >-1){
+            treeNode.name = treeNode.name.replace("[只读]","");
+        }
+        else{
+            treeNode.name = treeNode.name + "[只读]";
+        }
+        var treeObj = $.fn.zTree.getZTreeObj(treeId);
+        treeObj.updateNode(treeNode);
+    }
+    function loadMenuTree(event, treeId, treeNode) {
+        var width = $("#menuModal").width();
+        var height = $("#menuModal").height();
+        var $shade = $('<div id="waiting"></div>');
+        $shade.css({ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, background: '#fff url(/Content/images/waiting.gif) center center no-repeat', opacity: 0.4 });
+        $("#menuModal").append($shade);
+        resetMenuTree();
+        reloadMenuTree(treeNode.id, $shade);
+    }
+    function resetMenuTree(){
+        var treeObj = $.fn.zTree.getZTreeObj("menuTree");
+        treeObj.checkAllNodes(false);
+        var nodes = treeObj.getNodes();
+        nodes = treeObj.transformToArray(nodes);
+        for(var i=0;i<nodes.length;i++){
+            if(nodes[i].isParent == false && nodes[i].name.indexOf("[只读]") > -1 ){
+                nodes[i].name = nodes[i].name.replace("[只读]","");
+                treeObj.updateNode(nodes[i]);
+            }
+        }
+    }
+    function reloadMenuTree(companyProjectTreeNodeId, $shade){
+        $.get("/ManageAjax/GetUserMenuTree?userid=" + $("#editUserId").val().split('|')[0] + "&companyProjectTreeNodeId=" + companyProjectTreeNodeId, function(result){
+            var treeObj = $.fn.zTree.getZTreeObj("menuTree");
+            treeObj.setting.check.chkboxType.Y = "";  //清除上下级全选影响
+            var data = result.data;
+            for (var x in data)
+            {
+                var node = treeObj.getNodeByParam("id", data[x].split('|')[0], null);
+                if(node){
+                    treeObj.checkNode(node, true, true);
+                    if(data[x].split('|')[1] == "r")
+                    {
+                        node.name = node.name + "[只读]";
+                        treeObj.updateNode(node);
+                    }
+                }
+                else{
+                    console.log("未找到结点id为" + x);
+                }
+            }
+            treeObj.setting.check.chkboxType.Y = "ps"; //还原上下级全选影响
+            $shade.remove();
+        });
+    }
 </script>

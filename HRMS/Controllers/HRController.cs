@@ -28,7 +28,7 @@ namespace HRMS.Controllers
         public ActionResult BasicIndex()
         {
             DicManager dm = new DicManager();
-            var companies = dm.GetDicByType("公司");
+            var companies = dm.GetAllCompanies();
             ViewBag.Companies = companies;
             var projects = dm.GetDicByType("项目");
             ViewBag.Projects = projects;
