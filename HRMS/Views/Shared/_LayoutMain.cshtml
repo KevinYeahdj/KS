@@ -198,7 +198,7 @@
 
                 @{
                     HRMS.Controllers.ManageAjaxController mc = new HRMS.Controllers.ManageAjaxController();
-                    @Html.Raw(mc.GetMenuHtml())
+                    @Html.Raw(mc.GetAuthorisedMenuHtml())
                     if (HRMS.WEB.Utils.SessionHelper.CurrentUser.UserType == "超级管理员")
                     {
                         <li class="sub-menu">

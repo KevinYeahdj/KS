@@ -303,7 +303,7 @@ namespace HRMS.Data.Manager
             Dictionary<string, string> dic = new Dictionary<string, string>();
             if (userType == "普通用户")
             {
-                string querySql = "SELECT distinct iGuid, iName FROM [SysUserCompanyProjectTree] a inner join [SysProject] b on REPLACE(a.iId,a.iPid+'|','')= b.iGuid and b.iIsDeleted =0 and b.iStatus=1 and a.iId<>a.iPid where iEmployeeCodeId='" + empNo + "' and a.Pid ='" + companyId + "'";
+                string querySql = "SELECT distinct iGuid, iName FROM [SysUserCompanyProjectTree] a inner join [SysProject] b on REPLACE(a.iId,a.iPid+'|','')= b.iGuid and b.iIsDeleted =0 and b.iStatus=1 and a.iId<>a.iPid where iEmployeeCodeId='" + empNo + "' and a.iPid ='" + companyId + "'";
                 DataSet ds = DbHelperSQL.Query(querySql);
                 foreach (DataRow dr in ds.Tables[0].Rows)
                 {

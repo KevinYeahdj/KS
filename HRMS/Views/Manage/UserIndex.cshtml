@@ -274,8 +274,9 @@
             },//单击row事件
             onDblClickRow: function (row, $element) {
                 $("#addModalLabel").html("修改记录");
-                $('#iEmployeeCodeId').addClass("warning");
                 myViewModel.iEmployeeCodeId(row.iEmployeeCodeId);
+                $('#iEmployeeCodeId').removeClass("warning");
+                $("#iEmployeeCodeId").attr("readonly", "readonly");
                 myViewModel.iUserName(row.iUserName);
                 myViewModel.iPassWord(row.iPassWord);
                 myViewModel.iUserType(row.iUserType);
@@ -301,6 +302,7 @@
         $("#NewRecord").click(function () {
             $("#removeRecord").hide();
             $('#iEmployeeCodeId').addClass("warning");
+            $("#iEmployeeCodeId").removeAttr("readonly");
             myViewModel.iEmployeeCodeId("");
             myViewModel.iUserName("");
             myViewModel.iPassWord("");
@@ -400,7 +402,7 @@
                 onClick : loadMenuTree
             }
         };
-        
+
         window.companyProjectReadSetting = companyProjectReadSetting;
         //$.fn.zTree.init($("#companyProjectReadTree"), companyProjectReadSetting, companyProjectNodes);
 
@@ -554,13 +556,16 @@
             var treeObj = $.fn.zTree.getZTreeObj("companyProjectReadTree");
             var data = result.data;
             var removeNodes = [];
-            $.each(treeObj.getNodes(), function(i, value) {
-                $.each(value.children, function(j, jvalue) {
-                    if(data.indexOf(jvalue.id) == -1)
-                        removeNodes.push(jvalue);
-                });
+            var allNodes = treeObj.getNodes();
+            $.each(allNodes, function(i, value) {
                 if(data.indexOf(value.id) == -1)
                     removeNodes.push(value);
+                else{
+                    $.each(value.children, function(j, jvalue) {
+                        if(data.indexOf(jvalue.id) == -1)
+                            removeNodes.push(jvalue);
+                    });
+                }
             });
             $.each(removeNodes, function(i, item) {
                 treeObj.removeNode(item);

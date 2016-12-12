@@ -943,6 +943,35 @@ namespace HRMS.Controllers
             return sb.ToString();
         }
 
+        public string GetAuthorisedMenuHtml()
+        {
+
+            string querySql = "select iguid, iparentid, iname, iUrl from  [sysMenu] a inner join [sysUserMenuTree] b on a.iguid = b.imenuid and b.iEmployeeCodeId='" + SessionHelper.CurrentUser.UserId + "' and b.iCompanyId='" + ((SessionHelper.CurrentUser.UserType == "超级用户") ? "-" : SessionHelper.CurrentUser.CurrentCompany) + "' and b.iProjectId='" + ((SessionHelper.CurrentUser.UserType == "超级用户") ? "-" : SessionHelper.CurrentUser.CurrentProject) + "' ";
+
+            if (SessionHelper.CurrentUser.UserType == "超级管理员")
+            {
+                querySql = "select iguid, iparentid, iname, iUrl from  [sysMenu]";
+            }
+            DataSet ds = DbHelperSQL.Query(querySql);
+            List<ItemContent> contents = new List<ItemContent>();
+            foreach (DataRow dr in ds.Tables[0].Rows)
+            {
+                contents.Add(new ItemContent { id = dr[0].ToString(), pId = dr[1].ToString(), name = dr[2].ToString() + "$" + ((dr[3] != null && !string.IsNullOrEmpty(dr[3].ToString())) ? dr[3].ToString() : "") });
+            }
+            StringBuilder sb = new StringBuilder();
+            foreach (var item in contents.Where(i => i.pId == "0"))
+            {
+                sb.AppendLine(string.Format("<li class=\"sub-menu\"> \n <a href=\"javascript:;\"> \n <i class=\"icon-laptop\"></i> \n <span>{0}</span> \n </a>", item.name.Split('$')[0]));
+
+                foreach (var menu in contents.Where(i => i.pId == item.id))
+                {
+                    sb.AppendLine(string.Format("<ul class=\"sub\"> \n <li><a href=\"{1}\">{0}</a></li> \n </ul>", menu.name.Split('$')[0], menu.name.Split('$')[1]));
+                }
+                sb.AppendLine("</li>");
+            }
+            return sb.ToString();
+        } 
+
         #endregion
 
         #region 公司方法
