@@ -8,32 +8,26 @@ namespace HRMS.WEB.Utils
 {
     public static class SystemStatic
     {
-        //服务器地址带虚拟目录 如http://192.168.0.2:6001/formanager/
-        private static string _serverUrl;
-
-        public static string serverUrl
+        private static string ReadAppConfig(string key)
         {
-            get
-            {
-                return _serverUrl;
-            }
-            set
-            {
-                _serverUrl = value;
-            }
-
+            return System.Configuration.ConfigurationManager.AppSettings[key];
         }
-        private static string _serverUrlFull;
-
-        public static string serverUrlFull
+        private static List<string> _serverRefreshUrlList;
+        public static List<string> serverRefreshUrlList
         {
             get
             {
-                return _serverUrlFull;
-            }
-            set
-            {
-                _serverUrlFull = value;
+                if (_serverRefreshUrlList == null)
+                {
+                    var tmp = ReadAppConfig("serverRefreshUrlList");
+                    if (string.IsNullOrEmpty(tmp))
+                    {
+                        _serverRefreshUrlList = new List<string>();
+                    }
+                    else
+                        _serverRefreshUrlList = tmp.ToString().Split(';', '；').ToList();
+                }
+                return _serverRefreshUrlList;
             }
         }
 

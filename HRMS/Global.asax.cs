@@ -27,53 +27,37 @@ namespace HRMS
             log4net.Config.XmlConfigurator.Configure();
         }
 
-        // 注册一缓存条目在10分钟内到期，到期后触发的调事件  
+        // 注册一缓存条目在20分钟内到期，到期后触发的调事件  
         private void RegisterCacheEntry()
         {
             if (null != HttpContext.Current.Cache["dummycachekey"]) return;
             HttpContext.Current.Cache.Add("dummycachekey", "cachevalue", null, DateTime.MaxValue,
-                TimeSpan.FromMinutes(10), CacheItemPriority.NotRemovable,
+                TimeSpan.FromMinutes(20), CacheItemPriority.NotRemovable,
                 new CacheItemRemovedCallback(CacheItemRemovedCallback));
         }
 
         // 缓存项过期时程序模拟点击页面，阻止应用程序结束  
         public void CacheItemRemovedCallback(string key, object value, CacheItemRemovedReason reason)
         {
-            HitPage();
-        }
-
-        // 模拟点击网站网页  
-        private void HitPage()
-        {
+            // 模拟点击网站网页  
             log4net.ILog log = log4net.LogManager.GetLogger(this.GetType());
             try
             {
                 System.Net.WebClient client = new System.Net.WebClient();
-                client.DownloadData(SystemStatic.serverUrlFull + "Account/Login");
-                log.Info("模拟点击成功：模拟地址" + SystemStatic.serverUrlFull + "Account/Login");
+                foreach (var item in SystemStatic.serverRefreshUrlList)
+                {
+                    client.DownloadData(item);
+                    log.Info("模拟点击成功：模拟地址" + item);
+                }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                log.Info("模拟点击失败：模拟地址" + SystemStatic.serverUrlFull ?? "" + "Account/Login" + e.ToString());
+                log.Info("模拟点击失败");
             }
         }
         protected void Application_BeginRequest(Object sender, EventArgs e)
         {
-            //第一次访问网站时记录根地址，为之后程序池释放后自动刷新页面来保持程序池活力做准备
-            if (string.IsNullOrEmpty(SystemStatic.serverUrl) || string.IsNullOrEmpty(SystemStatic.serverUrlFull))
-            {
-                UrlHelper url = new UrlHelper(Request.RequestContext);
-                SystemStatic.serverUrl = url.Content("~");
-                SystemStatic.serverUrlFull = "http://" + Request.Url.Authority + SystemStatic.serverUrl;
-                RegisterCacheEntry();
-            }
-            else
-            {
-                if (HttpContext.Current.Request.Url.ToString() == SystemStatic.serverUrlFull + "Account/Login")
-                {
-                    RegisterCacheEntry();
-                }
-            }
+            RegisterCacheEntry();  //重新申请缓存
         }
     }
 }
