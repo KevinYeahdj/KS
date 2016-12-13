@@ -539,7 +539,14 @@ namespace HRMS.Controllers
                 {
                     ICell cell = rowInner.CreateCell(p.Value, CellType.String);
                     cell.CellStyle = cellStyle;
-                    cell.SetCellValue(p.Key.GetValue(obj, null) == null ? "" : p.Key.GetValue(obj, null).ToString());
+                    if (p.Key.PropertyType.FullName.ToLower().Contains("datetime"))
+                    {
+                        cell.SetCellValue(p.Key.GetValue(obj, null) == null ? "" : ((DateTime)p.Key.GetValue(obj, null)).ToString("yyyy-MM-dd"));
+                    }
+                    else
+                    {
+                        cell.SetCellValue(p.Key.GetValue(obj, null) == null ? "" : p.Key.GetValue(obj, null).ToString());
+                    }
                 }
                 rowIndex++;
             }

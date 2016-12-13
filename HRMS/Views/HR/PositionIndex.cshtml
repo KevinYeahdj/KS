@@ -621,7 +621,13 @@
 , { field: "iCompany", title: "所在公司", visible: false }
 , { field: "iWorkPlace", title: "所在工作地", visible: false }
 , { field: "iEmpNo", title: "工号", sortable: true }
-, { field: "iName", title: "姓名", sortable: true }
+, {
+    field: "iName", title: "姓名", sortable: true, formatter: function (value, row, index) {
+        if (row.iEmployeeStatus == "离职")
+            return '<span style="color:red">' + row.iName + '</span>';
+        return row.iName;
+    }
+}
 , { field: "iIdCard", title: "身份证号", sortable: true }
 , { field: "iEmpType", title: "人员类别", sortable: true }
 , { field: "iPosition", title: "岗位", sortable: true }
@@ -785,6 +791,12 @@
                         myViewModel.iIsDeleted(result.data.iIsDeleted);
 
                         $("#iIdCard").attr("readonly", "readonly");
+                        if (result.data.iIsReturnFee != "" && window.userType == "普通用户") {
+                            $("input[name='iIsReturnFee']").attr("disabled", true);
+                        }
+                        else {
+                            $("input[name='iIsReturnFee']").removeAttr("disabled");
+                        }
                     }
                     else {
                         console.log(result.msg);
@@ -808,6 +820,7 @@
             $('#mytab').bootstrapTable('showColumn', 'iItemName');
         }
         $("#addRecord").click(function () {
+            $("input[name='iIsReturnFee']").removeAttr("disabled");
             var warnings = $(".warning");
             if (warnings && warnings.length > 0) {
                 toastr.error('数据验证未通过！');
