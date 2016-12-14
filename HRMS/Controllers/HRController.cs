@@ -545,34 +545,43 @@ namespace HRMS.Controllers
 
         private List<HRInfoEntity> GetExportData()
         {
-            string paraString = Request.Params["searchpara"];
-            Dictionary<string, string> paraDic = JsonConvert.DeserializeObject<Dictionary<string, string>>(paraString);
-            paraDic.Add("iEmployeeDate[d]", paraDic["iEmployeeDateFrom"] + "§" + paraDic["iEmployeeDateTo"]);
-            paraDic.Add("iContractDeadLine[d]", paraDic["iContractDeadLineFrom"] + "§" + paraDic["iContractDeadLineTo"]);
-            paraDic.Add("iResignDate[d]", paraDic["iResignDateFrom"] + "§" + paraDic["iResignDateTo"]);
-            paraDic.Add("iUpdatedOn[d]", paraDic["iModifyOnFrom"] + "§" + paraDic["iModifyOnTo"]);
-            paraDic.Remove("iEmployeeDateFrom");
-            paraDic.Remove("iEmployeeDateTo");
-            paraDic.Remove("iContractDeadLineFrom");
-            paraDic.Remove("iContractDeadLineTo");
-            paraDic.Remove("iResignDateFrom");
-            paraDic.Remove("iResignDateTo");
-            paraDic.Remove("iModifyOnFrom");
-            paraDic.Remove("iModifyOnTo");
-
-            HRInfoManager service = new HRInfoManager();
-            List<HRInfoEntity> list = service.GetSearchAll(SessionHelper.CurrentUser.UserType, paraDic); 
-            DicManager dm = new DicManager();
-            var companies = dm.GetAllCompanies();
-            var projects = dm.GetAllProjects();
-            Dictionary<string, string> comDic = companies.ToDictionary(i => i.iGuid, i => i.iName);
-            Dictionary<string, string> proDic = projects.ToDictionary(i => i.iGuid, i => i.iName);
-            foreach (var item in list)
+            try
             {
-                item.iCompany = comDic[item.iCompany];
-                item.iItemName = proDic[item.iItemName];
+                string paraString = Request.Params["searchpara"];
+                Dictionary<string, string> paraDic = JsonConvert.DeserializeObject<Dictionary<string, string>>(paraString);
+                paraDic.Add("iEmployeeDate[d]", paraDic["iEmployeeDateFrom"] + "§" + paraDic["iEmployeeDateTo"]);
+                paraDic.Add("iContractDeadLine[d]", paraDic["iContractDeadLineFrom"] + "§" + paraDic["iContractDeadLineTo"]);
+                paraDic.Add("iResignDate[d]", paraDic["iResignDateFrom"] + "§" + paraDic["iResignDateTo"]);
+                paraDic.Add("iUpdatedOn[d]", paraDic["iModifyOnFrom"] + "§" + paraDic["iModifyOnTo"]);
+                paraDic.Remove("iEmployeeDateFrom");
+                paraDic.Remove("iEmployeeDateTo");
+                paraDic.Remove("iContractDeadLineFrom");
+                paraDic.Remove("iContractDeadLineTo");
+                paraDic.Remove("iResignDateFrom");
+                paraDic.Remove("iResignDateTo");
+                paraDic.Remove("iModifyOnFrom");
+                paraDic.Remove("iModifyOnTo");
+
+                HRInfoManager service = new HRInfoManager();
+                List<HRInfoEntity> list = service.GetSearchAll(SessionHelper.CurrentUser.UserType, paraDic);
+                DicManager dm = new DicManager();
+                var companies = dm.GetAllCompanies();
+                var projects = dm.GetAllProjects();
+                Dictionary<string, string> comDic = companies.ToDictionary(i => i.iGuid, i => i.iName);
+                Dictionary<string, string> proDic = projects.ToDictionary(i => i.iGuid, i => i.iName);
+                foreach (var item in list)
+                {
+                    item.iCompany = comDic[item.iCompany];
+                    item.iItemName = proDic[item.iItemName];
+                }
+                return list;
             }
-            return list;
+            catch(Exception e)
+            {
+                log4net.ILog log = log4net.LogManager.GetLogger(this.GetType());
+                log.Error(e);
+                return null;
+            }
 
         }
 
