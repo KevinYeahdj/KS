@@ -513,12 +513,6 @@
             $("[name=iChecked]").attr("disabled", true);
             $("#iPaidDate").attr("disabled", true);
 
-            if ($("#iCompanyId").val() == "-") {
-                $('#iCompanyId').addClass("warning");
-            }
-            if ($("#iProjectId").val() == "-") {
-                $('#iProjectId').addClass("warning");
-            }
             $('#iDate').addClass("warning");
             $('#iEvent').addClass("warning");
             $('#iType').addClass("warning");
@@ -543,6 +537,19 @@
             myViewModel.iUpdatedBy("");
             myViewModel.iStatus("1");
             myViewModel.iIsDeleted("0");
+            if ($("#iCompanyId").val() == "-") {
+                $('#iCompanyId').addClass("warning");
+            }
+            else {
+                $('#iCompanyId').removeClass("warning");
+            }
+            if ($("#iProjectId").val() == "-") {
+                $('#iProjectId').addClass("warning");
+            }
+            else {
+                $('#iProjectId').removeClass("warning");
+            }
+
             $("#addModalLabel").html("添加记录");
         });
 

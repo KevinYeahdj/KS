@@ -52,11 +52,16 @@ namespace HRMS.Controllers
             if (SessionHelper.CurrentUser.UserType == "超级管理员")
                 return "w";
             string projectPara = SessionHelper.CurrentUser.CurrentProject;
+            string companyPara = SessionHelper.CurrentUser.CurrentCompany;
             if (SessionHelper.CurrentUser.UserType == "超级用户")
+            {
                 projectPara = "-";
+                companyPara = "-";
 
-            string sql = "SELECT top 1 [iMenuRights] FROM [SysUserMenu] a inner join [SysMenu] b on a.iMenuId = b.iguid and iEmployeeCode = '{0}' and iProjectCode='{1}' and b.iUrl = '{2}'";
-            DataSet ds = DbHelperSQL.Query(string.Format(sql, SessionHelper.CurrentUser.UserId, projectPara, url));
+            }
+
+            string sql = "SELECT top 1 [iMenuRights] FROM [SysUserMenuTree] a inner join [SysMenu] b on a.iMenuId = b.iguid and a.iEmployeeCodeId = '{0}' and iCompanyId= '{1}' and iProjectId='{2}' and b.iUrl = '{3}'";
+            DataSet ds = DbHelperSQL.Query(string.Format(sql, SessionHelper.CurrentUser.UserId, companyPara, projectPara, url));
 
             if (ds.Tables[0].Rows.Count == 0)
                 return "deny";
