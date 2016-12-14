@@ -603,7 +603,13 @@
             , { field: "iItemName", title: "项目名称", visible: false }
 , { field: "iCompany", title: "所在公司", visible: false }
 , { field: "iEmpNo", title: "工号", sortable: true }
-, { field: "iName", title: "姓名", sortable: true }
+, {
+    field: "iName", title: "姓名", sortable: true, formatter: function (value, row, index) {
+        if (row.iEmployeeStatus == "离职")
+            return '<span style="color:red">' + row.iName + '</span>';
+        return row.iName;
+    }
+}
 , { field: "iIdCard", title: "身份证号", sortable: true }
 , { field: "iLaborName", title: "劳务名称", sortable: true }
 , { field: "iLaborCampBank", title: "劳务所银行支行", sortable: true }
@@ -928,27 +934,82 @@
         self.iFirstReturnFeeDays = ko.observable("");
         self.iFirstReturnFeeDate = ko.observable("");
         self.iFirstReturnFeePayment = ko.observable("");
-        self.iFirstReturnFeeActualPayDate = ko.observable("");
+        self.iFirstReturnFeeActualPayDate = ko.computed({
+            read: function () {
+                if (self.iFirstReturnFeePayment() == "已付")
+                    return '@DateTime.Now.ToString("yyyy-MM-dd")';
+                else {
+                    return "";
+                }
+
+            },
+            write: function (value) {
+            }
+        });
         self.iSecondReturnFeeAmount = ko.observable("");
         self.iSecondReturnFeeDays = ko.observable("");
         self.iSecondReturnFeeDate = ko.observable("");
         self.iSecondReturnFeePayment = ko.observable("");
-        self.iSecondReturnFeeActualPayDate = ko.observable("");
+        self.iSecondReturnFeeActualPayDate = ko.computed({
+            read: function () {
+                if (self.iSecondReturnFeePayment() == "已付")
+                    return '@DateTime.Now.ToString("yyyy-MM-dd")';
+                else {
+                    return "";
+                }
+
+            },
+            write: function (value) {
+            }
+        });
         self.iThirdReturnFeeAmount = ko.observable("");
         self.iThirdReturnFeeDays = ko.observable("");
         self.iThirdReturnFeeDate = ko.observable("");
         self.iThirdReturnFeePayment = ko.observable("");
-        self.iThirdReturnFeeActualPayDate = ko.observable("");
+        self.iThirdReturnFeeActualPayDate = ko.computed({
+            read: function () {
+                if (self.iThirdReturnFeePayment() == "已付")
+                    return '@DateTime.Now.ToString("yyyy-MM-dd")';
+                else {
+                    return "";
+                }
+
+            },
+            write: function (value) {
+            }
+        });
         self.iFourthReturnFeeAmount = ko.observable("");
         self.iFourthReturnFeeDays = ko.observable("");
         self.iFourthReturnFeeDate = ko.observable("");
         self.iFourthReturnFeePayment = ko.observable("");
-        self.iFourthReturnFeeActualPayDate = ko.observable("");
+        self.iFourthReturnFeeActualPayDate = ko.computed({
+            read: function () {
+                if (self.iFourthReturnFeePayment() == "已付")
+                    return '@DateTime.Now.ToString("yyyy-MM-dd")';
+                else {
+                    return "";
+                }
+
+            },
+            write: function (value) {
+            }
+        });
         self.iFifthReturnFeeAmount = ko.observable("");
         self.iFifthReturnFeeDays = ko.observable("");
         self.iFifthReturnFeeDate = ko.observable("");
         self.iFifthReturnFeePayment = ko.observable("");
-        self.iFifthReturnFeeActualPayDate = ko.observable("");
+        self.iFifthReturnFeeActualPayDate = ko.computed({
+            read: function () {
+                if (self.iFifthReturnFeePayment() == "已付")
+                    return '@DateTime.Now.ToString("yyyy-MM-dd")';
+                else {
+                    return "";
+                }
+
+            },
+            write: function (value) {
+            }
+        });
         self.iReturnFeeNote = ko.observable("");
         self.iCreatedOn = ko.observable("");
         self.iCreatedBy = ko.observable("");

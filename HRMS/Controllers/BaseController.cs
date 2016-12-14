@@ -46,7 +46,6 @@ namespace HRMS.Controllers
             log4net.ILog log = log4net.LogManager.GetLogger(this.GetType());
             log.Error(filterContext.Exception);
         }
-
         private string HasVisitRights(string url)
         {
             if (SessionHelper.CurrentUser.UserType == "超级管理员")
@@ -59,7 +58,6 @@ namespace HRMS.Controllers
                 companyPara = "-";
 
             }
-
             string sql = "SELECT top 1 [iMenuRights] FROM [SysUserMenuTree] a inner join [SysMenu] b on a.iMenuId = b.iguid and a.iEmployeeCodeId = '{0}' and iCompanyId= '{1}' and iProjectId='{2}' and b.iUrl = '{3}'";
             DataSet ds = DbHelperSQL.Query(string.Format(sql, SessionHelper.CurrentUser.UserId, companyPara, projectPara, url));
 

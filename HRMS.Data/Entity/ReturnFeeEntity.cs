@@ -72,6 +72,8 @@ namespace ClinBrain.Data.Entity
         public string iName { get; set; } //姓名 
         public string iIdCard { get; set; } //身份证号 
 
+        public string iEmployeeStatus { get; set; }
+
         public string iLaborName { get; set; } //劳务名称 
         public string iLaborCampBank { get; set; } //劳务所银行支行
         public string iLaborCampBankAccount { get; set; } //劳务所账号
