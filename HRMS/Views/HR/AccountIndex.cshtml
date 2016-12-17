@@ -395,6 +395,12 @@
                      field: 'Number',
                      title: '序号',
                      formatter: function (value, row, index) {
+                         if (row.iEmployeeStatus == "离职") {
+                             for (key in row) {
+                                 row[key] = '<span style="color:red">' + row[key] + '</span>';
+                             }
+                             return '<span style="color:red">' + (($('#mytab').bootstrapTable('getOptions').pageNumber - 1) * $('#mytab').bootstrapTable('getOptions').pageSize + index + 1) + '</span>';
+                         }
                          return ($('#mytab').bootstrapTable('getOptions').pageNumber - 1) * $('#mytab').bootstrapTable('getOptions').pageSize + index + 1;
                      }
                  },
@@ -403,13 +409,7 @@
 , { field: "iCompany", title: "所在公司", visible: false }
 , { field: "iWorkPlace", title: "所在工作地", visible: false }
 , { field: "iEmpNo", title: "工号", sortable: true }
-, {
-    field: "iName", title: "姓名", sortable: true, formatter: function (value, row, index) {
-        if (row.iEmployeeStatus == "离职")
-            return '<span style="color:red">' + row.iName + '</span>';
-        return row.iName;
-    }
-}
+, {field: "iName", title: "姓名", sortable: true}
 , { field: "iIdCard", title: "身份证号", sortable: true }
 , { field: "iWageBank", title: "开户行", sortable: true }
 , { field: "iWageBankName", title: "开户行名称", sortable: true }
