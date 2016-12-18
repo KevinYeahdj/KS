@@ -7,8 +7,8 @@
     <ProjectGuid>{8DCAD0CB-7995-459C-8AFE-C1C7CA426393}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>HRMS.Data</RootNamespace>
-    <AssemblyName>HRMS.Data</AssemblyName>
+    <RootNamespace>ClinBrain.Data</RootNamespace>
+    <AssemblyName>ClinBrain.Data</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
@@ -44,31 +44,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DbHelperSQL.cs" />
-    <Compile Include="Entity\JournalEntity.cs" />
-    <Compile Include="Entity\ProvidentFundEntity.cs" />
-    <Compile Include="Entity\SocialSecurityEntity.cs" />
-    <Compile Include="Entity\ReturnFeeEntity.cs" />
-    <Compile Include="Entity\ModifyLogEntity.cs" />
-    <Compile Include="Entity\HRInfoEntity.cs" />
-    <Compile Include="Entity\Table.cs" />
-    <Compile Include="Entity\LaborInfoEntity.cs" />
-    <Compile Include="Entity\DicEntity.cs" />
-    <Compile Include="Entity\UserEntity.cs" />
     <Compile Include="IRepository.cs" />
     <Compile Include="ManagerBase.cs" />
-    <Compile Include="Manager\SocialSecurityManager.cs" />
-    <Compile Include="Manager\JournalManager.cs" />
-    <Compile Include="Manager\ProvidentFundManager.cs" />
-    <Compile Include="Manager\ReturnFeeManager.cs" />
-    <Compile Include="Manager\ModifyLogManager.cs" />
-    <Compile Include="Manager\HRInfoManager.cs" />
-    <Compile Include="Manager\LaborInfoManager.cs" />
-    <Compile Include="Manager\DicManager.cs" />
-    <Compile Include="Manager\UserManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository.cs" />
-    <Compile Include="Service\ManageService.cs" />
     <Compile Include="Session.cs" />
   </ItemGroup>
   <ItemGroup />
@@ -76,10 +55,6 @@
     <ProjectReference Include="..\Dapper\Dapper.csproj">
       <Project>{4da6306b-b9f0-4e06-aca0-2a1400dd9bd0}</Project>
       <Name>Dapper</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\HRMS.Common\HRMS.Common.csproj">
-      <Project>{ebbd1f29-d4d8-409d-a0c3-9b8ed0254b0e}</Project>
-      <Name>HRMS.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
