@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClinBrain.Data.Entity
+namespace HRMS.Data.Entity
 {
     //返费 信息
     [Table("ReturnFee")]

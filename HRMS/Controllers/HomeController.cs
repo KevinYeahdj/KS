@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
-using ClinBrain.Data.Entity;
+using HRMS.Data.Entity;
 using HRMS.Data.Manager;
 using HRMS.WEB.Models;
 using HRMS.WEB.Utils;

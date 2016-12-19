@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data;
-using ClinBrain.Data.Entity;
+using HRMS.Data.Entity;
 
 namespace HRMS.Data.Manager
 {

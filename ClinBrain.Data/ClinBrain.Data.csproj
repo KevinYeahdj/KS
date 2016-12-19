@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8DCAD0CB-7995-459C-8AFE-C1C7CA426393}</ProjectGuid>
+    <ProjectGuid>{D27C61EF-5E16-4FDB-9E97-B97E5F130228}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ClinBrain.Data</RootNamespace>
@@ -48,6 +48,7 @@
     <Compile Include="ManagerBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository.cs" />
+    <Compile Include="Service\BPMService.cs" />
     <Compile Include="Session.cs" />
   </ItemGroup>
   <ItemGroup />

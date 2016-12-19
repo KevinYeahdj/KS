@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClinBrain.Data.Entity
+namespace HRMS.Data.Entity
 {
     //社保 信息
     [Table("SocialSecurity")]

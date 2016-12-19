@@ -76,6 +76,23 @@
             if (companySelect != "-") {
                 ChangeCompany(companySelected);
             }
+            //当前页面菜单选中
+            var url = location.search;
+            if (url == "") {  //自动跳转url /Display/Index/1
+                url = window.location.pathname;
+            }
+            var currentPage = $("#sidebar").find("a[href$='" + url + "']");
+            debugger;
+            if (currentPage && currentPage.length > 0) {
+                var li = currentPage.parent();
+                $(li).attr("selected", "selected");
+                $(li).addClass("active open");
+                var ul = li.parent();
+                var biga = ul.parent().children().first();
+                if (biga && biga.length > 0) {
+                    $(biga).attr("class", "active");
+                }
+            }
         });
 
         function ChangeCompany(newCompany) {
@@ -195,7 +212,21 @@
     <aside>
         <div id="sidebar" class="nav-collapse ">
             <ul class="sidebar-menu" id="nav-accordion">
-
+                <li class="sub-menu">
+                    <a href="javascript:;">
+                        <i class="icon-laptop"></i>
+                        <span>流程中心</span>
+                    </a>
+                    <ul class="sub">
+                        <li><a href="~/BPM/todo">我的待办</a></li>
+                    </ul>
+                    <ul class="sub">
+                        <li><a href="~/BPM/done">我的完成</a></li>
+                    </ul>
+                    <ul class="sub">
+                        <li><a href="~/BPM/myapp">我的申请</a></li>
+                    </ul>
+                </li>
                 @{
                     HRMS.Controllers.ManageAjaxController mc = new HRMS.Controllers.ManageAjaxController();
                     @Html.Raw(mc.GetAuthorisedMenuHtml())

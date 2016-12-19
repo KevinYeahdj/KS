@@ -3619,6 +3619,8 @@
     <Content Include="Views\Manage\ProjectIndex.cshtml" />
     <Content Include="Views\Manage\UserIndex.cshtml" />
     <Content Include="Views\BPM\Todo.cshtml" />
+    <Content Include="Views\BPM\Done.cshtml" />
+    <Content Include="Views\BPM\MyApp.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -3629,6 +3631,10 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ClinBrain.Data\ClinBrain.Data.csproj">
+      <Project>{d27c61ef-5e16-4fdb-9e97-b97e5f130228}</Project>
+      <Name>ClinBrain.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\HRMS.Common\HRMS.Common.csproj">
       <Project>{ebbd1f29-d4d8-409d-a0c3-9b8ed0254b0e}</Project>
       <Name>HRMS.Common</Name>

@@ -4,7 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using ClinBrain.Data.Entity;
+using HRMS.Data.Entity;
 using HRMS.Data;
 using HRMS.WEB.Utils;
 

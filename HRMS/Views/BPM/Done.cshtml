@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "我的待办";
+    ViewBag.Title = "我的完成";
     Layout = "~/Views/Shared/_LayoutMain.cshtml";
 }
 <style>
@@ -63,9 +63,9 @@
         })
         
         $('#mytab').bootstrapTable({
-            url: "/BPMAjax/GetMyTodoList",//数据源
+            url: "/BPMAjax/GetMyDoneList",//数据源
             dataField: "rows",//服务端返回数据键值 就是说记录放的键值是rows，分页时使用总记录数的键值为total
-            sortName: "createddatetime",//排序列
+            sortName: "EndedDateTime",//排序列
             sortOrder: "desc",
             cache: false,
             striped: true,//條紋行
@@ -112,12 +112,16 @@
                       field: "CreatedDateTime", title: "任务到达时间", sortable: true, formatter: function (value, row, index) {
                          return ChangeDateFormat(value);
                      }
-                    }
+                  }, {
+                      field: "EndedDateTime", title: "任务审批时间", sortable: true, formatter: function (value, row, index) {
+                          return ChangeDateFormat(value);
+                      }
+                  }
                  , { field: "summary", title: "概要", sortable: true }
                  , {
                      field: "operation", title: "操作", sortable: false,
                      formatter: function (value, row, index) {
-                         return '<a target="_blank" href="' + row.pageUrl + (row.pageUrl.indexOf("?") > -1) ? '&' : '?' + 'pguid=' + row.ProcessGUID + '&piid=' + row.ProcessInstanceID + '&appno=' + row.AppInstanceID + '&taskid=' + row.TaskID + '">点击处理</a>';
+                         return '<a target="_blank" href="' + row.viewPageUrl + (row.viewPageUrl.indexOf("?") > -1) ? '&' : '?' + 'appno=' + row.AppInstanceID + '">点击查看</a>';
                      }
                  }
             ],

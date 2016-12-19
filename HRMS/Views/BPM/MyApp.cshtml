@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "我的待办";
+    ViewBag.Title = "我的申请";
     Layout = "~/Views/Shared/_LayoutMain.cshtml";
 }
 <style>
@@ -61,9 +61,9 @@
                 height: tableHeight()
             })
         })
-        
+
         $('#mytab').bootstrapTable({
-            url: "/BPMAjax/GetMyTodoList",//数据源
+            url: "/BPMAjax/GetMyApplicationList",//数据源
             dataField: "rows",//服务端返回数据键值 就是说记录放的键值是rows，分页时使用总记录数的键值为total
             sortName: "createddatetime",//排序列
             sortOrder: "desc",
@@ -101,23 +101,20 @@
                  },
                  { field: "AppName", title: "流程名称", sortable: true }
                  , { field: "AppInstanceID", title: "流程单号", sortable: true }
-                 , { field: "ActivityName", title: "步骤名称", sortable: true }
-                 , { field: "applicantName", title: "申请人", sortable: true }
                  , {
-                     field: "applyTime", title: "申请时间", sortable: true, formatter: function (value, row, index) {
+                     field: "CreatedDateTime", title: "申请时间", sortable: true, formatter: function (value, row, index) {
                          return ChangeDateFormat(value);
                      }
-                    }
-                  , {
-                      field: "CreatedDateTime", title: "任务到达时间", sortable: true, formatter: function (value, row, index) {
-                         return ChangeDateFormat(value);
+                 }, {
+                     field: "flowStatus", title: "流程状态", sortable: true, formatter: function (value, row, index) {
+                         return row.ProcessState == "4" ? "完成" : "审核中";
                      }
-                    }
+                 }
                  , { field: "summary", title: "概要", sortable: true }
                  , {
                      field: "operation", title: "操作", sortable: false,
                      formatter: function (value, row, index) {
-                         return '<a target="_blank" href="' + row.pageUrl + (row.pageUrl.indexOf("?") > -1) ? '&' : '?' + 'pguid=' + row.ProcessGUID + '&piid=' + row.ProcessInstanceID + '&appno=' + row.AppInstanceID + '&taskid=' + row.TaskID + '">点击处理</a>';
+                         return '<a target="_blank" href="' + row.viewPageUrl + (row.viewPageUrl.indexOf("?") > -1) ? '&' : '?' + 'appno=' + row.AppInstanceID + '">点击查看</a>';
                      }
                  }
             ],
