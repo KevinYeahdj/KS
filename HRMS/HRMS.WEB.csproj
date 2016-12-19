@@ -3621,6 +3621,7 @@
     <Content Include="Views\BPM\Todo.cshtml" />
     <Content Include="Views\BPM\Done.cshtml" />
     <Content Include="Views\BPM\MyApp.cshtml" />
+    <Content Include="Views\BPM\JournalApplication.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

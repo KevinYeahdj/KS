@@ -1,0 +1,520 @@
+﻿@{
+    ViewBag.Title = "流水账申请";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+}
+<style>
+    .modal-body {
+        height: 230px;
+    }
+</style>
+
+<div>
+    <div>
+        <div class="col-*-12">
+            <table id="mytab" class="table table-hover"></table>
+
+            <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog" style="width:90%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                &times;
+                            </button>
+                            <h4 class="modal-title" id="addModalLabel">添加记录</h4>
+                        </div>
+                        <div class="modal-body">
+                            <input style="visibility:hidden" type="hidden" id="iGuid" data-bind="value: iGuid">
+                            <div class="form-group">
+                                公司：
+                                <select class="form-control" id="iCompanyId" data-bind="value: iCompanyId">
+                                    <option value="-">请选择</option>
+                                    @{
+                                        foreach (var item in ViewBag.Companies)
+                                        {
+                                            <option value="@item.iGuid">@item.iName</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                项目：<select class="form-control" id="iProjectId" data-bind="value: iProjectId">
+                                    <option value="-">请选择</option>
+                                    @{
+                                        foreach (var item in ViewBag.Projects)
+                                        {
+                                            <option value="@item.iGuid">@item.iName</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                日期：<input type="text" class="form-control" id="iDate" data-bind="value: iDate" placeholder="请输入日期">
+                            </div>
+                            <div class="form-group">
+                                事项：<input type="text" class="form-control" id="iEvent" data-bind="value: iEvent" placeholder="请输入事项">
+                            </div>
+                            <div class="form-group">
+                                提报人：<input type="text" class="form-control" id="iApplicant" data-bind="value: iApplicant" readonly="readonly" placeholder="请输入提报人">
+                            </div>
+                            <div class="form-group">
+                                科目：<select class="form-control" id="iType" data-bind="value: iType">
+                                    <option value="" selected="selected">请选择</option>
+                                    <option value=" 招聘费用">招聘费用</option>
+                                    <option value="固定资产">固定资产</option>
+                                    <option value="用餐费用">用餐费用</option>
+                                    <option value="应付福利费">应付福利费</option>
+                                    <option value="预付账款">预付账款</option>
+                                    <option value="办公费用">办公费用</option>
+                                    <option value="管理费用">管理费用</option>
+                                    <option value="工伤费用">工伤费用</option>
+                                    <option value="公关费用">公关费用</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                金额：<input type="text" class="form-control" id="iAmount" data-bind="value: iAmount" onkeyup="clearNoNum(this)" onblur="clearNoNum(this)" maxlength="11" placeholder="请输入金额">
+                            </div>
+                            <div class="form-group">
+                                备注：<input type="text" class="form-control" id="iNote" data-bind="value: iNote" placeholder="请输入备注">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-primary" id="removeRecord">删除</button>
+                            <button type="button" class="btn btn-primary" id="SaveChanges">提交</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    //正则校验两位小数
+    function clearNoNum(obj) {
+        //先把非数字的都替换掉，除了数字和.
+        obj.value = obj.value.replace(/[^\d.]/g, "");
+        //保证只有出现一个.而没有多个.
+        obj.value = obj.value.replace(/\.{2,}/g, ".");
+        //必须保证第一个为数字而不是.
+        obj.value = obj.value.replace(/^\./g, "");
+        //保证.只出现一次，而不能出现两次以上
+        obj.value = obj.value.replace(".", "$#$").replace(/\./g, "").replace("$#$", ".");
+        //只能输入两个小数
+        obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3');
+        $(obj).trigger("change");
+    }
+
+    //bootstraptable 高度
+    function tableHeight() {
+        return $(window).height() * 0.86;
+    }
+
+    //json 日期转字符串
+    function ChangeDateFormat(jsondate) {
+        if (!jsondate) return "";
+        jsondate = jsondate.replace("/Date(", "").replace(")/", "");
+        if (jsondate.indexOf("+") > 0) {
+            jsondate = jsondate.substring(0, jsondate.indexOf("+"));
+        }
+        else if (jsondate.indexOf("-") > 0) {
+            jsondate = jsondate.substring(0, jsondate.indexOf("-"));
+        }
+
+        var date = new Date(parseInt(jsondate, 10));
+        var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+        var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+
+        return date.getFullYear()
+            + "-"
+            + month
+            + "-"
+            + currentDate;
+    }
+
+    function ViewModel() {
+        var self = this;
+        self.iGuid = ko.observable("");
+        self.iCompanyId = ko.observable("");
+        self.iProjectId = ko.observable("");
+        self.iDate = ko.observable("");
+        self.iEvent = ko.observable("");
+        self.iType = ko.observable("");
+        self.iApplicant = ko.observable("");
+        self.iAmount = ko.observable("");
+        self.iChecked = ko.observable("");
+        self.iNote = ko.observable("");
+        self.iCreatedOn = ko.observable("");
+        self.iCreatedBy = ko.observable("");
+        self.iUpdatedOn = ko.observable("");
+        self.iUpdatedBy = ko.observable("");
+        self.iStatus = ko.observable("1");
+        self.iIsDeleted = ko.observable("0");
+        self.iCheckedBy = ko.computed({
+            read: function () {
+                if (self.iChecked() == "是")
+                    return '@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserName';
+                else {
+                    return "";
+                }
+
+            },
+            write: function (value) {
+            }
+        });
+        self.iPaidDate = ko.computed({
+            read: function () {
+                if (self.iChecked() == "是")
+                    return '@DateTime.Now.ToString("yyyy-MM-dd")';
+                else {
+                    return "";
+                }
+
+            },
+            write: function (value) {
+            }
+        });
+    }
+    $(function () {
+        //重置函数
+        $("div.icon-reorder").click(function () {
+            $('#mytab').bootstrapTable('resetView', {
+                height: tableHeight()
+            })
+        })
+        //根据窗口调整表格高度
+        $(window).resize(function () {
+            $('#mytab').bootstrapTable('resetView', {
+                height: tableHeight()
+            })
+        })
+
+        //禁用功能
+        if (window.userType != "超级管理员") {
+            $("#iCompanyId").attr("disabled", true);
+            $("#iProjectId").attr("disabled", true);
+        }
+
+        //弹窗日期绑定
+        $('#iDate').datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            clearBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 1,
+            format: 'yyyy-mm-dd'
+        });
+        if (window.userType == "普通用户") { //当前日期三天以内
+            var end = new Date();
+            var start = new Date(end.getTime() - 3 * 24 * 60 * 60 * 1000);
+            $('#iDate').datetimepicker("setStartDate", start);
+            $('#iDate').datetimepicker("setEndDate", end);
+        }
+        $('#iPaidDate').datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            clearBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 1,
+            format: 'yyyy-mm-dd'
+        });
+        //必填校验
+        $("#iCompanyId").change(function () {
+            var value = $("#iCompanyId").val();
+            if (value != "-") {
+                $('#iCompanyId').removeClass("warning");
+            }
+            else {
+                $('#iCompanyId').addClass("warning");
+            }
+        });
+        $("#iProjectId").change(function () {
+            var value = $("#iProjectId").val();
+            if (value != "-") {
+                $('#iProjectId').removeClass("warning");
+            }
+            else {
+                $('#iProjectId').addClass("warning");
+            }
+        });
+
+        $("#iDate").change(function () {
+            var value = $("#iDate").val();
+            if (value.length > 0) {
+                $('#iDate').removeClass("warning");
+            }
+            else {
+                $('#iDate').addClass("warning");
+            }
+        });
+        $("#iEvent").blur(function () {
+            var value = $("#iEvent").val();
+            if (value.length > 0) {
+                $('#iEvent').removeClass("warning");
+            }
+            else {
+                $('#iEvent').addClass("warning");
+            }
+        });
+        $("#iType").blur(function () {
+            var value = $("#iType").val();
+            if (value.length > 0) {
+                $('#iType').removeClass("warning");
+            }
+            else {
+                $('#iType').addClass("warning");
+            }
+        });
+        $("#iAmount").blur(function () {
+            var value = $("#iType").val();
+            if (value.length > 0) {
+                $('#iAmount').removeClass("warning");
+            }
+            else {
+                $('#iAmount').addClass("warning");
+            }
+        });
+
+
+        $('#mytab').bootstrapTable({
+            //url: "/FinanceAjax/GetAllJournal",//数据源
+            dataField: "rows",//服务端返回数据键值 就是说记录放的键值是rows，分页时使用总记录数的键值为total
+            sortName: "iUpdatedOn",//排序列
+            sortOrder: "desc",
+            cache: false,
+            striped: true,//條紋行
+            clickToSelect: true,//选择行即选择checkbox
+            searchOnEnterKey: false,//ENTER键搜索
+            height: tableHeight(),//高度调整
+            search: true,//是否搜索
+            pagination: true,//是否分页
+            pageSize: 15,//单页记录数
+            pageNumber: 1,//起始页
+            pageList: [15, 100, 500, 1000, 10000],//分页步进值
+            sidePagination: "server",//服务端分页
+            contentType: "application/x-www-form-urlencoded",//请求数据内容格式 默认是 application/json 自己根据格式自行服务端处理
+            dataType: "json",//期待返回数据类型
+            method: "post",//请求方式
+            searchAlign: "left",//查询框对齐方式
+            queryParamsType: "limit",//查询参数组织方式
+            showRefresh: false,//刷新按钮
+            showColumns: true,//列选择按钮
+            buttonsAlign: "left",//按钮对齐方式
+            toolbar: "#toolbar",//指定工具栏
+            toolbarAlign: "right",//工具栏对齐方式
+            queryParams: function getParams(params) {
+                return params;
+            },
+            columns: [
+                 {
+                     field: 'Number',
+                     title: '序号',
+                     formatter: function (value, row, index) {
+                         return ($('#mytab').bootstrapTable('getOptions').pageNumber - 1) * $('#mytab').bootstrapTable('getOptions').pageSize + index + 1;
+                     }
+                 },
+                 { field: "iGuid", title: "iGuid", visible: false, switchable: false }
+                 , { field: "iProjectId", title: "项目", visible: false }
+                 , { field: "iCompanyId", title: "公司", visible: false }
+                 , {
+                     field: "iDate", title: "日期", sortable: true, formatter: function (value, row, index) {
+                         return ChangeDateFormat(value);
+                     }
+                 }
+                 , { field: "iEvent", title: "事项", sortable: true }
+                 , { field: "iType", title: "科目", sortable: true }
+                 , { field: "iApplicant", title: "提报人", sortable: true }
+                 , { field: "iAmount", title: "金额", sortable: true }
+                 , { field: "iNote", title: "备注", sortable: true }
+            ],
+            onClickRow: function (row, $element) {
+                //$element是当前tr的jquery对象
+                //$element.css("background-color", "green");
+            },//单击row事件
+            onDblClickRow: function (row, $element) {
+                if (window.menuRights == "r" || window.userType == "普通用户") {  //普通用户无法修改
+                    return;
+                }
+                if (window.userType == "超级管理员") {
+                    $("#iApplicant").removeAttr("readonly");
+                }
+                $("#addModalLabel").html("修改记录");
+                $('#addModal').modal('toggle');
+
+                if (window.userType != "普通用户") {
+                    $("#removeRecord").show();
+                }
+                else {
+                    $("#removeRecord").hide();
+                }
+                $("#iProjectId").removeClass("warning");
+                $('#iCompanyId').removeClass("warning");
+                $("#iDate").removeClass("warning");
+                $('#iEvent').removeClass("warning");
+                $('#iType').removeClass("warning");
+                $('#iAmount').removeClass("warning");
+
+                var width = $("#addModal").width();
+                var height = $("#addModal").height();
+                var $shade = $('<div id="waiting"></div>');
+                $shade.css({ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, background: '#fff url(/Content/images/waiting.gif) center center no-repeat', opacity: 0.4 });
+                $("#addModal").append($shade);
+                $.get("/FinanceAjax/GetJournal?iGuid=" + row.iGuid, function (result) {
+                    if (result.success) {
+                        if (result.data.iChecked == "是" && window.userType != "超级管理员") {  //如果已核销则不能再修改了
+                            $("#SaveChanges").hide();
+                        }
+                        myViewModel.iGuid(result.data.iGuid);
+                        myViewModel.iCompanyId(result.data.iCompanyId);
+                        myViewModel.iProjectId(result.data.iProjectId);
+                        myViewModel.iDate(ChangeDateFormat(result.data.iDate));
+                        myViewModel.iEvent(result.data.iEvent);
+                        myViewModel.iType(result.data.iType);
+                        myViewModel.iApplicant(result.data.iApplicant);
+                        myViewModel.iAmount(result.data.iAmount);
+                        myViewModel.iChecked(result.data.iChecked);
+                        myViewModel.iCheckedBy(result.data.iCheckedBy);
+                        myViewModel.iPaidDate(ChangeDateFormat(result.data.iPaidDate));
+                        myViewModel.iNote(result.data.iNote);
+                        myViewModel.iCreatedOn(result.data.iCreatedOn);
+                        myViewModel.iCreatedBy(result.data.iCreatedBy);
+                        myViewModel.iUpdatedOn(result.data.iUpdatedOn);
+                        myViewModel.iUpdatedBy(result.data.iUpdatedBy);
+                        myViewModel.iStatus(result.data.iStatus);
+                        myViewModel.iIsDeleted(result.data.iIsDeleted);
+                        if (result.data.iChecked == "否") {
+                            $("[name=iChecked]").attr("disabled", false);
+                            $("#iPaidDate").attr("disabled", false);
+                        }
+                    }
+                    else {
+                        console.log(result.msg);
+                        toastr.error('获取数据失败！');
+                    }
+                    $shade.remove();
+                });
+            },
+            locale: "zh-CN",//中文支持,
+            detailView: false, //是否显示详情折叠
+            detailFormatter: function (index, row, element) {
+                var html = '';
+                $.each(row, function (key, val) {
+                    html += "<p>" + key + ":" + val + "</p>"
+                });
+                return html;
+            },
+            data: []
+        });
+
+        if (window.userType != "普通用户") {
+            $('#mytab').bootstrapTable('showColumn', 'iCompanyId');
+            $('#mytab').bootstrapTable('showColumn', 'iProjectId');
+        }
+        $("#NewRecord").click(function () {
+            $("#removeRecord").hide();
+            $("[name=iChecked]").attr("disabled", true);
+            $("#iPaidDate").attr("disabled", true);
+
+            $('#iDate').addClass("warning");
+            $('#iEvent').addClass("warning");
+            $('#iType').addClass("warning");
+            $('#iAmount').addClass("warning");
+
+            myViewModel.iGuid("");
+            myViewModel.iProjectId('@HRMS.WEB.Utils.SessionHelper.CurrentUser.CurrentProject');
+            myViewModel.iCompanyId('@HRMS.WEB.Utils.SessionHelper.CurrentUser.CurrentCompany');
+            myViewModel.iDate("");
+            myViewModel.iEvent("");
+            myViewModel.iType("");
+            myViewModel.iApplicant("@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserName");
+            myViewModel.iAmount("");
+            myViewModel.iChecked("否");
+            myViewModel.iCheckedBy("");
+            myViewModel.iPaidDate("");
+            myViewModel.iNote("");
+
+            myViewModel.iCreatedOn("");
+            myViewModel.iCreatedBy("");
+            myViewModel.iUpdatedOn("");
+            myViewModel.iUpdatedBy("");
+            myViewModel.iStatus("1");
+            myViewModel.iIsDeleted("0");
+            if ($("#iCompanyId").val() == "-") {
+                $('#iCompanyId').addClass("warning");
+            }
+            else {
+                $('#iCompanyId').removeClass("warning");
+            }
+            if ($("#iProjectId").val() == "-") {
+                $('#iProjectId').addClass("warning");
+            }
+            else {
+                $('#iProjectId').removeClass("warning");
+            }
+            $("#addModalLabel").html("添加记录");
+        });
+
+        $("#SaveChanges").click(function () {
+            var warnings = $(".warning");
+            if (warnings && warnings.length > 0) {
+                toastr.error('数据验证未通过！');
+                return;
+            }
+            $(this).attr({ "disabled": "disabled" });
+            var param = {};
+            param.jsonString = ko.toJSON(myViewModel);
+            $.ajax({
+                url: "/FinanceAjax/JournalSaveChanges",
+                type: "POST",
+                data: param,
+                dataType: 'text',
+                success: function (data) {
+                    if (data == "success") {
+                        toastr.success('保存成功！');
+                        $('#mytab').bootstrapTable('refresh');
+                    }
+                    else {
+                        console.log(data);
+                        toastr.error('保存数据失败！');
+                    }
+                    $('#addModal').modal('toggle');
+                    $("#SaveChanges").removeAttr("disabled");
+                }
+            });
+        });
+        $("#removeRecord").click(function () {
+            if (confirm("确认要删除？")) {
+                var param = {};
+                myViewModel.iIsDeleted("1");
+                param.jsonString = ko.toJSON(myViewModel);
+                $.ajax({
+                    url: "/FinanceAjax/JournalSaveChanges",
+                    type: "POST",
+                    data: param,
+                    dataType: 'text',
+                    success: function (data) {
+                        if (data == "success") {
+                            toastr.success('删除成功！');
+                            $('#mytab').bootstrapTable('refresh');
+                        }
+                        else {
+                            console.log(data);
+                            toastr.error('删除数据失败！');
+                        }
+                        $('#addModal').modal('toggle');
+                    }
+                });
+            }
+        });
+
+        var myViewModel = new ViewModel();
+        ko.applyBindings(myViewModel);
+    })
+</script>

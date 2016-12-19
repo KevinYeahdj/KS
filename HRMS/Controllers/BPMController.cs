@@ -39,6 +39,10 @@ namespace HRMS.Controllers
             return View();
         }
 
+        public ActionResult JournalApplication()
+        {
+            return View();
+        }
     }
 
     public class BPMAjaxController : Controller
