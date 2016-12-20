@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using ClinBrain.Data.Service;
+using HRMS.Data.Manager;
 using HRMS.WEB.Models;
 using HRMS.WEB.Utils;
 
@@ -41,6 +42,11 @@ namespace HRMS.Controllers
 
         public ActionResult JournalApplication()
         {
+            DicManager dm = new DicManager();
+            var companies = dm.GetAllCompanies();
+            ViewBag.Companies = companies;
+            var projects = dm.GetAllProjects();
+            ViewBag.Projects = projects;
             return View();
         }
     }

@@ -11,6 +11,13 @@
 <div>
     <div>
         <div class="col-*-12">
+
+            <div id="toolbar" class="toolbar">
+                <div style="float: right; margin-left: 10px; margin-top: 5px; " class="btn btn-primary" id="SubmitApplication">提交</div>
+                <div style="float: right; margin-left: 10px; margin-top: 5px; " class="btn btn-primary" data-toggle="modal" data-target="#addModal" id="NewRecord">添加记录</div>
+
+            </div>
+
             <table id="mytab" class="table table-hover"></table>
 
             <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -79,7 +86,6 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                            <button type="button" class="btn btn-primary" id="removeRecord">删除</button>
                             <button type="button" class="btn btn-primary" id="SaveChanges">提交</button>
                         </div>
                     </div>
@@ -91,6 +97,13 @@
 </div>
 
 <script type="text/javascript">
+    //生成guid
+    function sysGuid() {
+        function S4() {
+            return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+        }
+        return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+    }
     //正则校验两位小数
     function clearNoNum(obj) {
         //先把非数字的都替换掉，除了数字和.
@@ -111,70 +124,20 @@
         return $(window).height() * 0.86;
     }
 
-    //json 日期转字符串
-    function ChangeDateFormat(jsondate) {
-        if (!jsondate) return "";
-        jsondate = jsondate.replace("/Date(", "").replace(")/", "");
-        if (jsondate.indexOf("+") > 0) {
-            jsondate = jsondate.substring(0, jsondate.indexOf("+"));
-        }
-        else if (jsondate.indexOf("-") > 0) {
-            jsondate = jsondate.substring(0, jsondate.indexOf("-"));
-        }
-
-        var date = new Date(parseInt(jsondate, 10));
-        var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
-        var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
-
-        return date.getFullYear()
-            + "-"
-            + month
-            + "-"
-            + currentDate;
-    }
-
     function ViewModel() {
         var self = this;
         self.iGuid = ko.observable("");
         self.iCompanyId = ko.observable("");
         self.iProjectId = ko.observable("");
+        self.iCompanyName = ko.observable("");
+        self.iProjectName = ko.observable("");
         self.iDate = ko.observable("");
         self.iEvent = ko.observable("");
         self.iType = ko.observable("");
         self.iApplicant = ko.observable("");
         self.iAmount = ko.observable("");
-        self.iChecked = ko.observable("");
         self.iNote = ko.observable("");
-        self.iCreatedOn = ko.observable("");
-        self.iCreatedBy = ko.observable("");
-        self.iUpdatedOn = ko.observable("");
-        self.iUpdatedBy = ko.observable("");
-        self.iStatus = ko.observable("1");
-        self.iIsDeleted = ko.observable("0");
-        self.iCheckedBy = ko.computed({
-            read: function () {
-                if (self.iChecked() == "是")
-                    return '@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserName';
-                else {
-                    return "";
-                }
-
-            },
-            write: function (value) {
-            }
-        });
-        self.iPaidDate = ko.computed({
-            read: function () {
-                if (self.iChecked() == "是")
-                    return '@DateTime.Now.ToString("yyyy-MM-dd")';
-                else {
-                    return "";
-                }
-
-            },
-            write: function (value) {
-            }
-        });
+        self.rowIndex = ko.observable("");
     }
     $(function () {
         //重置函数
@@ -214,20 +177,11 @@
             $('#iDate').datetimepicker("setStartDate", start);
             $('#iDate').datetimepicker("setEndDate", end);
         }
-        $('#iPaidDate').datetimepicker({
-            language: 'zh-CN',
-            weekStart: 1,
-            clearBtn: 1,
-            autoclose: 1,
-            todayHighlight: 1,
-            startView: 2,
-            minView: 2,
-            forceParse: 1,
-            format: 'yyyy-mm-dd'
-        });
+
         //必填校验
         $("#iCompanyId").change(function () {
             var value = $("#iCompanyId").val();
+            myViewModel.iCompanyName($("#iCompanyId").find("option:selected").text());
             if (value != "-") {
                 $('#iCompanyId').removeClass("warning");
             }
@@ -237,6 +191,7 @@
         });
         $("#iProjectId").change(function () {
             var value = $("#iProjectId").val();
+            myViewModel.iProjectName($("#iProjectId").find("option:selected").text());
             if (value != "-") {
                 $('#iProjectId').removeClass("warning");
             }
@@ -281,8 +236,6 @@
                 $('#iAmount').addClass("warning");
             }
         });
-
-
         $('#mytab').bootstrapTable({
             //url: "/FinanceAjax/GetAllJournal",//数据源
             dataField: "rows",//服务端返回数据键值 就是说记录放的键值是rows，分页时使用总记录数的键值为total
@@ -293,8 +246,8 @@
             clickToSelect: true,//选择行即选择checkbox
             searchOnEnterKey: false,//ENTER键搜索
             height: tableHeight(),//高度调整
-            search: true,//是否搜索
-            pagination: true,//是否分页
+            search: false,//是否搜索
+            pagination: false,//是否分页
             pageSize: 15,//单页记录数
             pageNumber: 1,//起始页
             pageList: [15, 100, 500, 1000, 10000],//分页步进值
@@ -305,7 +258,7 @@
             searchAlign: "left",//查询框对齐方式
             queryParamsType: "limit",//查询参数组织方式
             showRefresh: false,//刷新按钮
-            showColumns: true,//列选择按钮
+            showColumns: false,//列选择按钮
             buttonsAlign: "left",//按钮对齐方式
             toolbar: "#toolbar",//指定工具栏
             toolbarAlign: "right",//工具栏对齐方式
@@ -321,85 +274,29 @@
                      }
                  },
                  { field: "iGuid", title: "iGuid", visible: false, switchable: false }
-                 , { field: "iProjectId", title: "项目", visible: false }
                  , { field: "iCompanyId", title: "公司", visible: false }
+                 , { field: "iCompanyName", title: "公司", visible: false }
+                 , { field: "iProjectId", title: "项目", visible: false }
+                 , { field: "iProjectName", title: "项目", visible: false }
+                 , { field: "iDate", title: "日期" }
+                 , { field: "iEvent", title: "事项" }
+                 , { field: "iType", title: "科目" }
+                 , { field: "iApplicant", title: "提报人" }
+                 , { field: "iAmount", title: "金额" }
+                 , { field: "iNote", title: "备注" }
                  , {
-                     field: "iDate", title: "日期", sortable: true, formatter: function (value, row, index) {
-                         return ChangeDateFormat(value);
+                     field: "operation", title: "操作", sortable: false,
+                     formatter: function (value, row, index) {
+                         return '<a href="#" row=\'' + escape(JSON.stringify(row)) + '\' onclick="EditRow(\'' + index + '\',this)">修改</a>&nbsp;<a href="#" onclick="RemoveRow(\'' + row.iGuid + '\')">删除</a>';
                      }
                  }
-                 , { field: "iEvent", title: "事项", sortable: true }
-                 , { field: "iType", title: "科目", sortable: true }
-                 , { field: "iApplicant", title: "提报人", sortable: true }
-                 , { field: "iAmount", title: "金额", sortable: true }
-                 , { field: "iNote", title: "备注", sortable: true }
             ],
             onClickRow: function (row, $element) {
                 //$element是当前tr的jquery对象
                 //$element.css("background-color", "green");
             },//单击row事件
             onDblClickRow: function (row, $element) {
-                if (window.menuRights == "r" || window.userType == "普通用户") {  //普通用户无法修改
-                    return;
-                }
-                if (window.userType == "超级管理员") {
-                    $("#iApplicant").removeAttr("readonly");
-                }
-                $("#addModalLabel").html("修改记录");
-                $('#addModal').modal('toggle');
-
-                if (window.userType != "普通用户") {
-                    $("#removeRecord").show();
-                }
-                else {
-                    $("#removeRecord").hide();
-                }
-                $("#iProjectId").removeClass("warning");
-                $('#iCompanyId').removeClass("warning");
-                $("#iDate").removeClass("warning");
-                $('#iEvent').removeClass("warning");
-                $('#iType').removeClass("warning");
-                $('#iAmount').removeClass("warning");
-
-                var width = $("#addModal").width();
-                var height = $("#addModal").height();
-                var $shade = $('<div id="waiting"></div>');
-                $shade.css({ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, background: '#fff url(/Content/images/waiting.gif) center center no-repeat', opacity: 0.4 });
-                $("#addModal").append($shade);
-                $.get("/FinanceAjax/GetJournal?iGuid=" + row.iGuid, function (result) {
-                    if (result.success) {
-                        if (result.data.iChecked == "是" && window.userType != "超级管理员") {  //如果已核销则不能再修改了
-                            $("#SaveChanges").hide();
-                        }
-                        myViewModel.iGuid(result.data.iGuid);
-                        myViewModel.iCompanyId(result.data.iCompanyId);
-                        myViewModel.iProjectId(result.data.iProjectId);
-                        myViewModel.iDate(ChangeDateFormat(result.data.iDate));
-                        myViewModel.iEvent(result.data.iEvent);
-                        myViewModel.iType(result.data.iType);
-                        myViewModel.iApplicant(result.data.iApplicant);
-                        myViewModel.iAmount(result.data.iAmount);
-                        myViewModel.iChecked(result.data.iChecked);
-                        myViewModel.iCheckedBy(result.data.iCheckedBy);
-                        myViewModel.iPaidDate(ChangeDateFormat(result.data.iPaidDate));
-                        myViewModel.iNote(result.data.iNote);
-                        myViewModel.iCreatedOn(result.data.iCreatedOn);
-                        myViewModel.iCreatedBy(result.data.iCreatedBy);
-                        myViewModel.iUpdatedOn(result.data.iUpdatedOn);
-                        myViewModel.iUpdatedBy(result.data.iUpdatedBy);
-                        myViewModel.iStatus(result.data.iStatus);
-                        myViewModel.iIsDeleted(result.data.iIsDeleted);
-                        if (result.data.iChecked == "否") {
-                            $("[name=iChecked]").attr("disabled", false);
-                            $("#iPaidDate").attr("disabled", false);
-                        }
-                    }
-                    else {
-                        console.log(result.msg);
-                        toastr.error('获取数据失败！');
-                    }
-                    $shade.remove();
-                });
+                return;
             },
             locale: "zh-CN",//中文支持,
             detailView: false, //是否显示详情折叠
@@ -410,42 +307,35 @@
                 });
                 return html;
             },
-            data: []
+            data: [],
+            uniqueId: "iGuid"
         });
 
         if (window.userType != "普通用户") {
-            $('#mytab').bootstrapTable('showColumn', 'iCompanyId');
-            $('#mytab').bootstrapTable('showColumn', 'iProjectId');
+            $('#mytab').bootstrapTable('showColumn', 'iCompanyName');
+            $('#mytab').bootstrapTable('showColumn', 'iProjectName');
         }
         $("#NewRecord").click(function () {
             $("#removeRecord").hide();
-            $("[name=iChecked]").attr("disabled", true);
-            $("#iPaidDate").attr("disabled", true);
 
             $('#iDate').addClass("warning");
             $('#iEvent').addClass("warning");
             $('#iType').addClass("warning");
             $('#iAmount').addClass("warning");
 
-            myViewModel.iGuid("");
+            myViewModel.iGuid(sysGuid());
             myViewModel.iProjectId('@HRMS.WEB.Utils.SessionHelper.CurrentUser.CurrentProject');
             myViewModel.iCompanyId('@HRMS.WEB.Utils.SessionHelper.CurrentUser.CurrentCompany');
+            myViewModel.iProjectName($("#iProjectId").find("option:selected").text());
+            myViewModel.iCompanyName($("#iCompanyId").find("option:selected").text());
             myViewModel.iDate("");
             myViewModel.iEvent("");
             myViewModel.iType("");
             myViewModel.iApplicant("@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserName");
             myViewModel.iAmount("");
-            myViewModel.iChecked("否");
-            myViewModel.iCheckedBy("");
-            myViewModel.iPaidDate("");
             myViewModel.iNote("");
+            myViewModel.rowIndex("");
 
-            myViewModel.iCreatedOn("");
-            myViewModel.iCreatedBy("");
-            myViewModel.iUpdatedOn("");
-            myViewModel.iUpdatedBy("");
-            myViewModel.iStatus("1");
-            myViewModel.iIsDeleted("0");
             if ($("#iCompanyId").val() == "-") {
                 $('#iCompanyId').addClass("warning");
             }
@@ -467,9 +357,38 @@
                 toastr.error('数据验证未通过！');
                 return;
             }
-            $(this).attr({ "disabled": "disabled" });
-            var param = {};
-            param.jsonString = ko.toJSON(myViewModel);
+            var obj = {};
+            obj.iGuid = myViewModel.iGuid();
+            obj.iProjectId = myViewModel.iProjectId();
+            obj.iCompanyId = myViewModel.iCompanyId();
+            obj.iProjectName = myViewModel.iProjectName();
+            obj.iCompanyName = myViewModel.iCompanyName();
+            obj.iDate = myViewModel.iDate();
+            obj.iEvent = myViewModel.iEvent();
+            obj.iType = myViewModel.iType();
+            obj.iApplicant = myViewModel.iApplicant();
+            obj.iAmount = myViewModel.iAmount();
+            obj.iNote = myViewModel.iNote();
+            if (myViewModel.rowIndex() == "") {
+                $('#mytab').bootstrapTable('append', obj);
+            }
+            else {
+                $('#mytab').bootstrapTable('updateRow', { index: myViewModel.rowIndex(), row: obj });
+            }
+            $('#addModal').modal('toggle');
+        });
+
+        $("#SubmitApplication").click(function () {
+            var para = {};
+            para.Conditions = conditions;
+            para.ProcessInstanceID = ""; //important
+            para.AppName = "";
+            para.AppInstanceID = ""; //important
+            para.ProcessGUID = "";  //申请时必要 important
+            para.UserID = "@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId";
+            para.UserName = "";
+            para.TaskID = "";  //important
+            
             $.ajax({
                 url: "/FinanceAjax/JournalSaveChanges",
                 type: "POST",
@@ -489,32 +408,41 @@
                 }
             });
         });
-        $("#removeRecord").click(function () {
-            if (confirm("确认要删除？")) {
-                var param = {};
-                myViewModel.iIsDeleted("1");
-                param.jsonString = ko.toJSON(myViewModel);
-                $.ajax({
-                    url: "/FinanceAjax/JournalSaveChanges",
-                    type: "POST",
-                    data: param,
-                    dataType: 'text',
-                    success: function (data) {
-                        if (data == "success") {
-                            toastr.success('删除成功！');
-                            $('#mytab').bootstrapTable('refresh');
-                        }
-                        else {
-                            console.log(data);
-                            toastr.error('删除数据失败！');
-                        }
-                        $('#addModal').modal('toggle');
-                    }
-                });
-            }
-        });
+        
 
         var myViewModel = new ViewModel();
         ko.applyBindings(myViewModel);
+
+        window.EditRow = function (index, a) {
+            if (window.userType == "超级管理员") {
+                $("#iApplicant").removeAttr("readonly");
+            }
+            $("#addModalLabel").html("修改记录");
+            $("#iProjectId").removeClass("warning");
+            $('#iCompanyId').removeClass("warning");
+            $("#iDate").removeClass("warning");
+            $('#iEvent').removeClass("warning");
+            $('#iType').removeClass("warning");
+            $('#iAmount').removeClass("warning");
+            var row = JSON.parse(unescape($(a).attr("row")));
+
+            myViewModel.iGuid(row.iGuid);
+            myViewModel.iProjectId(row.iProjectId);
+            myViewModel.iCompanyId(row.iCompanyId);
+            myViewModel.iDate(row.iDate);
+            myViewModel.iEvent(row.iEvent);
+            myViewModel.iType(row.iType);
+            myViewModel.iApplicant(row.iApplicant);
+            myViewModel.iAmount(row.iAmount);
+            myViewModel.iNote(row.iNote);
+            myViewModel.rowIndex(index);
+            $('#addModal').modal('toggle');
+        }
+
+        window.RemoveRow = function (iguid) {
+            if (confirm("确认要删除？")) {
+                $('#mytab').bootstrapTable('removeByUniqueId', iguid);
+            }
+        }
     })
 </script>

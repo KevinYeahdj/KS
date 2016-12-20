@@ -82,7 +82,6 @@
                 url = window.location.pathname;
             }
             var currentPage = $("#sidebar").find("a[href$='" + url + "']");
-            debugger;
             if (currentPage && currentPage.length > 0) {
                 var li = currentPage.parent();
                 $(li).attr("selected", "selected");
