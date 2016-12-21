@@ -3622,6 +3622,7 @@
     <Content Include="Views\BPM\Done.cshtml" />
     <Content Include="Views\BPM\MyApp.cshtml" />
     <Content Include="Views\BPM\JournalApplication.cshtml" />
+    <Content Include="Views\BPM\JournalApprove.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -3635,6 +3636,14 @@
     <ProjectReference Include="..\ClinBrain.Data\ClinBrain.Data.csproj">
       <Project>{d27c61ef-5e16-4fdb-9e97-b97e5f130228}</Project>
       <Name>ClinBrain.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ClinBrain.OC\ClinBrain.OC.csproj">
+      <Project>{45b30359-d5a4-403b-ab8f-02e4faa38812}</Project>
+      <Name>ClinBrain.OC</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ClinBrain.WorkFlowEngine\ClinBrain.WorkFlowEngine.csproj">
+      <Project>{105a73cf-a16c-4aad-9e5c-d6d86499ab88}</Project>
+      <Name>ClinBrain.WorkFlowEngine</Name>
     </ProjectReference>
     <ProjectReference Include="..\HRMS.Common\HRMS.Common.csproj">
       <Project>{ebbd1f29-d4d8-409d-a0c3-9b8ed0254b0e}</Project>

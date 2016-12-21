@@ -5,6 +5,11 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using ClinBrain.Data.Service;
+using ClinBrain.OC;
+using ClinBrain.WorkFlowEngine.Business.Entity;
+using ClinBrain.WorkFlowEngine.Business.Manager;
+using ClinBrain.WorkFlowEngine.Common;
+using ClinBrain.WorkFlowEngine.Service;
 using HRMS.Data.Manager;
 using HRMS.WEB.Models;
 using HRMS.WEB.Utils;
@@ -49,6 +54,16 @@ namespace HRMS.Controllers
             ViewBag.Projects = projects;
             return View();
         }
+        public ActionResult JournalApprove()
+        {
+            DicManager dm = new DicManager();
+            var companies = dm.GetAllCompanies();
+            ViewBag.Companies = companies;
+            var projects = dm.GetAllProjects();
+            ViewBag.Projects = projects;
+            return View();
+        }
+        
     }
 
     public class BPMAjaxController : Controller
@@ -171,6 +186,87 @@ namespace HRMS.Controllers
                 log4net.ILog log = log4net.LogManager.GetLogger(this.GetType());
                 log.Error(ex);
             }
+        }
+
+        public JsonResult StartApplication(WfAppRunner initiator)
+        {
+            try
+            {
+                OrganizationService oc = new OrganizationService();
+                UserInfo ur = oc.GetUserInfoByLoginName(initiator.UserID);
+                initiator.UserName = ur == null ? "" : ur.Name;
+
+                IWorkflowService service = new WorkflowService();
+                string result = service.StartApplication(initiator);
+                if (result == "fail")
+                {
+                    return new JsonResult { Data = new { success = false, msg = "申请出错!" } };
+                }
+                else
+                {
+                    return new JsonResult { Data = new { success = true, msg = result } };
+                }
+            }
+            catch (Exception e)
+            {
+                return new JsonResult { Data = new { success = false, msg = "申请出错!" } };
+            }
+        }
+
+        public JsonResult StartApproval(WfAppRunner runner)
+        {
+            try
+            {
+                OrganizationService oc = new OrganizationService();
+                UserInfo ur = oc.GetUserInfoByLoginName(runner.UserID);
+                runner.UserName = ur == null ? "" : ur.Name;
+
+                IWorkflowService service = new WorkflowService();
+                string result = service.StartApproval(runner);
+                if (result == "fail")
+                {
+                    return new JsonResult { Data = new { success = false, msg = "审批出错!" } };
+                }
+                SaveApproveInfo(runner);
+                return new JsonResult { Data = new { success = true, msg = "审批成功!" } };
+            }
+            catch (Exception e)
+            {
+                return new JsonResult { Data = new { success = false, msg = "审批出错!" } };
+            }
+        }
+
+        private void SaveApproveInfo(WfAppRunner runner)
+        {
+            string approveType = "";
+            string approveTypeName = "";
+            string feedback = "";
+            if (runner.Conditions.ContainsKey("sys_approve"))
+            {
+                approveType = runner.Conditions["sys_approve"];
+            }
+            if (runner.Conditions.ContainsKey("sys_approvecn"))
+            {
+                approveTypeName = runner.Conditions["sys_approvecn"];
+            }
+            if (runner.Conditions.ContainsKey("sys_feedback"))
+            {
+                feedback = runner.Conditions["sys_feedback"];
+            }
+
+            ApproveInfo approveInfo = new ApproveInfo();
+            approveInfo.TaskID = runner.TaskID;
+            approveInfo.AppNo = runner.AppInstanceID;
+            approveInfo.ApproverId = runner.UserID;
+            approveInfo.ApproverName = runner.UserName;
+            approveInfo.ApproveType = approveType;
+            approveInfo.ApproveTypeName = approveTypeName;
+            approveInfo.CreateTime = DateTime.Now;
+            approveInfo.FeedBack = feedback;
+            approveInfo.ProcessName = runner.AppName;
+            approveInfo.StepName = runner.CurrentStepName;
+            ApproveInfoManager apim = new ApproveInfoManager();
+            apim.Insert(approveInfo);
         }
 
     }

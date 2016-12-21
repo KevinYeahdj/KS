@@ -25,7 +25,7 @@ namespace ClinBrain.Data.Service
         }
         public List<DoneViewModel> GetMyDoneList(Dictionary<string, string> para, string sort, string order, int offset, int pageSize, out int total)
         {
-            string commonSql = string.Format("FROM vwWfActivityInstanceTasks WHERE ActivityType=4 AND ActivityState=4 AND AssignedToUserID='{0}'  AND DATEDIFF(s,CreatedDateTime,EndedDateTime) >5 ", para["currentUserId"]);
+            string commonSql = string.Format("FROM vwWfActivityInstanceTasks WHERE ActivityType=4 AND ActivityState=4 AND AssignedToUserID='{0}'  AND DATEDIFF(s,CreatedDateTime,EndedDateTime) >5 and viewPageUrl is not null ", para["currentUserId"]);
             string querySql = "select applicantName, applyTime, AppName, CreatedDateTime, EndedDateTime, ActivityName, summary, AppInstanceID, viewPageUrl " + commonSql + " order by {0} {1} offset {2} row fetch next {3} rows only";
             querySql = string.Format(querySql, sort, order, offset, pageSize);
             string totalSql = "select cast(count(1) as varchar(8)) " + commonSql;

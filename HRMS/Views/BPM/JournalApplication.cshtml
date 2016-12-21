@@ -13,6 +13,8 @@
         <div class="col-*-12">
 
             <div id="toolbar" class="toolbar">
+                <div style="float: left; margin-left: 10px"><span>合计：</span></div>
+                <div style="float: left; margin-left: 10px; width: 30%"><input id="totalThis" class="form-control" readonly="readonly" value="0" /></div>
                 <div style="float: right; margin-left: 10px; margin-top: 5px; " class="btn btn-primary" id="SubmitApplication">提交</div>
                 <div style="float: right; margin-left: 10px; margin-top: 5px; " class="btn btn-primary" data-toggle="modal" data-target="#addModal" id="NewRecord">添加记录</div>
 
@@ -38,7 +40,7 @@
                                     @{
                                         foreach (var item in ViewBag.Companies)
                                         {
-                                            <option value="@item.iGuid">@item.iName</option>
+                                    <option value="@item.iGuid">@item.iName</option>
                                         }
                                     }
                                 </select>
@@ -49,7 +51,7 @@
                                     @{
                                         foreach (var item in ViewBag.Projects)
                                         {
-                                            <option value="@item.iGuid">@item.iName</option>
+                                <option value="@item.iGuid">@item.iName</option>
                                         }
                                     }
                                 </select>
@@ -376,39 +378,52 @@
                 $('#mytab').bootstrapTable('updateRow', { index: myViewModel.rowIndex(), row: obj });
             }
             $('#addModal').modal('toggle');
+
+            var datas = $('#mytab').bootstrapTable('getData', true);
+            var sum = 0;
+            datas.forEach(function (data) {
+                sum += parseFloat(data.iAmount);
+            })
+            $('#totalThis').val(sum);
+            
         });
 
         $("#SubmitApplication").click(function () {
+            $(this).attr({ "disabled": "disabled" });
             var para = {};
+            var conditions = {};
+            conditions.sys_approve = "1";
+            conditions.sys_feedback = "提交申请";
+            conditions.sys_summary = "合计：" + $('#totalThis').val();
             para.Conditions = conditions;
             para.ProcessInstanceID = ""; //important
             para.AppName = "";
             para.AppInstanceID = ""; //important
-            para.ProcessGUID = "";  //申请时必要 important
+            para.ProcessGUID = "09e8624f-ff2d-cc98-0eaa-6a11f3f7d9bc";  //申请时必要 important
             para.UserID = "@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId";
             para.UserName = "";
             para.TaskID = "";  //important
-            
+
             $.ajax({
-                url: "/FinanceAjax/JournalSaveChanges",
+                url: "/BPMAjax/StartApplication",
                 type: "POST",
-                data: param,
+                data: para,
                 dataType: 'text',
-                success: function (data) {
-                    if (data == "success") {
-                        toastr.success('保存成功！');
-                        $('#mytab').bootstrapTable('refresh');
+                success: function (result) {
+                    result = $.parseJSON(result);
+                    if (result.success) {
+                        toastr.success('申请成功！流程单号：【' + result.msg + '】');
+                        //$('#mytab').bootstrapTable('removeAll'); 
+                        setTimeout("window.location.href='/BPM/myapp'", 3000);
                     }
                     else {
-                        console.log(data);
-                        toastr.error('保存数据失败！');
+                        toastr.error('申请失败！');
                     }
-                    $('#addModal').modal('toggle');
-                    $("#SaveChanges").removeAttr("disabled");
+                    $("#SubmitApplication").removeAttr("disabled");
                 }
             });
         });
-        
+
 
         var myViewModel = new ViewModel();
         ko.applyBindings(myViewModel);
