@@ -100,7 +100,7 @@ namespace HRMS.Controllers
                 int total = 0;
                 ReturnFeeManager service = new ReturnFeeManager();
                 List<ReturnFeeModel> list = service.GetSearch(SessionHelper.CurrentUser.UserType, bizParaDic, sort, order, offset, pageSize, out total);
-                
+
                 DicManager dm = new DicManager();
                 var companies = dm.GetAllCompanies();
                 var projects = dm.GetAllProjects();
@@ -608,7 +608,8 @@ namespace HRMS.Controllers
                 int total = 0;
                 JournalManager service = new JournalManager();
                 List<JournalEntity> list = service.GetSearch(SessionHelper.CurrentUser.UserType, bizParaDic, sort, order, offset, pageSize, out total);
-
+                decimal? sum = list.Last().iAmount;
+                list.RemoveAt(list.Count - 1);
                 DicManager dm = new DicManager();
                 var companies = dm.GetAllCompanies();
                 var projects = dm.GetAllProjects();
@@ -621,7 +622,7 @@ namespace HRMS.Controllers
                 }
 
                 //给分页实体赋值  
-                PageModels<JournalEntity> model = new PageModels<JournalEntity>();
+                PageModels2<JournalEntity> model = new PageModels2<JournalEntity>();
                 model.total = total;
                 if (total % pageSize == 0)
                     model.page = total / pageSize;
@@ -629,6 +630,7 @@ namespace HRMS.Controllers
                     model.page = (total / pageSize) + 1;
 
                 model.rows = list;
+                model.sum = sum ?? 0;
 
                 //将查询结果返回  
                 HttpContext.Response.Write(jss.Serialize(model));

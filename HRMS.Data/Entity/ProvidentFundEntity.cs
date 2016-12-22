@@ -13,7 +13,7 @@ namespace HRMS.Data.Entity
         public string iGuid { get; set; } //惟一标识
         public string iHRInfoGuid { get; set; } //人事信息标识
         public string iPayPlace { get; set; } //缴纳地      
-        public string iEmployeeWilling { get; set; } //员工意愿
+        public string iEmployeeWilling { get; set; } //员工意愿  --和是否缴纳是一回事，暂时不使用
         //public string iIsPaid { get; set; } //是否缴纳
         public Decimal? iPayBase { get; set; } //缴费基数
         public DateTime? iEntryDate { get; set; } //转入日期

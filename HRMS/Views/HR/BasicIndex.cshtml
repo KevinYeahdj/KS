@@ -540,12 +540,6 @@
                      field: 'Number',
                      title: '序号',
                      formatter: function (value, row, index) {
-                         if (row.iEmployeeStatus == "离职") {
-                             for (key in row) {
-                                 row[key] = '<span style="color:red">' + row[key] + '</span>';
-                             }
-                             return '<span style="color:red">' + (($('#mytab').bootstrapTable('getOptions').pageNumber - 1) * $('#mytab').bootstrapTable('getOptions').pageSize + index + 1) + '</span>';
-                         }
                          return ($('#mytab').bootstrapTable('getOptions').pageNumber - 1) * $('#mytab').bootstrapTable('getOptions').pageSize + index + 1;
                      }
                  },
@@ -562,7 +556,8 @@
 , { field: "iNation", title: "民族", sortable: true }
 , { field: "iResidenceProperty", title: "户口性质", sortable: true }
 , {
-    field: "iRegistryAddress", title: "户籍地址", sortable: true}
+    field: "iRegistryAddress", title: "户籍地址", sortable: true
+}
 , { field: "iIssuedBy", title: "签发机关", sortable: true }
 , { field: "iIdCardValidate", title: "身份证有效期", sortable: true }
 , { field: "iLivedIn", title: "现住地", sortable: true }
@@ -694,6 +689,13 @@
                     }
                     $shade.remove();
                 });
+            },
+            onLoadSuccess: function (data) {
+                $.each(data.rows, function (i, item) {
+                    if (item.iEmployeeStatus == "离职") {
+                        $("#mytab").find("tr[data-index=" + i + "]").css("color", "red");
+                    }
+                })
             },
             locale: "zh-CN",//中文支持,
             detailView: false, //是否显示详情折叠

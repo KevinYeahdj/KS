@@ -160,12 +160,6 @@
                      field: 'Number',
                      title: '序号',
                      formatter: function (value, row, index) {
-                         if (row.iEmployeeStatus == "离职") {
-                             for (key in row) {
-                                 row[key] = '<span style="color:red">' + row[key] + '</span>';
-                             }
-                             return '<span style="color:red">' + (($('#mytab').bootstrapTable('getOptions').pageNumber - 1) * $('#mytab').bootstrapTable('getOptions').pageSize + index + 1) + '</span>';
-                         }
                          return ($('#mytab').bootstrapTable('getOptions').pageNumber - 1) * $('#mytab').bootstrapTable('getOptions').pageSize + index + 1;
                      }
                  },
@@ -259,6 +253,13 @@
                 //$element.css("background-color", "green");
             },//单击row事件
             onDblClickRow: function (row, $element) {
+            },
+            onLoadSuccess: function (data) {
+                $.each(data.rows, function (i, item) {
+                    if (item.iEmployeeStatus == "离职") {
+                        $("#mytab").find("tr[data-index=" + i + "]").css("color", "red");
+                    }
+                })
             },
             locale: "zh-CN",//中文支持,
             detailView: true, //是否显示详情折叠

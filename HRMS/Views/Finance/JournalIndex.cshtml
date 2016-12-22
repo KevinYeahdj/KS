@@ -16,7 +16,7 @@
                 <div style="float: left; margin-left: 10px">
                     <span>科目：</span>
                 </div>
-                <div style="float: left; margin-left: 10px">
+                <div style="float: left; margin-left: 10px; ">
                     <select class="form-control" id="sType">
                         <option value="" selected="selected">全部</option>
                         <option value=" 招聘费用">招聘费用</option>
@@ -30,10 +30,21 @@
                         <option value="公关费用">公关费用</option>
                     </select>
                 </div>
-                <div style="float: left; margin-left: 10px"><span>提报人：</span></div>
-                <div style="float: left; margin-left: 10px; width: 8%"><input id="sApplicant" class="form-control" /></div>
-                <div style="float:left;margin-left:10px"><span>日期：</span></div><div style="float: left; margin-left: 10px;width:12%"><input id="sDate" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 12%"><input id="sDate2" class="form-control" /></div>
-
+                <div style="float: left; margin-left: 10px; ">
+                    <span>是否核销：</span>
+                </div>
+                <div style="float: left; margin-left: 10px; ">
+                    <select class="form-control" id="sChecked">
+                        <option value="" selected="selected">全部</option>
+                        <option value="是">是</option>
+                        <option value="否">否</option>
+                    </select>
+                </div>
+                <div style="float: left; margin-left: 10px; "><span>提报人：</span></div>
+                <div style="float: left; margin-left: 10px; width: 8%; "><input id="sApplicant" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px; "><span>日期：</span></div><div style="float: left; margin-left: 10px; width: 10%"><input id="sDate" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 10%"><input id="sDate2" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px"><span>查询金额合计：</span></div>
+                <div style="float: left; margin-left: 10px; width: 10%"><input id="totalThis" class="form-control" readonly="readonly" value="0" /></div>
                 <div style="float: right; margin-left: 10px; margin-top: 5px; " class="btn btn-primary" data-toggle="modal" data-target="#addModal" id="NewRecord">添加记录</div>
                 <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" onclick="Search()">查询</div>
 
@@ -394,6 +405,7 @@
                 params.sProjectId = $("#projectSelect").val();
                 params.sType = $("#sType").val();
                 params.sApplicant = $("#sApplicant").val();
+                params.sChecked = $("#sChecked").val();
                 params.sDate = $("#sDate").val();
                 params.sDate2 = $("#sDate2").val();
                 return params;
@@ -492,6 +504,9 @@
                     }
                     $shade.remove();
                 });
+            },
+            onLoadSuccess: function (data) {
+                $("#totalThis").val(data.sum);
             },
             locale: "zh-CN",//中文支持,
             detailView: false, //是否显示详情折叠

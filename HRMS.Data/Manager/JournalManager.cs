@@ -135,8 +135,12 @@ namespace HRMS.Data.Manager
             querySql = string.Format(querySql, sort, order, offset, pageSize);
             string totalSql = "select cast(count(1) as varchar(8)) " + commonSql;
             total = int.Parse(Repository.Query<string>(totalSql).ToList()[0]);
-            return Repository.Query<JournalEntity>(querySql).ToList();
-
+            string sumSql = "select CONVERT(varchar(100),sum(iAmount)) " + commonSql;
+            decimal sum = 0;
+            decimal.TryParse(Repository.Query<string>(sumSql).ToList()[0], out sum);
+            List<JournalEntity> result = Repository.Query<JournalEntity>(querySql).ToList();
+            result.Add(new JournalEntity { iAmount = sum });  //多加一列传递总值，记得删除
+            return result;
         }
 
         public JournalEntity FirstOrDefault(string guid)

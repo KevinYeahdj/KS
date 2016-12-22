@@ -12,6 +12,10 @@ namespace HRMS.WEB.Models
         public int page { get; set; }
         public List<T> rows { get; set; }
     }
+    public class PageModels2<T> : PageModels<T>
+    {
+        public decimal sum { get; set; }
+    }
 
     public class ItemContent
     {

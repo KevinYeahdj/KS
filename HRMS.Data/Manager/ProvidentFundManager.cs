@@ -262,7 +262,7 @@ namespace HRMS.Data.Manager
                 para["iCompany"] = para["iCompany"] == "-" ? "" : para["iCompany"];
                 para["iItemName"] = para["iItemName"] == "-" ? "" : para["iItemName"];
             }
-            StringBuilder commandsb = new StringBuilder("from ProvidentFund pf right join hrinfo hr on pf.iHRInfoGuid = hr.iguid and pf.iIsDeleted =0 and pf.iStatus =1 where hr.iisdeleted=0 and hr.istatus=1 ");
+            StringBuilder commandsb = new StringBuilder("from ProvidentFund pf right join hrinfo hr on pf.iHRInfoGuid = hr.iguid and pf.iIsDeleted =0 and pf.iStatus =1 where hr.iIsProvidentPaid='是' and hr.iisdeleted=0 and hr.istatus=1 ");
 
             string searchKey = para["search"];
             para.Remove("search");

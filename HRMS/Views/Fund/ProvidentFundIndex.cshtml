@@ -23,7 +23,7 @@
 
                     </select>
                 </div>
-                <div style="float: left; margin-left: 10px">
+                @*<div style="float: left; margin-left: 10px">
                     <span>是否缴纳：</span>
                 </div>
                 <div style="float: left; margin-left: 10px">
@@ -42,7 +42,7 @@
                         <option value="是">是</option>
                         <option value="否">否</option>
                     </select>
-                </div>
+                </div>*@
 
                 <div style="float: left; margin-left: 10px"><span>姓名：</span></div>
                 <div style="float: left; margin-left: 10px; width: 8%"><input id="sName" class="form-control" /></div>
@@ -122,7 +122,7 @@
                                     <input type="radio" name="iResidenceProperty" data-bind="checked: iResidenceProperty" value="非农业户口">非农业户口
                                 </label>
                             </div>
-                            <div class="form-group">
+                            @*<div class="form-group">
                                 员工意愿：<br />
                                 <label class="radio-inline">
                                     <input type="radio" name="iEmployeeWilling" data-bind="checked: iEmployeeWilling" value="是"> 是
@@ -139,7 +139,7 @@
                                 <label class="radio-inline">
                                     <input type="radio" name="iIsProvidentPaid" data-bind="checked: iIsProvidentPaid" value="否">否
                                 </label>
-                            </div>
+                            </div>*@
                             <div class="form-group"> 缴费基数：<input type="text" class="form-control" id="iPayBase" data-bind="value: iPayBase" placeholder="请输入缴费基数" onkeyup="clearNoNum(this)" onblur="clearNoNum(this)" maxlength="11"></div>
                             
                             <div class="form-group"> 转入日期：<input type="text" class="form-control" id="iEntryDate" data-bind="value: iEntryDate" placeholder="请输入转入日期"></div>
@@ -200,6 +200,21 @@
 </div>
 
 <script type="text/javascript">
+    //加法函数，用来得到精确的加法结果
+    //说明：javascript的加法结果会有误差，在两个浮点数相加的时候会比较明显。这个函数返回较为精确的加法结果。
+    //调用：accAdd(arg1,arg2)
+    //返回值：arg1加上arg2的精确结果
+    function accAdd(arg1, arg2) {
+        var r1, r2, m;
+        try { r1 = arg1.toString().split(".")[1].length } catch (e) { r1 = 0 }
+        try { r2 = arg2.toString().split(".")[1].length } catch (e) { r2 = 0 }
+        m = Math.pow(10, Math.max(r1, r2));
+        return (arg1 * m + arg2 * m) / m;
+    }
+    //给Number类型增加一个add方法，调用起来更加方便。
+    Number.prototype.add = function (arg) {
+        return accAdd(arg, this);
+    }
     //正则校验两位小数
     function clearNoNum(obj) {
         //先把非数字的都替换掉，除了数字和.    
@@ -255,8 +270,8 @@
         params.sName = $("#sName").val();
         params.sIdCard = $("#sIdCard").val();
         params.sEmployeeStatus = $("#sEmployeeStatus").val();
-        params.sIsProvidentFundPaid = $("#sIsSProvidentFundPaid").val();
-        params.sEmployeeWilling = $("#sEmployeeWilling").val();
+        //params.sIsProvidentFundPaid = $("#sIsSProvidentFundPaid").val();
+        //params.sEmployeeWilling = $("#sEmployeeWilling").val();
         params.sPayPlace = $("#sPayPlace").val();
         params.sEmployeeDate = $("#sEmployeeDate").val();
         params.sEmployeeDate2 = $("#sEmployeeDate2").val();
@@ -299,8 +314,7 @@
             read: function () {
                 if (self.iIndividualAmount() == null || self.iCompanyAmount() == null || self.iAdditionalAmount() == null || self.iIndividualAmount() == "" || self.iCompanyAmount() == null || self.iAdditionalAmount() == "")
                     return "";
-                return Number(self.iIndividualAmount()) + Number(self.iCompanyAmount()) + Number(self.iAdditionalAmount());
-
+                return self.iIndividualAmount().add(self.iCompanyAmount()).add(self.iAdditionalAmount());
             },
             write: function (value) {
             }
@@ -510,8 +524,8 @@
                 params.sName = $("#sName").val();
                 params.sIdCard = $("#sIdCard").val();
                 params.sEmployeeStatus = $("#sEmployeeStatus").val();
-                params.sIsProvidentFundPaid = $("#sIsProvidentFundPaid").val();
-                params.sEmployeeWilling = $("#sEmployeeWilling").val();
+                //params.sIsProvidentFundPaid = $("#sIsProvidentFundPaid").val();
+                //params.sEmployeeWilling = $("#sEmployeeWilling").val();
                 params.sPayPlace = $("#sPayPlace").val();
                 params.sEmployeeDate = $("#sEmployeeDate").val();
                 params.sEmployeeDate2 = $("#sEmployeeDate2").val();
@@ -528,12 +542,6 @@
                      field: 'Number',
                      title: '序号',
                      formatter: function (value, row, index) {
-                         if (row.iEmployeeStatus == "离职") {
-                             for (key in row) {
-                                 row[key] = '<span style="color:red">' + row[key] + '</span>';
-                             }
-                             return '<span style="color:red">' + (($('#mytab').bootstrapTable('getOptions').pageNumber - 1) * $('#mytab').bootstrapTable('getOptions').pageSize + index + 1) + '</span>';
-                         }
                          return ($('#mytab').bootstrapTable('getOptions').pageNumber - 1) * $('#mytab').bootstrapTable('getOptions').pageSize + index + 1;
                      }
                  },
@@ -557,8 +565,8 @@
                                   , { field: "iEmployeeStatus", title: "员工状态", sortable: true }
                                   , { field: "iResidenceProperty", title: "户籍类型", sortable: true }
                  , { field: "iPayPlace", title: "缴纳地", sortable: true }
-, { field: "iEmployeeWilling", title: "员工意愿", sortable: true }
-, { field: "iIsProvidentPaid", title: "是否缴纳", sortable: true }
+//, { field: "iEmployeeWilling", title: "员工意愿", sortable: true }
+//, { field: "iIsProvidentPaid", title: "是否缴纳", sortable: true }
 , { field: "iPayBase", title: "缴费基数", sortable: true }
 , {
     field: "iEntryDate", title: "转入日期", sortable: true, formatter: function (value, row, index) {
@@ -602,6 +610,12 @@
                 $("#iName").attr("readonly", "readonly");
                 $("#iIdCard").attr("readonly", "readonly");
                 $("#iTotal").attr("readonly", "readonly");
+                $("#iEmployeeDate").attr("readonly", "readonly");
+                $("#iResignDate").attr("readonly", "readonly");
+                $("input[name=iEmployeeStatus]").attr("disabled", "disabled");
+                $("input[name=iResidenceProperty]").attr("disabled", "disabled");
+                $("input[name=iIsCommercialInsurancePaid]").attr("disabled", "disabled");
+                
 
                 var width = $("#addModal").width();
                 var height = $("#addModal").height();
@@ -646,6 +660,8 @@
                         myViewModel.iUpdatedBy(result.data.iUpdatedBy);
                         myViewModel.iStatus(result.data.iStatus);
                         myViewModel.iIsDeleted(result.data.iIsDeleted);
+                        var total = result.data.iIndividualAmount.add(result.data.iCompanyAmount).add(result.data.iAdditionalAmount);
+                        $("#iTotal").val(total);
                     }
                     else {
                         console.log(result.msg);
@@ -653,6 +669,13 @@
                     }
                     $shade.remove();
                 });
+            },
+            onLoadSuccess: function (data) {
+                $.each(data.rows, function (i, item) {
+                    if (item.iEmployeeStatus == "离职") {
+                        $("#mytab").find("tr[data-index=" + i + "]").css("color", "red");
+                    }
+                })
             },
             locale: "zh-CN",//中文支持,
             detailView: false, //是否显示详情折叠

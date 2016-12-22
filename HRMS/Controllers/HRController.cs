@@ -373,8 +373,11 @@ namespace HRMS.Controllers
                     {
                         object value = null;
                         ICell cell = sheet.GetRow(i).GetCell(kvp.Value);
-                        if (cell.CellType == CellType.Blank)
+                        if (cell.CellType == CellType.Blank)  //此处有公式？
+                        {
+                            errorLog += "第【" + (i + 1).ToString() + "】行,第【" + (kvp.Value + 1).ToString() + "】列格式有误，不要使用公式；";
                             value = "";
+                        }
                         else
                         {
                             string propertyName = en.GetType().GetProperty(kvp.Key).PropertyType.FullName.ToLower();
@@ -409,8 +412,8 @@ namespace HRMS.Controllers
                                     }
                                 }
                             }
+                            en.GetType().GetProperty(kvp.Key).SetValue(en, value, null);
                         }
-                        en.GetType().GetProperty(kvp.Key).SetValue(en, value, null);
                     }
                 }
                 if (currentProject != null)
