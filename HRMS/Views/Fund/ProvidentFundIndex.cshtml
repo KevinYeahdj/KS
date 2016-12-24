@@ -23,26 +23,26 @@
 
                     </select>
                 </div>
-                @*<div style="float: left; margin-left: 10px">
-                    <span>是否缴纳：</span>
-                </div>
-                <div style="float: left; margin-left: 10px">
-                    <select class="form-control" id="sIsProvidentFundPaid">
-                        <option value="" selected="selected">全部</option>
-                        <option value="是">是</option>
-                        <option value="否">否</option>
-                    </select>
-                </div>
                 <div style="float: left; margin-left: 10px">
                     <span>员工意愿：</span>
                 </div>
                 <div style="float: left; margin-left: 10px">
-                    <select class="form-control" id="sEmployeeWilling">
+                    <select class="form-control" id="sProvidentFundPaidWilling">
                         <option value="" selected="selected">全部</option>
                         <option value="是">是</option>
                         <option value="否">否</option>
                     </select>
-                </div>*@
+                </div>
+                <div style="float: left; margin-left: 10px">
+                    <span>是否缴纳：</span>
+                </div>
+                <div style="float: left; margin-left: 10px">
+                    <select class="form-control" id="sIsPaid">
+                        <option value="" selected="selected">全部</option>
+                        <option value="是">是</option>
+                        <option value="否">否</option>
+                    </select>
+                </div>
 
                 <div style="float: left; margin-left: 10px"><span>姓名：</span></div>
                 <div style="float: left; margin-left: 10px; width: 8%"><input id="sName" class="form-control" /></div>
@@ -122,24 +122,24 @@
                                     <input type="radio" name="iResidenceProperty" data-bind="checked: iResidenceProperty" value="非农业户口">非农业户口
                                 </label>
                             </div>
-                            @*<div class="form-group">
+                            <div class="form-group">
                                 员工意愿：<br />
                                 <label class="radio-inline">
-                                    <input type="radio" name="iEmployeeWilling" data-bind="checked: iEmployeeWilling" value="是"> 是
+                                    <input type="radio" name="iProvidentFundPaidWilling" data-bind="checked: iProvidentFundPaidWilling" value="是"> 是
                                 </label>
                                 <label class="radio-inline">
-                                    <input type="radio" name="iEmployeeWilling" data-bind="checked: iEmployeeWilling" value="否">否
+                                    <input type="radio" name="iProvidentFundPaidWilling" data-bind="checked: iProvidentFundPaidWilling" value="否">否
                                 </label>
                             </div>
                             <div class="form-group">
                                 是否缴纳：<br />
                                 <label class="radio-inline">
-                                    <input type="radio" name="iIsProvidentPaid" data-bind="checked: iIsProvidentPaid" value="是"> 是
+                                    <input type="radio" name="iIsPaid" data-bind="checked: iIsPaid" value="是"> 是
                                 </label>
                                 <label class="radio-inline">
-                                    <input type="radio" name="iIsProvidentPaid" data-bind="checked: iIsProvidentPaid" value="否">否
+                                    <input type="radio" name="iIsPaid" data-bind="checked: iIsPaid" value="否">否
                                 </label>
-                            </div>*@
+                            </div>
                             <div class="form-group"> 缴费基数：<input type="text" class="form-control" id="iPayBase" data-bind="value: iPayBase" placeholder="请输入缴费基数" onkeyup="clearNoNum(this)" onblur="clearNoNum(this)" maxlength="11"></div>
                             
                             <div class="form-group"> 转入日期：<input type="text" class="form-control" id="iEntryDate" data-bind="value: iEntryDate" placeholder="请输入转入日期"></div>
@@ -270,8 +270,8 @@
         params.sName = $("#sName").val();
         params.sIdCard = $("#sIdCard").val();
         params.sEmployeeStatus = $("#sEmployeeStatus").val();
-        //params.sIsProvidentFundPaid = $("#sIsSProvidentFundPaid").val();
-        //params.sEmployeeWilling = $("#sEmployeeWilling").val();
+        params.sProvidentFundPaidWilling = $("#sSProvidentFundPaidWilling").val();
+        params.sIsPaid = $("#sIsPaid").val();
         params.sPayPlace = $("#sPayPlace").val();
         params.sEmployeeDate = $("#sEmployeeDate").val();
         params.sEmployeeDate2 = $("#sEmployeeDate2").val();
@@ -299,8 +299,8 @@
         self.iEmployeeStatus = ko.observable("");
         self.iResidenceProperty = ko.observable("");
         self.iPayPlace = ko.observable("");
-        self.iEmployeeWilling = ko.observable("");
-        self.iIsProvidentPaid = ko.observable("");
+        self.iIsPaid = ko.observable("");
+        self.iProvidentFundPaidWilling = ko.observable("");
         self.iPayBase = ko.observable("");
         self.iEntryDate = ko.observable("");
         self.iSealDate = ko.observable("");
@@ -524,8 +524,8 @@
                 params.sName = $("#sName").val();
                 params.sIdCard = $("#sIdCard").val();
                 params.sEmployeeStatus = $("#sEmployeeStatus").val();
-                //params.sIsProvidentFundPaid = $("#sIsProvidentFundPaid").val();
-                //params.sEmployeeWilling = $("#sEmployeeWilling").val();
+                params.sProvidentFundPaidWilling = $("#sProvidentFundPaidWilling").val();
+                params.sIsPaid = $("#sIsPaid").val();
                 params.sPayPlace = $("#sPayPlace").val();
                 params.sEmployeeDate = $("#sEmployeeDate").val();
                 params.sEmployeeDate2 = $("#sEmployeeDate2").val();
@@ -565,8 +565,8 @@
                                   , { field: "iEmployeeStatus", title: "员工状态", sortable: true }
                                   , { field: "iResidenceProperty", title: "户籍类型", sortable: true }
                  , { field: "iPayPlace", title: "缴纳地", sortable: true }
-//, { field: "iEmployeeWilling", title: "员工意愿", sortable: true }
-//, { field: "iIsProvidentPaid", title: "是否缴纳", sortable: true }
+, { field: "iProvidentFundPaidWilling", title: "员工意愿", sortable: true }
+, { field: "iIsPaid", title: "是否缴纳", sortable: true }
 , { field: "iPayBase", title: "缴费基数", sortable: true }
 , {
     field: "iEntryDate", title: "转入日期", sortable: true, formatter: function (value, row, index) {
@@ -613,6 +613,7 @@
                 $("#iEmployeeDate").attr("readonly", "readonly");
                 $("#iResignDate").attr("readonly", "readonly");
                 $("input[name=iEmployeeStatus]").attr("disabled", "disabled");
+                $("input[name=iProvidentFundPaidWilling]").attr("disabled", "disabled");
                 $("input[name=iResidenceProperty]").attr("disabled", "disabled");
                 $("input[name=iIsCommercialInsurancePaid]").attr("disabled", "disabled");
                 
@@ -629,7 +630,7 @@
                         myViewModel.iResignDate(ChangeDateFormat(result.data.iResignDate));
                         myViewModel.iEmployeeStatus(result.data.iEmployeeStatus);
                         myViewModel.iResidenceProperty(result.data.iResidenceProperty);
-                        myViewModel.iIsProvidentPaid(result.data.iIsProvidentPaid);
+                        myViewModel.iProvidentFundPaidWilling(result.data.iProvidentFundPaidWilling);
                         myViewModel.iIsCommercialInsurancePaid(result.data.iIsCommercialInsurancePaid);
 
                         myViewModel.iItemName(result.data.iItemName);
@@ -643,7 +644,7 @@
                         myViewModel.iHRInfoGuid(result.data.iHRInfoGuid);
                         myViewModel.iHRInfoGuid2(result.data.iHRInfoGuid2);
                         myViewModel.iPayPlace(result.data.iPayPlace);
-                        myViewModel.iEmployeeWilling(result.data.iEmployeeWilling);
+                        myViewModel.iIsPaid(result.data.iIsPaid);
                         myViewModel.iPayBase(result.data.iPayBase);
                         myViewModel.iEntryDate(ChangeDateFormat(result.data.iEntryDate));
                         myViewModel.iSealDate(ChangeDateFormat(result.data.iSealDate));

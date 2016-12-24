@@ -667,8 +667,8 @@
                         myViewModel.iResignReason(result.data.iResignReason);
                         myViewModel.iFileLocation(result.data.iFileLocation);
                         myViewModel.iIsReturnFee(result.data.iIsReturnFee);
-                        myViewModel.iIsSocialInsurancePaid(result.data.iIsSocialInsurancePaid);
-                        myViewModel.iIsProvidentPaid(result.data.iIsProvidentPaid);
+                        myViewModel.iSocialInsurancePaidWilling(result.data.iSocialInsurancePaidWilling);
+                        myViewModel.iProvidentFundPaidWilling(result.data.iProvidentFundPaidWilling);
                         myViewModel.iIsCommercialInsurancePaid(result.data.iIsCommercialInsurancePaid);
                         myViewModel.iBasicInfoNote(result.data.iBasicInfoNote);
                         myViewModel.iAccountInfoNote(result.data.iAccountInfoNote);
@@ -837,8 +837,8 @@
             myViewModel.iResignReason("");
             myViewModel.iFileLocation("");
             myViewModel.iIsReturnFee("");
-            myViewModel.iIsSocialInsurancePaid("");
-            myViewModel.iIsProvidentPaid("");
+            myViewModel.iSocialInsurancePaidWilling("");
+            myViewModel.iProvidentFundPaidWilling("");
             myViewModel.iIsCommercialInsurancePaid("");
             myViewModel.iBasicInfoNote("");
             myViewModel.iAccountInfoNote("");
@@ -1016,8 +1016,8 @@
         self.iResignReason = ko.observable("");
         self.iFileLocation = ko.observable("");
         self.iIsReturnFee = ko.observable("");
-        self.iIsSocialInsurancePaid = ko.observable("");
-        self.iIsProvidentPaid = ko.observable("");
+        self.iSocialInsurancePaidWilling = ko.observable("");
+        self.iProvidentFundPaidWilling = ko.observable("");
         self.iIsCommercialInsurancePaid = ko.observable("");
         self.iBasicInfoNote = ko.observable("");
         self.iAccountInfoNote = ko.observable("");

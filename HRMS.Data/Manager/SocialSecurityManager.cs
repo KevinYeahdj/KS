@@ -92,8 +92,8 @@ namespace HRMS.Data.Manager
                 dic.Add("员工状态", "iEmployeeStatus");
                 dic.Add("户籍类型", "iResidenceProperty");
                 dic.Add("缴纳地", "iPayPlace");
-                dic.Add("员工意愿", "iEmployeeWilling");
-                dic.Add("是否缴纳", "iIsSocialInsurancePaid");
+                dic.Add("员工意愿", "iSocialInsurancePaidWilling");
+                dic.Add("是否缴纳", "iIsPaid");
                 dic.Add("缴费基数", "iPayBase");
                 dic.Add("入保日期", "iFirstEntryDate");
                 dic.Add("招工日期", "iFirstRecruitDate");
@@ -208,7 +208,7 @@ namespace HRMS.Data.Manager
         }
         public SocialSecurityModel GetFirstOrDefault(string hrGuid)
         {
-            string sql = @"select ss.iIndividualAmount + ss.iCompanyAmount + iAdditionalAmount  as iTotal, ss.*, hr.iItemName, hr.iCompany, hr.iName, hr.iIdCard, hr.iEmpNo, hr.iEmployeeDate,  hr.iResignDate, hr.iEmployeeStatus, hr.iResidenceProperty, hr.iIsSocialInsurancePaid, hr.iGuid as iHRInfoGuid2  from SocialSecurity ss right join hrinfo hr on ss.iHRInfoGuid = hr.iguid and ss.iIsDeleted =0 and ss.iStatus =1  where hr.iisdeleted=0 and hr.istatus=1 and hr.iguid=@id ";
+            string sql = @"select ss.iIndividualAmount + ss.iCompanyAmount + iAdditionalAmount  as iTotal, ss.*, hr.iItemName, hr.iCompany, hr.iName, hr.iIdCard, hr.iEmpNo, hr.iEmployeeDate,  hr.iResignDate, hr.iEmployeeStatus, hr.iResidenceProperty, hr.iSocialInsurancePaidWilling, hr.iGuid as iHRInfoGuid2  from SocialSecurity ss right join hrinfo hr on ss.iHRInfoGuid = hr.iguid and ss.iIsDeleted =0 and ss.iStatus =1  where hr.iisdeleted=0 and hr.istatus=1 and hr.iguid=@id ";
             return Repository.Query<SocialSecurityModel>(sql, new { id = hrGuid }).FirstOrDefault();
         }
         public SocialSecurityDetailModel GetDetailFirstOrDefault(string iguid)
@@ -238,7 +238,7 @@ namespace HRMS.Data.Manager
         public List<SocialSecurityModel> GetSearch(string userType, Dictionary<string, string> para, string sort, string order, int offset, int pageSize, out int total)
         {
             string commonSql = GenerateQuerySql(userType, para);
-            string querySql = "select ss.iIndividualAmount + ss.iCompanyAmount + iAdditionalAmount  as iTotal, ss.*, hr.iItemName, hr.iCompany, hr.iName, hr.iIdCard, hr.iEmpNo, hr.iEmployeeDate,  hr.iResignDate, hr.iEmployeeStatus, hr.iResidenceProperty, hr.iIsSocialInsurancePaid, hr.iGuid as iHRInfoGuid2 " + commonSql + "order by {0} {1} offset {2} row fetch next {3} rows only";
+            string querySql = "select ss.iIndividualAmount + ss.iCompanyAmount + iAdditionalAmount  as iTotal, ss.*, hr.iItemName, hr.iCompany, hr.iName, hr.iIdCard, hr.iEmpNo, hr.iEmployeeDate,  hr.iResignDate, hr.iEmployeeStatus, hr.iResidenceProperty, hr.iSocialInsurancePaidWilling, hr.iGuid as iHRInfoGuid2 " + commonSql + "order by {0} {1} offset {2} row fetch next {3} rows only";
             querySql = string.Format(querySql, sort, order, offset, pageSize);
             string totalSql = "select cast(count(1) as varchar(8)) " + commonSql;
             total = int.Parse(Repository.Query<string>(totalSql).ToList()[0]);
@@ -260,7 +260,7 @@ namespace HRMS.Data.Manager
         public List<SocialSecurityModel> GetSearchAll(string userType, Dictionary<string, string> para)
         {
             string commonSql = GenerateQuerySql(userType, para);
-            string querySql = "select ss.iIndividualAmount + ss.iCompanyAmount + iAdditionalAmount  as iTotal, ss.*, hr.iItemName, hr.iCompany, hr.iName, hr.iIdCard, hr.iEmpNo, hr.iEmployeeDate,  hr.iResignDate, hr.iEmployeeStatus, hr.iResidenceProperty, hr.iIsSocialInsurancePaid, hr.iGuid as iHRInfoGuid2 " + commonSql + "order by ss.iUpdatedOn desc, hr.iUpdatedOn desc";
+            string querySql = "select ss.iIndividualAmount + ss.iCompanyAmount + iAdditionalAmount  as iTotal, ss.*, hr.iItemName, hr.iCompany, hr.iName, hr.iIdCard, hr.iEmpNo, hr.iEmployeeDate,  hr.iResignDate, hr.iEmployeeStatus, hr.iResidenceProperty, hr.iSocialInsurancePaidWilling, hr.iGuid as iHRInfoGuid2 " + commonSql + "order by ss.iUpdatedOn desc, hr.iUpdatedOn desc";
             return Repository.Query<SocialSecurityModel>(querySql).ToList();
         }
 
@@ -272,7 +272,7 @@ namespace HRMS.Data.Manager
                 para["iCompany"] = para["iCompany"] == "-" ? "" : para["iCompany"];
                 para["iItemName"] = para["iItemName"] == "-" ? "" : para["iItemName"];
             }
-            StringBuilder commandsb = new StringBuilder("from SocialSecurity ss right join hrinfo hr on ss.iHRInfoGuid = hr.iguid and ss.iIsDeleted =0 and ss.iStatus =1  where hr.iIsSocialInsurancePaid='是' and hr.iisdeleted=0 and hr.istatus=1 ");
+            StringBuilder commandsb = new StringBuilder("from SocialSecurity ss right join hrinfo hr on ss.iHRInfoGuid = hr.iguid and ss.iIsDeleted =0 and ss.iStatus =1  where hr.iisdeleted=0 and hr.istatus=1 ");
 
             string searchKey = para["search"];
             para.Remove("search");

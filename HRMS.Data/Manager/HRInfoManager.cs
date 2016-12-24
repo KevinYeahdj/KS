@@ -187,8 +187,8 @@ namespace HRMS.Data.Manager
                 dic.Add("离职原因（公司）", "iResignReason");
                 dic.Add("档案位置", "iFileLocation");
                 dic.Add("是否返费", "iIsReturnFee");
-                dic.Add("是否缴纳保险", "iIsSocialInsurancePaid");
-                dic.Add("是否缴纳公积金", "iIsProvidentPaid");
+                dic.Add("员工保险缴纳意愿", "iSocialInsurancePaidWilling");
+                dic.Add("员工公积金缴纳意愿", "iProvidentFundPaidWilling");
                 dic.Add("是否缴纳商业保险", "iIsCommercialInsurancePaid");
 
                 dic.Add("基本信息备注", "iBasicInfoNote");
@@ -297,8 +297,8 @@ namespace HRMS.Data.Manager
                 dic.Add("离职原因（公司）", "iResignReason");
                 dic.Add("档案位置", "iFileLocation");
                 dic.Add("是否返费", "iIsReturnFee");
-                dic.Add("是否缴纳保险", "iIsSocialInsurancePaid");
-                dic.Add("是否缴纳公积金", "iIsProvidentPaid");
+                dic.Add("员工保险缴纳意愿", "iSocialInsurancePaidWilling");
+                dic.Add("员工公积金缴纳意愿", "iProvidentFundPaidWilling");
                 dic.Add("是否缴纳商业保险", "iIsCommercialInsurancePaid");
                 dic.Add("职位信息备注", "iPositionInfoNote");
                 return dic;
@@ -373,8 +373,8 @@ namespace HRMS.Data.Manager
                 dic.Add("离职原因（公司）", "iResignReason");
                 dic.Add("档案位置", "iFileLocation");
                 dic.Add("是否返费", "iIsReturnFee");
-                dic.Add("是否缴纳保险", "iIsSocialInsurancePaid");
-                dic.Add("是否缴纳公积金", "iIsProvidentPaid");
+                dic.Add("员工保险缴纳意愿", "iSocialInsurancePaidWilling");
+                dic.Add("员工公积金缴纳意愿", "iProvidentFundPaidWilling");
                 dic.Add("是否缴纳商业保险", "iIsCommercialInsurancePaid");
                 dic.Add("职位信息备注", "iPositionInfoNote");
                 return dic;

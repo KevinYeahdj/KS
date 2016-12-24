@@ -70,8 +70,10 @@ namespace HRMS.Data.Entity
         public string iResignReason { get; set; } //离职原因（公司） 
         public string iFileLocation { get; set; } //档案位置 
         public string iIsReturnFee { get; set; } //是否返费 
-        public string iIsSocialInsurancePaid { get; set; } //是否缴纳保险 
-        public string iIsProvidentPaid { get; set; } //是否缴纳公积金 
+        //public string iIsSocialInsurancePaid { get; set; } //是否缴纳保险 
+        //public string iIsProvidentPaid { get; set; } //是否缴纳公积金 
+        public string iSocialInsurancePaidWilling { get; set; } //员工保险缴纳意愿 
+        public string iProvidentFundPaidWilling { get; set; } //员工公积金缴纳意愿
         public string iIsCommercialInsurancePaid { get; set; } //是否缴纳商业保险 
 
         public string iBasicInfoNote { get; set; } // 基本信息备注

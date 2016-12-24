@@ -282,7 +282,7 @@ namespace HRMS.Controllers
             checkdic.Add("户口性质$iResidenceProperty", residencePropertyArray);
             //checkdic.Add("血型$iBloodType", bloodTypeArray);
             checkdic.Add("婚姻状况$iMariage", marriageArray);
-            checkdic.Add("体检$iHealthCheck|是否返费$iIsReturnFee|是否缴纳保险$iIsSocialInsurancePaid|是否缴纳公积金$iIsProvidentPaid|是否缴纳商业保险$iIsCommercialInsurancePaid", yesnoArray);
+            checkdic.Add("体检$iHealthCheck|是否返费$iIsReturnFee|员工保险缴纳意愿$iSocialInsurancePaidWilling|员工公积金缴纳意愿$iProvidentFundPaidWilling|是否缴纳商业保险$iIsCommercialInsurancePaid", yesnoArray);
             checkdic.Add("合同签订情况$iContractSignStatus", contractsignArray); 
             checkdic.Add("政治面貌$iPolitical", poliArray);
             checkdic.Add("文化水平$iEducationLevel", eduArray);

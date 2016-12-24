@@ -13,9 +13,9 @@ namespace HRMS.Data.Entity
         public string iGuid { get; set; } //惟一标识
         public string iHRInfoGuid { get; set; } //人事信息标识
         public string iPayPlace { get; set; } //缴纳地
-        public string iEmployeeWilling { get; set; } //员工意愿 --和是否缴纳是一回事，暂时不使用
+        //public string iSocialInsurancePaidWilling { get; set; } //员工意愿 --放入人事
 
-        //public string iIsPaid { get; set; } //是否缴纳 保存在人事信息里面 
+        public string iIsPaid { get; set; } //是否缴纳
         public Decimal? iPayBase { get; set; } //缴费基数
         public DateTime? iFirstEntryDate { get; set; } //入保日期
         public DateTime? iFirstRecruitDate { get; set; } //招工日期 
@@ -63,9 +63,9 @@ namespace HRMS.Data.Entity
 
         public string iResidenceProperty { get; set; } //户籍类型
         public string iPayPlace { get; set; } //缴纳地
-        public string iEmployeeWilling { get; set; } //员工意愿
+        public string iSocialInsurancePaidWilling { get; set; } //员工意愿 --放入人事
 
-        public string iIsSocialInsurancePaid { get; set; } //是否缴纳 
+        public string iIsPaid { get; set; } //是否缴纳
         public Decimal? iPayBase { get; set; } //缴费基数
 
         public DateTime? iFirstEntryDate { get; set; } //入保日期

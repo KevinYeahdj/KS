@@ -23,7 +23,7 @@ namespace HRMS.Data.Manager
                 dic.Add("iGuid", "iGuid");
                 dic.Add("人事信息标识", "iHRInfoGuid");
                 dic.Add("缴纳地", "iPayPlace");
-                dic.Add("员工意愿", "iEmployeeWilling");
+                dic.Add("是否缴纳", "iIsPaid");
                 dic.Add("缴费基数", "iPayBase");
                 dic.Add("转入日期", "iEntryDate");
                 dic.Add("封存日期", "iSealDate");
@@ -86,8 +86,8 @@ namespace HRMS.Data.Manager
                 dic.Add("员工状态", "iEmployeeStatus");
                 dic.Add("户籍类型", "iResidenceProperty");
                 dic.Add("缴纳地", "iPayPlace");
-                dic.Add("员工意愿", "iEmployeeWilling");
-                dic.Add("是否缴纳", "iIsProvidentPaid");
+                dic.Add("员工意愿", "iProvidentFundPaidWilling");
+                dic.Add("是否缴纳", "iIsPaid");
                 dic.Add("缴费基数", "iPayBase");
                 dic.Add("转入日期", "iEntryDate");
                 dic.Add("封存日期", "iSealDate");
@@ -200,7 +200,7 @@ namespace HRMS.Data.Manager
         }
         public ProvidentFundModel GetFirstOrDefault(string hrGuid)
         {
-            string sql = @"select pf.iIndividualAmount + pf.iCompanyAmount + pf.iAdditionalAmount  as iTotal, pf.*, hr.iItemName, hr.iCompany, hr.iName, hr.iIdCard, hr.iEmpNo, hr.iEmployeeDate,  hr.iResignDate, hr.iEmployeeStatus, hr.iResidenceProperty, hr.iIsProvidentPaid, hr.iIsCommercialInsurancePaid, hr.iGuid as iHRInfoGuid2  from ProvidentFund pf right join hrinfo hr on pf.iHRInfoGuid = hr.iguid and pf.iIsDeleted =0 and pf.iStatus =1  where hr.iisdeleted=0 and hr.istatus=1 and hr.iguid=@id ";
+            string sql = @"select pf.iIndividualAmount + pf.iCompanyAmount + pf.iAdditionalAmount  as iTotal, pf.*, hr.iItemName, hr.iCompany, hr.iName, hr.iIdCard, hr.iEmpNo, hr.iEmployeeDate,  hr.iResignDate, hr.iEmployeeStatus, hr.iResidenceProperty, hr.iProvidentFundPaidWilling, hr.iIsCommercialInsurancePaid, hr.iGuid as iHRInfoGuid2  from ProvidentFund pf right join hrinfo hr on pf.iHRInfoGuid = hr.iguid and pf.iIsDeleted =0 and pf.iStatus =1  where hr.iisdeleted=0 and hr.istatus=1 and hr.iguid=@id ";
             return Repository.Query<ProvidentFundModel>(sql, new { id = hrGuid }).FirstOrDefault();
         }
         public int GenerateSocialSecurityDetailMonthly(int payMonth)
@@ -228,7 +228,7 @@ namespace HRMS.Data.Manager
         public List<ProvidentFundModel> GetSearch(string userType, Dictionary<string, string> para, string sort, string order, int offset, int pageSize, out int total)
         {
             string commonSql = GenerateQuerySql(userType, para);
-            string querySql = "select pf.iIndividualAmount + pf.iCompanyAmount + pf.iAdditionalAmount  as iTotal, pf.*, hr.iItemName, hr.iCompany, hr.iName, hr.iIdCard, hr.iEmpNo, hr.iEmployeeDate,  hr.iResignDate, hr.iEmployeeStatus, hr.iResidenceProperty, hr.iIsProvidentPaid, hr.iIsCommercialInsurancePaid, hr.iGuid as iHRInfoGuid2 " + commonSql + "order by {0} {1} offset {2} row fetch next {3} rows only";
+            string querySql = "select pf.iIndividualAmount + pf.iCompanyAmount + pf.iAdditionalAmount  as iTotal, pf.*, hr.iItemName, hr.iCompany, hr.iName, hr.iIdCard, hr.iEmpNo, hr.iEmployeeDate,  hr.iResignDate, hr.iEmployeeStatus, hr.iResidenceProperty, hr.iProvidentFundPaidWilling, hr.iIsCommercialInsurancePaid, hr.iGuid as iHRInfoGuid2 " + commonSql + "order by {0} {1} offset {2} row fetch next {3} rows only";
             querySql = string.Format(querySql, sort, order, offset, pageSize);
             string totalSql = "select cast(count(1) as varchar(8)) " + commonSql;
             total = int.Parse(Repository.Query<string>(totalSql).ToList()[0]);
@@ -250,7 +250,7 @@ namespace HRMS.Data.Manager
         public List<ProvidentFundModel> GetSearchAll(string userType, Dictionary<string, string> para)
         {
             string commonSql = GenerateQuerySql(userType, para);
-            string querySql = "select pf.iIndividualAmount + pf.iCompanyAmount + pf.iAdditionalAmount  as iTotal, pf.*, hr.iItemName, hr.iCompany, hr.iName, hr.iIdCard, hr.iEmpNo, hr.iEmployeeDate,  hr.iResignDate, hr.iEmployeeStatus, hr.iResidenceProperty, hr.iIsProvidentPaid, hr.iIsCommercialInsurancePaid, hr.iGuid as iHRInfoGuid2 " + commonSql + "order by pf.iUpdatedOn desc, hr.iUpdatedOn desc";
+            string querySql = "select pf.iIndividualAmount + pf.iCompanyAmount + pf.iAdditionalAmount  as iTotal, pf.*, hr.iItemName, hr.iCompany, hr.iName, hr.iIdCard, hr.iEmpNo, hr.iEmployeeDate,  hr.iResignDate, hr.iEmployeeStatus, hr.iResidenceProperty, hr.iProvidentFundPaidWilling, hr.iIsCommercialInsurancePaid, hr.iGuid as iHRInfoGuid2 " + commonSql + "order by pf.iUpdatedOn desc, hr.iUpdatedOn desc";
             return Repository.Query<ProvidentFundModel>(querySql).ToList();
         }
 
@@ -262,7 +262,7 @@ namespace HRMS.Data.Manager
                 para["iCompany"] = para["iCompany"] == "-" ? "" : para["iCompany"];
                 para["iItemName"] = para["iItemName"] == "-" ? "" : para["iItemName"];
             }
-            StringBuilder commandsb = new StringBuilder("from ProvidentFund pf right join hrinfo hr on pf.iHRInfoGuid = hr.iguid and pf.iIsDeleted =0 and pf.iStatus =1 where hr.iIsProvidentPaid='是' and hr.iisdeleted=0 and hr.istatus=1 ");
+            StringBuilder commandsb = new StringBuilder("from ProvidentFund pf right join hrinfo hr on pf.iHRInfoGuid = hr.iguid and pf.iIsDeleted =0 and pf.iStatus =1 where hr.iisdeleted=0 and hr.istatus=1 ");
 
             string searchKey = para["search"];
             para.Remove("search");

@@ -231,7 +231,7 @@ namespace HRMS.Controllers
 
                 foreach (string para in HttpContext.Request.Params.Keys)
                 {
-                    if (para.StartsWith("s") && (SocialSecurityManager.SocialSecurityViewDic.ContainsValue("i" + para.Substring(1, para.Length - 1)) || (para.Length > 2 && SocialSecurityManager.SocialSecurityViewDic.ContainsValue("i" + para.Substring(1, para.Length - 2)))))
+                    if (para.StartsWith("s") && (ProvidentFundManager.ProvidentFundViewDic.ContainsValue("i" + para.Substring(1, para.Length - 1)) || (para.Length > 2 && ProvidentFundManager.ProvidentFundViewDic.ContainsValue("i" + para.Substring(1, para.Length - 2)))))
                     {
                         bizParaDicTemp.Add("i" + para.Substring(1, para.Length - 1), HttpContext.Request.Params[para]);
                     }
@@ -438,7 +438,7 @@ namespace HRMS.Controllers
                 hrEntity.iResignDate = entity.iResignDate;
                 hrEntity.iEmployeeStatus = entity.iEmployeeStatus;
                 hrEntity.iResidenceProperty = entity.iResidenceProperty;
-                hrEntity.iIsSocialInsurancePaid = entity.iIsSocialInsurancePaid;
+                hrEntity.iSocialInsurancePaidWilling = entity.iSocialInsurancePaidWilling;
                 hrService.Update(hrEntity);
 
                 SocialSecurityEntity ssEntity = JsonConvert.DeserializeObject<SocialSecurityEntity>(jsonString, st);
@@ -501,7 +501,7 @@ namespace HRMS.Controllers
                 hrEntity.iResignDate = entity.iResignDate;
                 hrEntity.iEmployeeStatus = entity.iEmployeeStatus;
                 hrEntity.iResidenceProperty = entity.iResidenceProperty;
-                hrEntity.iIsProvidentPaid = entity.iIsProvidentPaid;
+                hrEntity.iProvidentFundPaidWilling = entity.iProvidentFundPaidWilling;
                 hrEntity.iIsCommercialInsurancePaid = entity.iIsCommercialInsurancePaid;
                 hrService.Update(hrEntity);
 
@@ -811,7 +811,7 @@ namespace HRMS.Controllers
                 string[] empstaArray = { "在职", "离职" };
                 string[] yesnoArray = { "是", "否" };
                 Dictionary<string, string[]> checkdic = new Dictionary<string, string[]>();
-                checkdic.Add("员工意愿$iEmployeeWilling|是否缴纳$iIsSocialInsurancePaid", yesnoArray);
+                checkdic.Add("是否缴纳$iIsPaid|员工社保缴纳意愿$iSocialInsurancePaidWilling", yesnoArray);
                 checkdic.Add("户籍类型$iResidenceProperty", residencePropertyArray);
                 checkdic.Add("员工状态$iEmployeeStatus", empstaArray);
 
@@ -1021,7 +1021,7 @@ namespace HRMS.Controllers
                 string[] yesnoArray = { "是", "否" };
                 string[] commericalInsuranceCompanyArray = { "敏慧", "睿琼" };
                 Dictionary<string, string[]> checkdic = new Dictionary<string, string[]>();
-                checkdic.Add("员工意愿$iEmployeeWilling|是否缴纳$iIsProvidentPaid|是否缴纳商业保险$iIsCommercialInsurancePaid", yesnoArray);
+                checkdic.Add("员工意愿$iProvidentFundPaidWilling|是否缴纳$iIsPaid|是否缴纳商业保险$iIsCommercialInsurancePaid", yesnoArray);
                 checkdic.Add("户籍类型$iResidenceProperty", residencePropertyArray);
                 checkdic.Add("员工状态$iEmployeeStatus", empstaArray);
                 checkdic.Add("商业保险缴纳公司$iCommercialInsurancePaidCompany", commericalInsuranceCompanyArray);
@@ -1101,8 +1101,8 @@ namespace HRMS.Controllers
                     hrEntity.iEmployeeStatus = item.iEmployeeStatus;
                 if (item.iResidenceProperty != null)
                     hrEntity.iResidenceProperty = item.iResidenceProperty;
-                if (item.iIsSocialInsurancePaid != null)
-                    hrEntity.iIsSocialInsurancePaid = item.iIsSocialInsurancePaid;
+                if (item.iSocialInsurancePaidWilling != null)
+                    hrEntity.iSocialInsurancePaidWilling = item.iSocialInsurancePaidWilling;
                 hrService.Update(hrEntity);
 
                 SocialSecurityEntity en = new SocialSecurityEntity();
@@ -1141,8 +1141,8 @@ namespace HRMS.Controllers
                     hrEntity.iEmployeeStatus = item.iEmployeeStatus;
                 if (item.iResidenceProperty != null)
                     hrEntity.iResidenceProperty = item.iResidenceProperty;
-                if (item.iIsProvidentPaid != null)
-                    hrEntity.iIsSocialInsurancePaid = item.iIsProvidentPaid;
+                if (item.iProvidentFundPaidWilling != null)
+                    hrEntity.iProvidentFundPaidWilling = item.iProvidentFundPaidWilling;
                 if (item.iIsCommercialInsurancePaid != null)
                     hrEntity.iIsCommercialInsurancePaid = item.iIsCommercialInsurancePaid;
                 hrService.Update(hrEntity);
