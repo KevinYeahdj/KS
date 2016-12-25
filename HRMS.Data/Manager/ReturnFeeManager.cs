@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data;
 using HRMS.Data.Entity;
+using HRMS.Common;
 
 namespace HRMS.Data.Manager
 {
@@ -104,11 +105,16 @@ namespace HRMS.Data.Manager
         public void Update(ReturnFeeEntity entity)
         {
             entity.iUpdatedOn = DateTime.Now;
+            var record = ModifyRecord(entity);
             IDbSession session = SessionFactory.CreateSession();
             try
             {
                 session.BeginTrans();
                 Repository.Update<ReturnFeeEntity>(session.Connection, entity, session.Transaction);
+                if (record != null)
+                {
+                    Repository.Insert<ModifyLogEntity>(session.Connection, record, session.Transaction);
+                }
                 session.Commit();
             }
             catch (System.Exception)
@@ -303,6 +309,47 @@ namespace HRMS.Data.Manager
                 return dt.Rows[0][0].ToString();
             }
         }
+        public ModifyLogEntity ModifyRecord(ReturnFeeEntity entity)
+        {
+            var oldEntity = FirstOrDefault(entity.iHRInfoGuid);
+            if (oldEntity == null)
+            {
+                return null;
+            }
+            else
+            {
+                string modifiedContent = string.Empty;
+                System.Reflection.PropertyInfo[] properties = entity.GetType().GetProperties(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
 
+                Dictionary<string, string> dicConvertTmp = ConvertHelper.DicConvert(ReturnFeeDic);
+
+                foreach (System.Reflection.PropertyInfo item in properties)
+                {
+                    string name = item.Name;
+                    if (dicConvertTmp.ContainsKey(name) && !dicConvertTmp[name].StartsWith("i"))
+                    {
+                        object value = item.GetValue(entity, null);
+                        if (value == null) value = "";
+                        object valueOld = item.GetValue(oldEntity, null);
+                        if (valueOld == null) valueOld = "";
+                        if (value.ToString() != valueOld.ToString() && (item.PropertyType.IsValueType || item.PropertyType.Name.StartsWith("String")))
+                        {
+                            modifiedContent += string.Format("{0}:[{1}]->[{2}] ;", dicConvertTmp[name], valueOld, value);
+                        }
+                    }
+                }
+                if (string.IsNullOrEmpty(modifiedContent))
+                {
+                    return null;
+                }
+                ModifyLogEntity en = new ModifyLogEntity();
+                en.iId = entity.iGuid;
+                en.iModifiedBy = entity.iUpdatedBy;
+                en.iModifiedOn = DateTime.Now;
+                en.iModifiedContent = modifiedContent;
+                en.iTableName = "ReturnFee";
+                return en;
+            }
+        }
     }
 }

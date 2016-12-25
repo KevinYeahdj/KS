@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "人事修改记录";
     Layout = "~/Views/Shared/_LayoutMain.cshtml";
 }
 <style>
@@ -281,7 +281,7 @@
         });
 
         $('#logtable').bootstrapTable({
-            url: "/HRAjax/GetHRInfoLog",//数据源
+            url: "/CommonAjax/GetModifyRecords",//数据源
             dataField: "rows",//服务端返回数据键值 就是说记录放的键值是rows，分页时使用总记录数的键值为total
             sortName: "iModifiedOn",//排序列
             sortOrder: "desc",
@@ -304,6 +304,7 @@
             queryParams: function getParams(params) {
                 //params obj
                 params.recordid = $("#recordId").val();
+                params.tableName = "HRInfo";
                 return params;
             },
             searchOnEnterKey: false,//回车搜索

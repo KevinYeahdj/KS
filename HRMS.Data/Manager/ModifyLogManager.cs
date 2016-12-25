@@ -40,12 +40,12 @@ namespace HRMS.Data.Manager
         }
 
 
-        public List<ModifyLogEntity> GetSearch(string keyString, string sort, string order, int offset, int pageSize, out int total)
+        public List<ModifyLogEntity> GetSearch(Dictionary<string,string> dic, string sort, string order, int offset, int pageSize, out int total)
         {
-            string commonSql = "from SysModifyLog where iTableName='HRInfo' and iId='{0}' ";
-            string querySql = "select * " + commonSql + "order by {1} {2} offset {3} row fetch next {4} rows only";
-            querySql = string.Format(querySql, keyString, sort, order, offset, pageSize);
-            string totalSql = string.Format("select cast(count(1) as varchar(8)) " + commonSql, keyString);
+            string commonSql = "from SysModifyLog where iTableName='{0}' and iId='{1}' ";
+            string querySql = "select * " + commonSql + "order by {2} {3} offset {4} row fetch next {5} rows only";
+            querySql = string.Format(querySql, dic["tableName"], dic["iGuid"], sort, order, offset, pageSize);
+            string totalSql = string.Format("select cast(count(1) as varchar(8)) " + commonSql, dic["tableName"], dic["iGuid"]);
             total = int.Parse(Repository.Query<string>(totalSql).ToList()[0]);
             return Repository.Query<ModifyLogEntity>(querySql).ToList();
 

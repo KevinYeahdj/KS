@@ -190,37 +190,6 @@ namespace HRMS.Controllers
             }
         }
 
-        public void GetHRInfoLog()
-        {
-            //用于序列化实体类的对象  
-            JavaScriptSerializer jss = new JavaScriptSerializer();
-            jss.MaxJsonLength = Int32.MaxValue;
-
-            //请求中携带的条件  
-            string order = HttpContext.Request.Params["order"];
-            string sort = HttpContext.Request.Params["sort"];
-            string searchKey = HttpContext.Request.Params["recordid"];
-            int offset = Convert.ToInt32(HttpContext.Request.Params["offset"]);  //0
-            int pageSize = Convert.ToInt32(HttpContext.Request.Params["limit"]);
-
-            int total = 0;
-            ModifyLogManager service = new ModifyLogManager();
-            List<ModifyLogEntity> list = service.GetSearch(searchKey, sort, order, offset, pageSize, out total);
-
-            //给分页实体赋值  
-            PageModels<ModifyLogEntity> model = new PageModels<ModifyLogEntity>();
-            model.total = total;
-            if (total % pageSize == 0)
-                model.page = total / pageSize;
-            else
-                model.page = (total / pageSize) + 1;
-
-            model.rows = list;
-
-            //将查询结果返回  
-            HttpContext.Response.Write(jss.Serialize(model));
-        }
-
         public JsonResult ImportHRInfo()
         {
             try

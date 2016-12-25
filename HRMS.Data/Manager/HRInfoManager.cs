@@ -544,12 +544,12 @@ namespace HRMS.Data.Manager
                 string modifiedContent = string.Empty;
                 System.Reflection.PropertyInfo[] properties = entity.GetType().GetProperties(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
 
-                Dictionary<string, string> hrDicConvertTmp = ConvertHelper.DicConvert(hrDic);
+                Dictionary<string, string> dicConvertTmp = ConvertHelper.DicConvert(hrDic);
 
                 foreach (System.Reflection.PropertyInfo item in properties)
                 {
                     string name = item.Name;
-                    if (!hrDicConvertTmp[name].StartsWith("i"))
+                    if (!dicConvertTmp[name].StartsWith("i"))
                     {
                         object value = item.GetValue(entity, null);
                         if (value == null) value = "";
@@ -557,7 +557,7 @@ namespace HRMS.Data.Manager
                         if (valueOld == null) valueOld = "";
                         if (value.ToString() != valueOld.ToString() && (item.PropertyType.IsValueType || item.PropertyType.Name.StartsWith("String")))
                         {
-                            modifiedContent += string.Format("{0}:[{1}]->[{2}] ;", hrDicConvertTmp[name], valueOld, value);
+                            modifiedContent += string.Format("{0}:[{1}]->[{2}] ;", dicConvertTmp[name], valueOld, value);
                         }
                     }
                 }

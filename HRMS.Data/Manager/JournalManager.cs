@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data;
 using HRMS.Data.Entity;
+using HRMS.Common;
 
 namespace HRMS.Data.Manager
 {
@@ -28,6 +29,7 @@ namespace HRMS.Data.Manager
                 dic.Add("提报人", "iApplicant");
                 dic.Add("金额", "iAmount");
                 dic.Add("是否核销", "iChecked");
+                dic.Add("核销人", "iCheckedBy");
                 dic.Add("支付日期", "iPaidDate");
                 dic.Add("备注", "iNote");
 
@@ -74,11 +76,16 @@ namespace HRMS.Data.Manager
         public void Update(JournalEntity entity)
         {
             entity.iUpdatedOn = DateTime.Now;
+            var record = ModifyRecord(entity);
             IDbSession session = SessionFactory.CreateSession();
             try
             {
                 session.BeginTrans();
-                Repository.Update<JournalEntity>(session.Connection, entity, session.Transaction);
+                Repository.Update<JournalEntity>(session.Connection, entity, session.Transaction); 
+                if (record != null)
+                {
+                    Repository.Insert<ModifyLogEntity>(session.Connection, record, session.Transaction);
+                }
                 session.Commit();
             }
             catch (System.Exception)
@@ -148,6 +155,47 @@ namespace HRMS.Data.Manager
             string sql = @"select * from Journal where iGuid=@id and iIsDeleted =0 and iStatus =1";
             return Repository.Query<JournalEntity>(sql, new { id = guid }).FirstOrDefault();
         }
+        public ModifyLogEntity ModifyRecord(JournalEntity entity)
+        {
+            var oldEntity = FirstOrDefault(entity.iGuid);
+            if (oldEntity == null)
+            {
+                return null;
+            }
+            else
+            {
+                string modifiedContent = string.Empty;
+                System.Reflection.PropertyInfo[] properties = entity.GetType().GetProperties(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
 
+                Dictionary<string, string> dicConvertTmp = ConvertHelper.DicConvert(JournalDic);
+
+                foreach (System.Reflection.PropertyInfo item in properties)
+                {
+                    string name = item.Name;
+                    if (!dicConvertTmp[name].StartsWith("i"))
+                    {
+                        object value = item.GetValue(entity, null);
+                        if (value == null) value = "";
+                        object valueOld = item.GetValue(oldEntity, null);
+                        if (valueOld == null) valueOld = "";
+                        if (value.ToString() != valueOld.ToString() && (item.PropertyType.IsValueType || item.PropertyType.Name.StartsWith("String")))
+                        {
+                            modifiedContent += string.Format("{0}:[{1}]->[{2}] ;", dicConvertTmp[name], valueOld, value);
+                        }
+                    }
+                }
+                if (string.IsNullOrEmpty(modifiedContent))
+                {
+                    return null;
+                }
+                ModifyLogEntity en = new ModifyLogEntity();
+                en.iId = entity.iGuid;
+                en.iModifiedBy = entity.iUpdatedBy;
+                en.iModifiedOn = DateTime.Now;
+                en.iModifiedContent = modifiedContent;
+                en.iTableName = "Journal";
+                return en;
+            }
+        }
     }
 }

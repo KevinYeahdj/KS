@@ -151,6 +151,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\BPMController.cs" />
+    <Compile Include="Controllers\CommonAjaxController.cs" />
     <Compile Include="Controllers\FinanceController.cs" />
     <Compile Include="Controllers\FundController.cs" />
     <Compile Include="Controllers\HRController.cs" />

@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "员工岗位信息";
     Layout = "~/Views/Shared/_LayoutMain.cshtml";
 }
 <style>
@@ -649,11 +649,6 @@
         return year + "年" + month + "月";
     }
 }
-, { field: "iFirstDep", title: "所属一级部门", sortable: true }
-, { field: "iSecondDep", title: "所属二级部门", sortable: true }
-, { field: "iThirdDep", title: "所属三级部门", sortable: true }
-, { field: "iFourthDep", title: "所属四级部门", sortable: true }
-, { field: "iFifthDep", title: "所属五级部门", sortable: true }
 , { field: "iEmployeeStatus", title: "员工状态", sortable: true }
 , {
     field: "iEmployeeDate", title: "入职时间", sortable: true, formatter: function (value, row, index) {
@@ -681,6 +676,11 @@
 , { field: "iSocialInsurancePaidWilling", title: "员工保险缴纳意愿", sortable: true }
 , { field: "iProvidentFundPaidWilling", title: "员工公积金缴纳意愿", sortable: true }
 , { field: "iIsCommercialInsurancePaid", title: "是否缴纳商业保险", sortable: true }
+,{ field: "iFirstDep", title: "所属一级部门", sortable: true }
+, { field: "iSecondDep", title: "所属二级部门", sortable: true }
+, { field: "iThirdDep", title: "所属三级部门", sortable: true }
+, { field: "iFourthDep", title: "所属四级部门", sortable: true }
+, { field: "iFifthDep", title: "所属五级部门", sortable: true }
 , { field: "iPositionInfoNote", title: "职位信息备注", sortable: true }
 
 
