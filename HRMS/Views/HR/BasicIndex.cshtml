@@ -500,7 +500,7 @@
             striped: true,//條紋行
             clickToSelect: true,//选择行即选择checkbox
             searchOnEnterKey: true,//ENTER键搜索
-            height: tableHeight(),//高度调整
+            //height: tableHeight(),//高度调整
             search: true,//是否搜索
             pagination: true,//是否分页
             pageSize: 15,//单页记录数
@@ -543,13 +543,13 @@
                          return ($('#mytab').bootstrapTable('getOptions').pageNumber - 1) * $('#mytab').bootstrapTable('getOptions').pageSize + index + 1;
                      }
                  },
-                 { field: "iGuid", title: "iGuid", visible: false, switchable: false }
-                 , { field: "iItemName", title: "项目名称", visible: false }
-, { field: "iCompany", title: "所在公司", visible: false }
-, { field: "iWorkPlace", title: "所在工作地", visible: false }
-, { field: "iEmpNo", title: "工号", sortable: true }
+                 { field: "iEmpNo", title: "工号", sortable: true }
 , { field: "iName", title: "姓名", sortable: true }
 , { field: "iIdCard", title: "身份证号", sortable: true }
+,{ field: "iGuid", title: "iGuid", visible: false, switchable: false }
+                 , { field: "iItemName", title: "项目名称", visible: false }
+, { field: "iCompany", title: "所在公司", visible: false }
+, { field: "iWorkPlace", title: "所在工作地", visible: false, switchable: false }
 , { field: "iSex", title: "性别", sortable: true }
 , { field: "iBirthday", title: "出生日期", sortable: true }
 , { field: "iRegistry", title: "户籍", sortable: true }
@@ -705,7 +705,9 @@
                     html += "<p>" + key + ":" + val + "</p>"
                 });
                 return html;
-            }
+            },
+            fixedColumns: true,
+            fixedNumber: 4
         });
         if (window.userType != "普通用户") {
             $('#mytab').bootstrapTable('showColumn', 'iCompany');

@@ -1836,6 +1836,8 @@
     <Content Include="FlatLab\bootstrap-table\docs\_layouts\home.html" />
     <Content Include="FlatLab\bootstrap-table\Gruntfile.js" />
     <Content Include="FlatLab\bootstrap-table\index.html" />
+    <Content Include="FlatLab\bootstrap-table\src\bootstrap-table-fixed-columns.css" />
+    <Content Include="FlatLab\bootstrap-table\src\bootstrap-table-fixed-columns.js" />
     <Content Include="FlatLab\bootstrap-table\src\bootstrap-table.css" />
     <Content Include="FlatLab\bootstrap-table\src\bootstrap-table.js" />
     <Content Include="FlatLab\bootstrap-table\src\extensions\editable\bootstrap-table-editable.js" />
@@ -3624,6 +3626,7 @@
     <Content Include="Views\BPM\MyApp.cshtml" />
     <Content Include="Views\BPM\JournalApplication.cshtml" />
     <Content Include="Views\BPM\JournalApprove.cshtml" />
+    <Content Include="Views\Finance\SalaryIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

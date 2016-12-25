@@ -572,7 +572,7 @@
             striped: true,//條紋行
             clickToSelect: true,//选择行即选择checkbox
             searchOnEnterKey: true,//ENTER键搜索
-            height: tableHeight(),//高度调整
+            //height: tableHeight(),//高度调整  -冻结列就不能指定高度了，会有问题
             search: true,//是否搜索
             pagination: true,//是否分页
             pageSize: 15,//单页记录数
@@ -615,14 +615,15 @@
                      formatter: function (value, row, index) {
                          return ($('#mytab').bootstrapTable('getOptions').pageNumber - 1) * $('#mytab').bootstrapTable('getOptions').pageSize + index + 1;
                      }
-                 },
+                 }
+                 , { field: "iEmpNo", title: "工号", sortable: true }
+                 , { field: "iName", title: "姓名", sortable: true }
+                 , { field: "iIdCard", title: "身份证号", sortable: true },
                  { field: "iGuid", title: "iGuid", visible: false, switchable: false }
                  , { field: "iItemName", title: "项目名称", visible: false }
 , { field: "iCompany", title: "所在公司", visible: false }
-, { field: "iWorkPlace", title: "所在工作地", visible: false }
-, { field: "iEmpNo", title: "工号", sortable: true }
-, { field: "iName", title: "姓名", sortable: true }
-, { field: "iIdCard", title: "身份证号", sortable: true }
+, { field: "iWorkPlace", title: "所在工作地", visible: false, switchable: false }
+
 , { field: "iEmpType", title: "人员类别", sortable: true }
 , { field: "iPosition", title: "岗位", sortable: true }
 , { field: "iManageLevel", title: "管理层级", sortable: true }
@@ -814,7 +815,9 @@
                     html += "<p>" + key + ":" + val + "</p>"
                 });
                 return html;
-            }
+            },
+            fixedColumns: true,
+            fixedNumber:4
         });
         if (window.userType != "普通用户") {
             $('#mytab').bootstrapTable('showColumn', 'iCompany');

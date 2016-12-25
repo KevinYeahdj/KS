@@ -1,0 +1,372 @@
+﻿@{
+    ViewBag.Title = "工资信息";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+}
+<style>
+    .modal-body {
+        height: 100%;
+    }
+</style>
+
+<div>
+    <div>
+        <div class="col-*-12">
+
+            <div id="toolbar" class="toolbar">
+                <div style="float: left; margin-left: 10px; "><span>工资发放年月：</span></div><div style="float: left; margin-left: 10px; width: 16%"><input id="sYearMonth" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 16%"><input id="sYearMonth2" class="form-control" /></div>
+                <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" onclick="Search()">查询</div>
+                <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" data-toggle="modal" data-target="#importModal">工资导入</div>
+            </div>
+
+            <table id="mytab" class="table table-hover"></table>
+            <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog modal-lg" role="document" style="width:90%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            <h4 class="modal-title" id="">工资Excel文件导入</h4>
+                        </div>
+                        <div class="modal-body" style="height:400px">
+                            <div class="form-group">
+                                所在公司：
+                                <select class="form-control" id="iCompany" data-bind="value: iCompanyId">
+                                    <option value="-">请选择</option>
+                                    @{
+                                        foreach (var item in ViewBag.Companies)
+                                        {
+                                            <option value="@item.iGuid">@item.iName</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                项目名称：
+                                <select class="form-control" id="iItemName" data-bind="value: iProjectId">
+                                    <option value="-">请选择</option>
+                                    @{
+                                        foreach (var item in ViewBag.Projects)
+                                        {
+                                            <option value="@item.iGuid">@item.iName</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group"> 工资发放年月：<input type="text" class="form-control" id="iYearMonth" data-bind="value: iYearMonth" placeholder="请输入工资发放年月"></div>
+                            <div class="form-group"> 备注：<input type="text" class="form-control" id="iNote" data-bind="value: iNote" placeholder="请输入备注"></div>
+
+                            <form style="margin-top:60px">
+                                <input type="file" name="txt_file" id="txt_file" multiple class="file-loading" />
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-primary" id="submitUpload">提交</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    document.onkeydown = function (e) {
+        e = e || window.event;
+        if (e.keyCode == 13) {
+            Search();
+        }
+    }
+    //bootstraptable 高度
+    function tableHeight() {
+        return $(window).height() * 0.86;
+    }
+    //json 日期转字符串
+    function ChangeDateFormat2YearMonth(jsondate) {
+        if (!jsondate) return "";
+        jsondate = jsondate.replace("/Date(", "").replace(")/", "");
+        if (jsondate.indexOf("+") > 0) {
+            jsondate = jsondate.substring(0, jsondate.indexOf("+"));
+        }
+        else if (jsondate.indexOf("-") > 0) {
+            jsondate = jsondate.substring(0, jsondate.indexOf("-"));
+        }
+
+        var date = new Date(parseInt(jsondate, 10));
+        var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+        var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+        return date.getFullYear()
+        + "-"
+        + month
+    }
+    
+    //查询
+    function Search() {
+        $('#mytab').bootstrapTable('refresh');
+    }
+    function ViewModel() {
+        var self = this;
+        self.iGuid = ko.observable("");
+        self.iCompanyId = ko.observable("");
+        self.iProjectId = ko.observable("");
+        self.iYearMonth = ko.observable("");
+        self.iFileName = ko.observable("");
+        self.iUrl = ko.observable("");
+        self.iNote = ko.observable("");
+    }
+    $(function () {
+        //重置函数
+        $("div.icon-reorder").click(function () {
+            $('#mytab').bootstrapTable('resetView', {
+                height: tableHeight()
+            })
+        })
+        //根据窗口调整表格高度
+        $(window).resize(function () {
+            $('#mytab').bootstrapTable('resetView', {
+                height: tableHeight()
+            })
+        })
+        //Enter 键函数
+        document.onkeydown = function (e) {
+            e = e || window.event;
+            if (e.keyCode == 13) {
+                Search();
+            }
+        }
+        //禁用功能
+        if (window.userType != "超级管理员") {
+            $("#iCompanyId").attr("disabled", true);
+            $("#iProjectId").attr("disabled", true);
+        }
+        
+        //查询日期选择绑定
+        $("#sYearMonth").datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            clearBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 3,
+            minView: 3,
+            forceParse: 0,
+            format: "yyyy-mm",
+            pickerPosition: "bottom-left"
+        }).on("click", function (ev) {
+            $("#sYearMonth").datetimepicker("setEndDate", $("#sYearMonth2").val());
+        });
+
+        $("#sYearMonth2").datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            clearBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 3,
+            minView: 3,
+            forceParse: 0,
+            format: "yyyy-mm",
+            pickerPosition: "bottom-left"
+        }).on("click", function (ev) {
+            $("#sYearMonth2").datetimepicker("setStartDate", $("#sYearMonth").val());
+        });
+        //弹窗日期绑定
+        $('#iYearMonth').datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            clearBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 3,
+            minView: 3,
+            forceParse: 0,
+            format: "yyyy-mm",
+        });
+        
+        //必填校验
+        $("#iCompanyId").change(function () {
+            var value = $("#iCompanyId").val();
+            if (value != "-") {
+                $('#iCompanyId').removeClass("warning");
+            }
+            else {
+                $('#iCompanyId').addClass("warning");
+            }
+        });
+        $("#iProjectId").change(function () {
+            var value = $("#iProjectId").val();
+            if (value != "-") {
+                $('#iProjectId').removeClass("warning");
+            }
+            else {
+                $('#iProjectId').addClass("warning");
+            }
+        });
+
+        $("#iYearMonth").change(function () {
+            var value = $("#iYearMonth").val();
+            if (value.length > 0) {
+                $('#iYearMonth').removeClass("warning");
+            }
+            else {
+                $('#iYearMonth').addClass("warning");
+            }
+        });
+
+        $('#mytab').bootstrapTable({
+            url: "/FinanceAjax/GetAllSalary",//数据源
+            dataField: "rows",//服务端返回数据键值 就是说记录放的键值是rows，分页时使用总记录数的键值为total
+            sortName: "iUpdatedOn",//排序列
+            sortOrder: "desc",
+            cache: false,
+            striped: true,//條紋行
+            clickToSelect: true,//选择行即选择checkbox
+            searchOnEnterKey: false,//ENTER键搜索
+            height: tableHeight(),//高度调整
+            search: true,//是否搜索
+            pagination: true,//是否分页
+            pageSize: 15,//单页记录数
+            pageNumber: 1,//起始页
+            pageList: [15, 100, 500, 1000, 10000],//分页步进值
+            sidePagination: "server",//服务端分页
+            contentType: "application/x-www-form-urlencoded",//请求数据内容格式 默认是 application/json 自己根据格式自行服务端处理
+            dataType: "json",//期待返回数据类型
+            method: "post",//请求方式
+            searchAlign: "left",//查询框对齐方式
+            queryParamsType: "limit",//查询参数组织方式
+            showRefresh: false,//刷新按钮
+            showColumns: true,//列选择按钮
+            buttonsAlign: "left",//按钮对齐方式
+            toolbar: "#toolbar",//指定工具栏
+            toolbarAlign: "right",//工具栏对齐方式
+            queryParams: function getParams(params) {
+                params.sCompanyId = $("#companySelect").val();
+                params.sProjectId = $("#projectSelect").val();
+                params.sType = $("#sType").val();
+                params.sApplicant = $("#sApplicant").val();
+                params.sChecked = $("#sChecked").val();
+                params.sDate = $("#sDate").val();
+                params.sDate2 = $("#sDate2").val();
+                return params;
+            },
+            columns: [
+                 {
+                     field: 'Number',
+                     title: '序号',
+                     formatter: function (value, row, index) {
+                         return ($('#mytab').bootstrapTable('getOptions').pageNumber - 1) * $('#mytab').bootstrapTable('getOptions').pageSize + index + 1;
+                     }
+                 },
+                 { field: "iGuid", title: "iGuid", visible: false, switchable: false }
+                 , { field: "iCompanyId", title: "公司", visible: false }
+                 , { field: "iProjectId", title: "项目", visible: false }
+                 , {
+                     field: "iYearMonth", title: "工资发放年月", sortable: true, formatter: function (value, row, index) {
+                         return ChangeDateFormat2YearMonth(value);
+                     }
+                 }
+                 , { field: "iNote", title: "备注", sortable: true }
+                 , { field: "iOperation", title: "操作" }
+            ],
+            onClickRow: function (row, $element) {
+                //$element是当前tr的jquery对象
+                //$element.css("background-color", "green");
+            },//单击row事件
+            onDblClickRow: function (row, $element) {
+            },
+            locale: "zh-CN",//中文支持,
+            detailView: false, //是否显示详情折叠
+            detailFormatter: function (index, row, element) {
+                var html = '';
+                $.each(row, function (key, val) {
+                    html += "<p>" + key + ":" + val + "</p>"
+                });
+                return html;
+            }
+        });
+
+        if (window.userType != "普通用户") {
+            $('#mytab').bootstrapTable('showColumn', 'iCompanyId');
+            $('#mytab').bootstrapTable('showColumn', 'iProjectId');
+        }
+        //初始化fileinput
+        var FileInput = function () {
+            var oFile = new Object();
+            //初始化fileinput控件（第一次初始化）
+            oFile.Init = function (ctrlName, uploadUrl) {
+                var control = $('#' + ctrlName);
+                //初始化上传控件的样式
+                control.fileinput({
+                    language: 'zh', //设置语言
+                    uploadUrl: uploadUrl, //上传的地址
+                    allowedFileExtensions: ['xls', 'xlsx'],//接收的文件后缀
+                    showUpload: false, //是否显示上传按钮
+                    showCaption: false,//是否显示标题
+                    browseClass: "btn btn-primary", //按钮样式
+                    //dropZoneEnabled: false,//是否显示拖拽区域
+                    //minImageWidth: 50, //图片的最小宽度
+                    //minImageHeight: 50,//图片的最小高度
+                    //maxImageWidth: 1000,//图片的最大宽度
+                    //maxImageHeight: 1000,//图片的最大高度
+                    maxFileSize: 0,//单位为kb，如果为0表示不限制文件大小
+                    //minFileCount: 0,
+                    maxFileCount: 1, //表示允许同时上传的最大文件个数
+                    enctype: 'multipart/form-data',
+                    validateInitialCount: true,
+                    previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
+                    msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！",
+                });
+                //导入文件上传完成之后的事件
+                $("#txt_file").on("fileuploaded", function (event, data, previewId, index) {
+                    $("#importModal").modal("hide");
+                    if (!data.response.success) {
+                        toastr.error(data.response.msg);
+                        console.log(data.response.msg);
+                        return;
+                    }
+                    else {
+                        myViewModel.iFileName($("#txt_file").val());
+                        myViewModel.iUrl(data.response.msg);
+                    }
+                    //刷新表格
+                    $('#mytab').bootstrapTable('refresh');
+                });
+            }
+            return oFile;
+        };
+        var oFileInput = new FileInput();
+        oFileInput.Init("txt_file", "/FinanceAjax/UploadSalary");
+
+        $("#submitUpload").click(function () {
+            var warnings = $(".warning");
+            if (warnings && warnings.length > 0) {
+                toastr.error('数据验证未通过！');
+                return;
+            }
+
+            $(this).attr({ "disabled": "disabled" });
+            var param = {};
+            param.jsonString = ko.toJSON(myViewModel);
+            $.ajax({
+                url: "/FinanceAjax/SalarySaveChanges",
+                type: "POST",
+                data: param,
+                dataType: 'text',
+                success: function (data) {
+                    if (data == "success") {
+                        toastr.success('保存成功！');
+                        $('#mytab').bootstrapTable('refresh');
+                    }
+                    else {
+                        console.log(data);
+                        toastr.error('保存数据失败！');
+                    }
+                    $('#addModal').modal('toggle');
+                    $("#submitUpload").removeAttr("disabled");
+                }
+            });
+        });
+
+        var myViewModel = new ViewModel();
+        ko.applyBindings(myViewModel);
+    })
+</script>
