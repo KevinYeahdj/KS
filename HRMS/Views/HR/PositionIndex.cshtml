@@ -625,6 +625,20 @@
 , { field: "iWorkPlace", title: "所在工作地", visible: false, switchable: false }
 
 , { field: "iEmpType", title: "人员类别", sortable: true }
+, { field: "iEmployeeStatus", title: "员工状态", sortable: true }
+, {
+    field: "iEmployeeDate", title: "入职时间", sortable: true, formatter: function (value, row, index) {
+        return ChangeDateFormat(value);
+    }
+}, {
+    field: "iResignDate", title: "离职日期", sortable: true, formatter: function (value, row, index) {
+        return ChangeDateFormat(value);
+    }
+}, { field: "iResignType", title: "离职类型", sortable: true }
+, { field: "iResignReason", title: "离职原因（公司）", sortable: true }
+, { field: "iIsReturnFee", title: "是否返费", sortable: true }
+, { field: "iSocialInsurancePaidWilling", title: "员工保险缴纳意愿", sortable: true }
+, { field: "iProvidentFundPaidWilling", title: "员工公积金缴纳意愿", sortable: true }
 , { field: "iPosition", title: "岗位", sortable: true }
 , { field: "iManageLevel", title: "管理层级", sortable: true }
 , { field: "iProjectGroup", title: "所在项目组", sortable: true }
@@ -650,12 +664,11 @@
         return year + "年" + month + "月";
     }
 }
-, { field: "iEmployeeStatus", title: "员工状态", sortable: true }
-, {
-    field: "iEmployeeDate", title: "入职时间", sortable: true, formatter: function (value, row, index) {
-        return ChangeDateFormat(value);
-    }
-}
+,{ field: "iFirstDep", title: "所属一级部门", sortable: true }
+, { field: "iSecondDep", title: "所属二级部门", sortable: true }
+, { field: "iThirdDep", title: "所属三级部门", sortable: true }
+, { field: "iFourthDep", title: "所属四级部门", sortable: true }
+, { field: "iFifthDep", title: "所属五级部门", sortable: true }
 , { field: "iPositiveDate", title: "转正时间", sortable: true }
 , { field: "iContractType", title: "合同类型", sortable: true }
 , { field: "iContractSignStatus", title: "合同签订情况", sortable: true }
@@ -665,23 +678,8 @@
         return ChangeDateFormat(value);
     }
 }
-, { field: "iResignType", title: "离职类型", sortable: true }
-, {
-    field: "iResignDate", title: "离职日期", sortable: true, formatter: function (value, row, index) {
-        return ChangeDateFormat(value);
-    }
-}
-, { field: "iResignReason", title: "离职原因（公司）", sortable: true }
 , { field: "iFileLocation", title: "档案位置", sortable: true }
-, { field: "iIsReturnFee", title: "是否返费", sortable: true }
-, { field: "iSocialInsurancePaidWilling", title: "员工保险缴纳意愿", sortable: true }
-, { field: "iProvidentFundPaidWilling", title: "员工公积金缴纳意愿", sortable: true }
 , { field: "iIsCommercialInsurancePaid", title: "是否缴纳商业保险", sortable: true }
-,{ field: "iFirstDep", title: "所属一级部门", sortable: true }
-, { field: "iSecondDep", title: "所属二级部门", sortable: true }
-, { field: "iThirdDep", title: "所属三级部门", sortable: true }
-, { field: "iFourthDep", title: "所属四级部门", sortable: true }
-, { field: "iFifthDep", title: "所属五级部门", sortable: true }
 , { field: "iPositionInfoNote", title: "职位信息备注", sortable: true }
 
 

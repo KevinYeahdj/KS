@@ -69,6 +69,33 @@ namespace HRMS.Data.Manager
             }
         }
 
+        public void Update(SalaryEntity entity)
+        {
+            entity.iUpdatedOn = DateTime.Now;
+            IDbSession session = SessionFactory.CreateSession();
+            try
+            {
+                session.BeginTrans();
+                Repository.Update<SalaryEntity>(session.Connection, entity, session.Transaction);
+                session.Commit();
+            }
+            catch (System.Exception)
+            {
+                session.Rollback();
+                throw;
+            }
+            finally
+            {
+                session.Dispose();
+            }
+        }
+
+        public SalaryEntity FirstOrDefault(string guid)
+        {
+            string sql = @"select * from Salary where iGuid=@id and iIsDeleted =0 and iStatus =1";
+            return Repository.Query<SalaryEntity>(sql, new { id = guid }).FirstOrDefault();
+        }
+
         public List<SalaryEntity> GetSearch(string userType, Dictionary<string, string> para, string sort, string order, int offset, int pageSize, out int total)
         {
             if (userType != "普通用户")

@@ -15,7 +15,7 @@
             <div id="toolbar" class="toolbar">
                 <div style="float: left; margin-left: 10px; "><span>工资发放年月：</span></div><div style="float: left; margin-left: 10px; width: 16%"><input id="sYearMonth" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 16%"><input id="sYearMonth2" class="form-control" /></div>
                 <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" onclick="Search()">查询</div>
-                <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" data-toggle="modal" data-target="#importModal">工资导入</div>
+                <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" data-toggle="modal" data-target="#importModal" id="importSalary">工资导入</div>
             </div>
 
             <table id="mytab" class="table table-hover"></table>
@@ -29,7 +29,7 @@
                         <div class="modal-body" style="height:400px">
                             <div class="form-group">
                                 所在公司：
-                                <select class="form-control" id="iCompany" data-bind="value: iCompanyId">
+                                <select class="form-control" id="iCompanyId" data-bind="value: iCompanyId">
                                     <option value="-">请选择</option>
                                     @{
                                         foreach (var item in ViewBag.Companies)
@@ -41,7 +41,7 @@
                             </div>
                             <div class="form-group">
                                 项目名称：
-                                <select class="form-control" id="iItemName" data-bind="value: iProjectId">
+                                <select class="form-control" id="iProjectId" data-bind="value: iProjectId">
                                     <option value="-">请选择</option>
                                     @{
                                         foreach (var item in ViewBag.Projects)
@@ -98,7 +98,7 @@
         + "-"
         + month
     }
-    
+
     //查询
     function Search() {
         $('#mytab').bootstrapTable('refresh');
@@ -112,7 +112,14 @@
         self.iFileName = ko.observable("");
         self.iUrl = ko.observable("");
         self.iNote = ko.observable("");
+        self.iCreatedOn = ko.observable("");
+        self.iCreatedBy = ko.observable("");
+        self.iUpdatedOn = ko.observable("");
+        self.iUpdatedBy = ko.observable("");
+        self.iStatus = ko.observable("1");
+        self.iIsDeleted = ko.observable("0");
     }
+
     $(function () {
         //重置函数
         $("div.icon-reorder").click(function () {
@@ -138,7 +145,7 @@
             $("#iCompanyId").attr("disabled", true);
             $("#iProjectId").attr("disabled", true);
         }
-        
+
         //查询日期选择绑定
         $("#sYearMonth").datetimepicker({
             language: 'zh-CN',
@@ -181,7 +188,7 @@
             forceParse: 0,
             format: "yyyy-mm",
         });
-        
+
         //必填校验
         $("#iCompanyId").change(function () {
             var value = $("#iCompanyId").val();
@@ -211,7 +218,6 @@
                 $('#iYearMonth').addClass("warning");
             }
         });
-
         $('#mytab').bootstrapTable({
             url: "/FinanceAjax/GetAllSalary",//数据源
             dataField: "rows",//服务端返回数据键值 就是说记录放的键值是rows，分页时使用总记录数的键值为total
@@ -241,11 +247,8 @@
             queryParams: function getParams(params) {
                 params.sCompanyId = $("#companySelect").val();
                 params.sProjectId = $("#projectSelect").val();
-                params.sType = $("#sType").val();
-                params.sApplicant = $("#sApplicant").val();
-                params.sChecked = $("#sChecked").val();
-                params.sDate = $("#sDate").val();
-                params.sDate2 = $("#sDate2").val();
+                params.sYearMonth = $("#sYearMonth").val();
+                params.sYearMonth2 = $("#sYearMonth2").val();
                 return params;
             },
             columns: [
@@ -263,9 +266,20 @@
                      field: "iYearMonth", title: "工资发放年月", sortable: true, formatter: function (value, row, index) {
                          return ChangeDateFormat2YearMonth(value);
                      }
+                 }, {
+                     field: "iFileName", title: "文件名", sortable: true
                  }
                  , { field: "iNote", title: "备注", sortable: true }
-                 , { field: "iOperation", title: "操作" }
+                 , {
+                     field: "iOperation", title: "操作", align: "center", formatter: function (value, row, index) {
+                         if (window.userType == "普通用户") {
+                             return '<a href="/UploadSalary/' + row.iUrl + '">下载</a>';
+                         }
+                         else {
+                             return '<a href="/UploadSalary/' + row.iUrl + '">下载</a>&nbsp;&nbsp;<a href="#" onclick="RemoveItem(\'' + row.iGuid + '\')">删除</a>';
+                         }
+                     }
+                 }
             ],
             onClickRow: function (row, $element) {
                 //$element是当前tr的jquery对象
@@ -317,18 +331,15 @@
                 });
                 //导入文件上传完成之后的事件
                 $("#txt_file").on("fileuploaded", function (event, data, previewId, index) {
-                    $("#importModal").modal("hide");
                     if (!data.response.success) {
                         toastr.error(data.response.msg);
                         console.log(data.response.msg);
                         return;
                     }
                     else {
-                        myViewModel.iFileName($("#txt_file").val());
+                        myViewModel.iFileName(data.response.msg.substr(15));
                         myViewModel.iUrl(data.response.msg);
                     }
-                    //刷新表格
-                    $('#mytab').bootstrapTable('refresh');
                 });
             }
             return oFile;
@@ -336,10 +347,37 @@
         var oFileInput = new FileInput();
         oFileInput.Init("txt_file", "/FinanceAjax/UploadSalary");
 
+        $("#importSalary").click(function () {
+            $('.fileinput-remove:not([disabled])').trigger("click");  //移除附件
+            myViewModel.iGuid("");
+            myViewModel.iProjectId('@HRMS.WEB.Utils.SessionHelper.CurrentUser.CurrentProject');
+            myViewModel.iCompanyId('@HRMS.WEB.Utils.SessionHelper.CurrentUser.CurrentCompany');
+            myViewModel.iYearMonth("");
+            myViewModel.iFileName("");
+            myViewModel.iNote("");
+            myViewModel.iCreatedOn("");
+            myViewModel.iCreatedBy("");
+            myViewModel.iUpdatedOn("");
+            myViewModel.iUpdatedBy("");
+            myViewModel.iStatus("1");
+            myViewModel.iIsDeleted("0");
+            if ($("#iCompanyId").val() == "-") {
+                $('#iCompanyId').addClass("warning");
+            }
+            if ($("#iProjectId").val() == "-") {
+                $('#iProjectId').addClass("warning");
+            }
+            $('#iYearMonth').addClass("warning");
+        });
+
         $("#submitUpload").click(function () {
             var warnings = $(".warning");
             if (warnings && warnings.length > 0) {
                 toastr.error('数据验证未通过！');
+                return;
+            }
+            if (myViewModel.iFileName() == "") {
+                toastr.error('请上传工资文件！');
                 return;
             }
 
@@ -360,7 +398,7 @@
                         console.log(data);
                         toastr.error('保存数据失败！');
                     }
-                    $('#addModal').modal('toggle');
+                    $('#importModal').modal('toggle');
                     $("#submitUpload").removeAttr("disabled");
                 }
             });
@@ -368,5 +406,29 @@
 
         var myViewModel = new ViewModel();
         ko.applyBindings(myViewModel);
+
+        window.RemoveItem = function (iguid) {
+            if (confirm("确认要删除？")) {
+                var param = {};
+                myViewModel.iGuid(iguid);
+                param.jsonString = ko.toJSON(myViewModel);
+                $.ajax({
+                    url: "/FinanceAjax/SalaryRemove",
+                    type: "POST",
+                    data: param,
+                    dataType: 'text',
+                    success: function (data) {
+                        if (data == "success") {
+                            toastr.success('删除成功！');
+                            $('#mytab').bootstrapTable('refresh');
+                        }
+                        else {
+                            console.log(data);
+                            toastr.error('删除数据失败！');
+                        }
+                    }
+                });
+            }
+        }
     })
 </script>

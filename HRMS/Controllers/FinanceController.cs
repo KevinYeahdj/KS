@@ -684,7 +684,7 @@ namespace HRMS.Controllers
                 return e.ToString();
             }
         }
-        #endregion
+        #endregion-
 
         #region  //工资信息
         public void GetAllSalary()
@@ -707,7 +707,7 @@ namespace HRMS.Controllers
 
                 foreach (string para in HttpContext.Request.Params.Keys)
                 {
-                    if (para.StartsWith("s") && (JournalManager.JournalDic.ContainsValue("i" + para.Substring(1, para.Length - 1)) || (para.Length > 2 && JournalManager.JournalDic.ContainsValue("i" + para.Substring(1, para.Length - 2)))))
+                    if (para.StartsWith("s") && (SalaryManager.SalaryDic.ContainsValue("i" + para.Substring(1, para.Length - 1)) || (para.Length > 2 && SalaryManager.SalaryDic.ContainsValue("i" + para.Substring(1, para.Length - 2)))))
                     {
                         bizParaDicTemp.Add("i" + para.Substring(1, para.Length - 1), HttpContext.Request.Params[para]);
                     }
@@ -718,7 +718,7 @@ namespace HRMS.Controllers
                         continue;
                     if (bizParaDicTemp.ContainsKey(item.Key + "2"))
                     {
-                        bizParaDic.Add(item.Key + "[d]", item.Value + "§" + bizParaDicTemp[item.Key + "2"]);
+                        bizParaDic.Add(item.Key + "[d]", (string.IsNullOrEmpty(item.Value) ? "" : (item.Value + "-01")) + "§" + ((string.IsNullOrEmpty(bizParaDicTemp[item.Key + "2"])) ? "" : (bizParaDicTemp[item.Key + "2"] + "-01")));
                     }
                     else
                     {
@@ -767,7 +767,7 @@ namespace HRMS.Controllers
                 var oFile = HttpContext.Request.Files["txt_file"];
                 //保存文件
                 string newFile = DateTime.Now.ToString("yyyyMMddHHmmss") + "_" + oFile.FileName;
-                string path = Server.MapPath("~") + "UploadFiles\\" + newFile;
+                string path = Server.MapPath("~") + "UploadSalary\\" + newFile;
                 oFile.SaveAs(path);
 
                 string errorLog = "";
@@ -803,6 +803,30 @@ namespace HRMS.Controllers
                     entity.iCreatedBy = SessionHelper.CurrentUser.UserName;
                     entity.iUpdatedBy = SessionHelper.CurrentUser.UserName;
                     service.Insert(entity);
+                }
+                return "success";
+            }
+            catch (Exception e)
+            {
+                return e.ToString();
+            }
+        }
+
+        public string SalaryRemove(string jsonString)
+        {
+
+            try
+            {
+                JsonSerializerSettings st = new JsonSerializerSettings();
+                st.DateTimeZoneHandling = DateTimeZoneHandling.Local;
+                SalaryEntity entity = JsonConvert.DeserializeObject<SalaryEntity>(jsonString, st);
+                SalaryManager service = new SalaryManager();
+                if (!string.IsNullOrEmpty(entity.iGuid))
+                {
+                    entity = service.FirstOrDefault(entity.iGuid);
+                    entity.iUpdatedBy = SessionHelper.CurrentUser.UserName;
+                    entity.iIsDeleted = 1;
+                    service.Update(entity);
                 }
                 return "success";
             }

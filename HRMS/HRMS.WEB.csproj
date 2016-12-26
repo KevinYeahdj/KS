@@ -3632,6 +3632,7 @@
     <Folder Include="App_Data\" />
     <Folder Include="FlatLab\assets\bootstrap-datetimepicker\build\" />
     <Folder Include="FlatLab\assets\jquery-file-upload\server\php\files\thumbnail\" />
+    <Folder Include="UploadSalary\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
