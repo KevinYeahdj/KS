@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "流水账审批";
+    ViewBag.Title = "流水账申请查看";
     Layout = "~/Views/Shared/_LayoutMain.cshtml";
 }
 <style>
@@ -15,8 +15,6 @@
             <div id="toolbar" class="toolbar">
                 <div style="float: left; margin-left: 10px"><span>合计：</span></div>
                 <div style="float: left; margin-left: 10px; width: 30%"><input id="totalThis" class="form-control" readonly="readonly" value="0" /></div>
-                <div style="float: right; margin-left: 10px; margin-top: 5px; " class="btn btn-primary" id="agreeSubmit">同意</div>
-                <div style="float: right; margin-left: 10px; margin-top: 5px; " class="btn btn-primary" id="repulseSubmit">退回</div>
 
             </div>
 
@@ -257,48 +255,6 @@
                     }
                 })
             }
-        });
-
-        var approveAction = function (approve, approvecn) {
-            var para = {};
-            var conditions = {};
-            conditions.sys_approve = approve;
-            conditions.sys_approvecn = approvecn;
-            conditions.sys_feedback = "提交申请";
-            para.Conditions = conditions;
-            para.ProcessInstanceID = Request["piid"]; //important
-            para.AppName = "";
-            para.AppInstanceID = Request["appno"]; //important
-            para.ProcessGUID = Request["pguid"];  //申请时必要 important
-            para.UserID = "@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId";
-            para.UserName = "";
-            para.TaskID = Request["taskid"];  //important
-
-            $.ajax({
-                url: "/BPMAjax/StartApproval",
-                type: "POST",
-                data: para,
-                dataType: 'text',
-                success: function (result) {
-                    result = $.parseJSON(result);
-                    if (result.success) {
-                        toastr.success('审批成功');
-                        //$('#mytab').bootstrapTable('removeAll');
-                        setTimeout("window.location.href='/BPM/done'", 3000);
-                    }
-                    else {
-                        toastr.error('审批失败！');
-                    }
-                }
-            });
-        }
-        $("#agreeSubmit").click(function () {
-            $(this).attr({ "disabled": "disabled" });
-            approveAction("1","同意");
-        });
-        $("#repulseSubmit").click(function () {
-            $(this).attr({ "disabled": "disabled" });
-            approveAction("-1","退回");
         });
     })
 </script>

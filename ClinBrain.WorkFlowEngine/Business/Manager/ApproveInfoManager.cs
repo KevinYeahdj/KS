@@ -76,5 +76,24 @@ namespace ClinBrain.WorkFlowEngine.Business.Manager
 
         }
 
+        public List<ApproveInfo> GetActiveSteps(string appNo)
+        {
+            List<ApproveInfo> result = new List<ApproveInfo>();
+            var strSQL = @"SELECT 
+                           ActivityName, AssignedToUserName,AssignedToUserID
+                           FROM WfTasks
+                           where TaskState =1 and AppInstanceID='" + appNo + "'";
+            DataSet ds = Repository.Query(strSQL);
+            if (ds.Tables[0].Rows.Count > 0)
+            {
+                foreach (DataRow dr in ds.Tables[0].Rows)
+                {
+                    result.Add(new ApproveInfo { StepName = dr[0].ToString(), ApproverName = dr[1].ToString(), ApproverId = dr[2].ToString(), AppNo="active"  });
+                }
+                return result;
+            }
+            else return null;
+        }
+
     }
 }

@@ -401,8 +401,8 @@
                  { field: "iEmpNo", title: "工号", sortable: true }
 , { field: "iName", title: "姓名", sortable: true }
 , { field: "iIdCard", title: "身份证号", sortable: true }
-,{ field: "iGuid", title: "iGuid", visible: false, switchable: false }
-                 , { field: "iItemName", title: "项目名称", visible: false }
+, { field: "iGuid", title: "iGuid", visible: false, switchable: false}
+, { field: "iItemName", title: "项目名称", visible: false }
 , { field: "iCompany", title: "所在公司", visible: false }
 , { field: "iWorkPlace", title: "所在工作地", visible: false, switchable: false }
 , { field: "iWageBank", title: "开户行", sortable: true }
@@ -410,7 +410,7 @@
 , { field: "iWageAccount", title: "工资帐号", sortable: true }
 , { field: "iSocialSecurityAccount", title: "社保账号", sortable: true }
 , { field: "iProvidentAccount", title: "公积金账号", sortable: true }
-, { field: "iAccountInfoNote", title: "账户信息备注", sortable: true }
+, { field: "iAccountInfoNote", title: "账户信息备注", sortable: true}
 
 
             ],
@@ -540,7 +540,7 @@
                 });
                 return html;
             },
-            fixedColumns: true,
+            fixedColumns: false,
             fixedNumber: 4
         });
 

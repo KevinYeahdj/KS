@@ -31,7 +31,8 @@ namespace HRMS.Data.Manager
                 dic.Add("是否核销", "iChecked");
                 dic.Add("核销人", "iCheckedBy");
                 dic.Add("支付日期", "iPaidDate");
-                dic.Add("备注", "iNote");
+                dic.Add("备注", "iNote"); 
+                dic.Add("流程单号", "iAppNo");
 
                 dic.Add("iCreatedOn", "iCreatedOn");
                 dic.Add("iCreatedBy", "iCreatedBy");
@@ -61,6 +62,36 @@ namespace HRMS.Data.Manager
             {
                 session.BeginTrans();
                 Repository.Insert<JournalEntity>(session.Connection, entity, session.Transaction);
+                session.Commit();
+            }
+            catch (System.Exception)
+            {
+                session.Rollback();
+                throw;
+            }
+            finally
+            {
+                session.Dispose();
+            }
+        }
+
+        public void BatchInsert(List<JournalEntity> entities)
+        {
+            IDbSession session = SessionFactory.CreateSession();
+            try
+            {
+                session.BeginTrans();
+
+                foreach (var entity in entities)
+                {
+                    if (string.IsNullOrEmpty(entity.iGuid))
+                        entity.iGuid = Guid.NewGuid().ToString();
+                    entity.iCreatedOn = DateTime.Now;
+                    entity.iUpdatedOn = DateTime.Now;
+                    entity.iIsDeleted = 0;
+                    entity.iStatus = 1;
+                    Repository.Insert<JournalEntity>(session.Connection, entity, session.Transaction);
+                }
                 session.Commit();
             }
             catch (System.Exception)

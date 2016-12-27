@@ -22,6 +22,7 @@ namespace HRMS.Data.Entity
         public string iCheckedBy { get; set; } //核销人
         public DateTime? iPaidDate { get; set; } //支付日期
         public string iNote { get; set; } //备注 
+        public string iAppNo { get; set; } //流程单号 
 
         public DateTime? iCreatedOn { get; set; }  //创建时间
         public string iCreatedBy { get; set; } //创建人

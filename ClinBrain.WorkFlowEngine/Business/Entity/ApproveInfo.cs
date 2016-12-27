@@ -22,6 +22,6 @@ namespace ClinBrain.WorkFlowEngine.Business.Entity
         public string ApproveType { get; set; }
         public string ApproveTypeName { get; set; }
         public string FeedBack { get; set; }
-        public DateTime CreateTime { get; set; }
+        public DateTime? CreateTime { get; set; }
     }
 }

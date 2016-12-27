@@ -10,9 +10,11 @@ using ClinBrain.WorkFlowEngine.Business.Entity;
 using ClinBrain.WorkFlowEngine.Business.Manager;
 using ClinBrain.WorkFlowEngine.Common;
 using ClinBrain.WorkFlowEngine.Service;
+using HRMS.Data.Entity;
 using HRMS.Data.Manager;
 using HRMS.WEB.Models;
 using HRMS.WEB.Utils;
+using Newtonsoft.Json;
 
 namespace HRMS.Controllers
 {
@@ -54,6 +56,16 @@ namespace HRMS.Controllers
             ViewBag.Projects = projects;
             return View();
         }
+
+        public ActionResult JournalReApplication()
+        {
+            DicManager dm = new DicManager();
+            var companies = dm.GetAllCompanies();
+            ViewBag.Companies = companies;
+            var projects = dm.GetAllProjects();
+            ViewBag.Projects = projects;
+            return View();
+        }
         public ActionResult JournalApprove()
         {
             DicManager dm = new DicManager();
@@ -63,7 +75,17 @@ namespace HRMS.Controllers
             ViewBag.Projects = projects;
             return View();
         }
-        
+
+        public ActionResult JournalView()
+        {
+            DicManager dm = new DicManager();
+            var companies = dm.GetAllCompanies();
+            ViewBag.Companies = companies;
+            var projects = dm.GetAllProjects();
+            ViewBag.Projects = projects;
+            return View();
+        }
+
     }
 
     public class BPMAjaxController : Controller
@@ -188,8 +210,53 @@ namespace HRMS.Controllers
             }
         }
 
+        public void GetFlowLogs()
+        {
+            try
+            {
+                //用于序列化实体类的对象  
+                JavaScriptSerializer jss = new JavaScriptSerializer();
+                jss.MaxJsonLength = Int32.MaxValue;
+                //请求中携带的条件  
+                string order = HttpContext.Request.Params["order"];
+                string sort = HttpContext.Request.Params["sort"];
+                int offset = Convert.ToInt32(HttpContext.Request.Params["offset"]);  //0
+                int pageSize = Convert.ToInt32(HttpContext.Request.Params["limit"]);
+                string appno = HttpContext.Request.Params["appno"];
+
+                ApproveInfoManager appma = new ApproveInfoManager();
+                List<ApproveInfo> approveinfos = appma.GetAllList(appno);
+                List<ApproveInfo> activeSteps = appma.GetActiveSteps(appno);
+                List<ApproveInfo> list = new List<ApproveInfo>();
+                if (activeSteps != null) 
+                    list.AddRange(activeSteps);
+                if (approveinfos != null)
+                    list.AddRange(approveinfos);
+
+                int total = list.Count();
+                //给分页实体赋值  
+                PageModels<ApproveInfo> model = new PageModels<ApproveInfo>();
+                model.total = total;
+                if (total % pageSize == 0)
+                    model.page = total / pageSize;
+                else
+                    model.page = (total / pageSize) + 1;
+
+                model.rows = list;
+
+                //将查询结果返回  
+                HttpContext.Response.Write(jss.Serialize(model));
+            }
+            catch (Exception ex)
+            {
+                log4net.ILog log = log4net.LogManager.GetLogger(this.GetType());
+                log.Error(ex);
+            }
+        }
+
         public JsonResult StartApplication(WfAppRunner initiator)
         {
+            string appNo = "";
             try
             {
                 OrganizationService oc = new OrganizationService();
@@ -197,14 +264,31 @@ namespace HRMS.Controllers
                 initiator.UserName = ur == null ? "" : ur.Name;
 
                 IWorkflowService service = new WorkflowService();
-                string result = service.StartApplication(initiator);
-                if (result == "fail")
+                appNo = service.StartApplication(initiator);
+                if (appNo == "fail")
                 {
                     return new JsonResult { Data = new { success = false, msg = "申请出错!" } };
                 }
                 else
                 {
-                    return new JsonResult { Data = new { success = true, msg = result } };
+
+                    SaveApproveInfo(initiator);
+                    //保存业务数据
+                    if (SaveBusinessDataForBPM(initiator.Other, initiator.ProcessGUID, appNo))
+                    {
+                        return new JsonResult { Data = new { success = true, msg = appNo } };
+                    }
+                    else
+                    {
+                        initiator.AppInstanceID = appNo;
+                        string result = service.CancelApplication(initiator); //保存业务数据失败就回退
+                        if (result != "success")
+                        {
+                            log4net.ILog log = log4net.LogManager.GetLogger(this.GetType());
+                            log.Error(result);
+                        }
+                        return new JsonResult { Data = new { success = false, msg = "申请出错!" } };
+                    }
                 }
             }
             catch (Exception e)
@@ -267,6 +351,29 @@ namespace HRMS.Controllers
             approveInfo.StepName = runner.CurrentStepName;
             ApproveInfoManager apim = new ApproveInfoManager();
             apim.Insert(approveInfo);
+        }
+
+        private bool SaveBusinessDataForBPM(string buzJson, string pguid, string appNo)
+        {
+            bool result = false;
+            if (pguid == "09e8624f-ff2d-cc98-0eaa-6a11f3f7d9bc")
+            {
+                JournalManager service = new JournalManager();
+                JsonSerializerSettings st = new JsonSerializerSettings();
+                st.DateTimeZoneHandling = DateTimeZoneHandling.Local;
+                List<JournalEntity> entities = JsonConvert.DeserializeObject<List<JournalEntity>>(buzJson, st);
+
+                foreach (var entity in entities)
+                {
+                    entity.iGuid = Guid.NewGuid().ToString();
+                    entity.iCreatedBy = SessionHelper.CurrentUser.UserName;
+                    entity.iUpdatedBy = SessionHelper.CurrentUser.UserName;
+                    entity.iAppNo = appNo;
+                }
+                service.BatchInsert(entities);
+                result = true;
+            }
+            return result;
         }
 
     }
