@@ -159,6 +159,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\SecretController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -3627,6 +3628,7 @@
     <Content Include="Views\BPM\JournalApplication.cshtml" />
     <Content Include="Views\BPM\JournalApprove.cshtml" />
     <Content Include="Views\Finance\SalaryIndex.cshtml" />
+    <Content Include="Views\Secret\Contract.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
