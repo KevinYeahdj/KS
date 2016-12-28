@@ -13,8 +13,14 @@
         <div class="col-*-12">
 
             <div id="toolbar" class="toolbar">
-                <div style="float: left; margin-left: 10px"><span>合计：</span></div>
+                <div style="float: left; margin-left: -100px"><span>合计：</span></div>
                 <div style="float: left; margin-left: 10px; width: 30%"><input id="totalThis" class="form-control" readonly="readonly" value="0" /></div>
+
+                <div style="float: left; margin-left: 10px"><span>审批意见：</span></div>
+                <div style="float: left; margin-left: 10px; width: 30%"><input id="sys_feedback" class="form-control" /></div>
+
+
+
                 <div style="float: right; margin-left: 10px; margin-top: 5px; " class="btn btn-primary" id="agreeSubmit">同意</div>
                 <div style="float: right; margin-left: 10px; margin-top: 5px; " class="btn btn-primary" id="repulseSubmit">退回</div>
 
@@ -264,7 +270,7 @@
             var conditions = {};
             conditions.sys_approve = approve;
             conditions.sys_approvecn = approvecn;
-            conditions.sys_feedback = "提交申请";
+            conditions.sys_feedback = $("#sys_feedback").val();
             para.Conditions = conditions;
             para.ProcessInstanceID = Request["piid"]; //important
             para.AppName = "";

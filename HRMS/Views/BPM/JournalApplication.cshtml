@@ -465,6 +465,12 @@
         window.RemoveRow = function (iguid) {
             if (confirm("确认要删除？")) {
                 $('#mytab').bootstrapTable('removeByUniqueId', iguid);
+                var datas = $('#mytab').bootstrapTable('getData', true);
+                var sum = 0;
+                datas.forEach(function (data) {
+                    sum += parseFloat(data.iAmount);
+                })
+                $('#totalThis').val(sum);
             }
         }
     })

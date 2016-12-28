@@ -31,7 +31,7 @@ namespace HRMS.Data.Manager
                 dic.Add("是否核销", "iChecked");
                 dic.Add("核销人", "iCheckedBy");
                 dic.Add("支付日期", "iPaidDate");
-                dic.Add("备注", "iNote"); 
+                dic.Add("备注", "iNote");
                 dic.Add("流程单号", "iAppNo");
 
                 dic.Add("iCreatedOn", "iCreatedOn");
@@ -75,13 +75,20 @@ namespace HRMS.Data.Manager
             }
         }
 
+        //同一流程所有数据操作
         public void BatchInsert(List<JournalEntity> entities)
         {
+            if (entities == null || entities.Count == 0)
+                return;
             IDbSession session = SessionFactory.CreateSession();
             try
             {
                 session.BeginTrans();
-
+                var old = Repository.Query<JournalEntity>("select * from Journal where iisdeleted=0 and istatus=1 and iAppNo='" + entities[0].iAppNo + "'");
+                foreach (var item in old)
+                {
+                    Repository.Delete<JournalEntity>(session.Connection, item, session.Transaction);
+                }
                 foreach (var entity in entities)
                 {
                     if (string.IsNullOrEmpty(entity.iGuid))
@@ -112,7 +119,7 @@ namespace HRMS.Data.Manager
             try
             {
                 session.BeginTrans();
-                Repository.Update<JournalEntity>(session.Connection, entity, session.Transaction); 
+                Repository.Update<JournalEntity>(session.Connection, entity, session.Transaction);
                 if (record != null)
                 {
                     Repository.Insert<ModifyLogEntity>(session.Connection, record, session.Transaction);

@@ -228,7 +228,7 @@ namespace HRMS.Controllers
                 List<ApproveInfo> approveinfos = appma.GetAllList(appno);
                 List<ApproveInfo> activeSteps = appma.GetActiveSteps(appno);
                 List<ApproveInfo> list = new List<ApproveInfo>();
-                if (activeSteps != null) 
+                if (activeSteps != null)
                     list.AddRange(activeSteps);
                 if (approveinfos != null)
                     list.AddRange(approveinfos);
@@ -294,6 +294,40 @@ namespace HRMS.Controllers
             catch (Exception e)
             {
                 return new JsonResult { Data = new { success = false, msg = "申请出错!" } };
+            }
+        }
+
+        public JsonResult ReStartApplication(WfAppRunner initiator)
+        {
+            try
+            {
+                //保存业务数据
+                if (SaveBusinessDataForBPM(initiator.Other, initiator.ProcessGUID, initiator.AppInstanceID))
+                {
+                    OrganizationService oc = new OrganizationService();
+                    UserInfo ur = oc.GetUserInfoByLoginName(initiator.UserID);
+                    initiator.UserName = ur == null ? "" : ur.Name;
+
+                    IWorkflowService service = new WorkflowService();
+                    string result = service.StartApproval(initiator);
+                    if (result == "fail")
+                    {
+                        return new JsonResult { Data = new { success = false, msg = "提交出错!" } };
+                    }
+                    else
+                    {
+                        SaveApproveInfo(initiator);
+                        return new JsonResult { Data = new { success = true, msg = "提交成功!" } };
+                    }
+                }
+                else
+                {
+                    return new JsonResult { Data = new { success = false, msg = "提交出错!" } };
+                }
+            }
+            catch (Exception e)
+            {
+                return new JsonResult { Data = new { success = false, msg = "提交出错!" } };
             }
         }
 
