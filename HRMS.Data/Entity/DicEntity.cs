@@ -74,4 +74,37 @@ namespace HRMS.Data.Entity
         public int iStatus { get; set; }
         public int iIsDeleted { get; set; }
     }
+
+    /// <summary>
+    /// 流程人员对象
+    /// </summary>
+    [Table("BpmUser")]
+    public class BpmUserEntity
+    {
+        public string iGuid { get; set; }
+        public string iCompanyId { get; set; }
+        public string iProjectId { get; set; }
+        public string iFlowSign { get; set; }
+        public string iRoleName { get; set; }
+        public string iUsers { get; set; }
+        public string iNote { get; set; }
+        public DateTime? iCreatedOn { get; set; }
+        public string iCreatedBy { get; set; }
+        public DateTime? iUpdatedOn { get; set; }
+        public string iUpdatedBy { get; set; }
+        public int iStatus { get; set; }
+        public int iIsDeleted { get; set; }
+    }
+
+    public class BpmUserView
+    {
+        public string iGuid { get; set; }
+        public string iCompanyId { get; set; }
+        public string iCompanyName { get; set; }
+        public string iFlowSign { get; set; }
+        public string iRoleName { get; set; }
+        public string iUsers { get; set; }
+        public string iNote { get; set; }
+        public DateTime? iUpdatedOn { get; set; }
+    }
 }

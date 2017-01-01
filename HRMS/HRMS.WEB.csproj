@@ -3631,6 +3631,7 @@
     <Content Include="Views\Secret\Contract.cshtml" />
     <Content Include="Views\BPM\JournalView.cshtml" />
     <Content Include="Views\BPM\JournalReApplication.cshtml" />
+    <Content Include="Views\Manage\CompanyFlowUsersSetting.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

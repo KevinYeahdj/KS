@@ -721,7 +721,7 @@ namespace HRMS.Controllers
                 }
                 foreach (var kvp in keycolumns)
                 {
-                    if (sheet.GetRow(i).GetCell(kvp.Value) == null || sheet.GetRow(i).GetCell(kvp.Value).ToString() == "" || en.GetType().GetProperty(kvp.Key) == null)
+                    if (sheet.GetRow(i).GetCell(kvp.Value) == null || sheet.GetRow(i).GetCell(kvp.Value).ToString().Trim() == "" || en.GetType().GetProperty(kvp.Key) == null)
                     {
                         //en.GetType().GetProperty(kvp.Key).SetValue(en, null, null);
                         //空的不填写，保持原数据不变  ,没有该属性就忽略
@@ -928,7 +928,7 @@ namespace HRMS.Controllers
                 }
                 foreach (var kvp in keycolumns)
                 {
-                    if (sheet.GetRow(i).GetCell(kvp.Value) == null || sheet.GetRow(i).GetCell(kvp.Value).ToString() == "" || en.GetType().GetProperty(kvp.Key) == null)
+                    if (sheet.GetRow(i).GetCell(kvp.Value) == null || sheet.GetRow(i).GetCell(kvp.Value).ToString().Trim() == "" || en.GetType().GetProperty(kvp.Key) == null)
                     {
                         //en.GetType().GetProperty(kvp.Key).SetValue(en, null, null);
                         //空的不填写，保持原数据不变  ,没有该属性就忽略

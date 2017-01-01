@@ -72,6 +72,16 @@ namespace HRMS.Controllers
             ViewBag.Companies = companies;
             return View();
         }
+
+        public ActionResult CompanyFlowUsersSetting()
+        {
+            DicManager service = new DicManager();
+            List<CompanyEntity> companies = service.GetAllCompanies();
+            ViewBag.Companies = companies;
+            return View();
+        }
+
+        
     }
     public class ManageAjaxController : Controller
     {
@@ -1213,5 +1223,66 @@ namespace HRMS.Controllers
 
 
         #endregion
+
+        #region 流程对应人员
+        public void GetJournalBpmUsers()
+        {
+            //用于序列化实体类的对象  
+            JavaScriptSerializer jss = new JavaScriptSerializer();
+
+            //请求中携带的条件  
+            string order = HttpContext.Request.Params["order"];
+            string sort = HttpContext.Request.Params["sort"];
+            int offset = Convert.ToInt32(HttpContext.Request.Params["offset"]);  //0
+            int pageSize = Convert.ToInt32(HttpContext.Request.Params["limit"]);
+            string searchKey = HttpContext.Request.Params["search"];
+            Dictionary<string, string> bizParaDic = new Dictionary<string, string>();
+            bizParaDic.Add("search", searchKey);
+
+            int total = 0;
+            DicManager dm = new DicManager();
+            List<BpmUserView> list = dm.JournalBpmUserGetSearch(bizParaDic, sort, order, offset, pageSize, out total);
+            //给分页实体赋值  
+            PageModels<BpmUserView> model = new PageModels<BpmUserView>();
+            model.total = total;
+            if (total % pageSize == 0)
+                model.page = total / pageSize;
+            else
+                model.page = (total / pageSize) + 1;
+
+            model.rows = list;
+
+            //将查询结果返回  
+            HttpContext.Response.Write(jss.Serialize(model));
+        }
+        public string JournalBpmUserSaveChanges(string jsonString)
+        {
+            try
+            {
+                BpmUserEntity en = JsonConvert.DeserializeObject<BpmUserEntity>(jsonString);
+                DicManager dm = new DicManager();
+                if (string.IsNullOrEmpty(en.iGuid))
+                {
+                    en.iGuid = Guid.NewGuid().ToString();
+                    en.iCreatedBy = SessionHelper.CurrentUser.UserName;
+                    en.iUpdatedBy = SessionHelper.CurrentUser.UserName;
+                    dm.InsertBpmUser(en);
+                }
+                else
+                {
+                    BpmUserEntity enOld = dm.BpmUserFirstOrDefault(en.iGuid);
+                    enOld.iUsers = en.iUsers;
+                    enOld.iNote = en.iNote;
+                    enOld.iUpdatedBy = SessionHelper.CurrentUser.UserName;
+                    dm.UpdateBpmUser(enOld);
+                }
+                return "success";
+            }
+            catch (Exception e)
+            {
+                return e.ToString();
+            }
+        }
+       #endregion
     }
 }

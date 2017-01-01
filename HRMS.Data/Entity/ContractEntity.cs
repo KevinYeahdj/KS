@@ -12,7 +12,9 @@ namespace HRMS.Data.Entity
     {
         public string iGuid { get; set; } //惟一标识
         public string iCompanyId { get; set; } //公司
-        public string iProjectId { get; set; } //项目
+        public string iProjectId { get; set; } //项目       
+        public string iCompanyName { get; set; } //公司
+        public string iProjectName { get; set; } //项目
         public DateTime? iStartDate { get; set; } //合同起始日期   
         public DateTime? iEndDate { get; set; } //合同终止日期
         public string iProperty { get; set; } //合同性质

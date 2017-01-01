@@ -209,7 +209,7 @@ namespace HRMS.Data.Manager
             string sql = @"select pf.iIndividualAmount + pf.iCompanyAmount + pf.iAdditionalAmount  as iTotal, pf.*, hr.iItemName, hr.iCompany, hr.iName, hr.iIdCard, hr.iEmpNo, hr.iEmployeeDate,  hr.iResignDate, hr.iEmployeeStatus, hr.iResidenceProperty, hr.iProvidentFundPaidWilling, hr.iIsCommercialInsurancePaid, hr.iGuid as iHRInfoGuid2  from ProvidentFund pf right join hrinfo hr on pf.iHRInfoGuid = hr.iguid and pf.iIsDeleted =0 and pf.iStatus =1  where hr.iisdeleted=0 and hr.istatus=1 and hr.iguid=@id ";
             return Repository.Query<ProvidentFundModel>(sql, new { id = hrGuid }).FirstOrDefault();
         }
-        public int GenerateSocialSecurityDetailMonthly(int payMonth)
+        public int GenerateProvidentFundDetailMonthly(int payMonth)
         {
             int affectedRowCount = 0;
             string sql = @"insert into ProvidentFundDetail select newid()," + payMonth.ToString() + ",iHRInfoGuid, iPayPlace, iPayBase, iIndividualAmount, iCompanyAmount, iAdditionalAmount, iAdditionalMonths,GETDATE(),'超级管理员',GETDATE(),'超级管理员',1,0 from ProvidentFund where iIndividualAmount is not null and iCompanyAmount is not null and iAdditionalAmount is not null and iIsDeleted =0 and iStatus =1";

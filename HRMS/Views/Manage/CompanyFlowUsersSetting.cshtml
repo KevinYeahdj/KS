@@ -1,0 +1,261 @@
+﻿@{
+    ViewBag.Title = "流水账审批人员维护";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+}
+<style>
+    .modal-body {
+        height: 230px;
+    }
+</style>
+
+<div>
+    <div>
+        <div class="col-*-12">
+            <div id="toolbar" class="toolbar">
+                <span>注意：新修改不会影响正在进行的流程的处理人，只会对新发起的流程生效！</span>
+            </div>
+
+            <table id="mytab" class="table table-hover"></table>
+
+            <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog" style="width:90%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                &times;
+                            </button>
+                            <h4 class="modal-title" id="addModalLabel">修改记录</h4>
+                        </div>
+                        <div class="form-group">
+                            所在公司：
+                            <select class="form-control" id="iCompanyId" data-bind="value: iCompanyId" disabled="disabled">
+                                <option value="-">请选择</option>
+                                @{
+                                    foreach (var item in ViewBag.Companies)
+                                    {
+                                        <option value="@item.iGuid">@item.iName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <div class="form-group"> 用户：<input type="text" class="form-control" id="iUsers" data-bind="value: iUsers" placeholder="请输入用户标识，多个用逗号分开"></div>
+                        <div class="form-group"> 备注：<input type="text" class="form-control" id="iNote" data-bind="value: iNote" placeholder="请输入备注"></div>
+                        <div class="form-group"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                        <div class="form-group"> 注意：<span>用户请输入工号，多个用逗号分开如1001,1002</span></div>
+
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-primary" id="SaveChanges">提交</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    //json 日期转字符串
+    function ChangeDateFormat(jsondate) {
+        if (!jsondate) return "";
+        jsondate = jsondate.replace("/Date(", "").replace(")/", "");
+        if (jsondate.indexOf("+") > 0) {
+            jsondate = jsondate.substring(0, jsondate.indexOf("+"));
+        }
+        else if (jsondate.indexOf("-") > 0) {
+            jsondate = jsondate.substring(0, jsondate.indexOf("-"));
+        }
+
+        var date = new Date(parseInt(jsondate, 10));
+        var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+        var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+
+        return date.getFullYear()
+            + "-"
+            + month
+            + "-"
+            + currentDate
+            + " "
+            + date.getHours()
+            + ":"
+            + date.getMinutes();
+    }
+    //bootstraptable 高度
+    function tableHeight() {
+        return $(window).height() * 0.86;
+    }
+    function ViewModel() {
+        var self = this;
+        self.iGuid = ko.observable("");
+        self.iCompanyId = ko.observable("");
+        self.iFlowSign = ko.observable("");
+        self.iRoleName = ko.observable("");
+        self.iUsers = ko.observable("");
+        self.iNote = ko.observable("");
+        self.iCreatedOn = ko.observable("");
+        self.iCreatedBy = ko.observable("");
+        self.iUpdatedOn = ko.observable("");
+        self.iUpdatedBy = ko.observable("");
+        self.iStatus = ko.observable("1");
+        self.iIsDeleted = ko.observable("0");
+    }
+    $(function () {
+        //Mvvm绑定
+        var myViewModel = new ViewModel();
+        ko.applyBindings(myViewModel);
+        //重置函数
+        $("div.icon-reorder").click(function () {
+            $('#mytab').bootstrapTable('resetView', {
+                height: tableHeight()
+            })
+        })
+        //根据窗口调整表格高度
+        $(window).resize(function () {
+            $('#mytab').bootstrapTable('resetView', {
+                height: tableHeight()
+            })
+        })
+        //必填,唯一校验
+        $("#iUsers").blur(function () {
+            var value = $("#iUsers").val();
+            if (value.length > 0) {
+                $('#iUsers').removeClass("warning");
+            }
+            else {
+                $('#iUsers').addClass("warning");
+            }
+        });
+
+        $('#mytab').bootstrapTable({
+            url: "/ManageAjax/GetJournalBpmUsers",//数据源
+            dataField: "rows",//服务端返回数据键值 就是说记录放的键值是rows，分页时使用总记录数的键值为total
+            sortName: "iUpdatedOn",//排序列
+            sortOrder: "desc",
+            cache: false,
+            striped: true,//條紋行
+            clickToSelect: true,//选择行即选择checkbox
+            searchOnEnterKey: true,//ENTER键搜索
+            height: tableHeight(),//高度调整
+            search: false,//是否搜索
+            pagination: true,//是否分页
+            pageSize: 15,//单页记录数
+            pageNumber: 1,//起始页
+            pageList: [15, 50, 100, 10000],//分页步进值
+            sidePagination: "server",//服务端分页
+            contentType: "application/x-www-form-urlencoded",//请求数据内容格式 默认是 application/json 自己根据格式自行服务端处理
+            dataType: "json",//期待返回数据类型
+            method: "post",//请求方式
+            searchAlign: "left",//查询框对齐方式
+            queryParamsType: "limit",//查询参数组织方式
+            queryParams: function getParams(params) {
+                return params;
+            },
+            searchOnEnterKey: false,//回车搜索
+            showRefresh: false,//刷新按钮
+            showColumns: false,//列选择按钮
+            buttonsAlign: "left",//按钮对齐方式
+            toolbar: "#toolbar",//指定工具栏
+            toolbarAlign: "right",//工具栏对齐方式
+            columns: [
+                {
+                    field: "iGuid",
+                    title: "iGuid",
+                    visible: false, switchable: false
+                },
+                {
+                    field: "iCompanyId",
+                    title: "公司名称",
+                    visible: false, switchable: false
+                },
+                {
+                    field: "iFlowSign",
+                    title: "流程名称",
+                    visible: false, switchable: false
+                },
+                {
+                    field: "iCompanyName",
+                    title: "公司名称",
+                    sortable: true
+                },
+                {
+                    field: "iRoleName",
+                    title: "角色",
+                    sortable: true
+                },
+                {
+                    field: "iNote",
+                    title: "备注",
+                    sortable: true
+                },
+                {
+                    field: "iUsers",
+                    title: "人员工号",
+                    sortable: true
+                },
+                {
+                    field: "iUpdatedOn",
+                    title: "最近修改时间",
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return ChangeDateFormat(value);
+                    }
+                }
+            ],
+            onClickRow: function (row, $element) {
+                //$element是当前tr的jquery对象
+                //$element.css("background-color", "green");
+            },//单击row事件
+            onDblClickRow: function (row, $element) {
+                $("#addModalLabel").html("修改记录");
+                myViewModel.iGuid(row.iGuid);
+                myViewModel.iCompanyId(row.iCompanyId);
+                myViewModel.iFlowSign(row.iFlowSign);
+                myViewModel.iRoleName(row.iRoleName);
+                myViewModel.iNote(row.iNote);
+                myViewModel.iUsers(row.iUsers);
+                $('#addModal').modal('toggle');
+            },
+            locale: "zh-CN",//中文支持,
+            detailView: false, //是否显示详情折叠
+            detailFormatter: function (index, row, element) {
+                var html = '';
+                $.each(row, function (key, val) {
+                    html += "<p>" + key + ":" + val + "</p>"
+                });
+                return html;
+            }
+        });
+
+        $("#SaveChanges").click(function () {
+            var warnings = $(".warning");
+            if (warnings && warnings.length > 0) {
+                toastr.error('数据验证未通过！');
+                return;
+            }
+            $(this).attr({ "disabled": "disabled" });
+
+            var param = {};
+            param.jsonString = ko.toJSON(myViewModel);
+            $.ajax({
+                url: "/ManageAjax/JournalBpmUserSaveChanges",
+                type: "POST",
+                data: param,
+                dataType: 'text',
+                success: function (data) {
+                    if (data == "success") {
+                        toastr.success('保存成功！');
+                        $('#mytab').bootstrapTable('refresh');
+                    }
+                    else {
+                        console.log(data);
+                        toastr.error('保存数据失败！');
+                    }
+                    $('#addModal').modal('toggle');
+                    $("#SaveChanges").removeAttr("disabled");
+                }
+            });
+        });
+    })
+</script>

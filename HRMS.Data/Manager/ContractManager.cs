@@ -21,8 +21,10 @@ namespace HRMS.Data.Manager
             {
                 Dictionary<string, string> dic = new Dictionary<string, string>();
                 dic.Add("iGuid", "iGuid");
-                dic.Add("公司", "iCompanyId");
-                dic.Add("项目", "iProjectId");
+                dic.Add("公司ID", "iCompanyId");
+                dic.Add("项目ID", "iProjectId");
+                dic.Add("公司", "iCompanyName");
+                dic.Add("项目", "iProjectName");
                 dic.Add("合同起始日期", "iStartDate");
                 dic.Add("合同终止日期", "iEndDate");
                 dic.Add("合同性质", "iProperty");
@@ -103,11 +105,11 @@ namespace HRMS.Data.Manager
 
         public List<ContractEntity> GetSearch(string userType, Dictionary<string, string> para, string sort, string order, int offset, int pageSize, out int total)
         {
-            if (userType != "普通用户")
-            {
-                para["iCompanyId"] = para["iCompanyId"] == "-" ? "" : para["iCompanyId"];
-                para["iProjectId"] = para["iProjectId"] == "-" ? "" : para["iProjectId"];
-            }
+            //if (userType != "普通用户")
+            //{
+            //    para["iCompanyId"] = para["iCompanyId"] == "-" ? "" : para["iCompanyId"];
+            //    para["iProjectId"] = para["iProjectId"] == "-" ? "" : para["iProjectId"];
+            //}
             StringBuilder commandsb = new StringBuilder("from Contract where iisdeleted=0 and istatus=1 ");
 
             string searchKey = para["search"];

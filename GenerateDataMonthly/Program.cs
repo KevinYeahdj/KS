@@ -19,7 +19,7 @@ namespace GenerateDataMonthly
             LogFileHelper.WriteLog("社保【" + paidMonth.ToString() + "】生成成功，生成条数【" + count.ToString() + "】");
 
             ProvidentFundManager serviceProvidentFund = new ProvidentFundManager();
-            count = serviceProvidentFund.GenerateSocialSecurityDetailMonthly(paidMonth);
+            count = serviceProvidentFund.GenerateProvidentFundDetailMonthly(paidMonth);
             LogFileHelper.WriteLog("公积金【" + paidMonth.ToString() + "】生成成功，生成条数【" + count.ToString() + "】");
         }
     }

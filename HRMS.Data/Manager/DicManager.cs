@@ -322,5 +322,79 @@ namespace HRMS.Data.Manager
             return dic;
         }
 
+        //流程人员相关
+        public void InsertBpmUser(BpmUserEntity entity)
+        {
+            entity.iCreatedOn = DateTime.Now;
+            entity.iUpdatedOn = DateTime.Now;
+            entity.iStatus = 1;
+            entity.iIsDeleted = 0;
+            IDbSession session = SessionFactory.CreateSession();
+            try
+            {
+                session.BeginTrans();
+                Repository.Insert<BpmUserEntity>(session.Connection, entity, session.Transaction);
+                session.Commit();
+            }
+            catch (System.Exception)
+            {
+                session.Rollback();
+                throw;
+            }
+            finally
+            {
+                session.Dispose();
+            }
+        }
+        public void UpdateBpmUser(BpmUserEntity entity)
+        {
+            entity.iUpdatedOn = DateTime.Now;
+            IDbSession session = SessionFactory.CreateSession();
+            try
+            {
+                session.BeginTrans();
+                Repository.Update<BpmUserEntity>(session.Connection, entity, session.Transaction);
+                session.Commit();
+            }
+            catch (System.Exception)
+            {
+                session.Rollback();
+                throw;
+            }
+            finally
+            {
+                session.Dispose();
+            }
+        }
+        public BpmUserEntity BpmUserFirstOrDefault(string iguid)
+        {
+            return Repository.GetById<BpmUserEntity>(iguid);
+        }
+        public List<BpmUserView> JournalBpmUserGetSearch(Dictionary<string, string> para, string sort, string order, int offset, int pageSize, out int total)
+        {
+            string commonSql = @"from (
+  select b.iGuid, a.iguid as icompanyId, a.iName as iCompanyName, '流水账申请' as iFlowSign, '人事' as iRoleName, b.iUsers, b.iNote, b.iUpdatedOn from [dbo].[SysCompany] a
+  left join [dbo].[BpmUser] b
+  on a.iguid = b.iCompanyId and b.iFlowSign='流水账申请' and b.iRoleName='人事'
+  and b.iIsDeleted =0 and b.iStatus =1  where a.iisdeleted=0 and a.istatus=1
+
+  union all  
+   select b.iGuid, a.iguid as icompanyId, a.iName as iCompanyName, '流水账申请' as iFlowSign, '高管' as iRoleName, b.iUsers, b.iNote , b.iUpdatedOn from [dbo].[SysCompany] a
+  left join [dbo].[BpmUser] b
+  on a.iguid = b.iCompanyId and b.iFlowSign='流水账申请' and b.iRoleName='高管'
+  and b.iIsDeleted =0 and b.iStatus =1  where a.iisdeleted=0 and a.istatus=1) t";
+            string querySql = "select * " + commonSql + " order by {0} {1} offset {2} row fetch next {3} rows only";
+            querySql = string.Format(querySql, sort, order, offset, pageSize);
+            string totalSql = "select cast(count(1) as varchar(8)) " + commonSql;
+            total = int.Parse(Repository.Query<string>(totalSql).ToList()[0]);
+            return Repository.Query<BpmUserView>(querySql).ToList();
+        }
+
+        public string GetUsersByFlowAndRole(string flowSign, string roleName)
+        {
+            string sql = "select iUsers from from [dbo].[BpmUser] where b.iStatus =1  where a.iisdeleted=0 and a.istatus=1 and iFlowSign='" + flowSign + "' and iRoleName='" + roleName + "' and b.iIsDeleted =0 and ";
+            List<string> result = Repository.Query<string>(sql).ToList();
+            return (result == null || result.Count == 0) ? "" : result[0];
+        }
     }
 }

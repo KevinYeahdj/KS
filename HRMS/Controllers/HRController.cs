@@ -333,7 +333,7 @@ namespace HRMS.Controllers
 
                 foreach (var kvp in keycolumns)
                 {
-                    if (sheet.GetRow(i).GetCell(kvp.Value) == null || sheet.GetRow(i).GetCell(kvp.Value).ToString() == "")
+                    if (sheet.GetRow(i).GetCell(kvp.Value) == null || sheet.GetRow(i).GetCell(kvp.Value).ToString().Trim() == "")
                     {
                         //en.GetType().GetProperty(kvp.Key).SetValue(en, null, null);
                         //空的不填写，保持原数据不变

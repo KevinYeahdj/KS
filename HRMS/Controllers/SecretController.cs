@@ -74,16 +74,17 @@ namespace HRMS.WEB.Controllers
                 int total = 0;
                 ContractManager service = new ContractManager();
                 List<ContractEntity> list = service.GetSearch(SessionHelper.CurrentUser.UserType, bizParaDic, sort, order, offset, pageSize, out total);
-                DicManager dm = new DicManager();
-                var companies = dm.GetAllCompanies();
-                var projects = dm.GetAllProjects();
-                Dictionary<string, string> comDic = companies.ToDictionary(i => i.iGuid, i => i.iName);
-                Dictionary<string, string> proDic = projects.ToDictionary(i => i.iGuid, i => i.iName);
-                foreach (var item in list)
-                {
-                    item.iCompanyId = comDic[item.iCompanyId];
-                    item.iProjectId = proDic[item.iProjectId];
-                }
+
+                //DicManager dm = new DicManager();
+                //var companies = dm.GetAllCompanies();
+                //var projects = dm.GetAllProjects();
+                //Dictionary<string, string> comDic = companies.ToDictionary(i => i.iGuid, i => i.iName);
+                //Dictionary<string, string> proDic = projects.ToDictionary(i => i.iGuid, i => i.iName);
+                //foreach (var item in list)
+                //{
+                //    item.iCompanyId = comDic[item.iCompanyId];
+                //    item.iProjectId = proDic[item.iProjectId];
+                //}
 
                 //给分页实体赋值  
                 PageModels<ContractEntity> model = new PageModels<ContractEntity>();
