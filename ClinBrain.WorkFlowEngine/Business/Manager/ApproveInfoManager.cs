@@ -81,8 +81,8 @@ namespace ClinBrain.WorkFlowEngine.Business.Manager
             List<ApproveInfo> result = new List<ApproveInfo>();
             var strSQL = @"SELECT 
                            ActivityName, AssignedToUserName,AssignedToUserID
-                           FROM WfTasks
-                           where TaskState =1 and AppInstanceID='" + appNo + "'";
+                           FROM [vwWfActivityInstanceTasks]
+                           where ActivityState =1 and AppInstanceID='" + appNo + "'";
             DataSet ds = Repository.Query(strSQL);
             if (ds.Tables[0].Rows.Count > 0)
             {

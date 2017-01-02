@@ -289,32 +289,21 @@
         self.iUpdatedBy = ko.observable("");
         self.iStatus = ko.observable("1");
         self.iIsDeleted = ko.observable("0");
-        self.iCheckedBy = ko.computed({
-            read: function () {
-                if (self.iChecked() == "是")
-                    return '@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserName';
-                else {
-                    return "";
-                }
-
-            },
-            write: function (value) {
-            }
-        });
-        self.iPaidDate = ko.computed({
-            read: function () {
-                if (self.iChecked() == "是")
-                    return '@DateTime.Now.ToString("yyyy-MM-dd")';
-                else {
-                    return "";
-                }
-
-            },
-            write: function (value) {
-            }
-        });
+        self.iCheckedBy = ko.observable("");
+        self.iPaidDate = ko.observable("");
     }
+
     $(function () {
+        $("[name=iChecked]").click(function () {
+            if ($(this).val() == "是") {
+                myViewModel.iCheckedBy("@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserName");
+                myViewModel.iPaidDate("@DateTime.Now.ToString("yyyy-MM-dd")");
+            } else {
+                myViewModel.iCheckedBy("");
+                myViewModel.iPaidDate("");
+            }
+        });
+
         //重置函数
         $("div.icon-reorder").click(function () {
             $('#mytab').bootstrapTable('resetView', {

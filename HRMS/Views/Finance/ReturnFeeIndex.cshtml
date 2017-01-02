@@ -25,13 +25,62 @@
                     </select>
                 </div>
                 <div style="float: left; margin-left: 10px">
-                    <span>付款情况：</span>
+                    <span>一级付款情况：</span>
                 </div>
                 <div style="float: left; margin-left: 10px">
                     <select class="form-control" id="sFirstReturnFeePayment">
                         <option value="">全部</option>
                         <option value="已付">已付</option>
                         <option value="未付">未付</option>
+                        <option value="正常待返">正常待返</option>
+
+                    </select>
+                </div>
+                <div style="float: left; margin-left: 10px">
+                    <span>二级付款情况：</span>
+                </div>
+                <div style="float: left; margin-left: 10px">
+                    <select class="form-control" id="sSecondReturnFeePayment">
+                        <option value="">全部</option>
+                        <option value="已付">已付</option>
+                        <option value="未付">未付</option>
+                        <option value="正常待返">正常待返</option>
+
+                    </select>
+                </div>
+                <div style="float: left; margin-left: 10px">
+                    <span>三级付款情况：</span>
+                </div>
+                <div style="float: left; margin-left: 10px">
+                    <select class="form-control" id="sThirdReturnFeePayment">
+                        <option value="">全部</option>
+                        <option value="已付">已付</option>
+                        <option value="未付">未付</option>
+                        <option value="正常待返">正常待返</option>
+
+                    </select>
+                </div>
+                <div style="float: left; margin-left: 10px">
+                    <span>四级付款情况：</span>
+                </div>
+                <div style="float: left; margin-left: 10px">
+                    <select class="form-control" id="sFourthReturnFeePayment">
+                        <option value="">全部</option>
+                        <option value="已付">已付</option>
+                        <option value="未付">未付</option>
+                        <option value="正常待返">正常待返</option>
+
+                    </select>
+                </div>
+                <div style="float: left; margin-left: 10px">
+                    <span>五级付款情况：</span>
+                </div>
+                <div style="float: left; margin-left: 10px">
+                    <select class="form-control" id="sFifthReturnFeePayment">
+                        <option value="">全部</option>
+                        <option value="已付">已付</option>
+                        <option value="未付">未付</option>
+                        <option value="正常待返">正常待返</option>
 
                     </select>
                 </div>
@@ -110,8 +159,8 @@
                             <div class="form-group"> 劳务所账号：<input type="text" class="form-control" id="iLaborCampBankAccount" data-bind="value: iLaborCampBankAccount" placeholder="请输入劳务所账号"></div>
                             <div class="form-group"> 劳务所人姓名：<input type="text" class="form-control" id="iLaborCampBankPerson" data-bind="value: iLaborCampBankPerson" placeholder="请输入劳务所人姓名"></div>
                             <div class="form-group"> 面试日期：<input type="text" class="form-control" id="iInterviewDate" data-bind="value: iInterviewDate" placeholder="请输入面试日期"></div>
-                            <div class="form-group"> 一级返费金额：<input type="text" class="form-control" id="iFirstReturnFeeAmount" data-bind="value: iFirstReturnFeeAmount" placeholder="请输入一级返费金额"></div>
-                            <div class="form-group"> 一级返费天数：<input type="text" class="form-control" id="iFirstReturnFeeDays" data-bind="value: iFirstReturnFeeDays" placeholder="请输入一级返费天数"></div>
+                            <div class="form-group"> 一级返费金额：<input type="text" class="form-control" id="iFirstReturnFeeAmount" data-bind="value: iFirstReturnFeeAmount" onkeyup="clearNoNum(this)" onblur="clearNoNum(this)" placeholder="请输入一级返费金额"></div>
+                            <div class="form-group"> 一级返费天数：<input type="text" class="form-control" id="iFirstReturnFeeDays" data-bind="value: iFirstReturnFeeDays" onkeyup="clearNoNum1(this)" onblur="clearNoNum1(this)" placeholder="请输入一级返费天数"></div>
                             <div class="form-group"> 一级返费日期：<input type="text" class="form-control" id="iFirstReturnFeeDate" data-bind="value: iFirstReturnFeeDate" placeholder="请输入一级返费日期"></div>
                             <div class="form-group">
                                 一级付款情况：
@@ -122,8 +171,8 @@
                                 </select>
                             </div>
                             <div class="form-group"> 一级实际支付日期：<input type="text" class="form-control" id="iFirstReturnFeeActualPayDate" data-bind="value: iFirstReturnFeeActualPayDate" placeholder="请输入一级实际支付日期"></div>
-                            <div class="form-group"> 二级返费金额：<input type="text" class="form-control" id="iSecondReturnFeeAmount" data-bind="value: iSecondReturnFeeAmount" placeholder="请输入二级返费金额"></div>
-                            <div class="form-group"> 二级返费天数：<input type="text" class="form-control" id="iSecondReturnFeeDays" data-bind="value: iSecondReturnFeeDays" placeholder="请输入二级返费天数"></div>
+                            <div class="form-group"> 二级返费金额：<input type="text" class="form-control" id="iSecondReturnFeeAmount" data-bind="value: iSecondReturnFeeAmount" onkeyup="clearNoNum(this)" onblur="clearNoNum(this)" placeholder="请输入二级返费金额"></div>
+                            <div class="form-group"> 二级返费天数：<input type="text" class="form-control" id="iSecondReturnFeeDays" data-bind="value: iSecondReturnFeeDays" onkeyup="clearNoNum1(this)" onblur="clearNoNum1(this)" placeholder="请输入二级返费天数"></div>
                             <div class="form-group"> 二级返费日期：<input type="text" class="form-control" id="iSecondReturnFeeDate" data-bind="value: iSecondReturnFeeDate" placeholder="请输入二级返费日期"></div>
                             <div class="form-group">
                                 二级付款情况：
@@ -134,8 +183,8 @@
                                 </select>
                             </div>
                             <div class="form-group"> 二级实际支付日期：<input type="text" class="form-control" id="iSecondReturnFeeActualPayDate" data-bind="value: iSecondReturnFeeActualPayDate" placeholder="请输入二级实际支付日期"></div>
-                            <div class="form-group"> 三级返费金额：<input type="text" class="form-control" id="iThirdReturnFeeAmount" data-bind="value: iThirdReturnFeeAmount" placeholder="请输入三级返费金额"></div>
-                            <div class="form-group"> 三级返费天数：<input type="text" class="form-control" id="iThirdReturnFeeDays" data-bind="value: iThirdReturnFeeDays" placeholder="请输入三级返费天数"></div>
+                            <div class="form-group"> 三级返费金额：<input type="text" class="form-control" id="iThirdReturnFeeAmount" data-bind="value: iThirdReturnFeeAmount" onkeyup="clearNoNum(this)" onblur="clearNoNum(this)" placeholder="请输入三级返费金额"></div>
+                            <div class="form-group"> 三级返费天数：<input type="text" class="form-control" id="iThirdReturnFeeDays" data-bind="value: iThirdReturnFeeDays" onkeyup="clearNoNum1(this)" onblur="clearNoNum1(this)" placeholder="请输入三级返费天数"></div>
                             <div class="form-group"> 三级返费日期：<input type="text" class="form-control" id="iThirdReturnFeeDate" data-bind="value: iThirdReturnFeeDate" placeholder="请输入三级返费日期"></div>
                             <div class="form-group">
                                 三级付款情况：
@@ -146,8 +195,8 @@
                                 </select>
                             </div>
                             <div class="form-group"> 三级实际支付日期：<input type="text" class="form-control" id="iThirdReturnFeeActualPayDate" data-bind="value: iThirdReturnFeeActualPayDate" placeholder="请输入三级实际支付日期"></div>
-                            <div class="form-group"> 四级返费金额：<input type="text" class="form-control" id="iFourthReturnFeeAmount" data-bind="value: iFourthReturnFeeAmount" placeholder="请输入四级返费金额"></div>
-                            <div class="form-group"> 四级返费天数：<input type="text" class="form-control" id="iFourthReturnFeeDays" data-bind="value: iFourthReturnFeeDays" placeholder="请输入四级返费天数"></div>
+                            <div class="form-group"> 四级返费金额：<input type="text" class="form-control" id="iFourthReturnFeeAmount" data-bind="value: iFourthReturnFeeAmount" onkeyup="clearNoNum(this)" onblur="clearNoNum(this)" placeholder="请输入四级返费金额"></div>
+                            <div class="form-group"> 四级返费天数：<input type="text" class="form-control" id="iFourthReturnFeeDays" data-bind="value: iFourthReturnFeeDays" onkeyup="clearNoNum1(this)" onblur="clearNoNum1(this)" placeholder="请输入四级返费天数"></div>
                             <div class="form-group"> 四级返费日期：<input type="text" class="form-control" id="iFourthReturnFeeDate" data-bind="value: iFourthReturnFeeDate" placeholder="请输入四级返费日期"></div>
                             <div class="form-group">
                                 四级付款情况：
@@ -158,8 +207,8 @@
                                 </select>
                             </div>
                             <div class="form-group"> 四级实际支付日期：<input type="text" class="form-control" id="iFourthReturnFeeActualPayDate" data-bind="value: iFourthReturnFeeActualPayDate" placeholder="请输入四级实际支付日期"></div>
-                            <div class="form-group"> 五级返费金额：<input type="text" class="form-control" id="iFifthReturnFeeAmount" data-bind="value: iFifthReturnFeeAmount" placeholder="请输入五级返费金额"></div>
-                            <div class="form-group"> 五级返费天数：<input type="text" class="form-control" id="iFifthReturnFeeDays" data-bind="value: iFifthReturnFeeDays" placeholder="请输入五级返费天数"></div>
+                            <div class="form-group"> 五级返费金额：<input type="text" class="form-control" id="iFifthReturnFeeAmount" data-bind="value: iFifthReturnFeeAmount" onkeyup="clearNoNum(this)" onblur="clearNoNum(this)" placeholder="请输入五级返费金额"></div>
+                            <div class="form-group"> 五级返费天数：<input type="text" class="form-control" id="iFifthReturnFeeDays" data-bind="value: iFifthReturnFeeDays" onkeyup="clearNoNum1(this)" onblur="clearNoNum1(this)" placeholder="请输入五级返费天数"></div>
                             <div class="form-group"> 五级返费日期：<input type="text" class="form-control" id="iFifthReturnFeeDate" data-bind="value: iFifthReturnFeeDate" placeholder="请输入五级返费日期"></div>
                             <div class="form-group">
                                 五级付款情况：
@@ -221,6 +270,40 @@
 </div>
 
 <script type="text/javascript">
+    function DateAddDay(date, days) {
+        if (!date || !days) return "";
+        var newDate = new Date(date)
+        newDate = newDate.valueOf();
+        newDate = newDate + days * 24 * 60 * 60 * 1000;
+        newDate = new Date(newDate)
+        var month = newDate.getMonth() + 1 < 10 ? "0" + (newDate.getMonth() + 1) : newDate.getMonth() + 1;
+        var currentDate = newDate.getDate() < 10 ? "0" + newDate.getDate() : newDate.getDate();
+        return newDate.getFullYear()
+            + "-"
+            + month
+            + "-"
+            + currentDate;
+    }
+    //正则校验两位小数
+    function clearNoNum(obj) {
+        //先把非数字的都替换掉，除了数字和.
+        obj.value = obj.value.replace(/[^\d.]/g, "");
+        //保证只有出现一个.而没有多个.
+        obj.value = obj.value.replace(/\.{2,}/g, ".");
+        //必须保证第一个为数字而不是.
+        obj.value = obj.value.replace(/^\./g, "");
+        //保证.只出现一次，而不能出现两次以上
+        obj.value = obj.value.replace(".", "$#$").replace(/\./g, "").replace("$#$", ".");
+        //只能输入两个小数
+        obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3');
+        $(obj).trigger("change");
+    }
+    //整数
+    function clearNoNum1(obj) {
+        obj.value = obj.value.replace(/[^\d]/g, '');
+        $(obj).trigger("change");
+    }
+
     document.onkeydown = function (e) {
         e = e || window.event;
         if (e.keyCode == 13) {
@@ -585,6 +668,22 @@
             }
         });
 
+        $("#iFirstReturnFeeDays").keyup(function () {
+            myViewModel.iFirstReturnFeeDate(DateAddDay(myViewModel.iEmployeeDate(), myViewModel.iFirstReturnFeeDays()));
+        });
+        $("#iSecondReturnFeeDays").keyup(function () {
+            myViewModel.iSecondReturnFeeDate(DateAddDay(myViewModel.iEmployeeDate(), myViewModel.iSecondReturnFeeDays()));
+        });
+        $("#iThirdReturnFeeDays").keyup(function () {
+            myViewModel.iThirdReturnFeeDate(DateAddDay(myViewModel.iEmployeeDate(), myViewModel.iThirdReturnFeeDays()));
+        });
+        $("#iFourthReturnFeeDays").keyup(function () {
+            myViewModel.iFourthReturnFeeDate(DateAddDay(myViewModel.iEmployeeDate(), myViewModel.iFourthReturnFeeDays()));
+        });
+        $("#iFifthReturnFeeDays").keyup(function () {
+            myViewModel.iFifthReturnFeeDate(DateAddDay(myViewModel.iEmployeeDate(), myViewModel.iFifthReturnFeeDays()));
+        });
+
         $("div.icon-reorder").click(function () {
             $('#mytab').bootstrapTable('resetView', {
                 height: tableHeight()
@@ -625,6 +724,10 @@
                 params.sIdCard = $("#sIdCard").val();
                 params.sLaborName = $("#sLaborName").val();
                 params.sFirstReturnFeePayment = $("#sFirstReturnFeePayment").val();
+                params.sSecondReturnFeePayment = $("#sSecondReturnFeePayment").val();
+                params.sThirdReturnFeePayment = $("#sThirdReturnFeePayment").val();
+                params.sFourthReturnFeePayment = $("#sFourthReturnFeePayment").val();
+                params.sFifthReturnFeePayment = $("#sFifthReturnFeePayment").val();
                 params.sFirstReturnFeeDays = $("#sFirstReturnFeeDays").val();
                 params.sFirstReturnFeeDate = $("#sFirstReturnFeeDate").val();
                 params.sFirstReturnFeeDate2 = $("#sFirstReturnFeeDate2").val();
@@ -952,6 +1055,43 @@
         var myViewModel = new ViewModel();
         ko.applyBindings(myViewModel);
 
+        $("#iFirstReturnFeePayment").change(function () {
+            if ($(this).val() == "已付") {
+                myViewModel.iFirstReturnFeeActualPayDate("@DateTime.Now.ToString("yyyy-MM-dd")");
+            } else {
+                myViewModel.iFirstReturnFeeActualPayDate("");
+            }
+        });
+        $("#iSecondReturnFeePayment").change(function () {
+            if ($(this).val() == "已付") {
+                myViewModel.iSecondReturnFeeActualPayDate("@DateTime.Now.ToString("yyyy-MM-dd")");
+            } else {
+                myViewModel.iSecondReturnFeeActualPayDate("");
+            }
+        });
+        $("#iThirdReturnFeePayment").change(function () {
+            if ($(this).val() == "已付") {
+                myViewModel.iThirdReturnFeeActualPayDate("@DateTime.Now.ToString("yyyy-MM-dd")");
+            } else {
+                myViewModel.iThirdReturnFeeActualPayDate("");
+            }
+        });
+        $("#iFourthReturnFeePayment").change(function () {
+            if ($(this).val() == "已付") {
+                myViewModel.iFourthReturnFeeActualPayDate("@DateTime.Now.ToString("yyyy-MM-dd")");
+            } else {
+                myViewModel.iFourthReturnFeeActualPayDate("");
+            }
+        });
+        $("#iFifthReturnFeePayment").change(function () {
+            if ($(this).val() == "已付") {
+                myViewModel.iFifthReturnFeeActualPayDate("@DateTime.Now.ToString("yyyy-MM-dd")");
+            } else {
+                myViewModel.iFifthReturnFeeActualPayDate("");
+            }
+        });
+
+
     })
 
     function tableHeight() {
@@ -1050,82 +1190,27 @@
         self.iFirstReturnFeeDays = ko.observable("");
         self.iFirstReturnFeeDate = ko.observable("");
         self.iFirstReturnFeePayment = ko.observable("");
-        self.iFirstReturnFeeActualPayDate = ko.computed({
-            read: function () {
-                if (self.iFirstReturnFeePayment() == "已付")
-                    return '@DateTime.Now.ToString("yyyy-MM-dd")';
-                else {
-                    return "";
-                }
-
-            },
-            write: function (value) {
-            }
-        });
+        self.iFirstReturnFeeActualPayDate = ko.observable("");
         self.iSecondReturnFeeAmount = ko.observable("");
         self.iSecondReturnFeeDays = ko.observable("");
         self.iSecondReturnFeeDate = ko.observable("");
         self.iSecondReturnFeePayment = ko.observable("");
-        self.iSecondReturnFeeActualPayDate = ko.computed({
-            read: function () {
-                if (self.iSecondReturnFeePayment() == "已付")
-                    return '@DateTime.Now.ToString("yyyy-MM-dd")';
-                else {
-                    return "";
-                }
-
-            },
-            write: function (value) {
-            }
-        });
+        self.iSecondReturnFeeActualPayDate = ko.observable("");
         self.iThirdReturnFeeAmount = ko.observable("");
         self.iThirdReturnFeeDays = ko.observable("");
         self.iThirdReturnFeeDate = ko.observable("");
         self.iThirdReturnFeePayment = ko.observable("");
-        self.iThirdReturnFeeActualPayDate = ko.computed({
-            read: function () {
-                if (self.iThirdReturnFeePayment() == "已付")
-                    return '@DateTime.Now.ToString("yyyy-MM-dd")';
-                else {
-                    return "";
-                }
-
-            },
-            write: function (value) {
-            }
-        });
+        self.iThirdReturnFeeActualPayDate = ko.observable("");
         self.iFourthReturnFeeAmount = ko.observable("");
         self.iFourthReturnFeeDays = ko.observable("");
         self.iFourthReturnFeeDate = ko.observable("");
         self.iFourthReturnFeePayment = ko.observable("");
-        self.iFourthReturnFeeActualPayDate = ko.computed({
-            read: function () {
-                if (self.iFourthReturnFeePayment() == "已付")
-                    return '@DateTime.Now.ToString("yyyy-MM-dd")';
-                else {
-                    return "";
-                }
-
-            },
-            write: function (value) {
-            }
-        });
+        self.iFourthReturnFeeActualPayDate = ko.observable("");
         self.iFifthReturnFeeAmount = ko.observable("");
         self.iFifthReturnFeeDays = ko.observable("");
         self.iFifthReturnFeeDate = ko.observable("");
         self.iFifthReturnFeePayment = ko.observable("");
-        self.iFifthReturnFeeActualPayDate = ko.computed({
-            read: function () {
-                if (self.iFifthReturnFeePayment() == "已付")
-                    return '@DateTime.Now.ToString("yyyy-MM-dd")';
-                else {
-                    return "";
-                }
-
-            },
-            write: function (value) {
-            }
-        });
+        self.iFifthReturnFeeActualPayDate = ko.observable("");
         self.iReturnFeeNote = ko.observable("");
         self.iCreatedOn = ko.observable("");
         self.iCreatedBy = ko.observable("");

@@ -67,11 +67,11 @@
                             <div class="form-group"> 缴纳地：<input type="text" class="form-control" id="iPayPlace" data-bind="value: iPayPlace" placeholder="请输入缴纳地"></div>
                             <div class="form-group"> 缴费基数：<input type="text" class="form-control" id="iPayBase" data-bind="value: iPayBase" placeholder="请输入缴费基数" onkeyup="clearNoNum(this)" onblur="clearNoNum(this)" maxlength="11"></div>
                             <div class="form-group"> 个人缴费金额：<input type="text" class="form-control" id="iIndividualAmount" data-bind="value: iIndividualAmount" placeholder="请输入个人缴费金额" onkeyup="clearNoNum(this)" maxlength="11"></div>
-                            <div class="form-group"> 公司缴费金额：<input type="text" class="form-control" id="iCompanyAmount" data-bind="value: iCompanyAmount" placeholder="请输入公司缴费金额" onkeyup="clearNoNum(this)"  maxlength="11"></div>
-                            <div class="form-group"> 补缴金额：<input type="text" class="form-control" id="iAdditionalAmount" data-bind="value: iAdditionalAmount" placeholder="请输入补缴金额" onkeyup="clearNoNum(this)"  maxlength="11"></div>
+                            <div class="form-group"> 公司缴费金额：<input type="text" class="form-control" id="iCompanyAmount" data-bind="value: iCompanyAmount" placeholder="请输入公司缴费金额" onkeyup="clearNoNum(this)" maxlength="11"></div>
+                            <div class="form-group"> 补缴金额：<input type="text" class="form-control" id="iAdditionalAmount" data-bind="value: iAdditionalAmount" placeholder="请输入补缴金额" onkeyup="clearNoNum(this)" maxlength="11"></div>
                             <div class="form-group"> 补缴月数：<input type="text" class="form-control" id="iAdditionalMonths" data-bind="value: iAdditionalMonths" placeholder="请输入补缴月数" onkeyup="clearNoNum(this)" onblur="clearNoNum(this)" maxlength="11"></div>
                             <div class="form-group"> 公积金总计：<input type="text" class="form-control" id="iTotal" data-bind="value: iTotal" placeholder="请输入社保总计"></div>
-                            
+
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
@@ -208,7 +208,7 @@
         }).on("changeDate", function (ev) {
             var date = $('#sPayMonth').val();
             if (date > $('#sPayMonth2').val())
-            $("#sPayMonth2").val(date);
+                $("#sPayMonth2").val(date);
         });
         $('#sPayMonth2').datetimepicker({
             format: 'yyyymm',
@@ -221,10 +221,10 @@
         }).on("changeDate", function (ev) {
             var date = $('#sPayMonth2').val();
             if (date < $('#sPayMonth').val())
-            $("#sPayMonth").val(date);
+                $("#sPayMonth").val(date);
         });
-        $("#sPayMonth").val('@DateTime.Now.ToString("yyyyMM")');
-        $("#sPayMonth2").val('@DateTime.Now.ToString("yyyyMM")');
+        $("#sPayMonth").val('@DateTime.Now.AddMonths(-1).ToString("yyyyMM")');
+        $("#sPayMonth2").val('@DateTime.Now.AddMonths(-1).ToString("yyyyMM")');
         //弹窗日期绑定
         $('#iPayMonth').datetimepicker({
             format: 'yyyymm',
@@ -404,7 +404,7 @@
                         console.log(data);
                         toastr.error('保存数据失败！');
                     }
-                    $('#addModal').modal('toggle'); 
+                    $('#addModal').modal('toggle');
                     $("#submit").removeAttr("disabled");
                 }
             });

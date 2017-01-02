@@ -373,9 +373,9 @@ namespace HRMS.Data.Manager
         public List<BpmUserView> JournalBpmUserGetSearch(Dictionary<string, string> para, string sort, string order, int offset, int pageSize, out int total)
         {
             string commonSql = @"from (
-  select b.iGuid, a.iguid as icompanyId, a.iName as iCompanyName, '流水账申请' as iFlowSign, '人事' as iRoleName, b.iUsers, b.iNote, b.iUpdatedOn from [dbo].[SysCompany] a
+  select b.iGuid, a.iguid as icompanyId, a.iName as iCompanyName, '流水账申请' as iFlowSign, '财务' as iRoleName, b.iUsers, b.iNote, b.iUpdatedOn from [dbo].[SysCompany] a
   left join [dbo].[BpmUser] b
-  on a.iguid = b.iCompanyId and b.iFlowSign='流水账申请' and b.iRoleName='人事'
+  on a.iguid = b.iCompanyId and b.iFlowSign='流水账申请' and b.iRoleName='财务'
   and b.iIsDeleted =0 and b.iStatus =1  where a.iisdeleted=0 and a.istatus=1
 
   union all  
@@ -390,11 +390,11 @@ namespace HRMS.Data.Manager
             return Repository.Query<BpmUserView>(querySql).ToList();
         }
 
-        public string GetUsersByFlowAndRole(string flowSign, string roleName)
+        public string GetUsersByFlowAndRole(string companyId, string flowSign, string roleName)
         {
-            string sql = "select iUsers from from [dbo].[BpmUser] where b.iStatus =1  where a.iisdeleted=0 and a.istatus=1 and iFlowSign='" + flowSign + "' and iRoleName='" + roleName + "' and b.iIsDeleted =0 and ";
+            string sql = "select iUsers from [dbo].[BpmUser] where iisdeleted=0 and istatus=1 and iCompanyId='" + companyId + "' and iFlowSign='" + flowSign + "' and iRoleName='" + roleName + "'";
             List<string> result = Repository.Query<string>(sql).ToList();
-            return (result == null || result.Count == 0) ? "" : result[0];
+            return (result == null || result.Count == 0) ? "sa" : result[0];
         }
     }
 }

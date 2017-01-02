@@ -55,10 +55,10 @@ namespace HRMS.Controllers
             var projects = dm.GetAllProjects();
             ViewBag.Projects = projects;
 
-            var hrUsers = dm.GetUsersByFlowAndRole("流水账申请", "人事").Replace(",", ";").Replace("，", ";");
-            var manUsers = dm.GetUsersByFlowAndRole("流水账申请", "高管").Replace(",", ";").Replace("，", ";");
-            ViewBag.manUser = hrUsers;
-            ViewBag.hrUser = manUsers;
+            var financeUsers = dm.GetUsersByFlowAndRole(SessionHelper.CurrentUser.CurrentCompany, "流水账申请", "财务").Replace(",", ";").Replace("，", ";");
+            var managerUsers = dm.GetUsersByFlowAndRole(SessionHelper.CurrentUser.CurrentCompany, "流水账申请", "高管").Replace(",", ";").Replace("，", ";");
+            ViewBag.managerUser = managerUsers;
+            ViewBag.financeUser = financeUsers;
             return View();
         }
 

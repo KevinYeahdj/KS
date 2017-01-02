@@ -114,8 +114,8 @@
 </div>
 
 <script type="text/javascript">
-    var manUser = "@ViewBag.manUser";
-    var hrUser = "@ViewBag.hrUser";
+    var managerUser = "@ViewBag.managerUser";
+    var financeUser = "@ViewBag.financeUser";
     //生成guid
     function sysGuid() {
         function S4() {
@@ -419,8 +419,8 @@
             conditions.sys_approvecn = "提交申请";
             conditions.sys_feedback = "提交申请";
             conditions.sys_summary = "合计：" + $('#totalThis').val();
-            conditions.manuser = manUser;
-            conditions.hruser = hrUser;
+            conditions.manageruser = managerUser;
+            conditions.financeuser = financeUser;
             para.Conditions = conditions;
             para.ProcessInstanceID = ""; //important
             para.AppName = "";

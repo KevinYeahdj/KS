@@ -23,7 +23,7 @@ namespace HRMS.Controllers
             else
             {
                 ViewBag.CurrentPageRights = "unknown";
-                if (!"Home".Equals(filterContext.RequestContext.RouteData.Values["controller"].ToString()))
+                if (!"Home".Equals(filterContext.RequestContext.RouteData.Values["controller"].ToString()) && !"BPM".Equals(filterContext.RequestContext.RouteData.Values["controller"].ToString().ToUpper()))
                 {            //判定访问权限
                     string result = HasVisitRights(Request.Url.LocalPath.ToLower());
                     if (result == "deny")
