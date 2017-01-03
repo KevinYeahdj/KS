@@ -208,11 +208,13 @@ namespace HRMS.Controllers
                 {
                     ue.iCreatedBy = SessionHelper.CurrentUser.UserName;
                     ue.iUpdatedBy = SessionHelper.CurrentUser.UserName;
+                    ue.iEmployeeCodeId = ue.iEmployeeCodeId.Trim();  //工号不要出现空格
                     service.Insert(ue);
                 }
                 else
                 {
                     ue.iUpdatedBy = SessionHelper.CurrentUser.UserName;
+                    ue.iEmployeeCodeId = ue.iEmployeeCodeId.Trim();
                     service.Update(ue);
                 }
                 return "success";
