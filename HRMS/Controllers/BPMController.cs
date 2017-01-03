@@ -55,10 +55,14 @@ namespace HRMS.Controllers
             var projects = dm.GetAllProjects();
             ViewBag.Projects = projects;
 
-            var financeUsers = dm.GetUsersByFlowAndRole(SessionHelper.CurrentUser.CurrentCompany, "流水账申请", "财务").Replace(",", ";").Replace("，", ";");
+            var confirmUsers = dm.GetUsersByFlowAndRole(SessionHelper.CurrentUser.CurrentCompany, "流水账申请", "确认").Replace(",", ";").Replace("，", ";");
             var managerUsers = dm.GetUsersByFlowAndRole(SessionHelper.CurrentUser.CurrentCompany, "流水账申请", "高管").Replace(",", ";").Replace("，", ";");
-            ViewBag.managerUser = managerUsers;
-            ViewBag.financeUser = financeUsers;
+            var tellerUsers = dm.GetUsersByFlowAndRole(SessionHelper.CurrentUser.CurrentCompany, "流水账申请", "出纳").Replace(",", ";").Replace("，", ";");
+            var recordUsers = dm.GetUsersByFlowAndRole(SessionHelper.CurrentUser.CurrentCompany, "流水账申请", "登记").Replace(",", ";").Replace("，", ";");
+            ViewBag.confirmUsers = confirmUsers;
+            ViewBag.managerUsers = managerUsers;
+            ViewBag.tellerUsers = tellerUsers;
+            ViewBag.recordUsers = recordUsers;
             return View();
         }
 
@@ -355,6 +359,7 @@ namespace HRMS.Controllers
             }
             catch (Exception e)
             {
+                ClinBrain.Data.LogFileHelper.ErrorLog(e.ToString());
                 return new JsonResult { Data = new { success = false, msg = "审批出错!" } };
             }
         }

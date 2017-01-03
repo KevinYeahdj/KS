@@ -114,8 +114,10 @@
 </div>
 
 <script type="text/javascript">
-    var managerUser = "@ViewBag.managerUser";
-    var financeUser = "@ViewBag.financeUser";
+    var confirmUsers = "@ViewBag.confirmUsers";
+    var managerUsers = "@ViewBag.managerUsers";
+    var tellerUsers = "@ViewBag.tellerUsers";
+    var recordUsers = "@ViewBag.recordUsers";
     //生成guid
     function sysGuid() {
         function S4() {
@@ -413,14 +415,22 @@
             }
 
             $(this).attr({ "disabled": "disabled" });
+            var isManager = 0;
+            if (managerUsers.split(';').indexOf('@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId') > -1) {
+                isManager = 1;
+            }
+
             var para = {};
             var conditions = {};
             conditions.sys_approve = "1";
             conditions.sys_approvecn = "提交申请";
             conditions.sys_feedback = "提交申请";
             conditions.sys_summary = "合计：" + $('#totalThis').val();
-            conditions.manageruser = managerUser;
-            conditions.financeuser = financeUser;
+            conditions.confirmUsers = confirmUsers;
+            conditions.managerUsers = managerUsers;
+            conditions.tellerUsers = tellerUsers;
+            conditions.recordUsers = recordUsers;
+            conditions.isManager = isManager;
             para.Conditions = conditions;
             para.ProcessInstanceID = ""; //important
             para.AppName = "";

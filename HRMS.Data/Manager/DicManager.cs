@@ -373,17 +373,28 @@ namespace HRMS.Data.Manager
         public List<BpmUserView> JournalBpmUserGetSearch(Dictionary<string, string> para, string sort, string order, int offset, int pageSize, out int total)
         {
             string commonSql = @"from (
-  select b.iGuid, a.iguid as icompanyId, a.iName as iCompanyName, '流水账申请' as iFlowSign, '财务' as iRoleName, b.iUsers, b.iNote, b.iUpdatedOn from [dbo].[SysCompany] a
+  select b.iGuid, a.iguid as icompanyId, a.iName as iCompanyName, '流水账申请' as iFlowSign, '确认' as iRoleName, b.iUsers, b.iNote, b.iUpdatedOn from [dbo].[SysCompany] a
   left join [dbo].[BpmUser] b
-  on a.iguid = b.iCompanyId and b.iFlowSign='流水账申请' and b.iRoleName='财务'
+  on a.iguid = b.iCompanyId and b.iFlowSign='流水账申请' and b.iRoleName='确认'
   and b.iIsDeleted =0 and b.iStatus =1  where a.iisdeleted=0 and a.istatus=1
 
   union all  
    select b.iGuid, a.iguid as icompanyId, a.iName as iCompanyName, '流水账申请' as iFlowSign, '高管' as iRoleName, b.iUsers, b.iNote , b.iUpdatedOn from [dbo].[SysCompany] a
   left join [dbo].[BpmUser] b
   on a.iguid = b.iCompanyId and b.iFlowSign='流水账申请' and b.iRoleName='高管'
-  and b.iIsDeleted =0 and b.iStatus =1  where a.iisdeleted=0 and a.istatus=1) t";
-            string querySql = "select * " + commonSql + " order by {0} {1} offset {2} row fetch next {3} rows only";
+  and b.iIsDeleted =0 and b.iStatus =1  where a.iisdeleted=0 and a.istatus=1
+union all  
+   select b.iGuid, a.iguid as icompanyId, a.iName as iCompanyName, '流水账申请' as iFlowSign, '出纳' as iRoleName, b.iUsers, b.iNote , b.iUpdatedOn from [dbo].[SysCompany] a
+  left join [dbo].[BpmUser] b
+  on a.iguid = b.iCompanyId and b.iFlowSign='流水账申请' and b.iRoleName='出纳'
+  and b.iIsDeleted =0 and b.iStatus =1  where a.iisdeleted=0 and a.istatus=1
+union all  
+   select b.iGuid, a.iguid as icompanyId, a.iName as iCompanyName, '流水账申请' as iFlowSign, '登记' as iRoleName, b.iUsers, b.iNote , b.iUpdatedOn from [dbo].[SysCompany] a
+  left join [dbo].[BpmUser] b
+  on a.iguid = b.iCompanyId and b.iFlowSign='流水账申请' and b.iRoleName='登记'
+  and b.iIsDeleted =0 and b.iStatus =1  where a.iisdeleted=0 and a.istatus=1
+) t";
+            string querySql = "select * " + commonSql + " order by iRoleName asc, {0} {1} offset {2} row fetch next {3} rows only";
             querySql = string.Format(querySql, sort, order, offset, pageSize);
             string totalSql = "select cast(count(1) as varchar(8)) " + commonSql;
             total = int.Parse(Repository.Query<string>(totalSql).ToList()[0]);
