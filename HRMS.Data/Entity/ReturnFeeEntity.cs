@@ -12,6 +12,7 @@ namespace HRMS.Data.Entity
     {
         public string iGuid { get; set; } //惟一标识
         public string iHRInfoGuid { get; set; } //人事信息标识
+        public string iAdvice { get; set; } //返费建议
         public string iLaborName { get; set; } //劳务名称 
         public string iLaborCampBank { get; set; } //劳务所银行支行
         public string iLaborCampBankAccount { get; set; } //劳务所账号
@@ -73,7 +74,7 @@ namespace HRMS.Data.Entity
         public string iIdCard { get; set; } //身份证号 
 
         public string iEmployeeStatus { get; set; }
-
+        public string iAdvice { get; set; } //返费建议
         public string iLaborName { get; set; } //劳务名称 
         public string iLaborCampBank { get; set; } //劳务所银行支行
         public string iLaborCampBankAccount { get; set; } //劳务所账号

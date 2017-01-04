@@ -30,6 +30,7 @@ namespace HRMS.Data.Manager
                 dic.Add("离职日期", "iResignDate");
                 dic.Add("在职天数", "iOnJobDays");
 
+                dic.Add("返费建议", "iAdvice");
                 dic.Add("劳务名称", "iLaborName");
                 dic.Add("劳务所银行支行", "iLaborCampBank");
                 dic.Add("劳务所账号", "iLaborCampBankAccount");
@@ -297,7 +298,31 @@ namespace HRMS.Data.Manager
                         }
                         else
                         {
-                            commandsb.Append(" and " + item.Key + " like '%" + item.Value + "%'");
+                            if (item.Key == "iFirstReturnFeePayment" && item.Value == "正常待返")
+                            {
+                                commandsb.Append(" and fee.iFirstReturnFeePayment <> '已付' and ((hr.iEmployeeStatus = '在职' and fee.iFirstReturnFeeDate < getdate()) or (hr.iEmployeeStatus = '离职' and fee.iFirstReturnFeeDate < hr.iResignDate)) ");
+
+                            }
+                            else if (item.Key == "iSecondReturnFeePayment" && item.Value == "正常待返")
+                            {
+                                commandsb.Append(" and fee.iSecondReturnFeePayment <> '已付' and ((hr.iEmployeeStatus = '在职' and fee.iSecondReturnFeeDate < getdate()) or (hr.iEmployeeStatus = '离职' and fee.iSecondReturnFeeDate < hr.iResignDate)) ");
+                            }
+                            else if (item.Key == "iThirdReturnFeePayment" && item.Value == "正常待返")
+                            {
+                                commandsb.Append(" and fee.iThirdReturnFeePayment <> '已付' and ((hr.iEmployeeStatus = '在职' and fee.iThirdReturnFeeDate < getdate()) or (hr.iEmployeeStatus = '离职' and fee.iThirdReturnFeeDate < hr.iResignDate)) ");
+                            }
+                            else if (item.Key == "iFourthReturnFeePayment" && item.Value == "正常待返")
+                            {
+                                commandsb.Append(" and fee.iFourthReturnFeePayment <> '已付' and ((hr.iEmployeeStatus = '在职' and fee.iFourthReturnFeeDate < getdate()) or (hr.iEmployeeStatus = '离职' and fee.iFourthReturnFeeDate < hr.iResignDate)) ");
+                            }
+                            else if (item.Key == "iFifthReturnFeePayment" && item.Value == "正常待返")
+                            {
+                                commandsb.Append(" and fee.iFifthReturnFeePayment <> '已付' and ((hr.iEmployeeStatus = '在职' and fee.iFifthReturnFeeDate < getdate()) or (hr.iEmployeeStatus = '离职' and fee.iFifthReturnFeeDate < hr.iResignDate)) ");
+                            }
+                            else
+                            {
+                                commandsb.Append(" and " + item.Key + " like '%" + item.Value + "%'");
+                            }
                         }
                     }
                 }

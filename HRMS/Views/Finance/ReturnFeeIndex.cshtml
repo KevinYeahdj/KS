@@ -124,11 +124,11 @@
                         <div class="modal-body">
                             <input style="visibility:hidden" type="hidden" id="iGuid" data-bind="value: iGuid">
                             <div class="form-group">
-                                项目名称：
-                                <select class="form-control" id="iItemName" data-bind="value: iItemName">
+                                所在公司：
+                                <select class="form-control" id="iCompany" data-bind="value: iCompany">
                                     <option value="-">请选择</option>
                                     @{
-                                        foreach (var item in ViewBag.Projects)
+                                        foreach (var item in ViewBag.Companies)
                                         {
                                             <option value="@item.iGuid">@item.iName</option>
                                         }
@@ -136,11 +136,11 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                所在公司：
-                                <select class="form-control" id="iCompany" data-bind="value: iCompany">
+                                项目名称：
+                                <select class="form-control" id="iItemName" data-bind="value: iItemName">
                                     <option value="-">请选择</option>
                                     @{
-                                        foreach (var item in ViewBag.Companies)
+                                        foreach (var item in ViewBag.Projects)
                                         {
                                             <option value="@item.iGuid">@item.iName</option>
                                         }
@@ -154,6 +154,13 @@
                             <div class="form-group"> 入职日期：<input type="text" class="form-control" id="iEmployeeDate" data-bind="value: iEmployeeDate" placeholder="" readonly="readonly"></div>
                             <div class="form-group"> 离职日期：<input type="text" class="form-control" id="iResignDate" data-bind="value: iResignDate" placeholder="" readonly="readonly"></div>
                             <div class="form-group"> 在职天数：<input type="text" class="form-control" id="iOnJobDays" data-bind="value: iOnJobDays" placeholder="" readonly="readonly"></div>
+                            <div class="form-group">
+                                返费建议：
+                                <select class="form-control" id="iAdvice" data-bind="value: iAdvice">
+                                    <option value="正常返费">正常返费</option>
+                                    <option value="暂不返费">暂不返费</option>
+                                </select>
+                            </div>
                             <div class="form-group"> 劳务名称：<input type="text" class="form-control" id="iLaborName" data-bind="value: iLaborName" placeholder="请输入劳务名称"></div>
                             <div class="form-group"> 劳务所银行支行：<input type="text" class="form-control" id="iLaborCampBank" data-bind="value: iLaborCampBank" placeholder="请输入劳务所银行支行"></div>
                             <div class="form-group"> 劳务所账号：<input type="text" class="form-control" id="iLaborCampBankAccount" data-bind="value: iLaborCampBankAccount" placeholder="请输入劳务所账号"></div>
@@ -372,6 +379,162 @@
             $("#sItemName").attr("disabled", true);
             $("#iItemName").attr("disabled", true);
             $("#sEditType").val("未编辑");
+
+            $("#iFirstReturnFeePayment").attr("disabled", true);
+            $("#iSecondReturnFeePayment").attr("disabled", true);
+            $("#iThirdReturnFeePayment").attr("disabled", true);
+            $("#iFourthReturnFeePayment").attr("disabled", true);
+            $("#iFifthReturnFeePayment").attr("disabled", true);
+
+            $("#iLaborName").attr("readonly", "readonly");
+            $("#iLaborCampBank").attr("readonly", "readonly");
+            $("#iLaborCampBankAccount").attr("readonly", "readonly");
+            $("#iLaborCampBankPerson").attr("readonly", "readonly");
+            $("#iInterviewDate").attr("readonly", "readonly");
+            $("#iReturnFeeNote").attr("readonly", "readonly");
+            $("#iFirstReturnFeeAmount").attr("readonly", "readonly");
+            $("#iFirstReturnFeeDays").attr("readonly", "readonly");
+            $("#iFirstReturnFeeDate").attr("readonly", "readonly");
+            $("#iFirstReturnFeeActualPayDate").attr("readonly", "readonly");
+            $("#iSecondReturnFeeAmount").attr("readonly", "readonly");
+            $("#iSecondReturnFeeDays").attr("readonly", "readonly");
+            $("#iSecondReturnFeeDate").attr("readonly", "readonly");
+            $("#iSecondReturnFeeActualPayDate").attr("readonly", "readonly");
+            $("#iThirdReturnFeeAmount").attr("readonly", "readonly");
+            $("#iThirdReturnFeeDays").attr("readonly", "readonly");
+            $("#iThirdReturnFeeDate").attr("readonly", "readonly");
+            $("#iThirdReturnFeeActualPayDate").attr("readonly", "readonly");
+            $("#iFourthReturnFeeAmount").attr("readonly", "readonly");
+            $("#iFourthReturnFeeDays").attr("readonly", "readonly");
+            $("#iFourthReturnFeeDate").attr("readonly", "readonly");
+            $("#iFourthReturnFeeActualPayDate").attr("readonly", "readonly");
+            $("#iFifthReturnFeeAmount").attr("readonly", "readonly");
+            $("#iFifthReturnFeeDays").attr("readonly", "readonly");
+            $("#iFifthReturnFeeDate").attr("readonly", "readonly");
+            $("#iFifthReturnFeeActualPayDate").attr("readonly", "readonly");
+        }
+        else {
+            $('#iInterviewDate').datetimepicker({
+                language: 'zh-CN',
+                weekStart: 1,
+                clearBtn: 1,
+                autoclose: 1,
+                todayHighlight: 1,
+                startView: 2,
+                minView: 2,
+                forceParse: 1,
+                format: 'yyyy-mm-dd'
+            });
+            $('#iFirstReturnFeeDate').datetimepicker({
+                language: 'zh-CN',
+                weekStart: 1,
+                clearBtn: 1,
+                autoclose: 1,
+                todayHighlight: 1,
+                startView: 2,
+                minView: 2,
+                forceParse: 1,
+                format: 'yyyy-mm-dd'
+            });
+            $('#iFirstReturnFeeActualPayDate').datetimepicker({
+                language: 'zh-CN',
+                weekStart: 1,
+                clearBtn: 1,
+                autoclose: 1,
+                todayHighlight: 1,
+                startView: 2,
+                minView: 2,
+                forceParse: 1,
+                format: 'yyyy-mm-dd'
+            });
+            $('#iSecondReturnFeeDate').datetimepicker({
+                language: 'zh-CN',
+                weekStart: 1,
+                clearBtn: 1,
+                autoclose: 1,
+                todayHighlight: 1,
+                startView: 2,
+                minView: 2,
+                forceParse: 1,
+                format: 'yyyy-mm-dd'
+            });
+            $('#iSecondReturnFeeActualPayDate').datetimepicker({
+                language: 'zh-CN',
+                weekStart: 1,
+                clearBtn: 1,
+                autoclose: 1,
+                todayHighlight: 1,
+                startView: 2,
+                minView: 2,
+                forceParse: 1,
+                format: 'yyyy-mm-dd'
+            });
+            $('#iThirdReturnFeeDate').datetimepicker({
+                language: 'zh-CN',
+                weekStart: 1,
+                clearBtn: 1,
+                autoclose: 1,
+                todayHighlight: 1,
+                startView: 2,
+                minView: 2,
+                forceParse: 1,
+                format: 'yyyy-mm-dd'
+            });
+            $('#iThirdReturnFeeActualPayDate').datetimepicker({
+                language: 'zh-CN',
+                weekStart: 1,
+                clearBtn: 1,
+                autoclose: 1,
+                todayHighlight: 1,
+                startView: 2,
+                minView: 2,
+                forceParse: 1,
+                format: 'yyyy-mm-dd'
+            });
+            $('#iFourthReturnFeeDate').datetimepicker({
+                language: 'zh-CN',
+                weekStart: 1,
+                clearBtn: 1,
+                autoclose: 1,
+                todayHighlight: 1,
+                startView: 2,
+                minView: 2,
+                forceParse: 1,
+                format: 'yyyy-mm-dd'
+            });
+            $('#iFourthReturnFeeActualPayDate').datetimepicker({
+                language: 'zh-CN',
+                weekStart: 1,
+                clearBtn: 1,
+                autoclose: 1,
+                todayHighlight: 1,
+                startView: 2,
+                minView: 2,
+                forceParse: 1,
+                format: 'yyyy-mm-dd'
+            });
+            $('#iFifthReturnFeeDate').datetimepicker({
+                language: 'zh-CN',
+                weekStart: 1,
+                clearBtn: 1,
+                autoclose: 1,
+                todayHighlight: 1,
+                startView: 2,
+                minView: 2,
+                forceParse: 1,
+                format: 'yyyy-mm-dd'
+            });
+            $('#iFifthReturnFeeActualPayDate').datetimepicker({
+                language: 'zh-CN',
+                weekStart: 1,
+                clearBtn: 1,
+                autoclose: 1,
+                todayHighlight: 1,
+                startView: 2,
+                minView: 2,
+                forceParse: 1,
+                format: 'yyyy-mm-dd'
+            });
         }
 
 
@@ -448,129 +611,6 @@
         }).on("click", function (ev) {
             $("#sFirstReturnFeeActualPayDate2").datetimepicker("setStartDate", $("#sFirstReturnFeeActualPayDate").val());
         });
-
-        $('#iInterviewDate').datetimepicker({
-            language: 'zh-CN',
-            weekStart: 1,
-            clearBtn: 1,
-            autoclose: 1,
-            todayHighlight: 1,
-            startView: 2,
-            minView: 2,
-            forceParse: 1,
-            format: 'yyyy-mm-dd'
-        });
-        $('#iFirstReturnFeeDate').datetimepicker({
-            language: 'zh-CN',
-            weekStart: 1,
-            clearBtn: 1,
-            autoclose: 1,
-            todayHighlight: 1,
-            startView: 2,
-            minView: 2,
-            forceParse: 1,
-            format: 'yyyy-mm-dd'
-        });
-        $('#iFirstReturnFeeActualPayDate').datetimepicker({
-            language: 'zh-CN',
-            weekStart: 1,
-            clearBtn: 1,
-            autoclose: 1,
-            todayHighlight: 1,
-            startView: 2,
-            minView: 2,
-            forceParse: 1,
-            format: 'yyyy-mm-dd'
-        });
-        $('#iSecondReturnFeeDate').datetimepicker({
-            language: 'zh-CN',
-            weekStart: 1,
-            clearBtn: 1,
-            autoclose: 1,
-            todayHighlight: 1,
-            startView: 2,
-            minView: 2,
-            forceParse: 1,
-            format: 'yyyy-mm-dd'
-        });
-        $('#iSecondReturnFeeActualPayDate').datetimepicker({
-            language: 'zh-CN',
-            weekStart: 1,
-            clearBtn: 1,
-            autoclose: 1,
-            todayHighlight: 1,
-            startView: 2,
-            minView: 2,
-            forceParse: 1,
-            format: 'yyyy-mm-dd'
-        });
-        $('#iThirdReturnFeeDate').datetimepicker({
-            language: 'zh-CN',
-            weekStart: 1,
-            clearBtn: 1,
-            autoclose: 1,
-            todayHighlight: 1,
-            startView: 2,
-            minView: 2,
-            forceParse: 1,
-            format: 'yyyy-mm-dd'
-        });
-        $('#iThirdReturnFeeActualPayDate').datetimepicker({
-            language: 'zh-CN',
-            weekStart: 1,
-            clearBtn: 1,
-            autoclose: 1,
-            todayHighlight: 1,
-            startView: 2,
-            minView: 2,
-            forceParse: 1,
-            format: 'yyyy-mm-dd'
-        });
-        $('#iFourthReturnFeeDate').datetimepicker({
-            language: 'zh-CN',
-            weekStart: 1,
-            clearBtn: 1,
-            autoclose: 1,
-            todayHighlight: 1,
-            startView: 2,
-            minView: 2,
-            forceParse: 1,
-            format: 'yyyy-mm-dd'
-        });
-        $('#iFourthReturnFeeActualPayDate').datetimepicker({
-            language: 'zh-CN',
-            weekStart: 1,
-            clearBtn: 1,
-            autoclose: 1,
-            todayHighlight: 1,
-            startView: 2,
-            minView: 2,
-            forceParse: 1,
-            format: 'yyyy-mm-dd'
-        });
-        $('#iFifthReturnFeeDate').datetimepicker({
-            language: 'zh-CN',
-            weekStart: 1,
-            clearBtn: 1,
-            autoclose: 1,
-            todayHighlight: 1,
-            startView: 2,
-            minView: 2,
-            forceParse: 1,
-            format: 'yyyy-mm-dd'
-        });
-        $('#iFifthReturnFeeActualPayDate').datetimepicker({
-            language: 'zh-CN',
-            weekStart: 1,
-            clearBtn: 1,
-            autoclose: 1,
-            todayHighlight: 1,
-            startView: 2,
-            minView: 2,
-            forceParse: 1,
-            format: 'yyyy-mm-dd'
-        });
-
 
 
         $("#iItemName").change(function () {
@@ -760,11 +800,12 @@
                  { field: "iGuid", title: "iGuid", visible: false, switchable: false }
             , { field: "iHRInfoGuid", title: "iHRInfoGuid", visible: false, switchable: false }
             , { field: "iHRInfoGuid2", title: "iHRInfoGuid2", visible: false, switchable: false }
-            , { field: "iItemName", title: "项目名称", visible: (window.userType != "普通用户") }
 , { field: "iCompany", title: "所在公司", visible: (window.userType != "普通用户") }
+            , { field: "iItemName", title: "项目名称", visible: (window.userType != "普通用户") }
 , { field: "iEmpNo", title: "工号", sortable: true }
 , { field: "iName", title: "姓名", sortable: true }
 , { field: "iIdCard", title: "身份证号", sortable: true }
+, { field: "iAdvice", title: "返费建议", sortable: true }
 , { field: "iLaborName", title: "劳务名称", sortable: true }
 , { field: "iLaborCampBank", title: "劳务所银行支行", sortable: true }
 , { field: "iLaborCampBankAccount", title: "劳务所账号", sortable: true }
@@ -874,12 +915,13 @@
                 var $shade = $('<div id="waiting"></div>');
                 $shade.css({ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, background: '#fff url(/Content/images/waiting.gif) center center no-repeat', opacity: 0.4 });
                 $("#addModal").append($shade);
-                if (row.iGuid != null && window.userType == "普通用户") {
-                    $('#addRecord').hide();
-                }
-                else {
-                    $('#addRecord').show();
-                }
+                //if (row.iGuid != null && window.userType == "普通用户") {
+                //    $('#addRecord').hide();
+                //}
+                //else {
+                //    $('#addRecord').show();
+                //}
+
 
                 $.get("/FinanceAjax/GetReturnFee?hrguid=" + row.iHRInfoGuid2, function (result) {
                     if (result.success) {
@@ -891,6 +933,7 @@
                         myViewModel.iEmpNo(result.data.iEmpNo);
                         myViewModel.iName(result.data.iName);
                         myViewModel.iIdCard(result.data.iIdCard);
+                        myViewModel.iAdvice(result.data.iAdvice);
                         myViewModel.iLaborName(result.data.iLaborName);
                         myViewModel.iLaborCampBank(result.data.iLaborCampBank);
                         myViewModel.iLaborCampBankAccount(result.data.iLaborCampBankAccount);
@@ -1181,6 +1224,7 @@
         self.iEmpNo = ko.observable("");
         self.iName = ko.observable("");
         self.iIdCard = ko.observable("");
+        self.iAdvice = ko.observable("");
         self.iLaborName = ko.observable("");
         self.iLaborCampBank = ko.observable("");
         self.iLaborCampBankAccount = ko.observable("");
