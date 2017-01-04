@@ -212,7 +212,7 @@ namespace HRMS.Data.Manager
         public int GenerateProvidentFundDetailMonthly(int payMonth)
         {
             int affectedRowCount = 0;
-            string sql = @"insert into ProvidentFundDetail select newid()," + payMonth.ToString() + ",iHRInfoGuid, iPayPlace, iPayBase, iIndividualAmount, iCompanyAmount, iAdditionalAmount, iAdditionalMonths,GETDATE(),'超级管理员',GETDATE(),'超级管理员',1,0 from ProvidentFund where iIndividualAmount is not null and iCompanyAmount is not null and iAdditionalAmount is not null and iIsDeleted =0 and iStatus =1";
+            string sql = @"insert into ProvidentFundDetail select newid()," + payMonth.ToString() + ",iHRInfoGuid, iPayPlace, iPayBase, iIndividualAmount, iCompanyAmount, iAdditionalAmount, iAdditionalMonths,GETDATE(),'系统',GETDATE(),'系统',1,0 from ProvidentFund where iIsPaid='是' and iIsDeleted =0 and iStatus =1";
             using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSDBConnectionString"].ConnectionString))
             {
                 Repository.Execute(conn, "delete from ProvidentFundDetail where iPayMonth =" + payMonth.ToString());

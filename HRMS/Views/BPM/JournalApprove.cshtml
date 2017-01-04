@@ -101,6 +101,9 @@
     $(function () {
 
         var Request = GetRequest();
+        if (Request["sp"] == 5 || Request["sp"] == 6) {
+            $("#repulseSubmit").hide();
+        }
         //重置函数
         $("div.icon-reorder").click(function () {
             $('#mytab').bootstrapTable('resetView', {

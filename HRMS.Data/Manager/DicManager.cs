@@ -377,7 +377,11 @@ namespace HRMS.Data.Manager
   left join [dbo].[BpmUser] b
   on a.iguid = b.iCompanyId and b.iFlowSign='流水账申请' and b.iRoleName='确认'
   and b.iIsDeleted =0 and b.iStatus =1  where a.iisdeleted=0 and a.istatus=1
-
+union all  
+   select b.iGuid, a.iguid as icompanyId, a.iName as iCompanyName, '流水账申请' as iFlowSign, '经理' as iRoleName, b.iUsers, b.iNote , b.iUpdatedOn from [dbo].[SysCompany] a
+  left join [dbo].[BpmUser] b
+  on a.iguid = b.iCompanyId and b.iFlowSign='流水账申请' and b.iRoleName='经理'
+  and b.iIsDeleted =0 and b.iStatus =1  where a.iisdeleted=0 and a.istatus=1
   union all  
    select b.iGuid, a.iguid as icompanyId, a.iName as iCompanyName, '流水账申请' as iFlowSign, '高管' as iRoleName, b.iUsers, b.iNote , b.iUpdatedOn from [dbo].[SysCompany] a
   left join [dbo].[BpmUser] b
