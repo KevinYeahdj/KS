@@ -397,13 +397,13 @@
                      formatter: function (value, row, index) {
                          return ($('#mytab').bootstrapTable('getOptions').pageNumber - 1) * $('#mytab').bootstrapTable('getOptions').pageSize + index + 1;
                      }
-                 },
-                 { field: "iEmpNo", title: "工号", sortable: true }
+                 }
+, { field: "iCompany", title: "所在公司", visible: false },
+{ field: "iItemName", title: "项目名称", visible: false }
+                 ,{ field: "iEmpNo", title: "工号", sortable: true }
 , { field: "iName", title: "姓名", sortable: true }
 , { field: "iIdCard", title: "身份证号", sortable: true }
 , { field: "iGuid", title: "iGuid", visible: false, switchable: false}
-, { field: "iItemName", title: "项目名称", visible: false }
-, { field: "iCompany", title: "所在公司", visible: false }
 , { field: "iWorkPlace", title: "所在工作地", visible: false, switchable: false }
 , { field: "iWageBank", title: "开户行", sortable: true }
 , { field: "iWageBankName", title: "开户行名称", sortable: true }

@@ -616,12 +616,12 @@
                          return ($('#mytab').bootstrapTable('getOptions').pageNumber - 1) * $('#mytab').bootstrapTable('getOptions').pageSize + index + 1;
                      }
                  }
+, { field: "iCompany", title: "所在公司", visible: (window.userType != "普通用户") }
+                 , { field: "iItemName", title: "项目名称", visible: (window.userType != "普通用户") }
                  , { field: "iEmpNo", title: "工号", sortable: true }
                  , { field: "iName", title: "姓名", sortable: true }
                  , { field: "iIdCard", title: "身份证号", sortable: true },
                  { field: "iGuid", title: "iGuid", visible: false, switchable: false }
-                 , { field: "iItemName", title: "项目名称", visible: false }
-, { field: "iCompany", title: "所在公司", visible: false }
 , { field: "iWorkPlace", title: "所在工作地", visible: false, switchable: false }
 
 , { field: "iEmpType", title: "人员类别", sortable: true }
@@ -664,7 +664,7 @@
         return year + "年" + month + "月";
     }
 }
-,{ field: "iFirstDep", title: "所属一级部门", sortable: true }
+, { field: "iFirstDep", title: "所属一级部门", sortable: true }
 , { field: "iSecondDep", title: "所属二级部门", sortable: true }
 , { field: "iThirdDep", title: "所属三级部门", sortable: true }
 , { field: "iFourthDep", title: "所属四级部门", sortable: true }
@@ -803,7 +803,8 @@
                     if (item.iEmployeeStatus == "离职") {
                         $("#mytab").find("tr[data-index=" + i + "]").css("color", "red");
                     }
-                })
+                });
+                $(".fixed-table-column").first().css("display", "block");
             },
             locale: "zh-CN",//中文支持,
             detailView: false, //是否显示详情折叠
@@ -815,12 +816,12 @@
                 return html;
             },
             fixedColumns: true,
-            fixedNumber:4
+            fixedNumber: (window.userType != "普通用户") ? 6 : 4
         });
-        if (window.userType != "普通用户") {
-            $('#mytab').bootstrapTable('showColumn', 'iCompany');
-            $('#mytab').bootstrapTable('showColumn', 'iItemName');
-        }
+        //if (window.userType != "普通用户") {
+        //    $('#mytab').bootstrapTable('showColumn', 'iCompany');
+        //    $('#mytab').bootstrapTable('showColumn', 'iItemName');
+        //}
         $("#addRecord").click(function () {
             $("input[name='iIsReturnFee']").removeAttr("disabled");
             var warnings = $(".warning");

@@ -35,6 +35,7 @@
             return;
         }
 
+        this.$container.find(".fixed-table-column").remove();
         this.initFixedColumns();
 
         var $tr = this.$header.find('tr:eq(0)').clone(),
