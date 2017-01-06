@@ -73,6 +73,9 @@
         }
     </style>
     <script>
+        window.menuRights = "@ViewBag.CurrentPageRights";
+        window.userType = "@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserType";
+
         $(function () {
             var companySelected = $("#companySelect").val();
             if (companySelect != "-") {
@@ -97,6 +100,9 @@
         });
 
         function ChangeCompany(newCompany) {
+            if (newCompany == "-" && window.userType == "普通用户" && '@HRMS.WEB.Utils.SessionHelper.CurrentUser.CurrentCompany' != "-")
+                location.reload(); //普通用户切换看所有公司(已选择过公司了)，查看有没有权限
+
             $.ajax({
                 url: "/ManageAjax/GetAuthorisedProjectDic?companyCode=" + newCompany,
                 type: "GET",
@@ -139,8 +145,6 @@
             });
         }
 
-        window.menuRights = "@ViewBag.CurrentPageRights";
-        window.userType = "@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserType";
     </script>
 
 </head>
@@ -219,7 +223,7 @@
                         <span>流程中心</span>
                     </a>
                     <ul class="sub">
-                        <li><a href="~/BPM/todo">我的待办</a></li>
+                        <li><a href="~/BPM/todo">我的待办(<span style="color:red">@{ ClinBrain.Data.Service.BPMManager service = new ClinBrain.Data.Service.BPMManager(); @Html.Raw(service.GetMyTodoCount(HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId).ToString())}</span>)</a></li>
                     </ul>
                     <ul class="sub">
                         <li><a href="~/BPM/done">我的完成</a></li>

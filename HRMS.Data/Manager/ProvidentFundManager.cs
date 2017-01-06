@@ -213,10 +213,12 @@ namespace HRMS.Data.Manager
         {
             int affectedRowCount = 0;
             string sql = @"insert into ProvidentFundDetail select newid()," + payMonth.ToString() + ",iHRInfoGuid, iPayPlace, iPayBase, iIndividualAmount, iCompanyAmount, iAdditionalAmount, iAdditionalMonths,GETDATE(),'系统',GETDATE(),'系统',1,0 from ProvidentFund where iIsPaid='是' and iIsDeleted =0 and iStatus =1";
+            string clearsql = "update ProvidentFund set iAdditionalAmount = null, iAdditionalMonths = null";
             using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSDBConnectionString"].ConnectionString))
             {
                 Repository.Execute(conn, "delete from ProvidentFundDetail where iPayMonth =" + payMonth.ToString());
                 affectedRowCount = Repository.Execute(conn, sql);
+                Repository.Execute(conn, clearsql);
             }
             return affectedRowCount;
         }

@@ -375,167 +375,129 @@
 
     $(function () {
         if (window.userType == "普通用户") {
-            $("#sItemName").val('@HRMS.WEB.Utils.SessionHelper.CurrentUser.CurrentProject');
-            $("#sItemName").attr("disabled", true);
-            $("#iItemName").attr("disabled", true);
             $("#sEditType").val("未编辑");
-
-            $("#iFirstReturnFeePayment").attr("disabled", true);
-            $("#iSecondReturnFeePayment").attr("disabled", true);
-            $("#iThirdReturnFeePayment").attr("disabled", true);
-            $("#iFourthReturnFeePayment").attr("disabled", true);
-            $("#iFifthReturnFeePayment").attr("disabled", true);
-
-            $("#iLaborName").attr("readonly", "readonly");
-            $("#iLaborCampBank").attr("readonly", "readonly");
-            $("#iLaborCampBankAccount").attr("readonly", "readonly");
-            $("#iLaborCampBankPerson").attr("readonly", "readonly");
-            $("#iInterviewDate").attr("readonly", "readonly");
-            $("#iReturnFeeNote").attr("readonly", "readonly");
-            $("#iFirstReturnFeeAmount").attr("readonly", "readonly");
-            $("#iFirstReturnFeeDays").attr("readonly", "readonly");
-            $("#iFirstReturnFeeDate").attr("readonly", "readonly");
-            $("#iFirstReturnFeeActualPayDate").attr("readonly", "readonly");
-            $("#iSecondReturnFeeAmount").attr("readonly", "readonly");
-            $("#iSecondReturnFeeDays").attr("readonly", "readonly");
-            $("#iSecondReturnFeeDate").attr("readonly", "readonly");
-            $("#iSecondReturnFeeActualPayDate").attr("readonly", "readonly");
-            $("#iThirdReturnFeeAmount").attr("readonly", "readonly");
-            $("#iThirdReturnFeeDays").attr("readonly", "readonly");
-            $("#iThirdReturnFeeDate").attr("readonly", "readonly");
-            $("#iThirdReturnFeeActualPayDate").attr("readonly", "readonly");
-            $("#iFourthReturnFeeAmount").attr("readonly", "readonly");
-            $("#iFourthReturnFeeDays").attr("readonly", "readonly");
-            $("#iFourthReturnFeeDate").attr("readonly", "readonly");
-            $("#iFourthReturnFeeActualPayDate").attr("readonly", "readonly");
-            $("#iFifthReturnFeeAmount").attr("readonly", "readonly");
-            $("#iFifthReturnFeeDays").attr("readonly", "readonly");
-            $("#iFifthReturnFeeDate").attr("readonly", "readonly");
-            $("#iFifthReturnFeeActualPayDate").attr("readonly", "readonly");
         }
-        else {
-            $('#iInterviewDate').datetimepicker({
-                language: 'zh-CN',
-                weekStart: 1,
-                clearBtn: 1,
-                autoclose: 1,
-                todayHighlight: 1,
-                startView: 2,
-                minView: 2,
-                forceParse: 1,
-                format: 'yyyy-mm-dd'
-            });
-            $('#iFirstReturnFeeDate').datetimepicker({
-                language: 'zh-CN',
-                weekStart: 1,
-                clearBtn: 1,
-                autoclose: 1,
-                todayHighlight: 1,
-                startView: 2,
-                minView: 2,
-                forceParse: 1,
-                format: 'yyyy-mm-dd'
-            });
-            $('#iFirstReturnFeeActualPayDate').datetimepicker({
-                language: 'zh-CN',
-                weekStart: 1,
-                clearBtn: 1,
-                autoclose: 1,
-                todayHighlight: 1,
-                startView: 2,
-                minView: 2,
-                forceParse: 1,
-                format: 'yyyy-mm-dd'
-            });
-            $('#iSecondReturnFeeDate').datetimepicker({
-                language: 'zh-CN',
-                weekStart: 1,
-                clearBtn: 1,
-                autoclose: 1,
-                todayHighlight: 1,
-                startView: 2,
-                minView: 2,
-                forceParse: 1,
-                format: 'yyyy-mm-dd'
-            });
-            $('#iSecondReturnFeeActualPayDate').datetimepicker({
-                language: 'zh-CN',
-                weekStart: 1,
-                clearBtn: 1,
-                autoclose: 1,
-                todayHighlight: 1,
-                startView: 2,
-                minView: 2,
-                forceParse: 1,
-                format: 'yyyy-mm-dd'
-            });
-            $('#iThirdReturnFeeDate').datetimepicker({
-                language: 'zh-CN',
-                weekStart: 1,
-                clearBtn: 1,
-                autoclose: 1,
-                todayHighlight: 1,
-                startView: 2,
-                minView: 2,
-                forceParse: 1,
-                format: 'yyyy-mm-dd'
-            });
-            $('#iThirdReturnFeeActualPayDate').datetimepicker({
-                language: 'zh-CN',
-                weekStart: 1,
-                clearBtn: 1,
-                autoclose: 1,
-                todayHighlight: 1,
-                startView: 2,
-                minView: 2,
-                forceParse: 1,
-                format: 'yyyy-mm-dd'
-            });
-            $('#iFourthReturnFeeDate').datetimepicker({
-                language: 'zh-CN',
-                weekStart: 1,
-                clearBtn: 1,
-                autoclose: 1,
-                todayHighlight: 1,
-                startView: 2,
-                minView: 2,
-                forceParse: 1,
-                format: 'yyyy-mm-dd'
-            });
-            $('#iFourthReturnFeeActualPayDate').datetimepicker({
-                language: 'zh-CN',
-                weekStart: 1,
-                clearBtn: 1,
-                autoclose: 1,
-                todayHighlight: 1,
-                startView: 2,
-                minView: 2,
-                forceParse: 1,
-                format: 'yyyy-mm-dd'
-            });
-            $('#iFifthReturnFeeDate').datetimepicker({
-                language: 'zh-CN',
-                weekStart: 1,
-                clearBtn: 1,
-                autoclose: 1,
-                todayHighlight: 1,
-                startView: 2,
-                minView: 2,
-                forceParse: 1,
-                format: 'yyyy-mm-dd'
-            });
-            $('#iFifthReturnFeeActualPayDate').datetimepicker({
-                language: 'zh-CN',
-                weekStart: 1,
-                clearBtn: 1,
-                autoclose: 1,
-                todayHighlight: 1,
-                startView: 2,
-                minView: 2,
-                forceParse: 1,
-                format: 'yyyy-mm-dd'
-            });
-        }
+        $('#iInterviewDate').datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            clearBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 1,
+            format: 'yyyy-mm-dd'
+        });
+        $('#iFirstReturnFeeDate').datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            clearBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 1,
+            format: 'yyyy-mm-dd'
+        });
+        $('#iFirstReturnFeeActualPayDate').datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            clearBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 1,
+            format: 'yyyy-mm-dd'
+        });
+        $('#iSecondReturnFeeDate').datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            clearBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 1,
+            format: 'yyyy-mm-dd'
+        });
+        $('#iSecondReturnFeeActualPayDate').datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            clearBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 1,
+            format: 'yyyy-mm-dd'
+        });
+        $('#iThirdReturnFeeDate').datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            clearBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 1,
+            format: 'yyyy-mm-dd'
+        });
+        $('#iThirdReturnFeeActualPayDate').datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            clearBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 1,
+            format: 'yyyy-mm-dd'
+        });
+        $('#iFourthReturnFeeDate').datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            clearBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 1,
+            format: 'yyyy-mm-dd'
+        });
+        $('#iFourthReturnFeeActualPayDate').datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            clearBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 1,
+            format: 'yyyy-mm-dd'
+        });
+        $('#iFifthReturnFeeDate').datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            clearBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 1,
+            format: 'yyyy-mm-dd'
+        });
+        $('#iFifthReturnFeeActualPayDate').datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            clearBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 1,
+            format: 'yyyy-mm-dd'
+        });
 
 
         if (window.menuRights == "r") {
@@ -976,6 +938,75 @@
                         myViewModel.iIsDeleted(result.data.iIsDeleted);
                         $("#iItemName").attr("disabled", true);
                         $("#iCompany").attr("disabled", true);
+
+                        if (result.data.iGuid != null) {  //已编辑过就不能再编辑了
+                            $("#iFirstReturnFeePayment").attr("disabled", true);
+                            $("#iSecondReturnFeePayment").attr("disabled", true);
+                            $("#iThirdReturnFeePayment").attr("disabled", true);
+                            $("#iFourthReturnFeePayment").attr("disabled", true);
+                            $("#iFifthReturnFeePayment").attr("disabled", true);
+
+                            $("#iLaborName").attr("readonly", "readonly");
+                            $("#iLaborCampBank").attr("readonly", "readonly");
+                            $("#iLaborCampBankAccount").attr("readonly", "readonly");
+                            $("#iLaborCampBankPerson").attr("readonly", "readonly");
+                            $("#iInterviewDate").attr("readonly", "readonly").attr("disabled", true);
+                            $("#iReturnFeeNote").attr("readonly", "readonly");
+                            $("#iFirstReturnFeeAmount").attr("readonly", "readonly");
+                            $("#iFirstReturnFeeDays").attr("readonly", "readonly");
+                            $("#iFirstReturnFeeDate").attr("readonly", "readonly").attr("disabled", true);
+                            $("#iFirstReturnFeeActualPayDate").attr("readonly", "readonly").attr("disabled", true);
+                            $("#iSecondReturnFeeAmount").attr("readonly", "readonly");
+                            $("#iSecondReturnFeeDays").attr("readonly", "readonly");
+                            $("#iSecondReturnFeeDate").attr("readonly", "readonly").attr("disabled", true);
+                            $("#iSecondReturnFeeActualPayDate").attr("readonly", "readonly").attr("disabled", true);
+                            $("#iThirdReturnFeeAmount").attr("readonly", "readonly");
+                            $("#iThirdReturnFeeDays").attr("readonly", "readonly");
+                            $("#iThirdReturnFeeDate").attr("readonly", "readonly").attr("disabled", true);
+                            $("#iThirdReturnFeeActualPayDate").attr("readonly", "readonly").attr("disabled", true);
+                            $("#iFourthReturnFeeAmount").attr("readonly", "readonly");
+                            $("#iFourthReturnFeeDays").attr("readonly", "readonly");
+                            $("#iFourthReturnFeeDate").attr("readonly", "readonly").attr("disabled", true);
+                            $("#iFourthReturnFeeActualPayDate").attr("readonly", "readonly").attr("disabled", true);
+                            $("#iFifthReturnFeeAmount").attr("readonly", "readonly");
+                            $("#iFifthReturnFeeDays").attr("readonly", "readonly");
+                            $("#iFifthReturnFeeDate").attr("readonly", "readonly").attr("disabled", true);
+                            $("#iFifthReturnFeeActualPayDate").attr("readonly", "readonly").attr("disabled", true);
+                        }
+                        else {
+                            $("#iFirstReturnFeePayment").removeAttr("disabled");
+                            $("#iSecondReturnFeePayment").removeAttr("disabled");
+                            $("#iThirdReturnFeePayment").removeAttr("disabled");
+                            $("#iFourthReturnFeePayment").removeAttr("disabled");
+                            $("#iFifthReturnFeePayment").removeAttr("disabled");
+
+                            $("#iLaborName").removeAttr("readonly");
+                            $("#iLaborCampBank").removeAttr("readonly");
+                            $("#iLaborCampBankAccount").removeAttr("readonly");
+                            $("#iLaborCampBankPerson").removeAttr("readonly");
+                            $("#iInterviewDate").removeAttr("readonly").removeAttr("disabled");
+                            $("#iReturnFeeNote").removeAttr("readonly");
+                            $("#iFirstReturnFeeAmount").removeAttr("readonly");
+                            $("#iFirstReturnFeeDays").removeAttr("readonly");
+                            $("#iFirstReturnFeeDate").removeAttr("readonly").removeAttr("disabled");
+                            $("#iFirstReturnFeeActualPayDate").removeAttr("readonly").removeAttr("disabled");
+                            $("#iSecondReturnFeeAmount").removeAttr("readonly");
+                            $("#iSecondReturnFeeDays").removeAttr("readonly");
+                            $("#iSecondReturnFeeDate").removeAttr("readonly").removeAttr("disabled");
+                            $("#iSecondReturnFeeActualPayDate").removeAttr("readonly").removeAttr("disabled");
+                            $("#iThirdReturnFeeAmount").removeAttr("readonly");
+                            $("#iThirdReturnFeeDays").removeAttr("readonly");
+                            $("#iThirdReturnFeeDate").removeAttr("readonly").removeAttr("disabled");
+                            $("#iThirdReturnFeeActualPayDate").removeAttr("readonly").removeAttr("disabled");
+                            $("#iFourthReturnFeeAmount").removeAttr("readonly");
+                            $("#iFourthReturnFeeDays").removeAttr("readonly");
+                            $("#iFourthReturnFeeDate").removeAttr("readonly").removeAttr("disabled");
+                            $("#iFourthReturnFeeActualPayDate").removeAttr("readonly").removeAttr("disabled");
+                            $("#iFifthReturnFeeAmount").removeAttr("readonly");
+                            $("#iFifthReturnFeeDays").removeAttr("readonly");
+                            $("#iFifthReturnFeeDate").removeAttr("readonly").removeAttr("disabled");
+                            $("#iFifthReturnFeeActualPayDate").removeAttr("readonly").removeAttr("disabled");
+                        }
                     }
                     else {
                         console.log(result.msg);

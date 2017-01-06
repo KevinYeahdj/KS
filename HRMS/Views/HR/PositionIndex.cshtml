@@ -823,7 +823,6 @@
         //    $('#mytab').bootstrapTable('showColumn', 'iItemName');
         //}
         $("#addRecord").click(function () {
-            $("input[name='iIsReturnFee']").removeAttr("disabled");
             var warnings = $(".warning");
             if (warnings && warnings.length > 0) {
                 toastr.error('数据验证未通过！');
@@ -879,6 +878,7 @@
         });
 
         $("#NewRecord").click(function () {
+            $("input[name='iIsReturnFee']").removeAttr("disabled");
             $("#removeRecord").hide();
             if ($("#iItemName").val() == "-") {
                 $('#iItemName').addClass("warning");

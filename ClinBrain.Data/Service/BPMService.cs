@@ -23,6 +23,13 @@ namespace ClinBrain.Data.Service
             total = int.Parse(Repository.Query<string>(totalSql).ToList()[0]);
             return Repository.Query<TodoViewModel>(querySql).ToList();
         }
+
+        public int GetMyTodoCount(string userId)
+        {
+            string sql = string.Format("select cast(count(1) as varchar(8)) FROM vwWfActivityInstanceTasks WHERE ActivityType=4 AND ActivityState=1 AND AssignedToUserID='{0}'  AND ProcessState=2 ", userId);
+            int total = int.Parse(Repository.Query<string>(sql).ToList()[0]);
+            return total;
+        }
         public List<DoneViewModel> GetMyDoneList(Dictionary<string, string> para, string sort, string order, int offset, int pageSize, out int total)
         {
             string commonSql = string.Format("FROM vwWfActivityInstanceTasks WHERE ActivityType=4 AND ActivityState=4 AND AssignedToUserID='{0}'  AND DATEDIFF(s,CreatedDateTime,EndedDateTime) >5 and viewPageUrl is not null ", para["currentUserId"]);
