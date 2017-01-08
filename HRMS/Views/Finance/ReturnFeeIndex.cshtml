@@ -930,6 +930,13 @@
                         myViewModel.iFifthReturnFeePayment(result.data.iFifthReturnFeePayment);
                         myViewModel.iFifthReturnFeeActualPayDate(ChangeDateFormat(result.data.iFifthReturnFeeActualPayDate));
                         myViewModel.iReturnFeeNote(result.data.iReturnFeeNote);
+
+                        myViewModel.iFirstAppNo(result.data.iFirstAppNo);
+                        myViewModel.iSecondAppNo(result.data.iSecondAppNo);
+                        myViewModel.iThirdAppNo(result.data.iThirdAppNo);
+                        myViewModel.iFourthAppNo(result.data.iFourthAppNo);
+                        myViewModel.iFifthAppNo(result.data.iFifthAppNo);
+
                         myViewModel.iCreatedOn(result.data.iCreatedOn);
                         myViewModel.iCreatedBy(result.data.iCreatedBy);
                         myViewModel.iUpdatedOn(result.data.iUpdatedOn);
@@ -939,7 +946,7 @@
                         $("#iItemName").attr("disabled", true);
                         $("#iCompany").attr("disabled", true);
 
-                        if (result.data.iGuid != null) {  //已编辑过就不能再编辑了
+                        if (result.data.iGuid != null && window.userType == "普通用户") {  //普通用户已编辑过就不能再编辑了
                             $("#iFirstReturnFeePayment").attr("disabled", true);
                             $("#iSecondReturnFeePayment").attr("disabled", true);
                             $("#iThirdReturnFeePayment").attr("disabled", true);
@@ -1290,6 +1297,11 @@
         self.iFifthReturnFeePayment = ko.observable("");
         self.iFifthReturnFeeActualPayDate = ko.observable("");
         self.iReturnFeeNote = ko.observable("");
+        self.iFirstAppNo = ko.observable("");
+        self.iSecondAppNo = ko.observable("");
+        self.iThirdAppNo = ko.observable("");
+        self.iFourthAppNo = ko.observable("");
+        self.iFifthAppNo = ko.observable("");
         self.iCreatedOn = ko.observable("");
         self.iCreatedBy = ko.observable("");
         self.iUpdatedOn = ko.observable("");

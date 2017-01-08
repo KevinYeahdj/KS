@@ -400,5 +400,183 @@ namespace HRMS.Data.Manager
                 return en;
             }
         }
+
+        public List<ReturnFeeHistoryEntity> GetValidReturnFeeList(string companyId, string projectId)
+        {
+            string sql = @"select fee.[iGuid]+'1' as iGuid
+      ,fee.[iGuid] as iRturnFeeGuid
+      ,[iHRInfoGuid]
+      ,[iLaborName]
+      ,[iLaborCampBank]
+      ,[iLaborCampBankAccount]
+      ,[iLaborCampBankPerson]
+      ,'一级' as [iReturnFeeLevel]
+      ,[iFirstReturnFeeAmount] as iReturnFeeAmount
+      ,[iFirstReturnFeeDays]as iReturnFeeDays
+      ,[iFirstReturnFeeDate]as iReturnFeeDate
+      ,[iFirstReturnFeePayment]as iReturnFeePayment
+      ,[iFirstReturnFeeActualPayDate]as iReturnFeeActualPayDate
+  from ReturnFee fee right join hrinfo hr on fee.iHRInfoGuid = hr.iguid and fee.iIsDeleted =0 and fee.iStatus =1  
+  where hr.iIsReturnFee = '是' and hr.iisdeleted=0 and hr.istatus=1 and hr.iCompany = @companyid and hr.iItemName= @projectid
+  and fee.iFirstReturnFeePayment <> '已付' and fee.iAdvice <> '暂不返费' and fee.iFirstAppNo is null
+  and ((hr.iEmployeeStatus = '在职' and fee.iFirstReturnFeeDate < getdate()) or (hr.iEmployeeStatus = '离职' and fee.iFirstReturnFeeDate < hr.iResignDate))
+  union all
+  select fee.[iGuid]+'2' as iGuid
+      ,fee.[iGuid] as iRturnFeeGuid
+      ,[iHRInfoGuid]
+      ,[iLaborName]
+      ,[iLaborCampBank]
+      ,[iLaborCampBankAccount]
+      ,[iLaborCampBankPerson]
+      ,'二级' as [iReturnFeeLevel]
+      ,[iSecondReturnFeeAmount] as iReturnFeeAmount
+      ,[iSecondReturnFeeDays]as iReturnFeeDays
+      ,[iSecondReturnFeeDate]as iReturnFeeDate
+      ,[iSecondReturnFeePayment]as iReturnFeePayment
+      ,[iSecondReturnFeeActualPayDate]as iReturnFeeActualPayDate
+  from ReturnFee fee right join hrinfo hr on fee.iHRInfoGuid = hr.iguid and fee.iIsDeleted =0 and fee.iStatus =1  
+  where hr.iIsReturnFee = '是' and hr.iisdeleted=0 and hr.istatus=1 and hr.iCompany = @companyid and hr.iItemName= @projectid
+  and fee.iSecondReturnFeePayment <> '已付' and fee.iAdvice <> '暂不返费' and fee.iSecondAppNo is null
+  and ((hr.iEmployeeStatus = '在职' and fee.iSecondReturnFeeDate < getdate()) or (hr.iEmployeeStatus = '离职' and fee.iSecondReturnFeeDate < hr.iResignDate))
+  union all
+  select fee.[iGuid]+'3' as iGuid
+      ,fee.[iGuid] as iRturnFeeGuid
+      ,[iHRInfoGuid]
+      ,[iLaborName]
+      ,[iLaborCampBank]
+      ,[iLaborCampBankAccount]
+      ,[iLaborCampBankPerson]
+      ,'三级' as [iReturnFeeLevel]
+      ,[iThirdReturnFeeAmount] as iReturnFeeAmount
+      ,[iThirdReturnFeeDays]as iReturnFeeDays
+      ,[iThirdReturnFeeDate]as iReturnFeeDate
+      ,[iThirdReturnFeePayment]as iReturnFeePayment
+      ,[iThirdReturnFeeActualPayDate]as iReturnFeeActualPayDate
+  from ReturnFee fee right join hrinfo hr on fee.iHRInfoGuid = hr.iguid and fee.iIsDeleted =0 and fee.iStatus =1  
+  where hr.iIsReturnFee = '是' and hr.iisdeleted=0 and hr.istatus=1 and hr.iCompany = @companyid and hr.iItemName= @projectid
+  and fee.iThirdReturnFeePayment <> '已付' and fee.iAdvice <> '暂不返费' and fee.iThirdAppNo is null
+  and ((hr.iEmployeeStatus = '在职' and fee.iThirdReturnFeeDate < getdate()) or (hr.iEmployeeStatus = '离职' and fee.iThirdReturnFeeDate < hr.iResignDate))
+  union all
+  select fee.[iGuid]+'4' as iGuid
+      ,fee.[iGuid] as iRturnFeeGuid
+      ,[iHRInfoGuid]
+      ,[iLaborName]
+      ,[iLaborCampBank]
+      ,[iLaborCampBankAccount]
+      ,[iLaborCampBankPerson]
+      ,'四级' as [iReturnFeeLevel]
+      ,[iFourthReturnFeeAmount] as iReturnFeeAmount
+      ,[iFourthReturnFeeDays]as iReturnFeeDays
+      ,[iFourthReturnFeeDate]as iReturnFeeDate
+      ,[iFourthReturnFeePayment]as iReturnFeePayment
+      ,[iFourthReturnFeeActualPayDate]as iReturnFeeActualPayDate
+  from ReturnFee fee right join hrinfo hr on fee.iHRInfoGuid = hr.iguid and fee.iIsDeleted =0 and fee.iStatus =1  
+  where hr.iIsReturnFee = '是' and hr.iisdeleted=0 and hr.istatus=1 and hr.iCompany = @companyid and hr.iItemName= @projectid
+  and fee.iFourthReturnFeePayment <> '已付' and fee.iAdvice <> '暂不返费' and fee.iFourthAppNo is null
+  and ((hr.iEmployeeStatus = '在职' and fee.iFourthReturnFeeDate < getdate()) or (hr.iEmployeeStatus = '离职' and fee.iFourthReturnFeeDate < hr.iResignDate))
+  union all
+  select fee.[iGuid]+'5' as iGuid
+      ,fee.[iGuid] as iRturnFeeGuid
+      ,[iHRInfoGuid]
+      ,[iLaborName]
+      ,[iLaborCampBank]
+      ,[iLaborCampBankAccount]
+      ,[iLaborCampBankPerson]
+      ,'五级' as [iReturnFeeLevel]
+      ,[iFifthReturnFeeAmount] as iReturnFeeAmount
+      ,[iFifthReturnFeeDays]as iReturnFeeDays
+      ,[iFifthReturnFeeDate]as iReturnFeeDate
+      ,[iFifthReturnFeePayment]as iReturnFeePayment
+      ,[iFifthReturnFeeActualPayDate]as iReturnFeeActualPayDate
+  from ReturnFee fee right join hrinfo hr on fee.iHRInfoGuid = hr.iguid and fee.iIsDeleted =0 and fee.iStatus =1  
+  where hr.iIsReturnFee = '是' and hr.iisdeleted=0 and hr.istatus=1 and hr.iCompany = @companyid and hr.iItemName= @projectid
+  and fee.iFifthReturnFeePayment <> '已付' and fee.iAdvice <> '暂不返费' and fee.iFifthAppNo is null
+  and ((hr.iEmployeeStatus = '在职' and fee.iFifthReturnFeeDate < getdate()) or (hr.iEmployeeStatus = '离职' and fee.iFifthReturnFeeDate < hr.iResignDate))";
+
+            return Repository.Query<ReturnFeeHistoryEntity>(sql, new { companyid = companyId, projectid = projectId }).ToList();
+
+
+        }
+
+        //清掉所有当前流程标识的返费，以重新获取
+        public bool ResetValidReturnFeeList(string appNo)
+        {
+            string sql1 = "update returnFee set iFirstAppNo = null where iFirstAppNo='" + appNo + "'";
+            string sql2 = "update returnFee set iSecondAppNo=null where iSecondAppNo='" + appNo + "'";
+            string sql3 = "update returnFee set iThirdAppNo=null where iThirdAppNo='" + appNo + "'";
+            string sql4 = "update returnFee set iFourthAppNo=null where iFourthAppNo='" + appNo + "'";
+            string sql5 = "update returnFee set iFifthAppNo=null where iFifthAppNo='" + appNo + "'";
+            List<string> clearSqls = new List<string>();
+            clearSqls.Add(sql1);
+            clearSqls.Add(sql2);
+            clearSqls.Add(sql3);
+            clearSqls.Add(sql4);
+            clearSqls.Add(sql5);
+            DbHelperSQL.ExecuteSqlTran(clearSqls);
+            return true;
+
+        }
+
+        //同一流程所有数据操作  发起流程
+        public void BatchInsertReturnFeeHistoryApplication(List<ReturnFeeHistoryEntity> entities)
+        {
+            if (entities == null || entities.Count == 0)
+                return;
+            string appNo = entities[0].iReturnFeeAppNo;
+            IDbSession session = SessionFactory.CreateSession();
+            try
+            {
+                session.BeginTrans();
+                var old = Repository.Query<ReturnFeeHistoryEntity>("select * from ReturnFeeHistory where iisdeleted=0 and istatus=1 and iReturnFeeAppNo='" + entities[0].iReturnFeeAppNo + "'");
+                foreach (var item in old)
+                {
+                    Repository.Delete<ReturnFeeHistoryEntity>(session.Connection, item, session.Transaction);
+                }
+                foreach (var entity in entities)
+                {
+                    if (string.IsNullOrEmpty(entity.iGuid))
+                        entity.iGuid = Guid.NewGuid().ToString();
+                    entity.iCreatedOn = DateTime.Now;
+                    entity.iUpdatedOn = DateTime.Now;
+                    entity.iIsDeleted = 0;
+                    entity.iStatus = 1;
+                    Repository.Insert<ReturnFeeHistoryEntity>(session.Connection, entity, session.Transaction);
+                    string updateSql = "";
+                    if (entity.iReturnFeeLevel == "一级")
+                    {
+                        updateSql = "update returnfee set iFirstAppNo = '" + appNo + "' where iguid='" + entity.iReturnFeeGuid + "'";
+                    }
+                    else if (entity.iReturnFeeLevel == "二级")
+                    {
+                        updateSql = "update returnfee set iSecondAppNo = '" + appNo + "' where iguid='" + entity.iReturnFeeGuid + "'";
+                    }
+                    else if (entity.iReturnFeeLevel == "三级")
+                    {
+                        updateSql = "update returnfee set iThirdAppNo = '" + appNo + "' where iguid='" + entity.iReturnFeeGuid + "'";
+                    }
+                    else if (entity.iReturnFeeLevel == "四级")
+                    {
+                        updateSql = "update returnfee set iFourthAppNo = '" + appNo + "' where iguid='" + entity.iReturnFeeGuid + "'";
+                    }
+                    else if (entity.iReturnFeeLevel == "五级")
+                    {
+                        updateSql = "update returnfee set iFifthAppNo = '" + appNo + "' where iguid='" + entity.iReturnFeeGuid + "'";
+                    }
+
+                    Repository.Execute(session.Connection, updateSql, null, session.Transaction);
+                }
+                session.Commit();
+            }
+            catch (System.Exception)
+            {
+                session.Rollback();
+                throw;
+            }
+            finally
+            {
+                session.Dispose();
+            }
+        }
+        
     }
 }

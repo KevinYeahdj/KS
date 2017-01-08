@@ -50,6 +50,12 @@ namespace HRMS.Data.Entity
 
         public string iReturnFeeNote { get; set; } // 返费信息备注
 
+        public string iFirstAppNo { get; set; } // 一级返费流程编号
+        public string iSecondAppNo { get; set; } // 二级费流程编号
+        public string iThirdAppNo { get; set; } // 三级返费流程编号
+        public string iFourthAppNo { get; set; } // 四级返费流程编号
+        public string iFifthAppNo { get; set; } // 五级返费流程编号
+
         public DateTime? iCreatedOn { get; set; }  //创建时间
         public string iCreatedBy { get; set; } //创建人
         public DateTime? iUpdatedOn { get; set; } //修改时间
@@ -117,6 +123,13 @@ namespace HRMS.Data.Entity
         public DateTime? iFifthReturnFeeActualPayDate { get; set; } //五级实际支付日期
 
         public string iReturnFeeNote { get; set; } // 返费信息备注
+
+        public string iFirstAppNo { get; set; } // 一级返费流程编号
+        public string iSecondAppNo { get; set; } // 二级费流程编号
+        public string iThirdAppNo { get; set; } // 三级返费流程编号
+        public string iFourthAppNo { get; set; } // 四级返费流程编号
+        public string iFifthAppNo { get; set; } // 五级返费流程编号
+
         public DateTime? iCreatedOn { get; set; }  //创建时间
         public string iCreatedBy { get; set; } //创建人
         public DateTime? iUpdatedOn { get; set; } //修改时间
@@ -125,4 +138,34 @@ namespace HRMS.Data.Entity
         public int iIsDeleted { get; set; } //假删
         
     }
+
+    //返费历史 信息
+    [Table("ReturnFeeHistory")]
+    public class ReturnFeeHistoryEntity
+    {
+        public string iGuid { get; set; } //惟一标识
+        public string iReturnFeeGuid { get; set; } //返费惟一标识
+        public string iHRInfoGuid { get; set; } //人事信息标识
+        public string iLaborName { get; set; } //劳务名称 
+        public string iLaborCampBank { get; set; } //劳务所银行支行
+        public string iLaborCampBankAccount { get; set; } //劳务所账号
+        public string iLaborCampBankPerson { get; set; } //劳务所人姓名
+        public string iReturnFeeLevel { get; set; } //返费级别
+        public string iFirstReturnFeeAmount { get; set; } //返费金额 
+        public string iFirstReturnFeeDays { get; set; } //返费天数
+        public DateTime? iFirstReturnFeeDate { get; set; } //返费日期
+        public string iFirstReturnFeePayment { get; set; } //付款情况 
+        public DateTime? iFirstReturnFeeActualPayDate { get; set; } //实际支付日期
+
+        public string iReturnFeeAppNo { get; set; } //返费单号
+        //public 
+        public DateTime? iCreatedOn { get; set; }  //创建时间
+        public string iCreatedBy { get; set; } //创建人
+        public DateTime? iUpdatedOn { get; set; } //修改时间
+        public string iUpdatedBy { get; set; } //修改人
+        public int iStatus { get; set; }  //状态
+        public int iIsDeleted { get; set; } //假删
+
+    }
 }
+
