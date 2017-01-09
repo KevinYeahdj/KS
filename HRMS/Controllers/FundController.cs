@@ -77,9 +77,11 @@ namespace HRMS.Controllers
                 string searchKey = HttpContext.Request.Params["search"];
                 int offset = Convert.ToInt32(HttpContext.Request.Params["offset"]);  //0
                 int pageSize = Convert.ToInt32(HttpContext.Request.Params["limit"]);
+                string editType = HttpContext.Request.Params["sEditType"];
 
                 Dictionary<string, string> bizParaDic = new Dictionary<string, string>();
                 bizParaDic.Add("search", searchKey);
+                bizParaDic.Add("editType", editType);
                 Dictionary<string, string> bizParaDicTemp = new Dictionary<string, string>();
 
                 foreach (string para in HttpContext.Request.Params.Keys)
@@ -224,9 +226,11 @@ namespace HRMS.Controllers
                 string searchKey = HttpContext.Request.Params["search"];
                 int offset = Convert.ToInt32(HttpContext.Request.Params["offset"]);  //0
                 int pageSize = Convert.ToInt32(HttpContext.Request.Params["limit"]);
+                string editType = HttpContext.Request.Params["sEditType"];
 
                 Dictionary<string, string> bizParaDic = new Dictionary<string, string>();
                 bizParaDic.Add("search", searchKey);
+                bizParaDic.Add("editType", editType);
                 Dictionary<string, string> bizParaDicTemp = new Dictionary<string, string>();
 
                 foreach (string para in HttpContext.Request.Params.Keys)
@@ -1188,6 +1192,8 @@ namespace HRMS.Controllers
             Dictionary<string, string> bizParaDic = new Dictionary<string, string>();
             bizParaDic.Add("search", paraDic["search"]);
             paraDic.Remove("search");
+            bizParaDic.Add("editType", paraDic["sEditType"]);
+            paraDic.Remove("sEditType");
             foreach (var item in paraDic)
             {
                 if (item.Key.EndsWith("2"))
@@ -1225,6 +1231,8 @@ namespace HRMS.Controllers
             Dictionary<string, string> bizParaDic = new Dictionary<string, string>();
             bizParaDic.Add("search", paraDic["search"]);
             paraDic.Remove("search");
+            bizParaDic.Add("editType", paraDic["sEditType"]);
+            paraDic.Remove("sEditType");
             foreach (var item in paraDic)
             {
                 if (item.Key.EndsWith("2"))

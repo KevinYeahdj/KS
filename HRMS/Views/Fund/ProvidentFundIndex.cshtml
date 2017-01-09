@@ -13,6 +13,17 @@
 
             <div id="toolbar" class="toolbar">
                 <div style="float: left; margin-left: 10px">
+                    <span>编辑状态：</span>
+                </div>
+                <div style="float: left; margin-left: 10px">
+                    <select class="form-control" id="sEditType">
+                        <option value="所有">所有</option>
+                        <option value="已编辑">已编辑</option>
+                        <option value="未编辑">未编辑</option>
+
+                    </select>
+                </div>
+                <div style="float: left; margin-left: 10px">
                     <span>员工状态：</span>
                 </div>
                 <div style="float: left; margin-left: 10px">
@@ -332,6 +343,7 @@
         params.sEntryDate2 = $("#sEntryDate2").val();
         params.sSealDate = $("#sSealDate").val();
         params.sSealDate2 = $("#sSealDate2").val();
+        params.sEditType = $("#sEditType").val();
         var inputs = '<input type="hidden" name="searchpara" value="' + JSON.stringify(params).replace(new RegExp("\"", "gm"), "'") + '" />';
         $('<form action="' + url + '" method="post" target="_blank">' + inputs + '</form>').appendTo('body').submit().remove();
     }
@@ -380,7 +392,9 @@
         self.iIsDeleted = ko.observable("");
     }
     $(function () {
-
+        if (window.userType == "普通用户") {
+            $("#sEditType").val("未编辑");
+        }
         //重置函数
         $("div.icon-reorder").click(function () {
             $('#mytab').bootstrapTable('resetView', {
@@ -586,6 +600,7 @@
                 params.sEntryDate2 = $("#sEntryDate2").val();
                 params.sSealDate = $("#sSealDate").val();
                 params.sSealDate2 = $("#sSealDate2").val();
+                params.sEditType = $("#sEditType").val();
                 return params;
             },
             columns: [

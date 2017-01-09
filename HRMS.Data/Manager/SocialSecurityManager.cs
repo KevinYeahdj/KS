@@ -282,6 +282,16 @@ namespace HRMS.Data.Manager
             }
             StringBuilder commandsb = new StringBuilder("from SocialSecurity ss right join hrinfo hr on ss.iHRInfoGuid = hr.iguid and ss.iIsDeleted =0 and ss.iStatus =1  where hr.iisdeleted=0 and hr.istatus=1 ");
 
+            if (para["editType"] == "已编辑")
+            {
+                commandsb.Append("and ss.iGuid is not null ");
+            }
+            else if (para["editType"] == "未编辑")
+            {
+                commandsb.Append("and ss.iGuid is null ");
+            }
+            para.Remove("editType");
+
             string searchKey = para["search"];
             para.Remove("search");
 

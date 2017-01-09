@@ -151,11 +151,11 @@ namespace HRMS.Data.Entity
         public string iLaborCampBankAccount { get; set; } //劳务所账号
         public string iLaborCampBankPerson { get; set; } //劳务所人姓名
         public string iReturnFeeLevel { get; set; } //返费级别
-        public string iFirstReturnFeeAmount { get; set; } //返费金额 
-        public string iFirstReturnFeeDays { get; set; } //返费天数
-        public DateTime? iFirstReturnFeeDate { get; set; } //返费日期
-        public string iFirstReturnFeePayment { get; set; } //付款情况 
-        public DateTime? iFirstReturnFeeActualPayDate { get; set; } //实际支付日期
+        public string iReturnFeeAmount { get; set; } //返费金额 
+        public string iReturnFeeDays { get; set; } //返费天数
+        public DateTime? iReturnFeeDate { get; set; } //返费日期
+        public string iReturnFeePayment { get; set; } //付款情况 
+        public DateTime? iReturnFeeActualPayDate { get; set; } //实际支付日期
 
         public string iReturnFeeAppNo { get; set; } //返费单号
         //public 

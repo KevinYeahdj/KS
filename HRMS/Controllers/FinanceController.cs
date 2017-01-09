@@ -132,6 +132,220 @@ namespace HRMS.Controllers
             }
         }
 
+        public void GetFlowReturnFee()
+        {
+            try
+            {
+                //用于序列化实体类的对象  
+                JavaScriptSerializer jss = new JavaScriptSerializer();
+                jss.MaxJsonLength = Int32.MaxValue;
+                //请求中携带的条件  
+                string order = HttpContext.Request.Params["order"];
+                string sort = HttpContext.Request.Params["sort"];
+                string searchKey = HttpContext.Request.Params["search"];
+                int offset = Convert.ToInt32(HttpContext.Request.Params["offset"]);  //0
+                int pageSize = Convert.ToInt32(HttpContext.Request.Params["limit"]);
+
+                Dictionary<string, string> bizParaDic = new Dictionary<string, string>();
+                bizParaDic.Add("search", searchKey);
+                ReturnFeeManager service = new ReturnFeeManager();
+                List<ReturnFeeHistoryEntity> list = service.GetValidReturnFeeList(SessionHelper.CurrentUser.CurrentCompany, SessionHelper.CurrentUser.CurrentProject);
+                list = list.OrderBy(li => li.iLaborCampBankAccount).ToList();
+
+                List<ReturnFeeHistoryEntity> summaryList = new List<ReturnFeeHistoryEntity>();
+                if (list.Count >0)
+                {
+                    string iLaborCampBankAccount = list.First().iLaborCampBankAccount;
+                    string iLaborName = list.First().iLaborName;
+                    string iLaborCampBank = list.First().iLaborCampBank;
+                    string iLaborCampBankPerson = list.First().iLaborCampBankPerson;
+                    decimal sum = 0;
+                    foreach (var item in list)
+                    {
+                        if (item.iLaborCampBankAccount != iLaborCampBankAccount)
+                        {
+                            summaryList.Add(new ReturnFeeHistoryEntity { iLaborName = iLaborName, iLaborCampBankPerson = iLaborCampBankPerson, iLaborCampBank = iLaborCampBank, iLaborCampBankAccount = iLaborCampBankAccount, iReturnFeeAmount = sum.ToString() });
+
+                            iLaborCampBankAccount = item.iLaborCampBankAccount;
+                            iLaborName = item.iLaborName;
+                            iLaborCampBank = item.iLaborCampBank;
+                            iLaborCampBankPerson = item.iLaborCampBankPerson;
+                            sum = 0;
+                        }
+                        sum += decimal.Parse(item.iReturnFeeAmount);
+                        summaryList.Add(item);
+                    }
+                    summaryList.Add(new ReturnFeeHistoryEntity { iLaborName = iLaborName, iLaborCampBankPerson = iLaborCampBankPerson, iLaborCampBank = iLaborCampBank, iLaborCampBankAccount = iLaborCampBankAccount, iReturnFeeAmount = sum.ToString() });
+
+                }
+
+                //给分页实体赋值  
+                PageModels<ReturnFeeHistoryEntity> model = new PageModels<ReturnFeeHistoryEntity>();
+                int total = summaryList.Count();
+                model.total = total;
+                if (total % pageSize == 0)
+                    model.page = total / pageSize;
+                else
+                    model.page = (total / pageSize) + 1;
+
+                model.rows = summaryList;
+
+                //将查询结果返回  
+                HttpContext.Response.Write(jss.Serialize(model));
+            }
+            catch (Exception ex)
+            {
+                log4net.ILog log = log4net.LogManager.GetLogger(this.GetType());
+                log.Error(ex);
+            }
+        }
+
+        public void GetFlowReturnFeeHistory()
+        {
+            try
+            {
+                //用于序列化实体类的对象  
+                JavaScriptSerializer jss = new JavaScriptSerializer();
+                jss.MaxJsonLength = Int32.MaxValue;
+                //请求中携带的条件  
+                string order = HttpContext.Request.Params["order"];
+                string sort = HttpContext.Request.Params["sort"];
+                string searchKey = HttpContext.Request.Params["search"];
+                int offset = Convert.ToInt32(HttpContext.Request.Params["offset"]);  //0
+                int pageSize = Convert.ToInt32(HttpContext.Request.Params["limit"]);
+                string appno = HttpContext.Request.Params["sAppNo"];
+
+                Dictionary<string, string> bizParaDic = new Dictionary<string, string>();
+                bizParaDic.Add("search", searchKey);
+                ReturnFeeManager service = new ReturnFeeManager();
+                List<ReturnFeeHistoryEntity> list = service.GetFlowReturnFeeHistory(appno);
+
+                List<ReturnFeeHistoryEntity> summaryList = new List<ReturnFeeHistoryEntity>();
+                if (list.Count > 0)
+                {
+                    string iLaborCampBankAccount = list.First().iLaborCampBankAccount;
+                    string iLaborName = list.First().iLaborName;
+                    string iLaborCampBank = list.First().iLaborCampBank;
+                    string iLaborCampBankPerson = list.First().iLaborCampBankPerson;
+                    decimal sum = 0;
+                    foreach (var item in list)
+                    {
+                        if (item.iLaborCampBankAccount != iLaborCampBankAccount)
+                        {
+                            summaryList.Add(new ReturnFeeHistoryEntity { iLaborName = iLaborName, iLaborCampBankPerson = iLaborCampBankPerson, iLaborCampBank = iLaborCampBank, iLaborCampBankAccount = iLaborCampBankAccount, iReturnFeeAmount = sum.ToString() });
+
+                            iLaborCampBankAccount = item.iLaborCampBankAccount;
+                            iLaborName = item.iLaborName;
+                            iLaborCampBank = item.iLaborCampBank;
+                            iLaborCampBankPerson = item.iLaborCampBankPerson;
+                            sum = 0;
+                        }
+                        sum += decimal.Parse(item.iReturnFeeAmount);
+                        summaryList.Add(item);
+                    }
+                    summaryList.Add(new ReturnFeeHistoryEntity { iLaborName = iLaborName, iLaborCampBankPerson = iLaborCampBankPerson, iLaborCampBank = iLaborCampBank, iLaborCampBankAccount = iLaborCampBankAccount, iReturnFeeAmount = sum.ToString() });
+
+                }
+
+                //给分页实体赋值  
+                PageModels<ReturnFeeHistoryEntity> model = new PageModels<ReturnFeeHistoryEntity>();
+                int total = summaryList.Count();
+                model.total = total;
+                if (total % pageSize == 0)
+                    model.page = total / pageSize;
+                else
+                    model.page = (total / pageSize) + 1;
+
+                model.rows = summaryList;
+
+                //将查询结果返回  
+                HttpContext.Response.Write(jss.Serialize(model));
+            }
+            catch (Exception ex)
+            {
+                log4net.ILog log = log4net.LogManager.GetLogger(this.GetType());
+                log.Error(ex);
+            }
+        }
+
+        public void GetFlowReturnFeeHistoryAction()
+        {
+            try
+            {
+                //用于序列化实体类的对象  
+                JavaScriptSerializer jss = new JavaScriptSerializer();
+                jss.MaxJsonLength = Int32.MaxValue;
+                //请求中携带的条件  
+                string order = HttpContext.Request.Params["order"];
+                string sort = HttpContext.Request.Params["sort"];
+                string searchKey = HttpContext.Request.Params["search"];
+                int offset = Convert.ToInt32(HttpContext.Request.Params["offset"]);  //0
+                int pageSize = Convert.ToInt32(HttpContext.Request.Params["limit"]);
+                string appno = HttpContext.Request.Params["sAppNo"];
+                string action = HttpContext.Request.Params["action"];
+
+                Dictionary<string, string> bizParaDic = new Dictionary<string, string>();
+                bizParaDic.Add("search", searchKey);
+                ReturnFeeManager service = new ReturnFeeManager();
+                List<ReturnFeeHistoryEntity> list = new List<ReturnFeeHistoryEntity>();
+                if (string.IsNullOrEmpty(action))
+                {
+                    list = service.GetFlowReturnFeeHistory(appno);
+                }
+                else
+                {
+                    service.ResetValidReturnFeeList(appno);
+                    list = service.GetValidReturnFeeList(SessionHelper.CurrentUser.CurrentCompany, SessionHelper.CurrentUser.CurrentProject);
+                }
+
+                List<ReturnFeeHistoryEntity> summaryList = new List<ReturnFeeHistoryEntity>();
+                if (list.Count > 0)
+                {
+                    string iLaborCampBankAccount = list.First().iLaborCampBankAccount;
+                    string iLaborName = list.First().iLaborName;
+                    string iLaborCampBank = list.First().iLaborCampBank;
+                    string iLaborCampBankPerson = list.First().iLaborCampBankPerson;
+                    decimal sum = 0;
+                    foreach (var item in list)
+                    {
+                        if (item.iLaborCampBankAccount != iLaborCampBankAccount)
+                        {
+                            summaryList.Add(new ReturnFeeHistoryEntity { iLaborName = iLaborName, iLaborCampBankPerson = iLaborCampBankPerson, iLaborCampBank = iLaborCampBank, iLaborCampBankAccount = iLaborCampBankAccount, iReturnFeeAmount = sum.ToString() });
+
+                            iLaborCampBankAccount = item.iLaborCampBankAccount;
+                            iLaborName = item.iLaborName;
+                            iLaborCampBank = item.iLaborCampBank;
+                            iLaborCampBankPerson = item.iLaborCampBankPerson;
+                            sum = 0;
+                        }
+                        sum += decimal.Parse(item.iReturnFeeAmount);
+                        summaryList.Add(item);
+                    }
+                    summaryList.Add(new ReturnFeeHistoryEntity { iLaborName = iLaborName, iLaborCampBankPerson = iLaborCampBankPerson, iLaborCampBank = iLaborCampBank, iLaborCampBankAccount = iLaborCampBankAccount, iReturnFeeAmount = sum.ToString() });
+
+                }
+
+                //给分页实体赋值  
+                PageModels<ReturnFeeHistoryEntity> model = new PageModels<ReturnFeeHistoryEntity>();
+                int total = summaryList.Count();
+                model.total = total;
+                if (total % pageSize == 0)
+                    model.page = total / pageSize;
+                else
+                    model.page = (total / pageSize) + 1;
+
+                model.rows = summaryList;
+
+                //将查询结果返回  
+                HttpContext.Response.Write(jss.Serialize(model));
+            }
+            catch (Exception ex)
+            {
+                log4net.ILog log = log4net.LogManager.GetLogger(this.GetType());
+                log.Error(ex);
+            }
+        }
+
         public JsonResult GetReturnFee(string hrguid)
         {
             try

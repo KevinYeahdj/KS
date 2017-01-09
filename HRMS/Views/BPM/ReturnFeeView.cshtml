@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "流水账申请查看";
+    ViewBag.Title = "返费申请查看";
     Layout = "~/Views/Shared/_LayoutMain.cshtml";
 }
 <style>
@@ -13,9 +13,6 @@
         <div class="col-*-12">
 
             <div id="toolbar" class="toolbar">
-                <div style="float: left; margin-left: 10px"><span>合计：</span></div>
-                <div style="float: left; margin-left: 10px; width: 30%"><input id="totalThis" class="form-control" readonly="readonly" value="0" /></div>
-
             </div>
 
             <table id="mytab" class="table table-hover"></table>
@@ -106,10 +103,10 @@
             })
         })
         $('#mytab').bootstrapTable({
-            url: "/FinanceAjax/GetAllJournal",//数据源
+            url: "/FinanceAjax/GetFlowReturnFeeHistory",//数据源
             dataField: "rows",//服务端返回数据键值 就是说记录放的键值是rows，分页时使用总记录数的键值为total
-            sortName: "iUpdatedOn",//排序列
-            sortOrder: "desc",
+            sortName: "iLaborCampBankAccount",//排序列
+            sortOrder: "asc",
             cache: false,
             striped: true,//條紋行
             clickToSelect: true,//选择行即选择checkbox
@@ -132,8 +129,6 @@
             toolbar: "#toolbar",//指定工具栏
             toolbarAlign: "right",//工具栏对齐方式
             queryParams: function getParams(params) {
-                params.sCompanyId = $("#companySelect").val();
-                params.sProjectId = $("#projectSelect").val();
                 params.sAppNo = Request["appno"];
                 params.limit = 10000;
                 return params;
@@ -146,19 +141,21 @@
                          return ($('#mytab').bootstrapTable('getOptions').pageNumber - 1) * $('#mytab').bootstrapTable('getOptions').pageSize + index + 1;
                      }
                  },
-                 { field: "iGuid", title: "iGuid", visible: false, switchable: false }
-                 , { field: "iCompanyId", title: "公司", visible: true }
-                 , { field: "iProjectId", title: "项目", visible: true }
+                 { field: "iGuid", title: "iGuid", visible: false, switchable: false },
+                 { field: "iReturnFeeGuid", title: "iReturnFeeGuid", visible: false, switchable: false },
+                 { field: "iHRInfoGuid", title: "iHRInfoGuid", visible: false, switchable: false }
+                 , { field: "iLaborName", title: "劳务名称" }
+                 , { field: "iLaborCampBankPerson", title: "劳务所人姓名" }
+                 , { field: "iLaborCampBank", title: "劳务所银行支行" }
+                 , { field: "iLaborCampBankAccount", title: "劳务所账号" }
+                 , { field: "iReturnFeeLevel", title: "返费级别" }
+                 , { field: "iReturnFeeAmount", title: "返费金额" }
+                 , { field: "iReturnFeeDays", title: "返费天数" }
                  , {
-                     field: "iDate", title: "日期", formatter: function (value, row, index) {
+                     field: "iReturnFeeDate", title: "返费日期", formatter: function (value, row, index) {
                          return ChangeDateFormat(value);
                      }
                  }
-                 , { field: "iEvent", title: "事项" }
-                 , { field: "iType", title: "科目" }
-                 , { field: "iApplicant", title: "提报人" }
-                 , { field: "iAmount", title: "金额" }
-                 , { field: "iNote", title: "备注" }
             ],
             onClickRow: function (row, $element) {
                 //$element是当前tr的jquery对象
@@ -177,7 +174,11 @@
                 return html;
             },
             onLoadSuccess: function (data) {
-                $("#totalThis").val(data.sum);
+                $.each(data.rows, function (i, item) {
+                    if (item.iReturnFeeGuid == null) {
+                        $("#mytab").find("tr[data-index=" + i + "]").css("color", "red");
+                    }
+                })
             }
         });
         $('#logtab').bootstrapTable({

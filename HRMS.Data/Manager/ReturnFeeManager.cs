@@ -498,6 +498,12 @@ namespace HRMS.Data.Manager
 
         }
 
+        public List<ReturnFeeHistoryEntity> GetFlowReturnFeeHistory(string appNo)
+        {
+            string sql = @"select * from returnfeeHistory where iAppNo=@appno order by iLaborCampBankAccount asc";
+            return Repository.Query<ReturnFeeHistoryEntity>(sql, new { appno = appNo }).ToList();
+        }
+
         //清掉所有当前流程标识的返费，以重新获取
         public bool ResetValidReturnFeeList(string appNo)
         {
@@ -577,6 +583,6 @@ namespace HRMS.Data.Manager
                 session.Dispose();
             }
         }
-        
+
     }
 }

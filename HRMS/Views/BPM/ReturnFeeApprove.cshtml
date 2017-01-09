@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "流水账申请查看";
+    ViewBag.Title = "返费审批";
     Layout = "~/Views/Shared/_LayoutMain.cshtml";
 }
 <style>
@@ -13,8 +13,10 @@
         <div class="col-*-12">
 
             <div id="toolbar" class="toolbar">
-                <div style="float: left; margin-left: 10px"><span>合计：</span></div>
-                <div style="float: left; margin-left: 10px; width: 30%"><input id="totalThis" class="form-control" readonly="readonly" value="0" /></div>
+                <div style="float: left; margin-left: 10px"><span>审批意见：</span></div>
+                <div style="float: left; margin-left: 10px; width: 30%"><input id="sys_feedback" class="form-control" /></div>
+                <div style="float: right; margin-left: 10px; margin-top: 5px; " class="btn btn-primary" id="agreeSubmit">同意</div>
+                <div style="float: right; margin-left: 10px; margin-top: 5px; " class="btn btn-primary" id="repulseSubmit">退回</div>
 
             </div>
 
@@ -93,6 +95,9 @@
     $(function () {
 
         var Request = GetRequest();
+        if (Request["sp"] == 5 || Request["sp"] == 6) {
+            $("#repulseSubmit").hide();
+        }
         //重置函数
         $("div.icon-reorder").click(function () {
             $('#mytab').bootstrapTable('resetView', {
@@ -106,10 +111,10 @@
             })
         })
         $('#mytab').bootstrapTable({
-            url: "/FinanceAjax/GetAllJournal",//数据源
+            url: "/FinanceAjax/GetFlowReturnFeeHistory",//数据源
             dataField: "rows",//服务端返回数据键值 就是说记录放的键值是rows，分页时使用总记录数的键值为total
-            sortName: "iUpdatedOn",//排序列
-            sortOrder: "desc",
+            sortName: "iLaborCampBankAccount",//排序列
+            sortOrder: "asc",
             cache: false,
             striped: true,//條紋行
             clickToSelect: true,//选择行即选择checkbox
@@ -132,8 +137,6 @@
             toolbar: "#toolbar",//指定工具栏
             toolbarAlign: "right",//工具栏对齐方式
             queryParams: function getParams(params) {
-                params.sCompanyId = $("#companySelect").val();
-                params.sProjectId = $("#projectSelect").val();
                 params.sAppNo = Request["appno"];
                 params.limit = 10000;
                 return params;
@@ -146,19 +149,21 @@
                          return ($('#mytab').bootstrapTable('getOptions').pageNumber - 1) * $('#mytab').bootstrapTable('getOptions').pageSize + index + 1;
                      }
                  },
-                 { field: "iGuid", title: "iGuid", visible: false, switchable: false }
-                 , { field: "iCompanyId", title: "公司", visible: true }
-                 , { field: "iProjectId", title: "项目", visible: true }
+                 { field: "iGuid", title: "iGuid", visible: false, switchable: false },
+                 { field: "iReturnFeeGuid", title: "iReturnFeeGuid", visible: false, switchable: false },
+                 { field: "iHRInfoGuid", title: "iHRInfoGuid", visible: false, switchable: false }
+                 , { field: "iLaborName", title: "劳务名称" }
+                 , { field: "iLaborCampBankPerson", title: "劳务所人姓名" }
+                 , { field: "iLaborCampBank", title: "劳务所银行支行" }
+                 , { field: "iLaborCampBankAccount", title: "劳务所账号" }
+                 , { field: "iReturnFeeLevel", title: "返费级别" }
+                 , { field: "iReturnFeeAmount", title: "返费金额" }
+                 , { field: "iReturnFeeDays", title: "返费天数" }
                  , {
-                     field: "iDate", title: "日期", formatter: function (value, row, index) {
+                     field: "iReturnFeeDate", title: "返费日期", formatter: function (value, row, index) {
                          return ChangeDateFormat(value);
                      }
                  }
-                 , { field: "iEvent", title: "事项" }
-                 , { field: "iType", title: "科目" }
-                 , { field: "iApplicant", title: "提报人" }
-                 , { field: "iAmount", title: "金额" }
-                 , { field: "iNote", title: "备注" }
             ],
             onClickRow: function (row, $element) {
                 //$element是当前tr的jquery对象
@@ -177,7 +182,11 @@
                 return html;
             },
             onLoadSuccess: function (data) {
-                $("#totalThis").val(data.sum);
+                $.each(data.rows, function (i, item) {
+                    if (item.iReturnFeeGuid == null) {
+                        $("#mytab").find("tr[data-index=" + i + "]").css("color", "red");
+                    }
+                })
             }
         });
         $('#logtab').bootstrapTable({
@@ -255,6 +264,48 @@
                     }
                 })
             }
+        });
+
+        var approveAction = function (approve, approvecn) {
+            var para = {};
+            var conditions = {};
+            conditions.sys_approve = approve;
+            conditions.sys_approvecn = approvecn;
+            conditions.sys_feedback = $("#sys_feedback").val();
+            para.Conditions = conditions;
+            para.ProcessInstanceID = Request["piid"]; //important
+            para.AppName = "";
+            para.AppInstanceID = Request["appno"]; //important
+            para.ProcessGUID = Request["pguid"];  //申请时必要 important
+            para.UserID = "@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId";
+            para.UserName = "";
+            para.TaskID = Request["taskid"];  //important
+
+            $.ajax({
+                url: "/BPMAjax/StartApproval",
+                type: "POST",
+                data: para,
+                dataType: 'text',
+                success: function (result) {
+                    result = $.parseJSON(result);
+                    if (result.success) {
+                        toastr.success('审批成功');
+                        //$('#mytab').bootstrapTable('removeAll');
+                        setTimeout("window.location.href='/BPM/done'", 3000);
+                    }
+                    else {
+                        toastr.error('审批失败！');
+                    }
+                }
+            });
+        }
+        $("#agreeSubmit").click(function () {
+            $(this).attr({ "disabled": "disabled" });
+            approveAction("1","同意");
+        });
+        $("#repulseSubmit").click(function () {
+            $(this).attr({ "disabled": "disabled" });
+            approveAction("-1","退回");
         });
     })
 </script>

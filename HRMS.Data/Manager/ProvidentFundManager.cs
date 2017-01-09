@@ -272,6 +272,16 @@ namespace HRMS.Data.Manager
             }
             StringBuilder commandsb = new StringBuilder("from ProvidentFund pf right join hrinfo hr on pf.iHRInfoGuid = hr.iguid and pf.iIsDeleted =0 and pf.iStatus =1 where hr.iisdeleted=0 and hr.istatus=1 ");
 
+            if (para["editType"] == "已编辑")
+            {
+                commandsb.Append("and pf.iGuid is not null ");
+            }
+            else if (para["editType"] == "未编辑")
+            {
+                commandsb.Append("and pf.iGuid is null ");
+            }
+            para.Remove("editType");
+
             string searchKey = para["search"];
             para.Remove("search");
 
