@@ -404,7 +404,7 @@ namespace HRMS.Data.Manager
         public List<ReturnFeeHistoryEntity> GetValidReturnFeeList(string companyId, string projectId)
         {
             string sql = @"select fee.[iGuid]+'1' as iGuid
-      ,fee.[iGuid] as iRturnFeeGuid
+      ,fee.[iGuid] as iReturnFeeGuid
       ,[iHRInfoGuid]
       ,[iLaborName]
       ,[iLaborCampBank]
@@ -422,7 +422,7 @@ namespace HRMS.Data.Manager
   and ((hr.iEmployeeStatus = '在职' and fee.iFirstReturnFeeDate < getdate()) or (hr.iEmployeeStatus = '离职' and fee.iFirstReturnFeeDate < hr.iResignDate))
   union all
   select fee.[iGuid]+'2' as iGuid
-      ,fee.[iGuid] as iRturnFeeGuid
+      ,fee.[iGuid] as iReturnFeeGuid
       ,[iHRInfoGuid]
       ,[iLaborName]
       ,[iLaborCampBank]
@@ -440,7 +440,7 @@ namespace HRMS.Data.Manager
   and ((hr.iEmployeeStatus = '在职' and fee.iSecondReturnFeeDate < getdate()) or (hr.iEmployeeStatus = '离职' and fee.iSecondReturnFeeDate < hr.iResignDate))
   union all
   select fee.[iGuid]+'3' as iGuid
-      ,fee.[iGuid] as iRturnFeeGuid
+      ,fee.[iGuid] as iReturnFeeGuid
       ,[iHRInfoGuid]
       ,[iLaborName]
       ,[iLaborCampBank]
@@ -458,7 +458,7 @@ namespace HRMS.Data.Manager
   and ((hr.iEmployeeStatus = '在职' and fee.iThirdReturnFeeDate < getdate()) or (hr.iEmployeeStatus = '离职' and fee.iThirdReturnFeeDate < hr.iResignDate))
   union all
   select fee.[iGuid]+'4' as iGuid
-      ,fee.[iGuid] as iRturnFeeGuid
+      ,fee.[iGuid] as iReturnFeeGuid
       ,[iHRInfoGuid]
       ,[iLaborName]
       ,[iLaborCampBank]
@@ -476,7 +476,7 @@ namespace HRMS.Data.Manager
   and ((hr.iEmployeeStatus = '在职' and fee.iFourthReturnFeeDate < getdate()) or (hr.iEmployeeStatus = '离职' and fee.iFourthReturnFeeDate < hr.iResignDate))
   union all
   select fee.[iGuid]+'5' as iGuid
-      ,fee.[iGuid] as iRturnFeeGuid
+      ,fee.[iGuid] as iReturnFeeGuid
       ,[iHRInfoGuid]
       ,[iLaborName]
       ,[iLaborCampBank]
@@ -500,7 +500,7 @@ namespace HRMS.Data.Manager
 
         public List<ReturnFeeHistoryEntity> GetFlowReturnFeeHistory(string appNo)
         {
-            string sql = @"select * from returnfeeHistory where iAppNo=@appno order by iLaborCampBankAccount asc";
+            string sql = @"select * from returnfeeHistory where iReturnFeeAppNo=@appno order by iLaborCampBankAccount asc";
             return Repository.Query<ReturnFeeHistoryEntity>(sql, new { appno = appNo }).ToList();
         }
 
@@ -533,7 +533,7 @@ namespace HRMS.Data.Manager
             try
             {
                 session.BeginTrans();
-                var old = Repository.Query<ReturnFeeHistoryEntity>("select * from ReturnFeeHistory where iisdeleted=0 and istatus=1 and iReturnFeeAppNo='" + entities[0].iReturnFeeAppNo + "'");
+                var old = Repository.Query<ReturnFeeHistoryEntity>("select * from ReturnFeeHistory where iisdeleted=0 and istatus=1 and iReturnFeeAppNo='" + appNo + "'");
                 foreach (var item in old)
                 {
                     Repository.Delete<ReturnFeeHistoryEntity>(session.Connection, item, session.Transaction);

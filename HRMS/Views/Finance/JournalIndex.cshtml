@@ -330,7 +330,7 @@
         }
 
         //权限判定
-        if (window.menuRights == "r") {
+        if (window.menuRights == "r" || window.userType != "超级管理员") {
             $("#NewRecord").hide();
         }
         //查询日期选择绑定
@@ -517,7 +517,7 @@
                 //$element.css("background-color", "green");
             },//单击row事件
             onDblClickRow: function (row, $element) {
-                if (window.menuRights == "r" || window.userType == "普通用户") {  //普通用户无法修改
+                if (window.menuRights == "r" || window.userType == "普通用户" || window.userType == "超级用户") {  //普通用户无法修改
                     return;
                 }
                 if (window.userType == "超级管理员") {

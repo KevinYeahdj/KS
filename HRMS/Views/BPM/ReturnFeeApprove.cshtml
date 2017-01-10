@@ -95,7 +95,7 @@
     $(function () {
 
         var Request = GetRequest();
-        if (Request["sp"] == 5 || Request["sp"] == 6) {
+        if (Request["sp"] == 6) {
             $("#repulseSubmit").hide();
         }
         //重置函数
@@ -148,6 +148,12 @@
                      formatter: function (value, row, index) {
                          return ($('#mytab').bootstrapTable('getOptions').pageNumber - 1) * $('#mytab').bootstrapTable('getOptions').pageSize + index + 1;
                      }
+                 }, {
+                     field: 'Note',
+                     title: '说明',
+                     formatter: function (value, row, index) {
+                         return (row.iReturnFeeGuid == null ? "汇总" : "明细");
+                     }
                  },
                  { field: "iGuid", title: "iGuid", visible: false, switchable: false },
                  { field: "iReturnFeeGuid", title: "iReturnFeeGuid", visible: false, switchable: false },
@@ -184,7 +190,7 @@
             onLoadSuccess: function (data) {
                 $.each(data.rows, function (i, item) {
                     if (item.iReturnFeeGuid == null) {
-                        $("#mytab").find("tr[data-index=" + i + "]").css("color", "red");
+                        $("#mytab").find("tr[data-index=" + i + "]").css("color", "blue");
                     }
                 })
             }

@@ -489,6 +489,7 @@ namespace ClinBrain.WorkFlowEngine.Core.Pattern
 
         private void DoEvent(string connstring, string sql, IDictionary<string, string> conditions)
         {
+            connstring = "Data Source=.;Initial Catalog=HRMS;Integrated Security=True;";
             try
             {
                 if (conditions != null)

@@ -232,6 +232,8 @@ namespace ClinBrain.WorkFlowEngine.Xpdl
                 string sql = XMLHelper.GetXmlNodeValue(eventNode, "ExecSql");
                 result[0] = connString;
                 result[1] = sql;
+                if (string.IsNullOrEmpty(connString) || string.IsNullOrEmpty(sql))
+                    return null;
                 return result;
             }
             else return null;

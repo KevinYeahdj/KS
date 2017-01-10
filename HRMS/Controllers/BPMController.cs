@@ -464,6 +464,24 @@ namespace HRMS.Controllers
                 service.BatchInsert(entities);
                 result = true;
             }
+            else if (pguid == "eb2844bd-0ffd-9eaa-6068-910b66fad9d9")
+            {
+                ReturnFeeManager service = new ReturnFeeManager();
+                JsonSerializerSettings st = new JsonSerializerSettings();
+                st.DateTimeZoneHandling = DateTimeZoneHandling.Local;
+                List<ReturnFeeHistoryEntity> entities = JsonConvert.DeserializeObject<List<ReturnFeeHistoryEntity>>(buzJson, st);
+
+                foreach (var entity in entities)
+                {
+                    entity.iGuid = Guid.NewGuid().ToString();
+                    entity.iCreatedBy = SessionHelper.CurrentUser.UserName;
+                    entity.iUpdatedBy = SessionHelper.CurrentUser.UserName;
+                    entity.iReturnFeeAppNo = appNo;
+                }
+                entities.RemoveAll(i => string.IsNullOrEmpty(i.iReturnFeeGuid));
+                service.BatchInsertReturnFeeHistoryApplication(entities);
+                result = true;
+            }
             return result;
         }
 
