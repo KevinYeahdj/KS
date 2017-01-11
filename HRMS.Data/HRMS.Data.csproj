@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="DbHelperSQL.cs" />
     <Compile Include="Entity\ContractEntity.cs" />
+    <Compile Include="Entity\MaterialCollarEntity.cs" />
     <Compile Include="Entity\SalaryEntity.cs" />
     <Compile Include="Entity\JournalEntity.cs" />
     <Compile Include="Entity\ProvidentFundEntity.cs" />

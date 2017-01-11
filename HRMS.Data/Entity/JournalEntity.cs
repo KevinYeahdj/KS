@@ -23,6 +23,7 @@ namespace HRMS.Data.Entity
         public DateTime? iPaidDate { get; set; } //支付日期
         public string iNote { get; set; } //备注 
         public string iAppNo { get; set; } //流程单号 
+        public string iRecordStatus { get; set; } //流水账性质  正式/草稿 
 
         public DateTime? iCreatedOn { get; set; }  //创建时间
         public string iCreatedBy { get; set; } //创建人

@@ -33,6 +33,7 @@ namespace HRMS.Data.Manager
                 dic.Add("支付日期", "iPaidDate");
                 dic.Add("备注", "iNote");
                 dic.Add("流程单号", "iAppNo");
+                dic.Add("流水账性质", "iRecordStatus");
 
                 dic.Add("iCreatedOn", "iCreatedOn");
                 dic.Add("iCreatedBy", "iCreatedBy");

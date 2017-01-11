@@ -81,7 +81,7 @@ namespace HRMS.Controllers
             return View();
         }
 
-        
+
     }
     public class ManageAjaxController : Controller
     {
@@ -379,7 +379,7 @@ namespace HRMS.Controllers
                 Dictionary<string, string> projectsDic = new Dictionary<string, string>();
                 DicManager service = new DicManager();
                 projectsDic = service.GetAuthorisedProjectDic(SessionHelper.CurrentUser.UserId, SessionHelper.CurrentUser.UserType, companyCode);
-                
+
                 return new JsonResult { Data = new { success = true, msg = "msg", data = projectsDic }, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
 
             }
@@ -957,14 +957,34 @@ namespace HRMS.Controllers
 
         public string GetAuthorisedMenuHtml()
         {
-
-            string querySql = "select iguid, iparentid, iname, iUrl from  [sysMenu] a inner join [sysUserMenuTree] b on a.iguid = b.imenuid and b.iEmployeeCodeId='" + SessionHelper.CurrentUser.UserId + "' and b.iCompanyId='" + ((SessionHelper.CurrentUser.UserType == "超级用户") ? "-" : SessionHelper.CurrentUser.CurrentCompany) + "' and b.iProjectId='" + ((SessionHelper.CurrentUser.UserType == "超级用户") ? "-" : SessionHelper.CurrentUser.CurrentProject) + "' ";
-
-            if (SessionHelper.CurrentUser.UserType == "超级管理员")
+            string querySql = "";
+            //普通用户
+            if (SessionHelper.CurrentUser.UserType == "普通用户")
+            {
+                if(SessionHelper.CurrentUser.CurrentCompany == "-")
+                {
+                    return "";
+                }
+                else
+                {
+                    querySql = "select iguid, iparentid, iname, iUrl from  [sysMenu] a inner join [sysUserMenuTree] b on a.iguid = b.imenuid and b.iEmployeeCodeId='" + SessionHelper.CurrentUser.UserId + "' and b.iCompanyId='" + SessionHelper.CurrentUser.CurrentCompany + "' and b.iProjectId='" + SessionHelper.CurrentUser.CurrentProject + "' ";
+                }
+            }
+            else if (SessionHelper.CurrentUser.UserType == "超级用户")
+            {
+                querySql = "select iguid, iparentid, iname, iUrl from  [sysMenu] a inner join [sysUserMenuTree] b on a.iguid = b.imenuid and b.iEmployeeCodeId='" + SessionHelper.CurrentUser.UserId + "' and b.iCompanyId='-' and b.iProjectId='-' ";
+            }
+            else if (SessionHelper.CurrentUser.UserType == "超级管理员")
             {
                 querySql = "select iguid, iparentid, iname, iUrl from  [sysMenu]";
             }
             DataSet ds = DbHelperSQL.Query(querySql);
+            if (SessionHelper.CurrentUser.UserType == "普通用户" && ds.Tables[0].Rows.Count == 0)  //普通用户没查到项目上的，查绑定到公司的
+            {
+                querySql = "select iguid, iparentid, iname, iUrl from  [sysMenu] a inner join [sysUserMenuTree] b on a.iguid = b.imenuid and b.iEmployeeCodeId='" + SessionHelper.CurrentUser.UserId + "' and b.iCompanyId='" + SessionHelper.CurrentUser.CurrentCompany + "' and b.iProjectId='-' ";
+                ds = DbHelperSQL.Query(querySql);
+            }
+
             List<ItemContent> contents = new List<ItemContent>();
             foreach (DataRow dr in ds.Tables[0].Rows)
             {
@@ -982,7 +1002,7 @@ namespace HRMS.Controllers
                 sb.AppendLine("</li>");
             }
             return sb.ToString();
-        } 
+        }
 
         #endregion
 
@@ -1285,6 +1305,6 @@ namespace HRMS.Controllers
                 return e.ToString();
             }
         }
-       #endregion
+        #endregion
     }
 }

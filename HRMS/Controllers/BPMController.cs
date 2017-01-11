@@ -460,6 +460,7 @@ namespace HRMS.Controllers
                     entity.iCreatedBy = SessionHelper.CurrentUser.UserName;
                     entity.iUpdatedBy = SessionHelper.CurrentUser.UserName;
                     entity.iAppNo = appNo;
+                    entity.iRecordStatus = "正式";
                 }
                 service.BatchInsert(entities);
                 result = true;
