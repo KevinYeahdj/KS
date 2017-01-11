@@ -10,12 +10,12 @@ using HRMS.Common;
 namespace HRMS.Data.Manager
 {
     /// <summary>
-    /// 流水账信息管理类
+    /// 物资领用信息管理类
     /// </summary>
-    public class JournalManager : ManagerBase
+    public class MaterialBorrowManager : ManagerBase
     {
         //建表dic
-        public static Dictionary<string, string> JournalDic
+        public static Dictionary<string, string> MaterialBorrowDic
         {
             get
             {
@@ -23,17 +23,17 @@ namespace HRMS.Data.Manager
                 dic.Add("iGuid", "iGuid");
                 dic.Add("公司", "iCompanyId");
                 dic.Add("项目", "iProjectId");
-                dic.Add("日期", "iDate");
-                dic.Add("事项", "iEvent");
-                dic.Add("科目", "iType");
-                dic.Add("提报人", "iApplicant");
-                dic.Add("金额", "iAmount");
-                dic.Add("是否核销", "iChecked");
-                dic.Add("核销人", "iCheckedBy");
-                dic.Add("支付日期", "iPaidDate");
+                dic.Add("领用人", "iBorrower");
+                dic.Add("领用日期", "iBorrowedDate");
+                dic.Add("资产名称", "iMaterialName");
+                dic.Add("品牌", "iBrand");
+                dic.Add("型号", "iModelNo");
+                dic.Add("序列号", "iSerialNo");
+                dic.Add("数量", "iQuantity");
+                dic.Add("购买金额", "iPrice");
+                dic.Add("购买日期", "iBoughtDate");
+                dic.Add("归还日期", "iReturnedDate");
                 dic.Add("备注", "iNote");
-                dic.Add("流程单号", "iAppNo");
-                dic.Add("流水账性质", "iRecordStatus");
 
                 dic.Add("iCreatedOn", "iCreatedOn");
                 dic.Add("iCreatedBy", "iCreatedBy");
@@ -50,7 +50,7 @@ namespace HRMS.Data.Manager
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public void Insert(JournalEntity entity)
+        public void Insert(MaterialBorrowEntity entity)
         {
             if (string.IsNullOrEmpty(entity.iGuid))
                 entity.iGuid = Guid.NewGuid().ToString();
@@ -62,7 +62,7 @@ namespace HRMS.Data.Manager
             try
             {
                 session.BeginTrans();
-                Repository.Insert<JournalEntity>(session.Connection, entity, session.Transaction);
+                Repository.Insert<MaterialBorrowEntity>(session.Connection, entity, session.Transaction);
                 session.Commit();
             }
             catch (System.Exception)
@@ -76,75 +76,7 @@ namespace HRMS.Data.Manager
             }
         }
 
-        //同一流程所有数据操作
-        public void BatchInsert(List<JournalEntity> entities)
-        {
-            if (entities == null || entities.Count == 0)
-                return;
-            IDbSession session = SessionFactory.CreateSession();
-            try
-            {
-                session.BeginTrans();
-                var old = Repository.Query<JournalEntity>("select * from Journal where iisdeleted=0 and istatus=1 and iAppNo='" + entities[0].iAppNo + "'");
-                foreach (var item in old)
-                {
-                    Repository.Delete<JournalEntity>(session.Connection, item, session.Transaction);
-                }
-                foreach (var entity in entities)
-                {
-                    if (string.IsNullOrEmpty(entity.iGuid))
-                        entity.iGuid = Guid.NewGuid().ToString();
-                    entity.iCreatedOn = DateTime.Now;
-                    entity.iUpdatedOn = DateTime.Now;
-                    entity.iIsDeleted = 0;
-                    entity.iStatus = 1;
-                    Repository.Insert<JournalEntity>(session.Connection, entity, session.Transaction);
-                }
-                session.Commit();
-            }
-            catch (System.Exception)
-            {
-                session.Rollback();
-                throw;
-            }
-            finally
-            {
-                session.Dispose();
-            }
-        }
-
-        //同一流程所有数据操作
-        public void BatchUpdate(List<JournalEntity> entities, string appNo)
-        {
-            if (entities == null || entities.Count == 0)
-                return;
-            IDbSession session = SessionFactory.CreateSession();
-            try
-            {
-                session.BeginTrans();
-                Repository.Execute(session.Connection, "update Journal set iRecordStatus = '草稿' and iAppNo = '' where iisdeleted=0 and istatus=1 and iAppNo=@appno ", new { appno = appNo }, session.Transaction);
-                List<JournalEntity> upds = new List<JournalEntity>();
-                foreach (var entity in entities)
-                {
-                    var item = Repository.GetById<JournalEntity>(entity.iGuid);
-                    item.iRecordStatus = "正式";
-                    item.iAppNo = appNo;
-                    upds.Add(item);
-                }
-                Repository.UpdateBatch<JournalEntity>(session.Connection, upds, session.Transaction);
-                session.Commit();
-            }
-            catch (System.Exception)
-            {
-                session.Rollback();
-                throw;
-            }
-            finally
-            {
-                session.Dispose();
-            }
-        }
-        public void Update(JournalEntity entity)
+        public void Update(MaterialBorrowEntity entity)
         {
             entity.iUpdatedOn = DateTime.Now;
             var record = ModifyRecord(entity);
@@ -152,7 +84,7 @@ namespace HRMS.Data.Manager
             try
             {
                 session.BeginTrans();
-                Repository.Update<JournalEntity>(session.Connection, entity, session.Transaction);
+                Repository.Update<MaterialBorrowEntity>(session.Connection, entity, session.Transaction);
                 if (record != null)
                 {
                     Repository.Insert<ModifyLogEntity>(session.Connection, record, session.Transaction);
@@ -170,14 +102,14 @@ namespace HRMS.Data.Manager
             }
         }
 
-        public List<JournalEntity> GetSearch(string userType, Dictionary<string, string> para, string sort, string order, int offset, int pageSize, out int total)
+        public List<MaterialBorrowEntity> GetSearch(string userType, Dictionary<string, string> para, string sort, string order, int offset, int pageSize, out int total)
         {
             if (userType != "普通用户")
             {
                 para["iCompanyId"] = para["iCompanyId"] == "-" ? "" : para["iCompanyId"];
                 para["iProjectId"] = para["iProjectId"] == "-" ? "" : para["iProjectId"];
             }
-            StringBuilder commandsb = new StringBuilder("from Journal where iisdeleted=0 and istatus=1 ");
+            StringBuilder commandsb = new StringBuilder("from MaterialBorrow where iisdeleted=0 and istatus=1 ");
 
             string searchKey = para["search"];
             para.Remove("search");
@@ -199,9 +131,9 @@ namespace HRMS.Data.Manager
             if (!string.IsNullOrEmpty(searchKey))
             {
                 commandsb.Append(" and (");
-                foreach (var item in Common.ConvertHelper.DicConvert(JournalDic))
+                foreach (var item in Common.ConvertHelper.DicConvert(MaterialBorrowDic))
                 {
-                    if (item.Value.StartsWith("i")) continue;  //去年不必要的比对
+                    if (item.Value.StartsWith("i")) continue;  //去除不必要的比对
                     commandsb.Append(item.Key + " like '%" + searchKey + "%' or ");
                 }
                 commandsb.Remove(commandsb.Length - 3, 3);
@@ -213,38 +145,15 @@ namespace HRMS.Data.Manager
             querySql = string.Format(querySql, sort, order, offset, pageSize);
             string totalSql = "select cast(count(1) as varchar(8)) " + commonSql;
             total = int.Parse(Repository.Query<string>(totalSql).ToList()[0]);
-            string sumSql = "select CONVERT(varchar(100),sum(iAmount)) " + commonSql;
-            decimal sum = 0;
-            decimal.TryParse(Repository.Query<string>(sumSql).ToList()[0], out sum);
-            List<JournalEntity> result = Repository.Query<JournalEntity>(querySql).ToList();
-            result.Add(new JournalEntity { iAmount = sum });  //多加一列传递总值，记得删除
+            List<MaterialBorrowEntity> result = Repository.Query<MaterialBorrowEntity>(querySql).ToList();
             return result;
         }
-
-        public List<JournalEntity> GetMyJournalDraft(string userType, Dictionary<string, string> para, string sort, string order, int offset, int pageSize, out int total)
+        public MaterialBorrowEntity FirstOrDefault(string guid)
         {
-            StringBuilder commandsb = new StringBuilder(" from Journal where iisdeleted=0 and istatus=1 and iRecordStatus='草稿' and iCreatedBy ='" + para["currentUserId"] + "'");
-
-
-            string commonSql = commandsb.ToString();
-            string querySql = "select * " + commonSql + "order by {0} {1} offset {2} row fetch next {3} rows only";
-            querySql = string.Format(querySql, sort, order, offset, pageSize);
-            string totalSql = "select cast(count(1) as varchar(8)) " + commonSql;
-            total = int.Parse(Repository.Query<string>(totalSql).ToList()[0]);
-            string sumSql = "select CONVERT(varchar(100),sum(iAmount)) " + commonSql;
-            decimal sum = 0;
-            decimal.TryParse(Repository.Query<string>(sumSql).ToList()[0], out sum);
-            List<JournalEntity> result = Repository.Query<JournalEntity>(querySql).ToList();
-            result.Add(new JournalEntity { iAmount = sum });  //多加一列传递总值，记得删除
-            return result;
+            string sql = @"select * from MaterialBorrow where iGuid=@id and iIsDeleted =0 and iStatus =1";
+            return Repository.Query<MaterialBorrowEntity>(sql, new { id = guid }).FirstOrDefault();
         }
-
-        public JournalEntity FirstOrDefault(string guid)
-        {
-            string sql = @"select * from Journal where iGuid=@id and iIsDeleted =0 and iStatus =1";
-            return Repository.Query<JournalEntity>(sql, new { id = guid }).FirstOrDefault();
-        }
-        public ModifyLogEntity ModifyRecord(JournalEntity entity)
+        public ModifyLogEntity ModifyRecord(MaterialBorrowEntity entity)
         {
             var oldEntity = FirstOrDefault(entity.iGuid);
             if (oldEntity == null)
@@ -256,7 +165,7 @@ namespace HRMS.Data.Manager
                 string modifiedContent = string.Empty;
                 System.Reflection.PropertyInfo[] properties = entity.GetType().GetProperties(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
 
-                Dictionary<string, string> dicConvertTmp = ConvertHelper.DicConvert(JournalDic);
+                Dictionary<string, string> dicConvertTmp = ConvertHelper.DicConvert(MaterialBorrowDic);
 
                 foreach (System.Reflection.PropertyInfo item in properties)
                 {

@@ -152,6 +152,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\BPMController.cs" />
     <Compile Include="Controllers\CommonAjaxController.cs" />
+    <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\FinanceController.cs" />
     <Compile Include="Controllers\FundController.cs" />
     <Compile Include="Controllers\HRController.cs" />
@@ -3636,6 +3637,7 @@
     <Content Include="Views\BPM\ReturnFeeApprove.cshtml" />
     <Content Include="Views\BPM\ReturnFeeReApplication.cshtml" />
     <Content Include="Views\BPM\ReturnFeeView.cshtml" />
+    <Content Include="Views\Admin\MaterialBorrow.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

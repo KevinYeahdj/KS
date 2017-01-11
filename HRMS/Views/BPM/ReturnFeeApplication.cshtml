@@ -163,6 +163,10 @@
             if (managerUsers.split(';').indexOf('@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId') > -1) {
                 isManager = 1;
             }
+            var isBoss = 0;
+            if (bossUsers.split(';').indexOf('@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId') > -1) {
+                isBoss = 1;
+            }
 
             var para = {};
             var conditions = {};
@@ -176,6 +180,7 @@
             conditions.tellerUsers = tellerUsers;
             conditions.recordUsers = recordUsers;
             conditions.isManager = isManager;
+            conditions.isBoss = isBoss;
             para.Conditions = conditions;
             para.ProcessInstanceID = ""; //important
             para.AppName = "";

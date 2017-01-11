@@ -942,6 +942,72 @@ namespace HRMS.Controllers
                 log.Error(ex);
             }
         }
+        
+        //流水账申请时获取流水账草稿
+        public void GetFlowJournalDraft()
+        {
+            try
+            {
+                //用于序列化实体类的对象  
+                JavaScriptSerializer jss = new JavaScriptSerializer();
+                jss.MaxJsonLength = Int32.MaxValue;
+                //请求中携带的条件  
+                string order = HttpContext.Request.Params["order"];
+                string sort = HttpContext.Request.Params["sort"];
+                string searchKey = HttpContext.Request.Params["search"];
+                int offset = Convert.ToInt32(HttpContext.Request.Params["offset"]);  //0
+                int pageSize = Convert.ToInt32(HttpContext.Request.Params["limit"]);
+
+                Dictionary<string, string> bizParaDic = new Dictionary<string, string>();
+                bizParaDic.Add("search", searchKey);
+                bizParaDic.Add("currentUserId", SessionHelper.CurrentUser.UserName);
+                int total = 0;
+                JournalManager service = new JournalManager();
+                List<JournalEntity> list = service.GetMyJournalDraft(SessionHelper.CurrentUser.UserType, bizParaDic, sort, order, offset, pageSize, out total);
+                decimal? sum = list.Last().iAmount;
+                list.RemoveAt(list.Count - 1);
+                DicManager dm = new DicManager();
+                var companies = dm.GetAllCompanies();
+                var projects = dm.GetAllProjects();
+                Dictionary<string, string> comDic = companies.ToDictionary(i => i.iGuid, i => i.iName);
+                Dictionary<string, string> proDic = projects.ToDictionary(i => i.iGuid, i => i.iName);
+                List<Journal4Flow> result = new List<Journal4Flow>();
+                foreach (var item in list)
+                {
+                    Journal4Flow jf = new Journal4Flow();
+                    jf.iAmount = item.iAmount.ToString();
+                    jf.iApplicant = item.iApplicant;
+                    jf.iCompanyId = item.iCompanyId;
+                    jf.iCompanyName = comDic[item.iCompanyId];
+                    jf.iProjectId = item.iProjectId;
+                    jf.iProjectName = proDic[item.iProjectId];
+                    jf.iDate = ((DateTime)item.iDate).ToString("yyyy-MM-dd");
+                    jf.iEvent = item.iEvent;
+                    jf.iGuid = item.iGuid;
+                    jf.iNote = item.iNote;
+                    jf.iType = item.iType;
+                    result.Add(jf);
+                }
+                //给分页实体赋值  
+                PageModels2<Journal4Flow> model = new PageModels2<Journal4Flow>();
+                model.total = total;
+                if (total % pageSize == 0)
+                    model.page = total / pageSize;
+                else
+                    model.page = (total / pageSize) + 1;
+
+                model.rows = result;
+                model.sum = sum ?? 0;
+
+                //将查询结果返回  
+                HttpContext.Response.Write(jss.Serialize(model));
+            }
+            catch (Exception ex)
+            {
+                log4net.ILog log = log4net.LogManager.GetLogger(this.GetType());
+                log.Error(ex);
+            }
+        }
         public JsonResult GetJournal(string iGuid)
         {
             try

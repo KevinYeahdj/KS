@@ -453,16 +453,7 @@ namespace HRMS.Controllers
                 JsonSerializerSettings st = new JsonSerializerSettings();
                 st.DateTimeZoneHandling = DateTimeZoneHandling.Local;
                 List<JournalEntity> entities = JsonConvert.DeserializeObject<List<JournalEntity>>(buzJson, st);
-
-                foreach (var entity in entities)
-                {
-                    entity.iGuid = Guid.NewGuid().ToString();
-                    entity.iCreatedBy = SessionHelper.CurrentUser.UserName;
-                    entity.iUpdatedBy = SessionHelper.CurrentUser.UserName;
-                    entity.iAppNo = appNo;
-                    entity.iRecordStatus = "正式";
-                }
-                service.BatchInsert(entities);
+                service.BatchUpdate(entities, appNo);
                 result = true;
             }
             else if (pguid == "eb2844bd-0ffd-9eaa-6068-910b66fad9d9")

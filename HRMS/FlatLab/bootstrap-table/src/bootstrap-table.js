@@ -2003,7 +2003,7 @@
 
         if (row) {
             this.options.data.splice(this.options.data.indexOf(row), 1);
-            this.data.splice(this.data.indexOf(row), 1);   //UpdatedByKevin@20161221 updateRow 使用this.data
+            //this.data.splice(this.data.indexOf(row), 1);   //UpdatedByKevin@20161221 updateRow 使用this.data
         }
 
         if (len === this.options.data.length) {

@@ -15,6 +15,7 @@ namespace HRMS.Data.Entity
         public string iProjectId { get; set; } //项目
         public string iBorrower { get; set; } //领用人 
         public DateTime? iBorrowedDate { get; set; } //领用日期
+        public string iMaterialName { get; set; } //资产名称
         public string iBrand { get; set; } //品牌
         public string iModelNo { get; set; } //型号
         public string iSerialNo { get; set; } //序列号

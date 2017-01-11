@@ -46,7 +46,7 @@
   <ItemGroup>
     <Compile Include="DbHelperSQL.cs" />
     <Compile Include="Entity\ContractEntity.cs" />
-    <Compile Include="Entity\MaterialCollarEntity.cs" />
+    <Compile Include="Entity\MaterialBorrowEntity.cs" />
     <Compile Include="Entity\SalaryEntity.cs" />
     <Compile Include="Entity\JournalEntity.cs" />
     <Compile Include="Entity\ProvidentFundEntity.cs" />
@@ -61,6 +61,7 @@
     <Compile Include="IRepository.cs" />
     <Compile Include="ManagerBase.cs" />
     <Compile Include="Manager\ContractManager.cs" />
+    <Compile Include="Manager\MaterialBorrowManager.cs" />
     <Compile Include="Manager\SalaryManager.cs" />
     <Compile Include="Manager\SocialSecurityManager.cs" />
     <Compile Include="Manager\JournalManager.cs" />

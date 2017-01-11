@@ -1,0 +1,714 @@
+﻿@{
+    ViewBag.Title = "物资领用信息";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+}
+<style>
+    .modal-body {
+        height: 100%;
+    }
+</style>
+
+<div>
+    <div>
+        <div class="col-*-12">
+
+            <div id="toolbar" class="toolbar">
+                <div style="float: left; margin-left: 10px; "><span>领用人：</span></div>
+                <div style="float: left; margin-left: 10px; width: 5%; "><input id="sBorrower" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px; "><span>资产名称：</span></div>
+                <div style="float: left; margin-left: 10px; width: 5%; "><input id="sMaterialName" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px; "><span>品牌：</span></div>
+                <div style="float: left; margin-left: 10px; width: 5%; "><input id="sBrand" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px; "><span>领用日期：</span></div><div style="float: left; margin-left: 10px; width: 8%"><input id="sBorrowedDate" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 8%"><input id="sBorrowedDate2" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px; "><span>归还日期：</span></div><div style="float: left; margin-left: 10px; width: 8%"><input id="sReturnedDate" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 8%"><input id="sReturnedDate2" class="form-control" /></div>
+                <div style="float: right; margin-left: 10px; margin-top: 5px; " class="btn btn-primary" data-toggle="modal" data-target="#addModal" id="NewRecord">添加记录</div>
+                <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" onclick="Search()">查询</div>
+
+            </div>
+
+            <table id="mytab" class="table table-hover"></table>
+
+            <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog" style="width:90%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                &times;
+                            </button>
+                            <h4 class="modal-title" id="addModalLabel">添加记录</h4>
+                        </div>
+                        <div class="modal-body">
+                            <input style="visibility:hidden" type="hidden" id="iGuid" data-bind="value: iGuid">
+                            <div class="form-group">
+                                公司：
+                                <select class="form-control" id="iCompanyId" data-bind="value: iCompanyId">
+                                    <option value="-">请选择</option>
+                                    @{
+                                        foreach (var item in ViewBag.Companies)
+                                        {
+                                            <option value="@item.iGuid">@item.iName</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                项目：<select class="form-control" id="iProjectId" data-bind="value: iProjectId">
+                                    <option value="-">请选择</option>
+                                    @{
+                                        foreach (var item in ViewBag.Projects)
+                                        {
+                                            <option value="@item.iGuid">@item.iName</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                领用人：<input type="text" class="form-control" id="iBorrower" data-bind="value: iBorrower" placeholder="请输入领用人">
+                            </div>
+                            <div class="form-group">
+                                领用日期：<input type="text" class="form-control" id="iBorrowedDate" data-bind="value: iBorrowedDate" placeholder="请输入领用日期">
+                            </div>
+                            <div class="form-group">
+                                资产名称：<input type="text" class="form-control" id="iMaterialName" data-bind="value: iMaterialName" placeholder="请输入资产名称">
+                            </div>
+                            <div class="form-group">
+                                品牌：<input type="text" class="form-control" id="iBrand" data-bind="value: iBrand" placeholder="请输入品牌">
+                            </div>
+                            <div class="form-group">
+                                型号：<input type="text" class="form-control" id="iModelNo" data-bind="value: iModelNo" placeholder="请输入型号">
+                            </div>
+                            <div class="form-group">
+                                序列号：<input type="text" class="form-control" id="iSerialNo" data-bind="value: iSerialNo" placeholder="请输入序列号">
+                            </div>
+                            <div class="form-group">
+                                数量：<input type="text" class="form-control" id="iQuantity" data-bind="value: iQuantity" placeholder="请输入数量">
+                            </div>
+                            <div class="form-group">
+                                购买金额：<input type="text" class="form-control" id="iPrice" data-bind="value: iPrice" placeholder="请输入购买金额">
+                            </div>
+                            <div class="form-group">
+                                购买日期：<input type="text" class="form-control" id="iBoughtDate" data-bind="value: iBoughtDate" placeholder="请输入购买日期">
+                            </div>
+                            <div class="form-group">
+                                归还日期：<input type="text" class="form-control" id="iReturnedDate" data-bind="value: iReturnedDate" placeholder="请输入归还日期">
+                            </div>
+                            <div class="form-group">
+                                备注：<input type="text" class="form-control" id="iNote" data-bind="value: iNote" placeholder="请输入备注">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-primary" id="removeRecord">删除</button>
+                            <button type="button" class="btn btn-primary" id="SaveChanges">提交</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="logModal" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog" style="width:90%;height:30px">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                &times;
+                            </button>
+                            <h4 class="modal-title" id="addModalLabel">修改记录</h4>
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" id="recordId" />
+                            <table id="logtable" class="table table-hover"></table>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    //正则校验两位小数
+    function clearNoNum(obj) {
+        //先把非数字的都替换掉，除了数字和.
+        obj.value = obj.value.replace(/[^\d.]/g, "");
+        //保证只有出现一个.而没有多个.
+        obj.value = obj.value.replace(/\.{2,}/g, ".");
+        //必须保证第一个为数字而不是.
+        obj.value = obj.value.replace(/^\./g, "");
+        //保证.只出现一次，而不能出现两次以上
+        obj.value = obj.value.replace(".", "$#$").replace(/\./g, "").replace("$#$", ".");
+        //只能输入两个小数
+        obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3');
+        $(obj).trigger("change");
+    }
+
+    //bootstraptable 高度
+    function tableHeight() {
+        return $(window).height() * 0.86;
+    }
+
+    function ShowLog(iguid) {
+        $("#recordId").val(iguid);
+        $('#logtable').bootstrapTable('refresh');
+        $('#logModal').modal('toggle');
+    }
+
+    //json 日期转字符串
+    function ChangeDateFormat(jsondate) {
+        if (!jsondate) return "";
+        jsondate = jsondate.replace("/Date(", "").replace(")/", "");
+        if (jsondate.indexOf("+") > 0) {
+            jsondate = jsondate.substring(0, jsondate.indexOf("+"));
+        }
+        else if (jsondate.indexOf("-") > 0) {
+            jsondate = jsondate.substring(0, jsondate.indexOf("-"));
+        }
+
+        var date = new Date(parseInt(jsondate, 10));
+        var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+        var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+        return date.getFullYear()
+        + "-"
+        + month
+        + "-"
+        + currentDate;
+    }
+    //json 日期转字符串
+    function ChangeDateTimeFormat(jsondate) {
+        if (!jsondate) return "";
+        jsondate = jsondate.replace("/Date(", "").replace(")/", "");
+        if (jsondate.indexOf("+") > 0) {
+            jsondate = jsondate.substring(0, jsondate.indexOf("+"));
+        }
+        else if (jsondate.indexOf("-") > 0) {
+            jsondate = jsondate.substring(0, jsondate.indexOf("-"));
+        }
+
+        var date = new Date(parseInt(jsondate, 10));
+        var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+        var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+        return date.getFullYear()
+               + "-"
+               + month
+               + "-"
+               + currentDate
+               + " "
+               + ((date.getHours() < 10) ? ("0" + date.getHours()) : date.getHours())
+               + ":"
+               + ((date.getMinutes() < 10) ? ("0" + date.getMinutes()) : date.getMinutes());
+
+    }
+
+    //查询
+    function Search() {
+        $('#mytab').bootstrapTable('refresh');
+    }
+    function ViewModel() {
+        var self = this;
+        self.iGuid = ko.observable("");
+        self.iCompanyId = ko.observable("");
+        self.iProjectId = ko.observable("");
+        self.iBorrower = ko.observable("");
+        self.iBorrowedDate = ko.observable("");
+        self.iMaterialName = ko.observable("");
+        self.iBrand = ko.observable("");
+        self.iModelNo = ko.observable("");
+        self.iSerialNo = ko.observable("");
+        self.iQuantity = ko.observable("");
+        self.iPrice = ko.observable("");
+        self.iBoughtDate = ko.observable("");
+        self.iReturnedDate = ko.observable("");
+        self.iNote = ko.observable("");
+        self.iCreatedOn = ko.observable("");
+        self.iCreatedBy = ko.observable("");
+        self.iUpdatedOn = ko.observable("");
+        self.iUpdatedBy = ko.observable("");
+        self.iStatus = ko.observable("1");
+        self.iIsDeleted = ko.observable("0");
+    }
+    $(function () {
+        //重置函数
+        $("div.icon-reorder").click(function () {
+            $('#mytab').bootstrapTable('resetView', {
+                height: tableHeight()
+            })
+        })
+        //根据窗口调整表格高度
+        $(window).resize(function () {
+            $('#mytab').bootstrapTable('resetView', {
+                height: tableHeight()
+            })
+        })
+        //Enter 键函数
+        document.onkeydown = function (e) {
+            e = e || window.event;
+            if (e.keyCode == 13) {
+                Search();
+            }
+        }
+
+        //权限判定
+        if (window.menuRights == "r") {
+            $("#NewRecord").hide();
+        }
+        //查询日期选择绑定
+        $("#sBorrowedDate").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            minView: "month",
+            maxView: "decade",
+            todayBtn: true,
+            clearBtn: 1,
+            pickerPosition: "bottom-left"
+        }).on("click", function (ev) {
+            $("#sBorrowedDate").datetimepicker("setEndDate", $("#sBorrowedDate2").val());
+        });
+        $("#sBorrowedDate2").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            minView: "month",
+            maxView: "decade",
+            todayBtn: true,
+            clearBtn: 1,
+            pickerPosition: "bottom-left"
+        }).on("click", function (ev) {
+            $("#sBorrowedDate2").datetimepicker("setStartDate", $("#sBorrowedDate").val());
+        });
+        $("#sReturnedDate").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            minView: "month",
+            maxView: "decade",
+            todayBtn: true,
+            clearBtn: 1,
+            pickerPosition: "bottom-left"
+        }).on("click", function (ev) {
+            $("#sReturnedDate").datetimepicker("setEndDate", $("#sReturnedDate2").val());
+        });
+        $("#sReturnedDate2").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            minView: "month",
+            maxView: "decade",
+            todayBtn: true,
+            clearBtn: 1,
+            pickerPosition: "bottom-left"
+        }).on("click", function (ev) {
+            $("#sReturnedDate2").datetimepicker("setStartDate", $("#sReturnedDate").val());
+        });
+        //弹窗日期绑定
+        $('#iBorrowedDate').datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            clearBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 1,
+            format: 'yyyy-mm-dd'
+        }).on("click", function (ev) {
+            $("#iBorrowedDate").datetimepicker("setEndDate", $("#iReturnedDate").val());
+        });
+        $('#iReturnedDate').datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            clearBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 1,
+            format: 'yyyy-mm-dd'
+        }).on("click", function (ev) {
+            $("#iReturnedDate").datetimepicker("setStartDate", $("#iBorrowedDate").val());
+        });
+        $('#iBoughtDate').datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            clearBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 1,
+            format: 'yyyy-mm-dd'
+        });
+        //必填校验
+        $("#iCompanyId").change(function () {
+            var value = $("#iCompanyId").val();
+            if (value != "-") {
+                $('#iCompanyId').removeClass("warning");
+            }
+            else {
+                $('#iCompanyId').addClass("warning");
+            }
+        });
+        $("#iProjectId").change(function () {
+            var value = $("#iProjectId").val();
+            if (value != "-") {
+                $('#iProjectId').removeClass("warning");
+            }
+            else {
+                $('#iProjectId').addClass("warning");
+            }
+        });
+        $("#iBorrower").change(function () {
+            var value = $("#iBorrower").val();
+            if (value.length > 0) {
+                $('#iBorrower').removeClass("warning");
+            }
+            else {
+                $('#iBorrower').addClass("warning");
+            }
+        });
+        $("#iBorrowedDate").change(function () {
+            var value = $("#iBorrowedDate").val();
+            if (value.length > 0) {
+                $('#iBorrowedDate').removeClass("warning");
+            }
+            else {
+                $('#iBorrowedDate').addClass("warning");
+            }
+        });
+
+        $("#iMaterialName").blur(function () {
+            var value = $("#iMaterialName").val();
+            if (value.length > 0) {
+                $('#iMaterialName').removeClass("warning");
+            }
+            else {
+                $('#iMaterialName').addClass("warning");
+            }
+        });
+        $("#iQuantity").blur(function () {
+            var value = $("#iQuantity").val();
+            if (value.length > 0) {
+                $('#iQuantity').removeClass("warning");
+            }
+            else {
+                $('#iQuantity').addClass("warning");
+            }
+        });
+
+
+        $('#mytab').bootstrapTable({
+            url: "/AdminAjax/GetAllMaterialBorrow",//数据源
+            dataField: "rows",//服务端返回数据键值 就是说记录放的键值是rows，分页时使用总记录数的键值为total
+            sortName: "iUpdatedOn",//排序列
+            sortOrder: "desc",
+            cache: false,
+            striped: true,//條紋行
+            clickToSelect: true,//选择行即选择checkbox
+            searchOnEnterKey: false,//ENTER键搜索
+            height: tableHeight(),//高度调整
+            search: true,//是否搜索
+            pagination: true,//是否分页
+            pageSize: 15,//单页记录数
+            pageNumber: 1,//起始页
+            pageList: [15, 100, 500, 1000, 10000],//分页步进值
+            sidePagination: "server",//服务端分页
+            contentType: "application/x-www-form-urlencoded",//请求数据内容格式 默认是 application/json 自己根据格式自行服务端处理
+            dataType: "json",//期待返回数据类型
+            method: "post",//请求方式
+            searchAlign: "left",//查询框对齐方式
+            queryParamsType: "limit",//查询参数组织方式
+            showRefresh: false,//刷新按钮
+            showColumns: true,//列选择按钮
+            buttonsAlign: "left",//按钮对齐方式
+            toolbar: "#toolbar",//指定工具栏
+            toolbarAlign: "right",//工具栏对齐方式
+            queryParams: function getParams(params) {
+                params.sCompanyId = $("#companySelect").val();
+                params.sProjectId = $("#projectSelect").val();
+                params.sBorrower = $("#sBorrower").val();
+                params.sMaterialName = $("#sMaterialName").val();
+                params.sBrand = $("#sBrand").val();
+                params.sBorrowedDate = $("#sBorrowedDate").val();
+                params.sBorrowedDate2 = $("#sBorrowedDate2").val();
+                params.sReturnedDate = $("#sReturnedDate").val();
+                params.sReturnedDate2 = $("#sReturnedDate2").val();
+                return params;
+            },
+            columns: [
+                 {
+                     field: 'Number',
+                     title: '序号',
+                     formatter: function (value, row, index) {
+                         return ($('#mytab').bootstrapTable('getOptions').pageNumber - 1) * $('#mytab').bootstrapTable('getOptions').pageSize + index + 1;
+                     }
+                 },
+                 {
+                     field: "iShowLog", title: "修改记录", visible: false, formatter: function (value, row, index) {
+                         return '<a href="#" onclick="ShowLog(\'' + row.iGuid + '\')">点击查看</a>';
+                     }
+                 },
+                 { field: "iGuid", title: "iGuid", visible: false, switchable: false }
+                 , { field: "iCompanyId", title: "公司" }
+                 , { field: "iProjectId", title: "项目" }
+                 , { field: "iBorrower", title: "领用人", sortable: true }
+                 , {
+                     field: "iBorrowedDate", title: "领用日期", sortable: true, formatter: function (value, row, index) {
+                         return ChangeDateFormat(value);
+                     }
+                 }
+                 , { field: "iMaterialName", title: "资产名称", sortable: true }
+                 , { field: "iBrand", title: "品牌", sortable: true }
+                 , { field: "iModelNo", title: "型号", sortable: true }
+                 , { field: "iSerialNo", title: "序列号", sortable: true }
+                 , { field: "iQuantity", title: "数量", sortable: true }
+                 , { field: "iPrice", title: "购买金额", sortable: true }
+                 , {
+                     field: "iBoughtDate", title: "购买日期", sortable: true, formatter: function (value, row, index) {
+                         return ChangeDateFormat(value);
+                     }
+                 }, {
+                     field: "iReturnedDate", title: "归还日期", sortable: true, formatter: function (value, row, index) {
+                         return ChangeDateFormat(value);
+                     }
+                 }
+                 , { field: "iPersonInChargeOnSpotTel", title: "现场负责人电话", sortable: true }
+                 , { field: "iNote", title: "备注", sortable: true }
+            ],
+            onClickRow: function (row, $element) {
+                //$element是当前tr的jquery对象
+                //$element.css("background-color", "green");
+            },//单击row事件
+            onDblClickRow: function (row, $element) {
+                if (window.menuRights == "r") { 
+                    return;
+                }
+                $("#addModalLabel").html("修改记录");
+                $('#addModal').modal('toggle');
+
+                if (window.userType != "普通用户") {
+                    $("#removeRecord").show();
+                }
+                else {
+                    $("#removeRecord").hide();
+                }
+                $("#iProjectId").removeClass("warning");
+                $('#iCompanyId').removeClass("warning");
+
+                $("#iBorrower").removeClass("warning");
+                $('#iBorrowedDate').removeClass("warning");
+                $('#iMaterialName').removeClass("warning");
+                $('#iQuantity').removeClass("warning");
+
+                var width = $("#addModal").width();
+                var height = $("#addModal").height();
+                var $shade = $('<div id="waiting"></div>');
+                $shade.css({ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, background: '#fff url(/Content/images/waiting.gif) center center no-repeat', opacity: 0.4 });
+                $("#addModal").append($shade);
+                $.get("/AdminAjax/GetMaterialBorrow?iGuid=" + row.iGuid, function (result) {
+                    if (result.success) {
+                        myViewModel.iGuid(result.data.iGuid);
+                        myViewModel.iCompanyId(result.data.iCompanyId);
+                        myViewModel.iProjectId(result.data.iProjectId);
+                        myViewModel.iBorrower(result.data.iBorrower);
+                        myViewModel.iBorrowedDate(ChangeDateFormat(result.data.iBorrowedDate));
+                        myViewModel.iMaterialName(result.data.iMaterialName);
+                        myViewModel.iBrand(result.data.iBrand);
+                        myViewModel.iModelNo(result.data.iModelNo);
+                        myViewModel.iSerialNo(result.data.iSerialNo);
+                        myViewModel.iQuantity(result.data.iQuantity);
+                        myViewModel.iPrice(result.data.iPrice);
+                        myViewModel.iBoughtDate(ChangeDateFormat(result.data.iBoughtDate));
+                        myViewModel.iReturnedDate(ChangeDateFormat(result.data.iReturnedDate));
+                        myViewModel.iNote(result.data.iNote);
+                        myViewModel.iCreatedOn(result.data.iCreatedOn);
+                        myViewModel.iCreatedBy(result.data.iCreatedBy);
+                        myViewModel.iUpdatedOn(result.data.iUpdatedOn);
+                        myViewModel.iUpdatedBy(result.data.iUpdatedBy);
+                        myViewModel.iStatus(result.data.iStatus);
+                        myViewModel.iIsDeleted(result.data.iIsDeleted);
+                    }
+                    else {
+                        console.log(result.msg);
+                        toastr.error('获取数据失败！');
+                    }
+                    $shade.remove();
+                });
+            },
+            onLoadSuccess: function (data) {
+            },
+            locale: "zh-CN",//中文支持,
+            detailView: false, //是否显示详情折叠
+            detailFormatter: function (index, row, element) {
+                var html = '';
+                $.each(row, function (key, val) {
+                    html += "<p>" + key + ":" + val + "</p>"
+                });
+                return html;
+            }
+        });
+
+        $('#logtable').bootstrapTable({
+            url: "/CommonAjax/GetModifyRecords",//数据源
+            dataField: "rows",//服务端返回数据键值 就是说记录放的键值是rows，分页时使用总记录数的键值为total
+            sortName: "iModifiedOn",//排序列
+            sortOrder: "desc",
+            cache: false,
+            striped: true,//條紋行
+            clickToSelect: true,//选择行即选择checkbox
+            searchOnEnterKey: true,//ENTER键搜索
+            height: tableHeight() * 0.84,//高度调整
+            search: false,//是否搜索
+            pagination: true,//是否分页
+            pageSize: 15,//单页记录数
+            pageNumber: 1,//起始页
+            pageList: [15, 20, 30, 50, 100, 1000, 10000],//分页步进值
+            sidePagination: "server",//服务端分页
+            contentType: "application/x-www-form-urlencoded",//请求数据内容格式 默认是 application/json 自己根据格式自行服务端处理
+            dataType: "json",//期待返回数据类型
+            method: "post",//请求方式
+            searchAlign: "left",//查询框对齐方式
+            queryParamsType: "limit",//查询参数组织方式
+            queryParams: function getParams(params) {
+                //params obj
+                params.recordid = $("#recordId").val();
+                params.tableName = "Contract";
+                return params;
+            },
+            searchOnEnterKey: false,//回车搜索
+            showRefresh: false,//刷新按钮
+            showColumns: false,//列选择按钮
+            buttonsAlign: "left",//按钮对齐方式
+            toolbarAlign: "right",//工具栏对齐方式
+            columns: [
+                 {
+                     field: 'Number',
+                     title: '序号',
+                     formatter: function (value, row, index) {
+                         return ($('#logtable').bootstrapTable('getOptions').pageNumber - 1) * $('#logtable').bootstrapTable('getOptions').pageSize + index + 1;
+                     }
+                 },
+            {
+                field: "iModifiedOn", title: "修改时间", formatter: function (value, row, index) {
+                    return ChangeDateTimeFormat(value);
+                }
+            }
+            , { field: "iModifiedBy", title: "修改人" }
+            , { field: "iModifiedContent", title: "修改明细" }
+            ],
+            onClickRow: function (row, $element) {
+                //$element是当前tr的jquery对象
+                //$element.css("background-color", "green");
+            },//单击row事件
+            onDblClickRow: function (row, $element) {
+            },
+            locale: "zh-CN",//中文支持,
+            detailView: false //是否显示详情折叠
+        });
+
+        $("#NewRecord").click(function () {
+            $("#removeRecord").hide();
+            $('#iCompanyId').addClass("warning");
+            $('#iProjectId').addClass("warning");
+            $('#iBorrower').addClass("warning");
+            $('#iBorrowedDate').addClass("warning");
+            $('#iMaterialName').addClass("warning");
+            $('#iQuantity').addClass("warning");
+
+            myViewModel.iGuid("");
+            myViewModel.iProjectId('@HRMS.WEB.Utils.SessionHelper.CurrentUser.CurrentProject');
+            myViewModel.iCompanyId('@HRMS.WEB.Utils.SessionHelper.CurrentUser.CurrentCompany');
+           
+            myViewModel.iBorrower("");
+            myViewModel.iBorrowedDate("");
+            myViewModel.iMaterialName("");
+            myViewModel.iBrand("");
+            myViewModel.iModelNo("");
+            myViewModel.iSerialNo("");
+            myViewModel.iQuantity("");
+            myViewModel.iPrice("");
+            myViewModel.iBoughtDate("");
+            myViewModel.iReturnedDate("");
+            myViewModel.iNote("");
+
+            myViewModel.iCreatedOn("");
+            myViewModel.iCreatedBy("");
+            myViewModel.iUpdatedOn("");
+            myViewModel.iUpdatedBy("");
+            myViewModel.iStatus("1");
+            myViewModel.iIsDeleted("0");
+
+            if ($("#iCompanyId").val() == "-") {
+                $('#iCompanyId').addClass("warning");
+            }
+            else {
+                $('#iCompanyId').removeClass("warning");
+            }
+            if ($("#iProjectId").val() == "-") {
+                $('#iProjectId').addClass("warning");
+            }
+            else {
+                $('#iProjectId').removeClass("warning");
+            }
+            $("#addModalLabel").html("添加记录");
+        });
+
+        $("#SaveChanges").click(function () {
+            var warnings = $(".warning");
+            if (warnings && warnings.length > 0) {
+                toastr.error('数据验证未通过！');
+                return;
+            }
+            $(this).attr({ "disabled": "disabled" });
+            var param = {};
+            param.jsonString = ko.toJSON(myViewModel);
+            $.ajax({
+                url: "/AdminAjax/MaterialBorrowSaveChanges",
+                type: "POST",
+                data: param,
+                dataType: 'text',
+                success: function (data) {
+                    if (data == "success") {
+                        toastr.success('保存成功！');
+                        $('#mytab').bootstrapTable('refresh');
+                    }
+                    else {
+                        console.log(data);
+                        toastr.error('保存数据失败！');
+                    }
+                    $('#addModal').modal('toggle');
+                    $("#SaveChanges").removeAttr("disabled");
+                }
+            });
+        });
+        $("#removeRecord").click(function () {
+            if (confirm("确认要删除？")) {
+                var param = {};
+                myViewModel.iIsDeleted("1");
+                param.jsonString = ko.toJSON(myViewModel);
+                $.ajax({
+                    url: "/AdminAjax/MaterialBorrowRemove",
+                    type: "POST",
+                    data: param,
+                    dataType: 'text',
+                    success: function (data) {
+                        if (data == "success") {
+                            toastr.success('删除成功！');
+                            $('#mytab').bootstrapTable('refresh');
+                        }
+                        else {
+                            console.log(data);
+                            toastr.error('删除数据失败！');
+                        }
+                        $('#addModal').modal('toggle');
+                    }
+                });
+            }
+        });
+
+        var myViewModel = new ViewModel();
+        ko.applyBindings(myViewModel);
+    })
+</script>
