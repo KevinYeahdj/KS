@@ -577,12 +577,12 @@
                         myViewModel.iUpdatedBy(result.data.iUpdatedBy);
                         myViewModel.iStatus(result.data.iStatus);
                         myViewModel.iIsDeleted(result.data.iIsDeleted);
-                        if (result.data.iChecked == "是" || result.data.iRecordStatus == "草稿") {
+                        if (false && result.data.iChecked == "是") {
                             $("[name=iChecked]").attr("disabled", true);
                             $("#iPaidDate").attr("disabled", true);
                         } else {
-                            $("[name=iChecked]").attr("disabled", true);
-                            $("#iPaidDate").attr("disabled", true);
+                            $("[name=iChecked]").attr("disabled", false);
+                            $("#iPaidDate").attr("disabled", false);
                         }
                     }
                     else {
