@@ -446,35 +446,45 @@ namespace HRMS.Controllers
 
         private bool SaveBusinessDataForBPM(string buzJson, string pguid, string appNo)
         {
-            bool result = false;
-            if (pguid == "09e8624f-ff2d-cc98-0eaa-6a11f3f7d9bc")
+            try
             {
-                JournalManager service = new JournalManager();
-                JsonSerializerSettings st = new JsonSerializerSettings();
-                st.DateTimeZoneHandling = DateTimeZoneHandling.Local;
-                List<JournalEntity> entities = JsonConvert.DeserializeObject<List<JournalEntity>>(buzJson, st);
-                service.BatchUpdate(entities, appNo);
-                result = true;
-            }
-            else if (pguid == "eb2844bd-0ffd-9eaa-6068-910b66fad9d9")
-            {
-                ReturnFeeManager service = new ReturnFeeManager();
-                JsonSerializerSettings st = new JsonSerializerSettings();
-                st.DateTimeZoneHandling = DateTimeZoneHandling.Local;
-                List<ReturnFeeHistoryEntity> entities = JsonConvert.DeserializeObject<List<ReturnFeeHistoryEntity>>(buzJson, st);
-
-                foreach (var entity in entities)
+                bool result = false;
+                if (pguid == "09e8624f-ff2d-cc98-0eaa-6a11f3f7d9bc")
                 {
-                    entity.iGuid = Guid.NewGuid().ToString();
-                    entity.iCreatedBy = SessionHelper.CurrentUser.UserName;
-                    entity.iUpdatedBy = SessionHelper.CurrentUser.UserName;
-                    entity.iReturnFeeAppNo = appNo;
+                    JournalManager service = new JournalManager();
+                    JsonSerializerSettings st = new JsonSerializerSettings();
+                    st.DateTimeZoneHandling = DateTimeZoneHandling.Local;
+                    List<JournalEntity> entities = JsonConvert.DeserializeObject<List<JournalEntity>>(buzJson, st);
+                    service.BatchUpdate(entities, appNo);
+                    result = true;
                 }
-                entities.RemoveAll(i => string.IsNullOrEmpty(i.iReturnFeeGuid));
-                service.BatchInsertReturnFeeHistoryApplication(entities);
-                result = true;
+                else if (pguid == "eb2844bd-0ffd-9eaa-6068-910b66fad9d9")
+                {
+                    ReturnFeeManager service = new ReturnFeeManager();
+                    JsonSerializerSettings st = new JsonSerializerSettings();
+                    st.DateTimeZoneHandling = DateTimeZoneHandling.Local;
+                    List<ReturnFeeHistoryEntity> entities = JsonConvert.DeserializeObject<List<ReturnFeeHistoryEntity>>(buzJson, st);
+
+                    foreach (var entity in entities)
+                    {
+                        entity.iGuid = Guid.NewGuid().ToString();
+                        entity.iCreatedBy = SessionHelper.CurrentUser.UserName;
+                        entity.iUpdatedBy = SessionHelper.CurrentUser.UserName;
+                        entity.iReturnFeeAppNo = appNo;
+                    }
+                    entities.RemoveAll(i => string.IsNullOrEmpty(i.iReturnFeeGuid));
+                    service.BatchInsertReturnFeeHistoryApplication(entities);
+                    result = true;
+                }
+                return result;
             }
-            return result;
+            catch (Exception ex)
+            {
+                log4net.ILog log = log4net.LogManager.GetLogger(this.GetType());
+                log.Error("保存流程业务数据出错！", ex);
+                return false;
+
+            }
         }
 
     }
