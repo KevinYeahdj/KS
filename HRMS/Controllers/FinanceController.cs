@@ -965,6 +965,8 @@ namespace HRMS.Controllers
                 Dictionary<string, string> bizParaDic = new Dictionary<string, string>();
                 bizParaDic.Add("search", searchKey);
                 bizParaDic.Add("currentUserId", SessionHelper.CurrentUser.UserName);
+                bizParaDic.Add("iCompanyId", HttpContext.Request.Params["iCompanyId"]);
+                bizParaDic.Add("iProjectId", HttpContext.Request.Params["iProjectId"]);
                 int total = 0;
                 JournalManager service = new JournalManager();
                 List<JournalEntity> list = service.GetMyJournalDraft(SessionHelper.CurrentUser.UserType, bizParaDic, sort, order, offset, pageSize, out total);
@@ -1032,11 +1034,11 @@ namespace HRMS.Controllers
                 JournalManager service = new JournalManager();
                 List<JournalEntity> list = new List<JournalEntity>();
                 Dictionary<string, string> bizParaDic = new Dictionary<string, string>();
+                bizParaDic.Add("iCompanyId", HttpContext.Request.Params["iCompanyId"]);
+                bizParaDic.Add("iProjectId", HttpContext.Request.Params["iCompanyId"]);
                 if (string.IsNullOrEmpty(action))
                 {
                     bizParaDic.Add("iAppNo", appno);
-                    bizParaDic.Add("iCompanyId", "-");
-                    bizParaDic.Add("iProjectId", "-");
                     bizParaDic.Add("search", "");
                     list = service.GetSearch(SessionHelper.CurrentUser.UserType, bizParaDic, sort, order, offset, pageSize, out total);
                 }

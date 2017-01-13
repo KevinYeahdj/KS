@@ -223,7 +223,7 @@ namespace HRMS.Data.Manager
 
         public List<JournalEntity> GetMyJournalDraft(string userType, Dictionary<string, string> para, string sort, string order, int offset, int pageSize, out int total)
         {
-            StringBuilder commandsb = new StringBuilder(" from Journal where iisdeleted=0 and istatus=1 and iRecordStatus='草稿' and iCreatedBy ='" + para["currentUserId"] + "'");
+            StringBuilder commandsb = new StringBuilder(" from Journal where iisdeleted=0 and istatus=1 and iRecordStatus='草稿' and iCreatedBy ='" + para["currentUserId"] + "' and iCompanyId = '" + para["iCompanyId"] + "' and iProjectId='" + para["iProjectId"] + "'");
 
 
             string commonSql = commandsb.ToString();

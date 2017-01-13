@@ -138,6 +138,8 @@
             toolbar: "#toolbar",//指定工具栏
             toolbarAlign: "right",//工具栏对齐方式
             queryParams: function getParams(params) {
+                params.iCompanyId = $("#companySelect").val();
+                params.iProjectId = $("#projectSelect").val();
                 params.sAppNo = Request["appno"];
                 params.limit = 10000;
                 params.action = $("#action").val();
