@@ -81,10 +81,10 @@
                                 序列号：<input type="text" class="form-control" id="iSerialNo" data-bind="value: iSerialNo" placeholder="请输入序列号">
                             </div>
                             <div class="form-group">
-                                数量：<input type="text" class="form-control" id="iQuantity" data-bind="value: iQuantity" placeholder="请输入数量">
+                                数量：<input type="text" class="form-control" id="iQuantity" data-bind="value: iQuantity" onkeyup="clearNoNum(this)" onblur="clearNoNum(this)" maxlength="11" placeholder="请输入数量">
                             </div>
                             <div class="form-group">
-                                购买金额：<input type="text" class="form-control" id="iPrice" data-bind="value: iPrice" placeholder="请输入购买金额">
+                                购买金额：<input type="text" class="form-control" id="iPrice" data-bind="value: iPrice" onkeyup="clearNoNum(this)" onblur="clearNoNum(this)" maxlength="11" placeholder="请输入购买金额">
                             </div>
                             <div class="form-group">
                                 购买日期：<input type="text" class="form-control" id="iBoughtDate" data-bind="value: iBoughtDate" placeholder="请输入购买日期">
@@ -574,7 +574,7 @@
             queryParams: function getParams(params) {
                 //params obj
                 params.recordid = $("#recordId").val();
-                params.tableName = "Contract";
+                params.tableName = "MaterialBorrow";
                 return params;
             },
             searchOnEnterKey: false,//回车搜索

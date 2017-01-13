@@ -126,6 +126,12 @@ namespace HRMS.Controllers
                     entity.iUpdatedBy = SessionHelper.CurrentUser.UserName;
                     service.Insert(entity);
                 }
+                else
+                {
+                    entity.iUpdatedBy = SessionHelper.CurrentUser.UserName;
+                    service.Update(entity);
+
+                }
                 return "success";
             }
             catch (Exception e)

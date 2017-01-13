@@ -191,7 +191,7 @@ namespace HRMS.Data.Manager
                 en.iModifiedBy = entity.iUpdatedBy;
                 en.iModifiedOn = DateTime.Now;
                 en.iModifiedContent = modifiedContent;
-                en.iTableName = "Journal";
+                en.iTableName = "MaterialBorrow";
                 return en;
             }
         }
