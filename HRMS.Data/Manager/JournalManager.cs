@@ -122,7 +122,7 @@ namespace HRMS.Data.Manager
             try
             {
                 session.BeginTrans();
-                Repository.Execute(session.Connection, "update Journal set iRecordStatus = '草稿' and iAppNo = '' where iisdeleted=0 and istatus=1 and iAppNo=@appno ", new { appno = appNo }, session.Transaction);
+                Repository.Execute(session.Connection, "update Journal set iRecordStatus = '草稿', iAppNo = '' where iisdeleted=0 and istatus=1 and iAppNo=@appno ", new { appno = appNo }, session.Transaction);
                 List<JournalEntity> upds = new List<JournalEntity>();
                 foreach (var entity in entities)
                 {
@@ -243,6 +243,15 @@ namespace HRMS.Data.Manager
         {
             string sql = @"select * from Journal where iGuid=@id and iIsDeleted =0 and iStatus =1";
             return Repository.Query<JournalEntity>(sql, new { id = guid }).FirstOrDefault();
+        }
+
+        //清掉所有当前流程标识的流水账，以重新获取
+        public bool ResetFlowJournal(string appNo)
+        {
+            string sql = "update Journal set iAppNo = null, iRecordStatus ='草稿' where iAppNo='" + appNo + "'";
+            DbHelperSQL.ExecuteSql(sql);
+            return true;
+
         }
         public ModifyLogEntity ModifyRecord(JournalEntity entity)
         {
