@@ -856,7 +856,7 @@ namespace HRMS.Controllers
             }
         }
 
-        //流程填报使用-只关心appno 不关心公司项目
+        //流程填报使用-只关心appno 
         public void GetFlowJournal()
         {
             try
@@ -1034,16 +1034,18 @@ namespace HRMS.Controllers
                 JournalManager service = new JournalManager();
                 List<JournalEntity> list = new List<JournalEntity>();
                 Dictionary<string, string> bizParaDic = new Dictionary<string, string>();
-                bizParaDic.Add("iCompanyId", HttpContext.Request.Params["iCompanyId"]);
-                bizParaDic.Add("iProjectId", HttpContext.Request.Params["iCompanyId"]);
                 if (string.IsNullOrEmpty(action))
                 {
+                    bizParaDic.Add("iCompanyId", "-");
+                    bizParaDic.Add("iProjectId", "-");
                     bizParaDic.Add("iAppNo", appno);
                     bizParaDic.Add("search", "");
                     list = service.GetSearch(SessionHelper.CurrentUser.UserType, bizParaDic, sort, order, offset, pageSize, out total);
                 }
                 else
                 {
+                    bizParaDic.Add("iCompanyId", HttpContext.Request.Params["iCompanyId"]);
+                    bizParaDic.Add("iProjectId", HttpContext.Request.Params["iCompanyId"]);
                     bizParaDic.Add("currentUserId", SessionHelper.CurrentUser.UserName);
                     service.ResetFlowJournal(appno);
                     list = service.GetMyJournalDraft(SessionHelper.CurrentUser.UserType, bizParaDic, sort, order, offset, pageSize, out total);
