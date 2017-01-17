@@ -401,7 +401,7 @@ namespace HRMS.Data.Manager
             }
         }
 
-        public List<ReturnFeeHistoryEntity> GetValidReturnFeeList(string companyId, string projectId)
+        public List<ReturnFeeHistoryViewModel> GetValidReturnFeeList(string companyId, string projectId)
         {
             string sql = @"select fee.[iGuid]+'1' as iGuid
       ,fee.[iGuid] as iReturnFeeGuid
@@ -415,7 +415,7 @@ namespace HRMS.Data.Manager
       ,[iFirstReturnFeeDays]as iReturnFeeDays
       ,[iFirstReturnFeeDate]as iReturnFeeDate
       ,[iFirstReturnFeePayment]as iReturnFeePayment
-      ,[iFirstReturnFeeActualPayDate]as iReturnFeeActualPayDate
+      ,[iFirstReturnFeeActualPayDate]as iReturnFeeActualPayDate,hr.iCompany as iCompanyId, hr.iItemName as iProjectId, hr.iName as iName, hr.iIdCard as iIdCard
   from ReturnFee fee right join hrinfo hr on fee.iHRInfoGuid = hr.iguid and fee.iIsDeleted =0 and fee.iStatus =1  
   where hr.iIsReturnFee = '是' and hr.iisdeleted=0 and hr.istatus=1 and hr.iCompany = @companyid and hr.iItemName= @projectid
   and fee.iFirstReturnFeePayment <> '已付' and fee.iAdvice <> '暂不返费' and fee.iFirstAppNo is null
@@ -433,7 +433,7 @@ namespace HRMS.Data.Manager
       ,[iSecondReturnFeeDays]as iReturnFeeDays
       ,[iSecondReturnFeeDate]as iReturnFeeDate
       ,[iSecondReturnFeePayment]as iReturnFeePayment
-      ,[iSecondReturnFeeActualPayDate]as iReturnFeeActualPayDate
+      ,[iSecondReturnFeeActualPayDate]as iReturnFeeActualPayDate,hr.iCompany as iCompanyId, hr.iItemName as iProjectId, hr.iName as iName, hr.iIdCard as iIdCard
   from ReturnFee fee right join hrinfo hr on fee.iHRInfoGuid = hr.iguid and fee.iIsDeleted =0 and fee.iStatus =1  
   where hr.iIsReturnFee = '是' and hr.iisdeleted=0 and hr.istatus=1 and hr.iCompany = @companyid and hr.iItemName= @projectid
   and fee.iSecondReturnFeePayment <> '已付' and fee.iAdvice <> '暂不返费' and fee.iSecondAppNo is null
@@ -451,7 +451,7 @@ namespace HRMS.Data.Manager
       ,[iThirdReturnFeeDays]as iReturnFeeDays
       ,[iThirdReturnFeeDate]as iReturnFeeDate
       ,[iThirdReturnFeePayment]as iReturnFeePayment
-      ,[iThirdReturnFeeActualPayDate]as iReturnFeeActualPayDate
+      ,[iThirdReturnFeeActualPayDate]as iReturnFeeActualPayDate,hr.iCompany as iCompanyId, hr.iItemName as iProjectId, hr.iName as iName, hr.iIdCard as iIdCard
   from ReturnFee fee right join hrinfo hr on fee.iHRInfoGuid = hr.iguid and fee.iIsDeleted =0 and fee.iStatus =1  
   where hr.iIsReturnFee = '是' and hr.iisdeleted=0 and hr.istatus=1 and hr.iCompany = @companyid and hr.iItemName= @projectid
   and fee.iThirdReturnFeePayment <> '已付' and fee.iAdvice <> '暂不返费' and fee.iThirdAppNo is null
@@ -469,7 +469,7 @@ namespace HRMS.Data.Manager
       ,[iFourthReturnFeeDays]as iReturnFeeDays
       ,[iFourthReturnFeeDate]as iReturnFeeDate
       ,[iFourthReturnFeePayment]as iReturnFeePayment
-      ,[iFourthReturnFeeActualPayDate]as iReturnFeeActualPayDate
+      ,[iFourthReturnFeeActualPayDate]as iReturnFeeActualPayDate,hr.iCompany as iCompanyId, hr.iItemName as iProjectId, hr.iName as iName, hr.iIdCard as iIdCard
   from ReturnFee fee right join hrinfo hr on fee.iHRInfoGuid = hr.iguid and fee.iIsDeleted =0 and fee.iStatus =1  
   where hr.iIsReturnFee = '是' and hr.iisdeleted=0 and hr.istatus=1 and hr.iCompany = @companyid and hr.iItemName= @projectid
   and fee.iFourthReturnFeePayment <> '已付' and fee.iAdvice <> '暂不返费' and fee.iFourthAppNo is null
@@ -487,21 +487,21 @@ namespace HRMS.Data.Manager
       ,[iFifthReturnFeeDays]as iReturnFeeDays
       ,[iFifthReturnFeeDate]as iReturnFeeDate
       ,[iFifthReturnFeePayment]as iReturnFeePayment
-      ,[iFifthReturnFeeActualPayDate]as iReturnFeeActualPayDate
+      ,[iFifthReturnFeeActualPayDate]as iReturnFeeActualPayDate,hr.iCompany as iCompanyId, hr.iItemName as iProjectId, hr.iName as iName, hr.iIdCard as iIdCard
   from ReturnFee fee right join hrinfo hr on fee.iHRInfoGuid = hr.iguid and fee.iIsDeleted =0 and fee.iStatus =1  
   where hr.iIsReturnFee = '是' and hr.iisdeleted=0 and hr.istatus=1 and hr.iCompany = @companyid and hr.iItemName= @projectid
   and fee.iFifthReturnFeePayment <> '已付' and fee.iAdvice <> '暂不返费' and fee.iFifthAppNo is null
   and ((hr.iEmployeeStatus = '在职' and fee.iFifthReturnFeeDate < getdate()) or (hr.iEmployeeStatus = '离职' and fee.iFifthReturnFeeDate < hr.iResignDate))";
 
-            return Repository.Query<ReturnFeeHistoryEntity>(sql, new { companyid = companyId, projectid = projectId }).ToList();
+            return Repository.Query<ReturnFeeHistoryViewModel>(sql, new { companyid = companyId, projectid = projectId }).ToList();
 
 
         }
 
-        public List<ReturnFeeHistoryEntity> GetFlowReturnFeeHistory(string appNo)
+        public List<ReturnFeeHistoryViewModel> GetFlowReturnFeeHistory(string appNo)
         {
-            string sql = @"select * from returnfeeHistory where iReturnFeeAppNo=@appno order by iLaborCampBankAccount asc";
-            return Repository.Query<ReturnFeeHistoryEntity>(sql, new { appno = appNo }).ToList();
+            string sql = @"select a.*, hr.iCompany as iCompanyId, hr.iItemName as iProjectId, hr.iName as iName, hr.iIdCard as iIdCard from returnfeeHistory a inner join hrinfo hr on a.iHRInfoGuid = hr.iGuid where iReturnFeeAppNo=@appno order by iLaborCampBankAccount asc";
+            return Repository.Query<ReturnFeeHistoryViewModel>(sql, new { appno = appNo }).ToList();
         }
 
         //清掉所有当前流程标识的返费，以重新获取

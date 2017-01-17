@@ -149,10 +149,22 @@ namespace HRMS.Controllers
                 Dictionary<string, string> bizParaDic = new Dictionary<string, string>();
                 bizParaDic.Add("search", searchKey);
                 ReturnFeeManager service = new ReturnFeeManager();
-                List<ReturnFeeHistoryEntity> list = service.GetValidReturnFeeList(SessionHelper.CurrentUser.CurrentCompany, SessionHelper.CurrentUser.CurrentProject);
-                list = list.OrderBy(li => li.iLaborCampBankAccount).ToList();
+                List<ReturnFeeHistoryViewModel> list = service.GetValidReturnFeeList(SessionHelper.CurrentUser.CurrentCompany, SessionHelper.CurrentUser.CurrentProject);
+                list = list.OrderBy(li => li.iLaborCampBankAccount + li.iLaborName).ToList();
 
-                List<ReturnFeeHistoryEntity> summaryList = new List<ReturnFeeHistoryEntity>();
+                DicManager dm = new DicManager();
+                var companies = dm.GetAllCompanies();
+                var projects = dm.GetAllProjects();
+                Dictionary<string, string> comDic = companies.ToDictionary(i => i.iGuid, i => i.iName);
+                Dictionary<string, string> proDic = projects.ToDictionary(i => i.iGuid, i => i.iName);
+                foreach (var item in list)
+                {
+                    item.iCompanyId = comDic[item.iCompanyId];
+                    item.iProjectId = proDic[item.iProjectId];
+                }
+
+
+                List<ReturnFeeHistoryViewModel> summaryList = new List<ReturnFeeHistoryViewModel>();
                 if (list.Count > 0)
                 {
                     string iLaborCampBankAccount = list.First().iLaborCampBankAccount;
@@ -162,9 +174,9 @@ namespace HRMS.Controllers
                     decimal sum = 0;
                     foreach (var item in list)
                     {
-                        if (item.iLaborCampBankAccount != iLaborCampBankAccount)
+                        if (item.iLaborCampBankAccount != iLaborCampBankAccount || (string.IsNullOrEmpty(iLaborCampBankAccount) && item.iLaborName != iLaborName))
                         {
-                            summaryList.Add(new ReturnFeeHistoryEntity { iLaborName = iLaborName, iLaborCampBankPerson = iLaborCampBankPerson, iLaborCampBank = iLaborCampBank, iLaborCampBankAccount = iLaborCampBankAccount, iReturnFeeAmount = sum.ToString() });
+                            summaryList.Add(new ReturnFeeHistoryViewModel { iLaborName = iLaborName, iLaborCampBankPerson = iLaborCampBankPerson, iLaborCampBank = iLaborCampBank, iLaborCampBankAccount = iLaborCampBankAccount, iReturnFeeAmount = sum.ToString() });
 
                             iLaborCampBankAccount = item.iLaborCampBankAccount;
                             iLaborName = item.iLaborName;
@@ -175,12 +187,12 @@ namespace HRMS.Controllers
                         sum += decimal.Parse(item.iReturnFeeAmount);
                         summaryList.Add(item);
                     }
-                    summaryList.Add(new ReturnFeeHistoryEntity { iLaborName = iLaborName, iLaborCampBankPerson = iLaborCampBankPerson, iLaborCampBank = iLaborCampBank, iLaborCampBankAccount = iLaborCampBankAccount, iReturnFeeAmount = sum.ToString() });
+                    summaryList.Add(new ReturnFeeHistoryViewModel { iLaborName = iLaborName, iLaborCampBankPerson = iLaborCampBankPerson, iLaborCampBank = iLaborCampBank, iLaborCampBankAccount = iLaborCampBankAccount, iReturnFeeAmount = sum.ToString() });
 
                 }
 
                 //给分页实体赋值  
-                PageModels<ReturnFeeHistoryEntity> model = new PageModels<ReturnFeeHistoryEntity>();
+                PageModels<ReturnFeeHistoryViewModel> model = new PageModels<ReturnFeeHistoryViewModel>();
                 int total = summaryList.Count();
                 model.total = total;
                 if (total % pageSize == 0)
@@ -218,9 +230,18 @@ namespace HRMS.Controllers
                 Dictionary<string, string> bizParaDic = new Dictionary<string, string>();
                 bizParaDic.Add("search", searchKey);
                 ReturnFeeManager service = new ReturnFeeManager();
-                List<ReturnFeeHistoryEntity> list = service.GetFlowReturnFeeHistory(appno);
-
-                List<ReturnFeeHistoryEntity> summaryList = new List<ReturnFeeHistoryEntity>();
+                List<ReturnFeeHistoryViewModel> list = service.GetFlowReturnFeeHistory(appno);
+                DicManager dm = new DicManager();
+                var companies = dm.GetAllCompanies();
+                var projects = dm.GetAllProjects();
+                Dictionary<string, string> comDic = companies.ToDictionary(i => i.iGuid, i => i.iName);
+                Dictionary<string, string> proDic = projects.ToDictionary(i => i.iGuid, i => i.iName);
+                foreach (var item in list)
+                {
+                    item.iCompanyId = comDic[item.iCompanyId];
+                    item.iProjectId = proDic[item.iProjectId];
+                }
+                List<ReturnFeeHistoryViewModel> summaryList = new List<ReturnFeeHistoryViewModel>();
                 if (list.Count > 0)
                 {
                     string iLaborCampBankAccount = list.First().iLaborCampBankAccount;
@@ -232,7 +253,7 @@ namespace HRMS.Controllers
                     {
                         if (item.iLaborCampBankAccount != iLaborCampBankAccount)
                         {
-                            summaryList.Add(new ReturnFeeHistoryEntity { iLaborName = iLaborName, iLaborCampBankPerson = iLaborCampBankPerson, iLaborCampBank = iLaborCampBank, iLaborCampBankAccount = iLaborCampBankAccount, iReturnFeeAmount = sum.ToString() });
+                            summaryList.Add(new ReturnFeeHistoryViewModel { iLaborName = iLaborName, iLaborCampBankPerson = iLaborCampBankPerson, iLaborCampBank = iLaborCampBank, iLaborCampBankAccount = iLaborCampBankAccount, iReturnFeeAmount = sum.ToString() });
 
                             iLaborCampBankAccount = item.iLaborCampBankAccount;
                             iLaborName = item.iLaborName;
@@ -243,12 +264,12 @@ namespace HRMS.Controllers
                         sum += decimal.Parse(item.iReturnFeeAmount);
                         summaryList.Add(item);
                     }
-                    summaryList.Add(new ReturnFeeHistoryEntity { iLaborName = iLaborName, iLaborCampBankPerson = iLaborCampBankPerson, iLaborCampBank = iLaborCampBank, iLaborCampBankAccount = iLaborCampBankAccount, iReturnFeeAmount = sum.ToString() });
+                    summaryList.Add(new ReturnFeeHistoryViewModel { iLaborName = iLaborName, iLaborCampBankPerson = iLaborCampBankPerson, iLaborCampBank = iLaborCampBank, iLaborCampBankAccount = iLaborCampBankAccount, iReturnFeeAmount = sum.ToString() });
 
                 }
 
                 //给分页实体赋值  
-                PageModels<ReturnFeeHistoryEntity> model = new PageModels<ReturnFeeHistoryEntity>();
+                PageModels<ReturnFeeHistoryViewModel> model = new PageModels<ReturnFeeHistoryViewModel>();
                 int total = summaryList.Count();
                 model.total = total;
                 if (total % pageSize == 0)
@@ -287,7 +308,7 @@ namespace HRMS.Controllers
                 Dictionary<string, string> bizParaDic = new Dictionary<string, string>();
                 bizParaDic.Add("search", searchKey);
                 ReturnFeeManager service = new ReturnFeeManager();
-                List<ReturnFeeHistoryEntity> list = new List<ReturnFeeHistoryEntity>();
+                List<ReturnFeeHistoryViewModel> list = new List<ReturnFeeHistoryViewModel>();
                 if (string.IsNullOrEmpty(action))
                 {
                     list = service.GetFlowReturnFeeHistory(appno);
@@ -298,7 +319,18 @@ namespace HRMS.Controllers
                     list = service.GetValidReturnFeeList(SessionHelper.CurrentUser.CurrentCompany, SessionHelper.CurrentUser.CurrentProject);
                 }
 
-                List<ReturnFeeHistoryEntity> summaryList = new List<ReturnFeeHistoryEntity>();
+                DicManager dm = new DicManager();
+                var companies = dm.GetAllCompanies();
+                var projects = dm.GetAllProjects();
+                Dictionary<string, string> comDic = companies.ToDictionary(i => i.iGuid, i => i.iName);
+                Dictionary<string, string> proDic = projects.ToDictionary(i => i.iGuid, i => i.iName);
+                foreach (var item in list)
+                {
+                    item.iCompanyId = comDic[item.iCompanyId];
+                    item.iProjectId = proDic[item.iProjectId];
+                }
+
+                List<ReturnFeeHistoryViewModel> summaryList = new List<ReturnFeeHistoryViewModel>();
                 if (list.Count > 0)
                 {
                     string iLaborCampBankAccount = list.First().iLaborCampBankAccount;
@@ -310,7 +342,7 @@ namespace HRMS.Controllers
                     {
                         if (item.iLaborCampBankAccount != iLaborCampBankAccount)
                         {
-                            summaryList.Add(new ReturnFeeHistoryEntity { iLaborName = iLaborName, iLaborCampBankPerson = iLaborCampBankPerson, iLaborCampBank = iLaborCampBank, iLaborCampBankAccount = iLaborCampBankAccount, iReturnFeeAmount = sum.ToString() });
+                            summaryList.Add(new ReturnFeeHistoryViewModel { iLaborName = iLaborName, iLaborCampBankPerson = iLaborCampBankPerson, iLaborCampBank = iLaborCampBank, iLaborCampBankAccount = iLaborCampBankAccount, iReturnFeeAmount = sum.ToString() });
 
                             iLaborCampBankAccount = item.iLaborCampBankAccount;
                             iLaborName = item.iLaborName;
@@ -321,12 +353,12 @@ namespace HRMS.Controllers
                         sum += decimal.Parse(item.iReturnFeeAmount);
                         summaryList.Add(item);
                     }
-                    summaryList.Add(new ReturnFeeHistoryEntity { iLaborName = iLaborName, iLaborCampBankPerson = iLaborCampBankPerson, iLaborCampBank = iLaborCampBank, iLaborCampBankAccount = iLaborCampBankAccount, iReturnFeeAmount = sum.ToString() });
+                    summaryList.Add(new ReturnFeeHistoryViewModel { iLaborName = iLaborName, iLaborCampBankPerson = iLaborCampBankPerson, iLaborCampBank = iLaborCampBank, iLaborCampBankAccount = iLaborCampBankAccount, iReturnFeeAmount = sum.ToString() });
 
                 }
 
                 //给分页实体赋值  
-                PageModels<ReturnFeeHistoryEntity> model = new PageModels<ReturnFeeHistoryEntity>();
+                PageModels<ReturnFeeHistoryViewModel> model = new PageModels<ReturnFeeHistoryViewModel>();
                 int total = summaryList.Count();
                 model.total = total;
                 if (total % pageSize == 0)

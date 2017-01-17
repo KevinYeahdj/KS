@@ -136,7 +136,7 @@ namespace HRMS.Data.Entity
         public string iUpdatedBy { get; set; } //修改人
         public int iStatus { get; set; }  //状态
         public int iIsDeleted { get; set; } //假删
-        
+
     }
 
     //返费历史 信息
@@ -166,6 +166,14 @@ namespace HRMS.Data.Entity
         public int iStatus { get; set; }  //状态
         public int iIsDeleted { get; set; } //假删
 
+    }
+
+    public class ReturnFeeHistoryViewModel : ReturnFeeHistoryEntity
+    {
+        public string iCompanyId { get; set; }
+        public string iProjectId { get; set; }
+        public string iName { get; set; }
+        public string iIdCard { get; set; }
     }
 }
 

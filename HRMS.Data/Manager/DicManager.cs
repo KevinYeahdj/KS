@@ -398,7 +398,7 @@ union all
   on a.iguid = b.iCompanyId and b.iFlowSign='流水账申请' and b.iRoleName='登记'
   and b.iIsDeleted =0 and b.iStatus =1  where a.iisdeleted=0 and a.istatus=1
 ) t";
-            string querySql = "select * " + commonSql + " order by iRoleName asc, {0} {1} offset {2} row fetch next {3} rows only";
+            string querySql = "select * " + commonSql + " order by {0} {1} offset {2} row fetch next {3} rows only";
             querySql = string.Format(querySql, sort, order, offset, pageSize);
             string totalSql = "select cast(count(1) as varchar(8)) " + commonSql;
             total = int.Parse(Repository.Query<string>(totalSql).ToList()[0]);
