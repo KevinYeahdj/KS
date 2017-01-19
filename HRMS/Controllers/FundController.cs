@@ -1178,10 +1178,22 @@ namespace HRMS.Controllers
             ExExcel<SocialSecurityModel>(GetExportData(), path, ConvertHelper.DicConvert(SocialSecurityManager.SocialSecurityViewDic));
         }
 
+        public void ExportSocialSecurityDetail()
+        {
+            string path = "社保明细导出" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
+            ExExcel<SocialSecurityDetailModel>(GetSocialSecurityDetailExportData(), path, ConvertHelper.DicConvert(SocialSecurityManager.SocialSecurityDetailViewDic));
+        }
+
         public void ExportProvidentFund()
         {
             string path = "公积金信息导出" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
             ExExcel<ProvidentFundModel>(GetProvidentFundExportData(), path, ConvertHelper.DicConvert(ProvidentFundManager.ProvidentFundViewDic));
+        }
+
+        public void ExportProvidentFundDetail()
+        {
+            string path = "公积金明细导出" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
+            ExExcel<ProvidentFundDetailModel>(GetProvidentFundDetailExportData(), path, ConvertHelper.DicConvert(ProvidentFundManager.ProvidentFundDetailViewDic));
         }
 
         private List<SocialSecurityModel> GetExportData()
@@ -1248,6 +1260,82 @@ namespace HRMS.Controllers
             }
             ProvidentFundManager service = new ProvidentFundManager();
             List<ProvidentFundModel> list = service.GetSearchAll(SessionHelper.CurrentUser.UserType, bizParaDic);
+            DicManager dm = new DicManager();
+            var companies = dm.GetAllCompanies();
+            var projects = dm.GetAllProjects();
+            Dictionary<string, string> comDic = companies.ToDictionary(i => i.iGuid, i => i.iName);
+            Dictionary<string, string> proDic = projects.ToDictionary(i => i.iGuid, i => i.iName);
+            foreach (var item in list)
+            {
+                item.iCompany = comDic[item.iCompany];
+                item.iItemName = proDic[item.iItemName];
+            }
+            return list;
+
+        }
+
+        private List<ProvidentFundDetailModel> GetProvidentFundDetailExportData()
+        {
+            string paraString = Request.Params["searchpara"];
+            Dictionary<string, string> paraDic = JsonConvert.DeserializeObject<Dictionary<string, string>>(paraString);
+            //查询使用的是bootstrap table 的parameters， 导出一个para反序列出来的参数
+
+            Dictionary<string, string> bizParaDic = new Dictionary<string, string>();
+            bizParaDic.Add("search", paraDic["search"]);
+            paraDic.Remove("search");
+            foreach (var item in paraDic)
+            {
+                if (item.Key.EndsWith("2"))
+                    continue;
+                if (paraDic.ContainsKey(item.Key + "2"))
+                {
+                    bizParaDic.Add("i" + item.Key.Substring(1, item.Key.Length - 1) + "[i]", item.Value + "§" + paraDic[item.Key + "2"]);
+                }
+                else
+                {
+                    bizParaDic.Add("i" + item.Key.Substring(1, item.Key.Length - 1), item.Value);
+                }
+            }
+
+            ProvidentFundManager service = new ProvidentFundManager();
+            List<ProvidentFundDetailModel> list = service.GetDetailSearchAll(SessionHelper.CurrentUser.UserType, bizParaDic);
+
+            DicManager dm = new DicManager();
+            var companies = dm.GetAllCompanies();
+            var projects = dm.GetAllProjects();
+            Dictionary<string, string> comDic = companies.ToDictionary(i => i.iGuid, i => i.iName);
+            Dictionary<string, string> proDic = projects.ToDictionary(i => i.iGuid, i => i.iName);
+            foreach (var item in list)
+            {
+                item.iCompany = comDic[item.iCompany];
+                item.iItemName = proDic[item.iItemName];
+            }
+            return list;
+        }
+
+        private List<SocialSecurityDetailModel> GetSocialSecurityDetailExportData()
+        {
+            string paraString = Request.Params["searchpara"];
+            Dictionary<string, string> paraDic = JsonConvert.DeserializeObject<Dictionary<string, string>>(paraString);
+            //查询使用的是bootstrap table 的parameters， 导出一个para反序列出来的参数
+            Dictionary<string, string> bizParaDic = new Dictionary<string, string>();
+            bizParaDic.Add("search", paraDic["search"]);
+            paraDic.Remove("search");
+            foreach (var item in paraDic)
+            {
+                if (item.Key.EndsWith("2"))
+                    continue;
+                if (paraDic.ContainsKey(item.Key + "2"))
+                {
+                    bizParaDic.Add("i" + item.Key.Substring(1, item.Key.Length - 1) + "[i]", item.Value + "§" + paraDic[item.Key + "2"]);
+                }
+                else
+                {
+                    bizParaDic.Add("i" + item.Key.Substring(1, item.Key.Length - 1), item.Value);
+                }
+            }
+            SocialSecurityManager service = new SocialSecurityManager();
+            List<SocialSecurityDetailModel> list = service.GetDetailSearchAll(SessionHelper.CurrentUser.UserType, bizParaDic);
             DicManager dm = new DicManager();
             var companies = dm.GetAllCompanies();
             var projects = dm.GetAllProjects();

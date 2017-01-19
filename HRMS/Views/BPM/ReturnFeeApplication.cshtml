@@ -118,6 +118,21 @@
                  , { field: "iProjectId", title: "项目" }
                  , { field: "iName", title: "姓名" }
                  , { field: "iIdCard", title: "身份证" }
+                 , {
+                     field: "iInterviewDate", title: "面试日期", formatter: function (value, row, index) {
+                         return ChangeDateFormat(value);
+                     }
+                 }
+                 , {
+                     field: "iEmployeeDate", title: "入职日期", formatter: function (value, row, index) {
+                         return ChangeDateFormat(value);
+                     }
+                 }
+                 , {
+                     field: "iResignDate", title: "离职日期", formatter: function (value, row, index) {
+                         return ChangeDateFormat(value);
+                     }
+                 }
                  , { field: "iLaborName", title: "劳务名称" }
                  , { field: "iLaborCampBankPerson", title: "劳务所人姓名" }
                  , { field: "iLaborCampBank", title: "劳务所银行支行" }
@@ -156,62 +171,65 @@
             }
         });
         $("#SubmitApplication").click(function () {
-            var data = $('#mytab').bootstrapTable('getData', true);
-            if (data.length == 0) {
-                toastr.error('至少需要一条返费信息！');
-                return;
-            }
-
-            $(this).attr({ "disabled": "disabled" });
-            var isManager = 0;
-            if (managerUsers.split(';').indexOf('@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId') > -1) {
-                isManager = 1;
-            }
-            var isBoss = 0;
-            if (bossUsers.split(';').indexOf('@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId') > -1) {
-                isBoss = 1;
-            }
-
-            var para = {};
-            var conditions = {};
-            conditions.sys_approve = "1";
-            conditions.sys_approvecn = "提交申请";
-            conditions.sys_feedback = "提交申请";
-            conditions.sys_summary = "返费" + data.length + "条";
-            conditions.confirmUsers = confirmUsers;
-            conditions.managerUsers = managerUsers;
-            conditions.bossUsers = bossUsers;
-            conditions.tellerUsers = tellerUsers;
-            conditions.recordUsers = recordUsers;
-            conditions.isManager = isManager;
-            conditions.isBoss = isBoss;
-            para.Conditions = conditions;
-            para.ProcessInstanceID = ""; //important
-            para.AppName = "";
-            para.AppInstanceID = ""; //important
-            para.ProcessGUID = "eb2844bd-0ffd-9eaa-6068-910b66fad9d9";  //申请时必要 important
-            para.UserID = "@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId";
-            para.UserName = "";
-            para.TaskID = "";  //important
-            para.Other = JSON.stringify(data);
-
-            $.ajax({
-                url: "/BPMAjax/StartApplication",
-                type: "POST",
-                data: para,
-                dataType: 'text',
-                success: function (result) {
-                    result = $.parseJSON(result);
-                    if (result.success) {
-                        toastr.success('申请成功！流程单号：【' + result.msg + '】');
-                        setTimeout("window.location.href='/BPM/myapp'", 3000);
-                    }
-                    else {
-                        toastr.error('申请失败！');
-                    }
-                    $("#SubmitApplication").removeAttr("disabled");
+            if (confirm("确认申请？")) {
+                var data = $('#mytab').bootstrapTable('getData', true);
+                if (data.length == 0) {
+                    toastr.error('至少需要一条返费信息！');
+                    return;
                 }
-            });
+
+                $(this).attr({ "disabled": "disabled" });
+                var isManager = 0;
+                if (managerUsers.split(';').indexOf('@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId') > -1) {
+                    isManager = 1;
+                }
+                var isBoss = 0;
+                if (bossUsers.split(';').indexOf('@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId') > -1) {
+                    isBoss = 1;
+                }
+
+                var para = {};
+                var conditions = {};
+                conditions.sys_approve = "1";
+                conditions.sys_approvecn = "提交申请";
+                conditions.sys_feedback = "提交申请";
+                conditions.sys_summary = "返费" + data.length + "条";
+                conditions.confirmUsers = confirmUsers;
+                conditions.managerUsers = managerUsers;
+                conditions.bossUsers = bossUsers;
+                conditions.tellerUsers = tellerUsers;
+                conditions.recordUsers = recordUsers;
+                conditions.isManager = isManager;
+                conditions.isBoss = isBoss;
+                para.Conditions = conditions;
+                para.ProcessInstanceID = ""; //important
+                para.AppName = "";
+                para.AppInstanceID = ""; //important
+                para.ProcessGUID = "eb2844bd-0ffd-9eaa-6068-910b66fad9d9";  //申请时必要 important
+                para.UserID = "@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId";
+                para.UserName = "";
+                para.TaskID = "";  //important
+                para.Other = JSON.stringify(data);
+
+                $.ajax({
+                    url: "/BPMAjax/StartApplication",
+                    type: "POST",
+                    data: para,
+                    dataType: 'text',
+                    success: function (result) {
+                        result = $.parseJSON(result);
+                        if (result.success) {
+                            toastr.success('申请成功！流程单号：【' + result.msg + '】');
+                            setTimeout("window.location.href='/BPM/myapp'", 3000);
+                        }
+                        else {
+                            toastr.error('申请失败！');
+                        }
+                        $("#SubmitApplication").removeAttr("disabled");
+                    }
+                });
+            }
+
         });
     })
 </script>

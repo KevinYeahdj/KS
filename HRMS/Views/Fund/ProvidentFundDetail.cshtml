@@ -21,6 +21,7 @@
                 <div style="float: left; margin-left: 10px; width: 8%"><input id="sEmpNo" class="form-control" /></div>
                 <div style="float: left; margin-left: 10px;"><span>缴纳地：</span></div>
                 <div style="float: left; margin-left: 10px; width: 8%; "><input id="sPayPlace" class="form-control" /></div>
+                <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" onclick="ExportData()">导出</div>
                 <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" onclick="Search()">查询</div>
             </div>
 
@@ -165,6 +166,22 @@
         self.iStatus = ko.observable("");
         self.iIsDeleted = ko.observable("");
     }
+    function ExportData() {
+        var url = "/FundAjax/ExportProvidentFundDetail";
+        var params = {};
+        params.search = $(".search input[type='text']").first().val();
+        params.sItemName = $("#projectSelect").val();
+        params.sCompany = $("#companySelect").val();
+        params.sEmpNo = $("#sEmpNo").val();
+        params.sName = $("#sName").val();
+        params.sIdCard = $("#sIdCard").val();
+        params.sPayPlace = $("#sPayPlace").val();
+        params.sPayMonth = $("#sPayMonth").val();
+        params.sPayMonth2 = $("#sPayMonth2").val();
+        var inputs = '<input type="hidden" name="searchpara" value="' + JSON.stringify(params).replace(new RegExp("\"", "gm"), "'") + '" />';
+        $('<form action="' + url + '" method="post" target="_blank">' + inputs + '</form>').appendTo('body').submit().remove();
+    }
+
     $(function () {
         //重置函数
         $("div.icon-reorder").click(function () {

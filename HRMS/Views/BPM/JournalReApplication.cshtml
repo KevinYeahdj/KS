@@ -271,47 +271,50 @@
         });
 
         $("#SubmitApplication").click(function () {
-            var data = $('#mytab').bootstrapTable('getData', true);
-            if (data.length == 0) {
-                toastr.error('请填写至少一条流水账信息！');
-                return;
+            if (confirm("确认再申请？")) {
+                var data = $('#mytab').bootstrapTable('getData', true);
+                if (data.length == 0) {
+                    toastr.error('请填写至少一条流水账信息！');
+                    return;
+                }
+
+                $(this).attr({ "disabled": "disabled" });
+                var para = {};
+                var conditions = {};
+                conditions.sys_approve = "1";
+                conditions.sys_approvecn = "再提交申请";
+                conditions.sys_feedback = $("#sys_feedback").val();
+                conditions.sys_summary = "合计：" + $('#totalThis').val();
+                para.Conditions = conditions;
+                para.ProcessInstanceID = Request["piid"]; //important
+                para.AppName = "";
+                para.AppInstanceID = Request["appno"]; //important
+                para.ProcessGUID = Request["pguid"];  //申请时必要 important
+                para.UserID = "@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId";
+                para.UserName = "";
+                para.TaskID = Request["taskid"];  //important
+                para.Other = JSON.stringify(data);
+
+                $.ajax({
+                    url: "/BPMAjax/ReStartApplication",
+                    type: "POST",
+                    data: para,
+                    dataType: 'text',
+                    success: function (result) {
+                        result = $.parseJSON(result);
+                        if (result.success) {
+                            toastr.success('提交成功！');
+                            //$('#mytab').bootstrapTable('removeAll');
+                            setTimeout("window.location.href='/BPM/done'", 3000);
+                        }
+                        else {
+                            toastr.error('提交失败！');
+                        }
+                        $("#SubmitApplication").removeAttr("disabled");
+                    }
+                });
             }
 
-            $(this).attr({ "disabled": "disabled" });
-            var para = {};
-            var conditions = {};
-            conditions.sys_approve = "1";
-            conditions.sys_approvecn = "再提交申请";
-            conditions.sys_feedback = $("#sys_feedback").val();
-            conditions.sys_summary = "合计：" + $('#totalThis').val();
-            para.Conditions = conditions;
-            para.ProcessInstanceID = Request["piid"]; //important
-            para.AppName = "";
-            para.AppInstanceID = Request["appno"]; //important
-            para.ProcessGUID = Request["pguid"];  //申请时必要 important
-            para.UserID = "@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId";
-            para.UserName = "";
-            para.TaskID = Request["taskid"];  //important
-            para.Other = JSON.stringify(data);
-
-            $.ajax({
-                url: "/BPMAjax/ReStartApplication",
-                type: "POST",
-                data: para,
-                dataType: 'text',
-                success: function (result) {
-                    result = $.parseJSON(result);
-                    if (result.success) {
-                        toastr.success('提交成功！');
-                        //$('#mytab').bootstrapTable('removeAll');
-                        setTimeout("window.location.href='/BPM/done'", 3000);
-                    }
-                    else {
-                        toastr.error('提交失败！');
-                    }
-                    $("#SubmitApplication").removeAttr("disabled");
-                }
-            });
         });
         $("#GetLatest").click(function () {
             $("#action").val("init");

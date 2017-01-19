@@ -162,6 +162,21 @@
                  , { field: "iProjectId", title: "项目" }
                  , { field: "iName", title: "姓名" }
                  , { field: "iIdCard", title: "身份证" }
+                 , {
+                     field: "iInterviewDate", title: "面试日期", formatter: function (value, row, index) {
+                         return ChangeDateFormat(value);
+                     }
+                 }
+                 , {
+                     field: "iEmployeeDate", title: "入职日期", formatter: function (value, row, index) {
+                         return ChangeDateFormat(value);
+                     }
+                 }
+                 , {
+                     field: "iResignDate", title: "离职日期", formatter: function (value, row, index) {
+                         return ChangeDateFormat(value);
+                     }
+                 }
                  , { field: "iLaborName", title: "劳务名称" }
                  , { field: "iLaborCampBankPerson", title: "劳务所人姓名" }
                  , { field: "iLaborCampBank", title: "劳务所银行支行" }

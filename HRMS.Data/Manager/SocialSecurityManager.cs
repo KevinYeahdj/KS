@@ -271,6 +271,12 @@ namespace HRMS.Data.Manager
             string querySql = "select ss.iIndividualAmount + ss.iCompanyAmount + iAdditionalAmount  as iTotal, ss.*, hr.iItemName, hr.iCompany, hr.iName, hr.iIdCard, hr.iEmpNo, hr.iEmployeeDate,  hr.iResignDate, hr.iEmployeeStatus, hr.iResidenceProperty, hr.iSocialInsurancePaidWilling, hr.iGuid as iHRInfoGuid2 " + commonSql + "order by ss.iUpdatedOn desc, hr.iUpdatedOn desc";
             return Repository.Query<SocialSecurityModel>(querySql).ToList();
         }
+        public List<SocialSecurityDetailModel> GetDetailSearchAll(string userType, Dictionary<string, string> para)
+        {
+            string commonSql = GenerateDetailQuerySql(userType, para);
+            string querySql = "select ss.iIndividualAmount + ss.iCompanyAmount + iAdditionalAmount  as iTotal, ss.*, hr.iItemName, hr.iCompany, hr.iName, hr.iIdCard, hr.iEmpNo  " + commonSql + "order by ss.iUpdatedOn desc ";
+            return Repository.Query<SocialSecurityDetailModel>(querySql).ToList();
+        }
 
         //生成通用查询前面部分
         public string GenerateQuerySql(string userType, Dictionary<string, string> para)

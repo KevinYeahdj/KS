@@ -17,7 +17,7 @@
                 <div style="float: left; margin-left: 10px; width: 30%"><input id="sys_feedback" class="form-control" /></div>
                 <div style="float: right; margin-left: 10px; margin-top: 5px; " class="btn btn-primary" id="SubmitApplication">提交申请</div>
                 <div style="float: right; margin-left: 10px; margin-top: 5px; " class="btn btn-primary" id="GetLatest">获取最新</div>
-                
+
             </div>
 
             <table id="mytab" class="table table-hover"></table>
@@ -159,6 +159,21 @@
                  , { field: "iProjectId", title: "项目" }
                  , { field: "iName", title: "姓名" }
                  , { field: "iIdCard", title: "身份证" }
+                 , {
+                     field: "iInterviewDate", title: "面试日期", formatter: function (value, row, index) {
+                         return ChangeDateFormat(value);
+                     }
+                 }
+                 , {
+                     field: "iEmployeeDate", title: "入职日期", formatter: function (value, row, index) {
+                         return ChangeDateFormat(value);
+                     }
+                 }
+                 , {
+                     field: "iResignDate", title: "离职日期", formatter: function (value, row, index) {
+                         return ChangeDateFormat(value);
+                     }
+                 }
                  , { field: "iLaborName", title: "劳务名称" }
                  , { field: "iLaborCampBankPerson", title: "劳务所人姓名" }
                  , { field: "iLaborCampBank", title: "劳务所银行支行" }
@@ -273,54 +288,59 @@
             }
         });
 
-        
+
         $("#SubmitApplication").click(function () {
-            var data = $('#mytab').bootstrapTable('getData', true);
-            if (data.length == 0) {
-                toastr.error('至少需要一条返费信息！');
-                return;
+            if (confirm("确认再申请？")) {
+                var data = $('#mytab').bootstrapTable('getData', true);
+                if (data.length == 0) {
+                    toastr.error('至少需要一条返费信息！');
+                    return;
+                }
+
+                $(this).attr({ "disabled": "disabled" });
+                var para = {};
+                var conditions = {};
+                conditions.sys_approve = "1";
+                conditions.sys_approvecn = "再提交申请";
+                conditions.sys_feedback = $("#sys_feedback").val();
+                conditions.sys_summary = "返费" + data.length + "条";
+                para.Conditions = conditions;
+                para.ProcessInstanceID = Request["piid"]; //important
+                para.AppName = "";
+                para.AppInstanceID = Request["appno"]; //important
+                para.ProcessGUID = Request["pguid"];  //申请时必要 important
+                para.UserID = "@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId";
+                para.UserName = "";
+                para.TaskID = Request["taskid"];  //important
+                para.Other = JSON.stringify(data);
+
+                $.ajax({
+                    url: "/BPMAjax/ReStartApplication",
+                    type: "POST",
+                    data: para,
+                    dataType: 'text',
+                    success: function (result) {
+                        result = $.parseJSON(result);
+                        if (result.success) {
+                            toastr.success('提交成功！');
+                            //$('#mytab').bootstrapTable('removeAll');
+                            setTimeout("window.location.href='/BPM/done'", 3000);
+                        }
+                        else {
+                            toastr.error('提交失败！');
+                        }
+                        $("#SubmitApplication").removeAttr("disabled");
+                    }
+                });
             }
 
-            $(this).attr({ "disabled": "disabled" });
-            var para = {};
-            var conditions = {};
-            conditions.sys_approve = "1";
-            conditions.sys_approvecn = "再提交申请";
-            conditions.sys_feedback = $("#sys_feedback").val();
-            conditions.sys_summary = "返费" + data.length + "条";
-            para.Conditions = conditions;
-            para.ProcessInstanceID = Request["piid"]; //important
-            para.AppName = "";
-            para.AppInstanceID = Request["appno"]; //important
-            para.ProcessGUID = Request["pguid"];  //申请时必要 important
-            para.UserID = "@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId";
-            para.UserName = "";
-            para.TaskID = Request["taskid"];  //important
-            para.Other = JSON.stringify(data);
-
-            $.ajax({
-                url: "/BPMAjax/ReStartApplication",
-                type: "POST",
-                data: para,
-                dataType: 'text',
-                success: function (result) {
-                    result = $.parseJSON(result);
-                    if (result.success) {
-                        toastr.success('提交成功！');
-                        //$('#mytab').bootstrapTable('removeAll');
-                        setTimeout("window.location.href='/BPM/done'", 3000);
-                    }
-                    else {
-                        toastr.error('提交失败！');
-                    }
-                    $("#SubmitApplication").removeAttr("disabled");
-                }
-            });
         });
 
         $("#GetLatest").click(function () {
-            $("#action").val("init");
-            $('#mytab').bootstrapTable('refresh');
+            if (confirm("获取最新后不保留原始记录，确认获取最新？")) {
+                $("#action").val("init");
+                $('#mytab').bootstrapTable('refresh');
+            }
         });
     })
 </script>

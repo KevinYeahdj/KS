@@ -416,6 +416,7 @@ namespace HRMS.Data.Manager
       ,[iFirstReturnFeeDate]as iReturnFeeDate
       ,[iFirstReturnFeePayment]as iReturnFeePayment
       ,[iFirstReturnFeeActualPayDate]as iReturnFeeActualPayDate,hr.iCompany as iCompanyId, hr.iItemName as iProjectId, hr.iName as iName, hr.iIdCard as iIdCard
+      ,fee.iInterviewDate, hr.iEmployeeDate, hr.iResignDate
   from ReturnFee fee right join hrinfo hr on fee.iHRInfoGuid = hr.iguid and fee.iIsDeleted =0 and fee.iStatus =1  
   where hr.iIsReturnFee = '是' and hr.iisdeleted=0 and hr.istatus=1 and hr.iCompany = @companyid and hr.iItemName= @projectid
   and fee.iFirstReturnFeePayment <> '已付' and fee.iAdvice <> '暂不返费' and fee.iFirstAppNo is null
@@ -434,6 +435,7 @@ namespace HRMS.Data.Manager
       ,[iSecondReturnFeeDate]as iReturnFeeDate
       ,[iSecondReturnFeePayment]as iReturnFeePayment
       ,[iSecondReturnFeeActualPayDate]as iReturnFeeActualPayDate,hr.iCompany as iCompanyId, hr.iItemName as iProjectId, hr.iName as iName, hr.iIdCard as iIdCard
+      ,fee.iInterviewDate, hr.iEmployeeDate, hr.iResignDate
   from ReturnFee fee right join hrinfo hr on fee.iHRInfoGuid = hr.iguid and fee.iIsDeleted =0 and fee.iStatus =1  
   where hr.iIsReturnFee = '是' and hr.iisdeleted=0 and hr.istatus=1 and hr.iCompany = @companyid and hr.iItemName= @projectid
   and fee.iSecondReturnFeePayment <> '已付' and fee.iAdvice <> '暂不返费' and fee.iSecondAppNo is null
@@ -452,6 +454,7 @@ namespace HRMS.Data.Manager
       ,[iThirdReturnFeeDate]as iReturnFeeDate
       ,[iThirdReturnFeePayment]as iReturnFeePayment
       ,[iThirdReturnFeeActualPayDate]as iReturnFeeActualPayDate,hr.iCompany as iCompanyId, hr.iItemName as iProjectId, hr.iName as iName, hr.iIdCard as iIdCard
+      ,fee.iInterviewDate, hr.iEmployeeDate, hr.iResignDate
   from ReturnFee fee right join hrinfo hr on fee.iHRInfoGuid = hr.iguid and fee.iIsDeleted =0 and fee.iStatus =1  
   where hr.iIsReturnFee = '是' and hr.iisdeleted=0 and hr.istatus=1 and hr.iCompany = @companyid and hr.iItemName= @projectid
   and fee.iThirdReturnFeePayment <> '已付' and fee.iAdvice <> '暂不返费' and fee.iThirdAppNo is null
@@ -470,6 +473,7 @@ namespace HRMS.Data.Manager
       ,[iFourthReturnFeeDate]as iReturnFeeDate
       ,[iFourthReturnFeePayment]as iReturnFeePayment
       ,[iFourthReturnFeeActualPayDate]as iReturnFeeActualPayDate,hr.iCompany as iCompanyId, hr.iItemName as iProjectId, hr.iName as iName, hr.iIdCard as iIdCard
+      ,fee.iInterviewDate, hr.iEmployeeDate, hr.iResignDate
   from ReturnFee fee right join hrinfo hr on fee.iHRInfoGuid = hr.iguid and fee.iIsDeleted =0 and fee.iStatus =1  
   where hr.iIsReturnFee = '是' and hr.iisdeleted=0 and hr.istatus=1 and hr.iCompany = @companyid and hr.iItemName= @projectid
   and fee.iFourthReturnFeePayment <> '已付' and fee.iAdvice <> '暂不返费' and fee.iFourthAppNo is null
@@ -488,6 +492,7 @@ namespace HRMS.Data.Manager
       ,[iFifthReturnFeeDate]as iReturnFeeDate
       ,[iFifthReturnFeePayment]as iReturnFeePayment
       ,[iFifthReturnFeeActualPayDate]as iReturnFeeActualPayDate,hr.iCompany as iCompanyId, hr.iItemName as iProjectId, hr.iName as iName, hr.iIdCard as iIdCard
+      ,fee.iInterviewDate, hr.iEmployeeDate, hr.iResignDate
   from ReturnFee fee right join hrinfo hr on fee.iHRInfoGuid = hr.iguid and fee.iIsDeleted =0 and fee.iStatus =1  
   where hr.iIsReturnFee = '是' and hr.iisdeleted=0 and hr.istatus=1 and hr.iCompany = @companyid and hr.iItemName= @projectid
   and fee.iFifthReturnFeePayment <> '已付' and fee.iAdvice <> '暂不返费' and fee.iFifthAppNo is null
@@ -500,7 +505,7 @@ namespace HRMS.Data.Manager
 
         public List<ReturnFeeHistoryViewModel> GetFlowReturnFeeHistory(string appNo)
         {
-            string sql = @"select a.*, hr.iCompany as iCompanyId, hr.iItemName as iProjectId, hr.iName as iName, hr.iIdCard as iIdCard from returnfeeHistory a inner join hrinfo hr on a.iHRInfoGuid = hr.iGuid where iReturnFeeAppNo=@appno order by iLaborCampBankAccount asc";
+            string sql = @"select a.*, hr.iEmployeeDate, hr.iResignDate, hr.iCompany as iCompanyId, hr.iItemName as iProjectId, hr.iName as iName, hr.iIdCard as iIdCard from returnfeeHistory a inner join hrinfo hr on a.iHRInfoGuid = hr.iGuid where iReturnFeeAppNo=@appno order by iLaborCampBankAccount asc";
             return Repository.Query<ReturnFeeHistoryViewModel>(sql, new { appno = appNo }).ToList();
         }
 
