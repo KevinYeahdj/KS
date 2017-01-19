@@ -175,7 +175,9 @@ namespace HRMS.Data.Entity
         public string iName { get; set; }
         public string iIdCard { get; set; }
 
-        public DateTime? iInterviewDate { get; set; }     
+        public string iEmployeeStatus { get; set; }
+
+        public DateTime? iInterviewDate { get; set; }
         public DateTime? iEmployeeDate { get; set; }
         public DateTime? iResignDate { get; set; }
     }

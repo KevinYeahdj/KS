@@ -500,7 +500,7 @@
             striped: true,//條紋行
             clickToSelect: true,//选择行即选择checkbox
             searchOnEnterKey: true,//ENTER键搜索
-            //height: tableHeight(),//高度调整
+            height: tableHeight(),//高度调整
             search: true,//是否搜索
             pagination: true,//是否分页
             pageSize: 15,//单页记录数
@@ -707,7 +707,7 @@
                 });
                 return html;
             },
-            fixedColumns: true,
+            fixedColumns: false,
             fixedNumber: (window.userType != "普通用户") ? 6 : 4
         });
         //if (window.userType != "普通用户") {

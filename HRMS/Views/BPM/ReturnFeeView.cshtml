@@ -203,6 +203,9 @@
                     if (item.iReturnFeeGuid == null) {
                         $("#mytab").find("tr[data-index=" + i + "]").css("color", "blue");
                     }
+                    if (item.iEmployeeStatus == '离职') {
+                        $("#mytab").find("tr[data-index=" + i + "]").css("color", "red");
+                    }
                 })
             }
         });
