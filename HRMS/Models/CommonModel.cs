@@ -16,6 +16,12 @@ namespace HRMS.WEB.Models
     {
         public decimal sum { get; set; }
     }
+    public class PageModels3<T> : PageModels<T>
+    {
+        public decimal personalSum { get; set; }
+        public decimal companySum { get; set; }
+        public decimal totalSum { get; set; }
+    }
 
     public class ItemContent
     {

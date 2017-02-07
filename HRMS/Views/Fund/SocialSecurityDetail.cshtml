@@ -21,6 +21,12 @@
                 <div style="float: left; margin-left: 10px; width: 8%"><input id="sEmpNo" class="form-control" /></div>
                 <div style="float: left; margin-left: 10px;"><span>缴纳地：</span></div>
                 <div style="float: left; margin-left: 10px; width: 8%; "><input id="sPayPlace" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px"><span>查询公司缴纳合计：</span></div>
+                <div style="float: left; margin-left: 10px; width: 10%"><input id="companySum" class="form-control" readonly="readonly" value="0" /></div>
+                <div style="float: left; margin-left: 10px"><span>查询个人缴纳合计：</span></div>
+                <div style="float: left; margin-left: 10px; width: 10%"><input id="personalSum" class="form-control" readonly="readonly" value="0" /></div>
+                <div style="float: left; margin-left: 10px"><span>查询社保总计合计：</span></div>
+                <div style="float: left; margin-left: 10px; width: 10%"><input id="totalSum" class="form-control" readonly="readonly" value="0" /></div>
                 <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" onclick="ExportData()">导出</div>
                 <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" onclick="Search()">查询</div>
             </div>
@@ -323,6 +329,15 @@
                  , { field: "iItemName", title: "项目名称", visible: false }
                  , { field: "iEmpNo", title: "工号", sortable: true }
                  , { field: "iName", title: "姓名", sortable: true }
+                 , {
+                     field: "iEmployeeDate", title: "入职日期", sortable: true, formatter: function (value, row, index) {
+                         return ChangeDateFormat(value);
+                     }
+                 }, {
+                     field: "iResignDate", title: "离职日期", sortable: true, formatter: function (value, row, index) {
+                         return ChangeDateFormat(value);
+                     }
+                 }
                  , { field: "iIdCard", title: "身份证号", sortable: true }
                  , { field: "iPayPlace", title: "缴纳地", sortable: true }
                  , { field: "iPayBase", title: "缴费基数", sortable: true }
@@ -383,6 +398,9 @@
                 });
             },
             onLoadSuccess: function (data) {
+                $("#companySum").val(data.companySum);
+                $("#personalSum").val(data.personalSum);
+                $("#totalSum").val(data.totalSum);
                 $.each(data.rows, function (i, item) {
                     if (item.iEmployeeStatus == "离职") {
                         $("#mytab").find("tr[data-index=" + i + "]").css("color", "red");

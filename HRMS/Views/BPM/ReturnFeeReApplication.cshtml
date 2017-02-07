@@ -13,6 +13,8 @@
         <div class="col-*-12">
             <input type="hidden" id="action" />
             <div id="toolbar" class="toolbar">
+                <div style="float: left; margin-left: 10px"><span>合计：</span></div>
+                <div style="float: left; margin-left: 10px; width: 30%"><input id="totalThis" class="form-control" readonly="readonly" value="0" /></div>
                 <div style="float: left; margin-left: 10px"><span>处理意见：</span></div>
                 <div style="float: left; margin-left: 10px; width: 30%"><input id="sys_feedback" class="form-control" /></div>
                 <div style="float: right; margin-left: 10px; margin-top: 5px; " class="btn btn-primary" id="SubmitApplication">提交申请</div>
@@ -205,14 +207,19 @@
                 return html;
             },
             onLoadSuccess: function (data) {
+                var totalSum = 0;
                 $.each(data.rows, function (i, item) {
                     if (item.iReturnFeeGuid == null) {
                         $("#mytab").find("tr[data-index=" + i + "]").css("color", "blue");
+                    }
+                    else {
+                        totalSum += parseFloat(item.iReturnFeeAmount);
                     }
                     if (item.iEmployeeStatus == '离职') {
                         $("#mytab").find("tr[data-index=" + i + "]").css("color", "red");
                     }
                 })
+                $("#totalThis").val(totalSum);
             }
         });
         $('#logtab').bootstrapTable({

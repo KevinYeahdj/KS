@@ -116,6 +116,8 @@ namespace HRMS.Data.Manager
                 dic.Add("工号", "iEmpNo");
                 dic.Add("姓名", "iName");
                 dic.Add("身份证号", "iIdCard");
+                dic.Add("入职日期", "iEmployeeDate");
+                dic.Add("离职日期", "iResignDate");
                 dic.Add("缴纳地", "iPayPlace");
                 dic.Add("缴费基数", "iPayBase");
                 dic.Add("个人缴费金额", "iIndividualAmount");
@@ -247,12 +249,15 @@ namespace HRMS.Data.Manager
         public List<ProvidentFundDetailModel> GetDetailSearch(string userType, Dictionary<string, string> para, string sort, string order, int offset, int pageSize, out int total)
         {
             string commonSql = GenerateDetailQuerySql(userType, para);
-            string querySql = "select pf.iIndividualAmount + pf.iCompanyAmount + pf.iAdditionalAmount  as iTotal, pf.*, hr.iItemName, hr.iCompany, hr.iName, hr.iIdCard, hr.iEmpNo, hr.iEmployeeStatus " + commonSql + "order by {0} {1} offset {2} row fetch next {3} rows only";
+            string querySql = "select pf.iIndividualAmount + pf.iCompanyAmount + pf.iAdditionalAmount  as iTotal, pf.*, hr.iItemName, hr.iCompany, hr.iName, hr.iIdCard, hr.iEmpNo, hr.iEmployeeStatus, hr.iEmployeeDate, hr.iResignDate " + commonSql + "order by {0} {1} offset {2} row fetch next {3} rows only";
             querySql = string.Format(querySql, sort, order, offset, pageSize);
             string totalSql = "select cast(count(1) as varchar(8)) " + commonSql;
             total = int.Parse(Repository.Query<string>(totalSql).ToList()[0]);
-            return Repository.Query<ProvidentFundDetailModel>(querySql).ToList();
-
+            string sumSql = "select sum(iIndividualAmount) as iIndividualAmount, sum(iCompanyAmount) as iCompanyAmount, sum(iIndividualAmount+iCompanyAmount+iAdditionalAmount) as iTotal " + commonSql;
+            ProvidentFundDetailModel sumRecord = Repository.Query<ProvidentFundDetailModel>(sumSql).ToList().FirstOrDefault();
+            List<ProvidentFundDetailModel> result = Repository.Query<ProvidentFundDetailModel>(querySql).ToList();
+            result.Add(new ProvidentFundDetailModel { iIndividualAmount = sumRecord.iIndividualAmount, iCompanyAmount = sumRecord.iCompanyAmount, iTotal = sumRecord.iTotal });  //多加一列传递总值，记得删除
+            return result;
         }
 
         public List<ProvidentFundModel> GetSearchAll(string userType, Dictionary<string, string> para)
@@ -264,7 +269,7 @@ namespace HRMS.Data.Manager
         public List<ProvidentFundDetailModel> GetDetailSearchAll(string userType, Dictionary<string, string> para)
         {
             string commonSql = GenerateDetailQuerySql(userType, para);
-            string querySql = "select pf.iIndividualAmount + pf.iCompanyAmount + pf.iAdditionalAmount  as iTotal, pf.*, hr.iItemName, hr.iCompany, hr.iName, hr.iIdCard, hr.iEmpNo, hr.iEmployeeStatus " + commonSql + "order by pf.iUpdatedOn desc";
+            string querySql = "select pf.iIndividualAmount + pf.iCompanyAmount + pf.iAdditionalAmount  as iTotal, pf.*, hr.iItemName, hr.iCompany, hr.iName, hr.iIdCard, hr.iEmpNo, hr.iEmployeeStatus, hr.iEmployeeDate, hr.iResignDate " + commonSql + "order by pf.iUpdatedOn desc";
             return Repository.Query<ProvidentFundDetailModel>(querySql).ToList();
 
         }

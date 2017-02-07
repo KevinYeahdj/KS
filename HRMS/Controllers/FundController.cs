@@ -182,6 +182,10 @@ namespace HRMS.Controllers
                 int total = 0;
                 SocialSecurityManager service = new SocialSecurityManager();
                 List<SocialSecurityDetailModel> list = service.GetDetailSearch(SessionHelper.CurrentUser.UserType, bizParaDic, sort, order, offset, pageSize, out total);
+                decimal? companySum = list.Last().iCompanyAmount;
+                decimal? personalSum = list.Last().iIndividualAmount;
+                decimal? totalSum = list.Last().iTotal;
+                list.RemoveAt(list.Count - 1);
 
                 DicManager dm = new DicManager();
                 var companies = dm.GetAllCompanies();
@@ -195,7 +199,10 @@ namespace HRMS.Controllers
                 }
 
                 //给分页实体赋值  
-                PageModels<SocialSecurityDetailModel> model = new PageModels<SocialSecurityDetailModel>();
+                PageModels3<SocialSecurityDetailModel> model = new PageModels3<SocialSecurityDetailModel>();
+                model.personalSum = personalSum ?? 0;
+                model.companySum = companySum ?? 0;
+                model.totalSum = totalSum ?? 0;
                 model.total = total;
                 if (total % pageSize == 0)
                     model.page = total / pageSize;
@@ -331,6 +338,10 @@ namespace HRMS.Controllers
                 int total = 0;
                 ProvidentFundManager service = new ProvidentFundManager();
                 List<ProvidentFundDetailModel> list = service.GetDetailSearch(SessionHelper.CurrentUser.UserType, bizParaDic, sort, order, offset, pageSize, out total);
+                decimal? companySum = list.Last().iCompanyAmount;
+                decimal? personalSum = list.Last().iIndividualAmount;
+                decimal? totalSum = list.Last().iTotal;
+                list.RemoveAt(list.Count - 1);
 
                 DicManager dm = new DicManager();
                 var companies = dm.GetAllCompanies();
@@ -344,7 +355,10 @@ namespace HRMS.Controllers
                 }
 
                 //给分页实体赋值  
-                PageModels<ProvidentFundDetailModel> model = new PageModels<ProvidentFundDetailModel>();
+                PageModels3<ProvidentFundDetailModel> model = new PageModels3<ProvidentFundDetailModel>(); 
+                model.personalSum = personalSum ?? 0;
+                model.companySum = companySum ?? 0;
+                model.totalSum = totalSum ?? 0;
                 model.total = total;
                 if (total % pageSize == 0)
                     model.page = total / pageSize;
