@@ -32,7 +32,7 @@ namespace HRMS.WEB
         {
             if (null != HttpContext.Current.Cache["dummycachekey"]) return;
             HttpContext.Current.Cache.Add("dummycachekey", "cachevalue", null, DateTime.MaxValue,
-                TimeSpan.FromMinutes(20), CacheItemPriority.NotRemovable,
+                TimeSpan.FromMinutes(30), CacheItemPriority.NotRemovable,
                 new CacheItemRemovedCallback(CacheItemRemovedCallback));
         }
 
@@ -52,7 +52,7 @@ namespace HRMS.WEB
             }
             catch (Exception ex)
             {
-                log.Info("模拟点击失败");
+                log.Info("模拟点击失败" + ex.Message);
             }
         }
         protected void Application_BeginRequest(Object sender, EventArgs e)
