@@ -59,12 +59,12 @@ namespace HRMS.Controllers
             var managerUsers = dm.GetUsersByFlowAndRole(SessionHelper.CurrentUser.CurrentCompany, "流水账申请", "经理").Replace(",", ";").Replace("，", ";");
             var bossUsers = dm.GetUsersByFlowAndRole(SessionHelper.CurrentUser.CurrentCompany, "流水账申请", "高管").Replace(",", ";").Replace("，", ";");
             var tellerUsers = dm.GetUsersByFlowAndRole(SessionHelper.CurrentUser.CurrentCompany, "流水账申请", "出纳").Replace(",", ";").Replace("，", ";");
-            var recordUsers = dm.GetUsersByFlowAndRole(SessionHelper.CurrentUser.CurrentCompany, "流水账申请", "登记").Replace(",", ";").Replace("，", ";");
+            //var recordUsers = dm.GetUsersByFlowAndRole(SessionHelper.CurrentUser.CurrentCompany, "流水账申请", "登记").Replace(",", ";").Replace("，", ";");
             ViewBag.confirmUsers = confirmUsers;
             ViewBag.managerUsers = managerUsers;
             ViewBag.bossUsers = bossUsers;
             ViewBag.tellerUsers = tellerUsers;
-            ViewBag.recordUsers = recordUsers;
+            //ViewBag.recordUsers = recordUsers;
             return View();
         }
 
@@ -104,12 +104,12 @@ namespace HRMS.Controllers
             var managerUsers = dm.GetUsersByFlowAndRole(SessionHelper.CurrentUser.CurrentCompany, "流水账申请", "经理").Replace(",", ";").Replace("，", ";");
             var bossUsers = dm.GetUsersByFlowAndRole(SessionHelper.CurrentUser.CurrentCompany, "流水账申请", "高管").Replace(",", ";").Replace("，", ";");
             var tellerUsers = dm.GetUsersByFlowAndRole(SessionHelper.CurrentUser.CurrentCompany, "流水账申请", "出纳").Replace(",", ";").Replace("，", ";");
-            var recordUsers = dm.GetUsersByFlowAndRole(SessionHelper.CurrentUser.CurrentCompany, "流水账申请", "登记").Replace(",", ";").Replace("，", ";");
+            //var recordUsers = dm.GetUsersByFlowAndRole(SessionHelper.CurrentUser.CurrentCompany, "流水账申请", "登记").Replace(",", ";").Replace("，", ";");
             ViewBag.confirmUsers = confirmUsers;
             ViewBag.managerUsers = managerUsers;
             ViewBag.bossUsers = bossUsers;
             ViewBag.tellerUsers = tellerUsers;
-            ViewBag.recordUsers = recordUsers;
+            //ViewBag.recordUsers = recordUsers;
             return View();
         }
 
@@ -372,6 +372,7 @@ namespace HRMS.Controllers
                     }
                     else
                     {
+                        UpdateSysSummary(initiator);
                         SaveApproveInfo(initiator);
                         return new JsonResult { Data = new { success = true, msg = "提交成功!" } };
                     }
@@ -411,6 +412,25 @@ namespace HRMS.Controllers
             }
         }
 
+        public JsonResult CancelApplication(WfAppRunner runner)
+        {
+            try
+            {
+                IWorkflowService service = new WorkflowService();
+                string result = service.CancelApplication(runner);
+                if (result == "success")
+                {
+                    return new JsonResult { Data = new { success = true, msg = "撤销成功!" } };
+                }
+                return new JsonResult { Data = new { success = false, msg = result } };
+            }
+            catch (Exception e)
+            {
+                ClinBrain.Data.LogFileHelper.ErrorLog(e.ToString());
+                return new JsonResult { Data = new { success = false, msg = "撤销出错!" } };
+            }
+        }
+
         private void SaveApproveInfo(WfAppRunner runner)
         {
             string approveType = "";
@@ -442,6 +462,11 @@ namespace HRMS.Controllers
             approveInfo.StepName = runner.CurrentStepName;
             ApproveInfoManager apim = new ApproveInfoManager();
             apim.Insert(approveInfo);
+        }
+        private void UpdateSysSummary(WfAppRunner runner)
+        {
+            BPMManager service = new BPMManager();
+            service.UpdateSysSummary(runner.Conditions["sys_summary"], runner.AppInstanceID);
         }
 
         private bool SaveBusinessDataForBPM(string buzJson, string pguid, string appNo)

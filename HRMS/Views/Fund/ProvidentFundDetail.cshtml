@@ -381,6 +381,13 @@
                     $shade.remove();
                 });
             },
+            onLoadSuccess: function (data) {
+                $.each(data.rows, function (i, item) {
+                    if (item.iEmployeeStatus == "离职") {
+                        $("#mytab").find("tr[data-index=" + i + "]").css("color", "red");
+                    }
+                })
+            },
             locale: "zh-CN",//中文支持,
             detailView: false, //是否显示详情折叠
             detailFormatter: function (index, row, element) {

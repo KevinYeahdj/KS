@@ -392,12 +392,15 @@ union all
   left join [dbo].[BpmUser] b
   on a.iguid = b.iCompanyId and b.iFlowSign='流水账申请' and b.iRoleName='出纳'
   and b.iIsDeleted =0 and b.iStatus =1  where a.iisdeleted=0 and a.istatus=1
-union all  
-   select b.iGuid, a.iguid as icompanyId, a.iName as iCompanyName, '流水账申请' as iFlowSign, '登记' as iRoleName, b.iUsers, b.iNote , b.iUpdatedOn from [dbo].[SysCompany] a
-  left join [dbo].[BpmUser] b
-  on a.iguid = b.iCompanyId and b.iFlowSign='流水账申请' and b.iRoleName='登记'
-  and b.iIsDeleted =0 and b.iStatus =1  where a.iisdeleted=0 and a.istatus=1
+
 ) t";
+
+  //          union all  
+  // select b.iGuid, a.iguid as icompanyId, a.iName as iCompanyName, '流水账申请' as iFlowSign, '登记' as iRoleName, b.iUsers, b.iNote , b.iUpdatedOn from [dbo].[SysCompany] a
+  //left join [dbo].[BpmUser] b
+  //on a.iguid = b.iCompanyId and b.iFlowSign='流水账申请' and b.iRoleName='登记'
+  //and b.iIsDeleted =0 and b.iStatus =1  where a.iisdeleted=0 and a.istatus=1
+
             string querySql = "select * " + commonSql + " order by {0} {1} offset {2} row fetch next {3} rows only";
             querySql = string.Format(querySql, sort, order, offset, pageSize);
             string totalSql = "select cast(count(1) as varchar(8)) " + commonSql;

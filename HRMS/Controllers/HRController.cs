@@ -108,6 +108,7 @@ namespace HRMS.Controllers
                 bizParaDic.Add("iContractDeadLine[d]", contractdeadline1 + "§" + contractdeadline2);
                 bizParaDic.Add("iResignDate[d]", resigndate1 + "§" + resigndate2);
                 bizParaDic.Add("iUpdatedOn[d]", modifyon1 + "§" + modifyon2);
+                bizParaDic.Add("iOnJobDay",HttpContext.Request.Params["iOnJobDay"]);
 
                 int total = 0;
                 HRInfoManager service = new HRInfoManager();

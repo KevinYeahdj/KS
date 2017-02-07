@@ -24,6 +24,8 @@
 
                     </select>
                 </div>
+                <div style="float:left;margin-left:10px"><span>某天在职：</span></div>
+                <div style="float: left; margin-left: 10px;width:8%"><input id="sOnJobDay" class="form-control" /></div>
                 <div style="float: left; margin-left: 10px"><span>姓名：</span></div>
                 <div style="float: left; margin-left: 10px; width: 8%"><input id="sName" class="form-control" /></div>
                 <div style="float: left; margin-left: 10px;"><span>身份证号：</span></div>
@@ -286,6 +288,15 @@
             $("#DataImport").hide();
             $("#NewRecord").hide();
         }
+        $("#sOnJobDay").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            minView: "month",
+            maxView: "decade",
+            todayBtn: true,
+            pickerPosition: "bottom-left"
+        });
 
         $("#sEmployeeDate").datetimepicker({
             language: 'zh-CN',
@@ -591,6 +602,7 @@
                 params.iName = $("#sName").val();
                 params.iEmpNo = $("#sEmpNo").val();
                 params.iEmployeeStatus = $("#sEmpStatus").val();
+                params.iOnJobDay = $("#sOnJobDay").val();
                 params.iFileLocation = $("#sFileLocation").val();
                 params.iEmployeeDateFrom = $("#sEmployeeDate").val();
                 params.iEmployeeDateTo = $("#sEmployeeDate2").val();
@@ -1055,6 +1067,7 @@
         params.iName = $("#sName").val();
         params.iEmpNo = $("#sEmpNo").val();
         params.iEmployeeStatus = $("#sEmpStatus").val();
+        params.iOnJobDay = $("#sOnJobDay").val();
         params.iEmployeeDateFrom = $("#sEmployeeDate").val();
         params.iEmployeeDateTo = $("#sEmployeeDate2").val();
         params.iContractDeadLineFrom = $("#sContractDeadLine").val();

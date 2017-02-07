@@ -24,6 +24,8 @@
 
                     </select>
                 </div>
+                <div style="float:left;margin-left:10px"><span>某天在职：</span></div>
+                <div style="float: left; margin-left: 10px;width:8%"><input id="sOnJobDay" class="form-control" /></div>
                 <div style="float: left; margin-left: 10px"><span>姓名：</span></div>
                 <div style="float: left; margin-left: 10px; width: 8%"><input id="sName" class="form-control" /></div>
                 <div style="float: left; margin-left: 10px;"><span>身份证号：</span></div>
@@ -32,7 +34,6 @@
                     <span>工号：</span>
                 </div>
                 <div style="float: left; margin-left: 10px; width: 8%"><input id="sEmpNo" class="form-control" /></div>
-
                 <div style="float:left;margin-left:10px"><span>入职时间：</span></div><div style="float: left; margin-left: 10px;width:8%"><input id="sEmployeeDate" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 8%"><input id="sEmployeeDate2" class="form-control" /></div>
                 <div style="float:left;margin-left:10px"><span>合同到期日期：</span></div><div style="float: left; margin-left: 10px; width: 8%"><input id="sContractDeadLine" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 8%"><input id="sContractDeadLine2" class="form-control" /></div>
                 <div style="float:left;margin-left:10px"><span>离职日期：</span></div><div style="float: left; margin-left: 10px; width: 8%"><input id="sResignDate" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 8%"><input id="sResignDate2" class="form-control" /></div>
@@ -259,7 +260,15 @@
             $("#DataImport").hide();
             $("#NewRecord").hide();
         }
-
+        $("#sOnJobDay").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            minView: "month",
+            maxView: "decade",
+            todayBtn: true,
+            pickerPosition: "bottom-left"
+        });
         $("#sEmployeeDate").datetimepicker({
             language: 'zh-CN',
             format: "yyyy-mm-dd",
@@ -519,6 +528,7 @@
                 params.iName = $("#sName").val();
                 params.iEmpNo = $("#sEmpNo").val();
                 params.iEmployeeStatus = $("#sEmpStatus").val();
+                params.iOnJobDay = $("#sOnJobDay").val();
                 params.iEmployeeDateFrom = $("#sEmployeeDate").val();
                 params.iEmployeeDateTo = $("#sEmployeeDate2").val();
                 params.iContractDeadLineFrom = $("#sContractDeadLine").val();
@@ -944,6 +954,7 @@
         params.iName = $("#sName").val();
         params.iEmpNo = $("#sEmpNo").val();
         params.iEmployeeStatus = $("#sEmpStatus").val();
+        params.iOnJobDay = $("#sOnJobDay").val();
         params.iEmployeeDateFrom = $("#sEmployeeDate").val();
         params.iEmployeeDateTo = $("#sEmployeeDate2").val();
         params.iContractDeadLineFrom = $("#sContractDeadLine").val();

@@ -251,7 +251,8 @@ namespace HRMS.Controllers
                     decimal sum = 0;
                     foreach (var item in list)
                     {
-                        if (item.iLaborCampBankAccount != iLaborCampBankAccount)
+                        //if (item.iLaborCampBankAccount != iLaborCampBankAccount)
+                        if (item.iLaborCampBankAccount != iLaborCampBankAccount || (string.IsNullOrEmpty(iLaborCampBankAccount) && item.iLaborName != iLaborName))
                         {
                             summaryList.Add(new ReturnFeeHistoryViewModel { iLaborName = iLaborName, iLaborCampBankPerson = iLaborCampBankPerson, iLaborCampBank = iLaborCampBank, iLaborCampBankAccount = iLaborCampBankAccount, iReturnFeeAmount = sum.ToString() });
 

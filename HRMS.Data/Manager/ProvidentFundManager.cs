@@ -212,8 +212,8 @@ namespace HRMS.Data.Manager
         public int GenerateProvidentFundDetailMonthly(int payMonth)
         {
             int affectedRowCount = 0;
-            string sql = @"insert into ProvidentFundDetail select newid()," + payMonth.ToString() + ",iHRInfoGuid, iPayPlace, iPayBase, iIndividualAmount, iCompanyAmount, iAdditionalAmount, iAdditionalMonths,GETDATE(),'系统',GETDATE(),'系统',1,0 from ProvidentFund where iIsPaid='是' and iIsDeleted =0 and iStatus =1";
-            string clearsql = "update ProvidentFund set iAdditionalAmount = null, iAdditionalMonths = null";
+            string sql = @"insert into ProvidentFundDetail select newid()," + payMonth.ToString() + ",iHRInfoGuid, iPayPlace, iPayBase, iIndividualAmount, iCompanyAmount, iAdditionalAmount, iAdditionalMonths,GETDATE(),'系统',GETDATE(),'系统',1,0 from ProvidentFund where iIsPaid='是' and iIsDeleted =0 and iStatus =1 ";
+            string clearsql = "update ProvidentFund set iAdditionalAmount = null, iAdditionalMonths = null ";
             using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSDBConnectionString"].ConnectionString))
             {
                 Repository.Execute(conn, "delete from ProvidentFundDetail where iPayMonth =" + payMonth.ToString());
@@ -224,7 +224,7 @@ namespace HRMS.Data.Manager
         }
         public ProvidentFundDetailModel GetDetailFirstOrDefault(string iguid)
         {
-            string sql = @"select pf.iIndividualAmount + pf.iCompanyAmount + pf.iAdditionalAmount  as iTotal, pf.*, hr.iItemName, hr.iCompany, hr.iName, hr.iIdCard, hr.iEmpNo from ProvidentFundDetail pf inner join hrinfo hr on pf.iHRInfoGuid = hr.iguid and pf.iIsDeleted =0 and pf.iStatus =1  where hr.iisdeleted=0 and hr.istatus=1 and pf.iguid=@id ";
+            string sql = @"select pf.iIndividualAmount + pf.iCompanyAmount + pf.iAdditionalAmount  as iTotal, pf.*, hr.iItemName, hr.iCompany, hr.iName, hr.iIdCard, hr.iEmpNo, hr.iEmployeeStatus from ProvidentFundDetail pf inner join hrinfo hr on pf.iHRInfoGuid = hr.iguid and pf.iIsDeleted =0 and pf.iStatus =1  where hr.iisdeleted=0 and hr.istatus=1 and pf.iguid=@id ";
             return Repository.Query<ProvidentFundDetailModel>(sql, new { id = iguid }).FirstOrDefault();
         }
         public ProvidentFundEntity FirstOrDefault(string hrGuid)
@@ -247,7 +247,7 @@ namespace HRMS.Data.Manager
         public List<ProvidentFundDetailModel> GetDetailSearch(string userType, Dictionary<string, string> para, string sort, string order, int offset, int pageSize, out int total)
         {
             string commonSql = GenerateDetailQuerySql(userType, para);
-            string querySql = "select pf.iIndividualAmount + pf.iCompanyAmount + pf.iAdditionalAmount  as iTotal, pf.*, hr.iItemName, hr.iCompany, hr.iName, hr.iIdCard, hr.iEmpNo " + commonSql + "order by {0} {1} offset {2} row fetch next {3} rows only";
+            string querySql = "select pf.iIndividualAmount + pf.iCompanyAmount + pf.iAdditionalAmount  as iTotal, pf.*, hr.iItemName, hr.iCompany, hr.iName, hr.iIdCard, hr.iEmpNo, hr.iEmployeeStatus " + commonSql + "order by {0} {1} offset {2} row fetch next {3} rows only";
             querySql = string.Format(querySql, sort, order, offset, pageSize);
             string totalSql = "select cast(count(1) as varchar(8)) " + commonSql;
             total = int.Parse(Repository.Query<string>(totalSql).ToList()[0]);
@@ -264,7 +264,7 @@ namespace HRMS.Data.Manager
         public List<ProvidentFundDetailModel> GetDetailSearchAll(string userType, Dictionary<string, string> para)
         {
             string commonSql = GenerateDetailQuerySql(userType, para);
-            string querySql = "select pf.iIndividualAmount + pf.iCompanyAmount + pf.iAdditionalAmount  as iTotal, pf.*, hr.iItemName, hr.iCompany, hr.iName, hr.iIdCard, hr.iEmpNo " + commonSql + "order by pf.iUpdatedOn desc";
+            string querySql = "select pf.iIndividualAmount + pf.iCompanyAmount + pf.iAdditionalAmount  as iTotal, pf.*, hr.iItemName, hr.iCompany, hr.iName, hr.iIdCard, hr.iEmpNo, hr.iEmployeeStatus " + commonSql + "order by pf.iUpdatedOn desc";
             return Repository.Query<ProvidentFundDetailModel>(querySql).ToList();
 
         }

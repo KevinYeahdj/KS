@@ -47,10 +47,32 @@ namespace ClinBrain.Data.Service
 
             string totalSql = "select cast(count(1) as varchar(8)) from (" + querySql + commonSql + ")t";
 
-            querySql+= commonSql + " order by {0} {1} offset {2} row fetch next {3} rows only";
+            querySql += commonSql + " order by {0} {1} offset {2} row fetch next {3} rows only";
             querySql = string.Format(querySql, sort, order, offset, pageSize);
             total = int.Parse(Repository.Query<string>(totalSql).ToList()[0]);
             return Repository.Query<ApplicationViewModel>(querySql).ToList();
+        }
+
+        public void UpdateSysSummary(string summary, string appNo)
+        {
+            string sql = "update WfProcessInstance set summary = '" + summary + "' where AppInstanceID='" + appNo + "'";
+            IDbSession session = SessionFactory.CreateSession();
+            try
+            {
+                session.BeginTrans();
+                Repository.Execute(session.Connection, sql, session.Transaction);
+                session.Commit();
+            }
+            catch (System.Exception)
+            {
+                session.Rollback();
+                throw;
+            }
+            finally
+            {
+                session.Dispose();
+            }
+
         }
     }
     public class TodoViewModel

@@ -219,7 +219,7 @@ namespace HRMS.Data.Manager
         }
         public SocialSecurityDetailModel GetDetailFirstOrDefault(string iguid)
         {
-            string sql = @"select ss.iIndividualAmount + ss.iCompanyAmount + iAdditionalAmount  as iTotal, ss.*, hr.iItemName, hr.iCompany, hr.iName, hr.iIdCard, hr.iEmpNo from SocialSecurityDetail ss inner join hrinfo hr on ss.iHRInfoGuid = hr.iguid and ss.iIsDeleted =0 and ss.iStatus =1  where hr.iisdeleted=0 and hr.istatus=1 and ss.iguid=@id ";
+            string sql = @"select ss.iIndividualAmount + ss.iCompanyAmount + iAdditionalAmount  as iTotal, ss.*, hr.iItemName, hr.iCompany, hr.iName, hr.iIdCard, hr.iEmpNo, hr.iEmployeeStatus from SocialSecurityDetail ss inner join hrinfo hr on ss.iHRInfoGuid = hr.iguid and ss.iIsDeleted =0 and ss.iStatus =1  where hr.iisdeleted=0 and hr.istatus=1 and ss.iguid=@id ";
             return Repository.Query<SocialSecurityDetailModel>(sql, new { id = iguid }).FirstOrDefault();
         }
 
@@ -229,14 +229,14 @@ namespace HRMS.Data.Manager
             return Repository.Query<SocialSecurityEntity>(sql, new { hrid = hrGuid }).FirstOrDefault();
         }
 
-        public int GenerateSocialSecurityDetailMonthly(int payMonth)
+        public int GenerateSocialSecurityDetailMonthly(int payMonth, string iPayPlace)
         {
             int affectedRowCount = 0;
-            string sql = @"insert into SocialSecurityDetail select newid()," + payMonth.ToString() + ",iHRInfoGuid, iPayPlace, iPayBase, iIndividualAmount, iCompanyAmount, iAdditionalAmount, iAdditionalMonths,GETDATE(),'系统',GETDATE(),'系统',1,0 from SocialSecurity where iIsPaid='是' and iIsDeleted =0 and iStatus =1";
-            string clearsql = "update SocialSecurity set iAdditionalAmount = null, iAdditionalMonths = null";
+            string sql = @"insert into SocialSecurityDetail select newid()," + payMonth.ToString() + ",iHRInfoGuid, iPayPlace, iPayBase, iIndividualAmount, iCompanyAmount, iAdditionalAmount, iAdditionalMonths,GETDATE(),'系统',GETDATE(),'系统',1,0 from SocialSecurity where iIsPaid='是' and iIsDeleted =0 and iStatus =1 and iPayPlace='"+ iPayPlace+"' ";
+            string clearsql = "update SocialSecurity set iAdditionalAmount = null, iAdditionalMonths = null where iPayPlace='"+ iPayPlace+"' ";
             using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSDBConnectionString"].ConnectionString))
             {
-                Repository.Execute(conn, "delete from SocialSecurityDetail where iPayMonth =" + payMonth.ToString());
+                Repository.Execute(conn, "delete from SocialSecurityDetail where iPayMonth =" + payMonth.ToString() +" and iPayPlace='"+ iPayPlace+"' ");
                 affectedRowCount = Repository.Execute(conn, sql);
                 Repository.Execute(conn, clearsql);
             }
@@ -257,7 +257,7 @@ namespace HRMS.Data.Manager
         public List<SocialSecurityDetailModel> GetDetailSearch(string userType, Dictionary<string, string> para, string sort, string order, int offset, int pageSize, out int total)
         {
             string commonSql = GenerateDetailQuerySql(userType, para);
-            string querySql = "select ss.iIndividualAmount + ss.iCompanyAmount + iAdditionalAmount  as iTotal, ss.*, hr.iItemName, hr.iCompany, hr.iName, hr.iIdCard, hr.iEmpNo " + commonSql + "order by {0} {1} offset {2} row fetch next {3} rows only";
+            string querySql = "select ss.iIndividualAmount + ss.iCompanyAmount + iAdditionalAmount  as iTotal, ss.*, hr.iItemName, hr.iCompany, hr.iName, hr.iIdCard, hr.iEmpNo, hr.iEmployeeStatus " + commonSql + "order by {0} {1} offset {2} row fetch next {3} rows only";
             querySql = string.Format(querySql, sort, order, offset, pageSize);
             string totalSql = "select cast(count(1) as varchar(8)) " + commonSql;
             total = int.Parse(Repository.Query<string>(totalSql).ToList()[0]);
@@ -274,7 +274,7 @@ namespace HRMS.Data.Manager
         public List<SocialSecurityDetailModel> GetDetailSearchAll(string userType, Dictionary<string, string> para)
         {
             string commonSql = GenerateDetailQuerySql(userType, para);
-            string querySql = "select ss.iIndividualAmount + ss.iCompanyAmount + iAdditionalAmount  as iTotal, ss.*, hr.iItemName, hr.iCompany, hr.iName, hr.iIdCard, hr.iEmpNo  " + commonSql + "order by ss.iUpdatedOn desc ";
+            string querySql = "select ss.iIndividualAmount + ss.iCompanyAmount + iAdditionalAmount  as iTotal, ss.*, hr.iItemName, hr.iCompany, hr.iName, hr.iIdCard, hr.iEmpNo, hr.iEmployeeStatus  " + commonSql + "order by ss.iUpdatedOn desc ";
             return Repository.Query<SocialSecurityDetailModel>(querySql).ToList();
         }
 

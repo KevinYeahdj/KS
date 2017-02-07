@@ -30,7 +30,7 @@
     var managerUsers = "@ViewBag.managerUsers";
     var bossUsers = "@ViewBag.bossUsers";
     var tellerUsers = "@ViewBag.tellerUsers";
-    var recordUsers = "@ViewBag.recordUsers";
+    @*var recordUsers = "@ViewBag.recordUsers";*@
 
     //bootstraptable 高度
     function tableHeight() {
@@ -158,7 +158,7 @@
                 conditions.managerUsers = managerUsers;
                 conditions.bossUsers = bossUsers;
                 conditions.tellerUsers = tellerUsers;
-                conditions.recordUsers = recordUsers;
+                //conditions.recordUsers = recordUsers;
                 conditions.isManager = isManager;
                 conditions.isBoss = isBoss;
                 para.Conditions = conditions;

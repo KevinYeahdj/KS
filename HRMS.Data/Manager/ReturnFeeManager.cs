@@ -538,11 +538,13 @@ namespace HRMS.Data.Manager
             try
             {
                 session.BeginTrans();
-                var old = Repository.Query<ReturnFeeHistoryEntity>("select * from ReturnFeeHistory where iisdeleted=0 and istatus=1 and iReturnFeeAppNo='" + appNo + "'");
-                foreach (var item in old)
-                {
-                    Repository.Delete<ReturnFeeHistoryEntity>(session.Connection, item, session.Transaction);
-                }
+                //var old = Repository.Query<ReturnFeeHistoryEntity>("select * from ReturnFeeHistory where iisdeleted=0 and istatus=1 and iReturnFeeAppNo='" + appNo + "'");
+                //foreach (var item in old)
+                //{
+                //    Repository.Delete<ReturnFeeHistoryEntity>(session.Connection, item, session.Transaction);
+                //}
+                string removeSql = "delete from ReturnFeeHistory where iisdeleted=0 and istatus=1 and iReturnFeeAppNo='" + appNo + "'";
+                Repository.Execute(session.Connection, removeSql, null, session.Transaction);
                 foreach (var entity in entities)
                 {
                     if (string.IsNullOrEmpty(entity.iGuid))

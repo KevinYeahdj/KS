@@ -456,6 +456,8 @@ namespace HRMS.Data.Manager
             }
             string searchKey = para["search"];
             para.Remove("search");
+            string iOnJobDay = para["iOnJobDay"];
+            para.Remove("iOnJobDay");
 
             StringBuilder commandsb = new StringBuilder("from HRInfo where iIsDeleted =0 and iStatus =1 ");
             foreach (KeyValuePair<string, string> item in para)
@@ -481,6 +483,12 @@ namespace HRMS.Data.Manager
                 }
                 commandsb.Remove(commandsb.Length - 3, 3);
                 commandsb.Append(")");
+            }
+            if (!string.IsNullOrEmpty(iOnJobDay))
+            {
+                //离职的  入职日期在这个日期之前 且 离职日期在这个日期之后 
+                //在职的  入职日期在这个日期之前
+                commandsb.Append(" and ((iEmployeeStatus='离职' and iEmployeeDate <= '" + iOnJobDay + "' and iResignDate>='" + iOnJobDay + "') or (iEmployeeStatus='在职' and iEmployeeDate <= '" + iOnJobDay + "'))");
             }
 
             string commonSql = commandsb.ToString();
@@ -501,6 +509,8 @@ namespace HRMS.Data.Manager
             }
             string searchKey = para["search"];
             para.Remove("search");
+            string iOnJobDay = para["iOnJobDay"];
+            para.Remove("iOnJobDay");
             StringBuilder commandsb = new StringBuilder("from HRInfo where iIsDeleted =0 and iStatus =1 ");
             foreach (KeyValuePair<string, string> item in para)
             {
@@ -525,6 +535,12 @@ namespace HRMS.Data.Manager
                 }
                 commandsb.Remove(commandsb.Length - 3, 3);
                 commandsb.Append(")");
+            }
+            if (!string.IsNullOrEmpty(iOnJobDay))
+            {
+                //离职的  入职日期在这个日期之前 且 离职日期在这个日期之后 
+                //在职的  入职日期在这个日期之前
+                commandsb.Append(" and ((iEmployeeStatus='离职' and iEmployeeDate <= '" + iOnJobDay + "' and iResignDate>='" + iOnJobDay + "') or (iEmployeeStatus='在职' and iEmployeeDate <= '" + iOnJobDay + "'))");
             }
 
             string commonSql = commandsb.ToString();

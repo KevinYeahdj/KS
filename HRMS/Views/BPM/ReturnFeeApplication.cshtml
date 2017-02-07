@@ -27,7 +27,7 @@
     var managerUsers = "@ViewBag.managerUsers";
     var bossUsers = "@ViewBag.bossUsers";
     var tellerUsers = "@ViewBag.tellerUsers";
-    var recordUsers = "@ViewBag.recordUsers";
+    @*var recordUsers = "@ViewBag.recordUsers";*@
     //json 日期转字符串
     function ChangeDateFormat(jsondate) {
         if (!jsondate) return "";
@@ -201,7 +201,7 @@
                 conditions.managerUsers = managerUsers;
                 conditions.bossUsers = bossUsers;
                 conditions.tellerUsers = tellerUsers;
-                conditions.recordUsers = recordUsers;
+                //conditions.recordUsers = recordUsers;
                 conditions.isManager = isManager;
                 conditions.isBoss = isBoss;
                 para.Conditions = conditions;

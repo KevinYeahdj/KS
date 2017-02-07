@@ -118,6 +118,7 @@ namespace HRMS.Data.Entity
         public string iEmpNo { get; set; } //工号 
         public string iName { get; set; } //姓名 
         public string iIdCard { get; set; } //身份证号 
+        public string iEmployeeStatus { get; set; } //员工状态
         public string iPayPlace { get; set; } //缴纳地
         public Decimal? iPayBase { get; set; } //缴费基数
         public Decimal? iIndividualAmount { get; set; } //个人缴费金额
