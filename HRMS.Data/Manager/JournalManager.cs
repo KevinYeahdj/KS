@@ -118,11 +118,11 @@ namespace HRMS.Data.Manager
         {
             if (entities == null || entities.Count == 0)
                 return;
+            DbHelperSQL.ExecuteSql("update Journal set iRecordStatus = '草稿', iAppNo = '' where iisdeleted=0 and istatus=1 and iAppNo='" + appNo + "'");
             IDbSession session = SessionFactory.CreateSession();
             try
             {
                 session.BeginTrans();
-                Repository.Execute(session.Connection, "update Journal set iRecordStatus = '草稿', iAppNo = '' where iisdeleted=0 and istatus=1 and iAppNo=@appno ", new { appno = appNo }, session.Transaction);
                 List<JournalEntity> upds = new List<JournalEntity>();
                 foreach (var entity in entities)
                 {
@@ -223,7 +223,7 @@ namespace HRMS.Data.Manager
 
         public List<JournalEntity> GetMyJournalDraft(string userType, Dictionary<string, string> para, string sort, string order, int offset, int pageSize, out int total)
         {
-            StringBuilder commandsb = new StringBuilder(" from Journal where iisdeleted=0 and istatus=1 and iRecordStatus='草稿' and iCreatedBy ='" + para["currentUserId"] + "' and iCompanyId = '" + para["iCompanyId"] + "' and iProjectId='" + para["iProjectId"] + "'");
+            StringBuilder commandsb = new StringBuilder(" from Journal where iChecked<>'是' and iisdeleted=0 and istatus=1 and iRecordStatus='草稿' and iCreatedBy ='" + para["currentUserId"] + "' and iCompanyId = '" + para["iCompanyId"] + "' and iProjectId='" + para["iProjectId"] + "'");
 
 
             string commonSql = commandsb.ToString();

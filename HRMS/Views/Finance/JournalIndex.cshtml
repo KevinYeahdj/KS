@@ -57,7 +57,8 @@
                 </div>
                 <div style="float: left; margin-left: 10px; "><span>提报人：</span></div>
                 <div style="float: left; margin-left: 10px; width: 8%; "><input id="sApplicant" class="form-control" /></div>
-                <div style="float: left; margin-left: 10px; "><span>日期：</span></div><div style="float: left; margin-left: 10px; width: 10%"><input id="sDate" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 10%"><input id="sDate2" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px; "><span>日期：</span></div><div style="float: left; margin-left: 5px; width: 7%"><input id="sDate" class="form-control" /></div><div style="float: left; margin-left: 5px"><span>至</span></div><div style="float: left; margin-left: 5px; width: 7%"><input id="sDate2" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px; "><span>支付日期：</span></div><div style="float: left; margin-left: 5px; width: 7%"><input id="sPaidDate" class="form-control" /></div><div style="float: left; margin-left: 5px"><span>至</span></div><div style="float: left; margin-left: 5px; width: 7%"><input id="sPaidDate2" class="form-control" /></div>
                 <div style="float: left; margin-left: 10px"><span>查询金额合计：</span></div>
                 <div style="float: left; margin-left: 10px; width: 10%"><input id="totalThis" class="form-control" readonly="readonly" value="0" /></div>
                 <div style="float: right; margin-left: 10px; margin-top: 5px; " class="btn btn-primary" data-toggle="modal" data-target="#addModal" id="NewRecord">添加记录</div>
@@ -362,6 +363,28 @@
         }).on("click", function (ev) {
             $("#sDate2").datetimepicker("setStartDate", $("#sDate").val());
         });
+        $("#sPaidDate").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            minView: "month",
+            maxView: "decade",
+            todayBtn: true,
+            pickerPosition: "bottom-left"
+        }).on("click", function (ev) {
+            $("#sPaidDate").datetimepicker("setEndDate", $("#sPaidDate2").val());
+        });
+        $("#sPaidDate2").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            minView: "month",
+            maxView: "decade",
+            todayBtn: true,
+            pickerPosition: "bottom-left"
+        }).on("click", function (ev) {
+            $("#sPaidDate2").datetimepicker("setStartDate", $("#sPaidDate").val());
+        });
         //弹窗日期绑定
         $('#iDate').datetimepicker({
             language: 'zh-CN',
@@ -483,6 +506,8 @@
                 params.sChecked = $("#sChecked").val();
                 params.sDate = $("#sDate").val();
                 params.sDate2 = $("#sDate2").val();
+                params.sPaidDate = $("#sPaidDate").val();
+                params.sPaidDate2 = $("#sPaidDate2").val();
                 return params;
             },
             columns: [

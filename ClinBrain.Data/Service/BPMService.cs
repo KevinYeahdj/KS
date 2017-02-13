@@ -33,7 +33,23 @@ namespace ClinBrain.Data.Service
         public List<DoneViewModel> GetMyDoneList(Dictionary<string, string> para, string sort, string order, int offset, int pageSize, out int total)
         {
             string commonSql = string.Format("FROM vwWfActivityInstanceTasks WHERE ActivityType=4 AND ActivityState=4 AND AssignedToUserID='{0}'  AND DATEDIFF(s,CreatedDateTime,EndedDateTime) >5 and viewPageUrl is not null ", para["currentUserId"]);
-            string querySql = "select applicantName, applyTime, AppName, CreatedDateTime, EndedDateTime, ActivityName, summary, AppInstanceID, viewPageUrl " + commonSql + " order by {0} {1} offset {2} row fetch next {3} rows only";
+            string filterSring = "";
+            if (!string.IsNullOrEmpty(para["iAppNo"]))
+            {
+                filterSring += " and AppInstanceID like '%" + para["iAppNo"] + "%'";
+            }
+            if (!string.IsNullOrEmpty(para["iApproveDate"]) || !string.IsNullOrEmpty(para["iApproveDate2"]))
+            {
+                string start = "1900-01-01 00:00:00";
+                string end = "2999-01-01 00:00:00";
+                if (!string.IsNullOrEmpty(para["iApproveDate"]))
+                    start = para["iApproveDate"];
+                if (!string.IsNullOrEmpty(para["iApproveDate2"]))
+                    end = para["iApproveDate2"];
+                filterSring += " and applyTime between '" + start + "' and '" + end + "' ";
+            }
+
+            string querySql = "select applicantName, applyTime, AppName, CreatedDateTime, EndedDateTime, ActivityName, summary, AppInstanceID, viewPageUrl " + commonSql + filterSring + " order by {0} {1} offset {2} row fetch next {3} rows only";
             querySql = string.Format(querySql, sort, order, offset, pageSize);
             string totalSql = "select cast(count(1) as varchar(8)) " + commonSql;
             total = int.Parse(Repository.Query<string>(totalSql).ToList()[0]);

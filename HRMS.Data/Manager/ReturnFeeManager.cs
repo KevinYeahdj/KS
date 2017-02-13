@@ -591,5 +591,38 @@ namespace HRMS.Data.Manager
             }
         }
 
+        public void ReturnFeeFlowDoneAction(Dictionary<string, string> conditions)
+        {
+            List<string> sqls = new List<string>();
+            string sql = "update [ReturnFeeHistory] set [iReturnFeePayment] = '已付', [iReturnFeeActualPayDate] = getdate() where [iReturnFeeAppNo]='" + conditions["sys_appno"] + "'";
+            sqls.Add(sql);
+            string sql2 = "select [iReturnFeeLevel], [iReturnFeeGuid] from [ReturnFeeHistory] where [iReturnFeeAppNo]='" + conditions["sys_appno"] + "'";
+            DataTable dt = DbHelperSQL.Query(sql2).Tables[0];
+            string updsql = "update ReturnFeeHistory set {0} = '已付', {1} = getdate() where iguid='{2}'";
+            foreach (DataRow dr in dt.Rows)
+            {
+                if (dr[0].ToString() == "一级")
+                {
+                    sqls.Add(string.Format(updsql, "[iFirstReturnFeePayment]", "[iFirstReturnFeeActualPayDate]", dr[1].ToString()));
+                }
+                else if (dr[0].ToString() == "二级")
+                {
+                    sqls.Add(string.Format(updsql, "[iSecondReturnFeePayment]", "[iSecondReturnFeeActualPayDate]", dr[1].ToString()));
+                }
+                else if (dr[0].ToString() == "三级")
+                {
+                    sqls.Add(string.Format(updsql, "[iThirdReturnFeePayment]", "[iThirdReturnFeeActualPayDate]", dr[1].ToString()));
+                }
+                else if (dr[0].ToString() == "四级")
+                {
+                    sqls.Add(string.Format(updsql, "[iFourthReturnFeePayment]", "[iFourthReturnFeeActualPayDate]", dr[1].ToString()));
+                }
+                else if (dr[0].ToString() == "五级")
+                {
+                    sqls.Add(string.Format(updsql, "[iFifthReturnFeePayment]", "[iFifthReturnFeeActualPayDate]", dr[1].ToString()));
+                }
+            }
+            DbHelperSQL.ExecuteSqlTran(sqls);
+        }
     }
 }

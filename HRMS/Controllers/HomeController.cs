@@ -26,8 +26,8 @@ namespace HRMS.Controllers
         public ActionResult Index()
         {
             //StringBuilder sb = new StringBuilder();
-            //Dictionary<string, string> dic = SocialSecurityManager.SocialSecurityDic;
-            //sb.AppendLine(CreateSql(dic, "SocialSecurity"));
+            //Dictionary<string, string> dic = FinanceSummaryManager.FinanceSummaryDic;
+            //sb.AppendLine(CreateSql(dic, "FinanceSummary"));
             //sb.AppendLine(CreateClass(dic));
             //sb.AppendLine(CreateTableColumn(dic));
             //sb.AppendLine(CreateMvvmModel(dic));

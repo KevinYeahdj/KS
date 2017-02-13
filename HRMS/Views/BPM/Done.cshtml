@@ -11,13 +11,33 @@
 <div>
     <div>
         <div class="col-*-12">
+            <div id="toolbar" class="toolbar">
+                <div style="float: left; margin-left: 10px">
+                    <span>单号：</span>
+                </div>
+                <div style="float: left; margin-left: 10px; width: 18%"><input id="sAppNo" class="form-control" /></div>
+
+                <div style="float:left;margin-left:10px"><span>完成日期：</span></div><div style="float: left; margin-left: 10px;width:15%"><input id="sApproveDate" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 15%"><input id="sApproveDate2" class="form-control" /></div>
+                
+                <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" onclick="Search()">查询</div>
+
+            </div>
+
             <table id="mytab" class="table table-hover"></table>
         </div>
     </div>
 </div>
 
 <script type="text/javascript">
-
+    document.onkeydown = function (e) {
+        e = e || window.event;
+        if (e.keyCode == 13) {
+            Search();
+        }
+    }
+    function Search() {
+        $('#mytab').bootstrapTable('refresh');
+    }
     //bootstraptable 高度
     function tableHeight() {
         return $(window).height() * 0.86;
@@ -61,6 +81,28 @@
                 height: tableHeight()
             })
         })
+        $("#sApproveDate").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            minView: "month",
+            maxView: "decade",
+            todayBtn: true,
+            pickerPosition: "bottom-left"
+        }).on("click", function (ev) {
+            $("#sApproveDate").datetimepicker("setEndDate", $("#sApproveDate2").val());
+        });
+        $("#sApproveDate2").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            minView: "month",
+            maxView: "decade",
+            todayBtn: true,
+            pickerPosition: "bottom-left"
+        }).on("click", function (ev) {
+            $("#sApproveDate2").datetimepicker("setStartDate", $("#sApproveDate").val());
+        });
         
         $('#mytab').bootstrapTable({
             url: "/BPMAjax/GetMyDoneList",//数据源
@@ -89,6 +131,9 @@
             toolbar: "#toolbar",//指定工具栏
             toolbarAlign: "right",//工具栏对齐方式
             queryParams: function getParams(params) {
+                params.iAppNo = $("#sAppNo").val();
+                params.iApproveDate = $("#sApproveDate").val();
+                params.iApproveDate2 = $("#sApproveDate2").val();
                 return params;
             },
             columns: [
@@ -131,6 +176,13 @@
                 //$element.css("background-color", "green");
             },//单击row事件
             onDblClickRow: function (row, $element) {
+            },
+            onLoadSuccess: function (data) {
+                $.each(data.rows, function (i, item) {
+                    if (item.iEmployeeStatus == "离职") {
+                        $("#mytab").find("tr[data-index=" + i + "]").css("color", "red");
+                    }
+                })
             },
             locale: "zh-CN",//中文支持,
             detailView: false, //是否显示详情折叠

@@ -16,6 +16,7 @@ using ClinBrain.WorkFlowEngine.Core.Result;
 using System.Data.SqlClient;
 using Newtonsoft.Json;
 using System.Threading;
+using System.IO;
 
 namespace ClinBrain.WorkFlowEngine.Core.Pattern
 {
@@ -489,6 +490,25 @@ namespace ClinBrain.WorkFlowEngine.Core.Pattern
 
         private void DoEvent(string connstring, string sql, IDictionary<string, string> conditions)
         {
+            if (sql.StartsWith("$"))
+            {
+                List<string> configs = sql.Split('$').ToList();
+                string assPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, configs[1] + ".dll");
+                if (!File.Exists(assPath))
+                    assPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin", configs[1] + ".dll");
+                if (!File.Exists(assPath))
+                    throw new Exception(string.Format("找不到{0}文件", assPath));
+                //获取程序集
+                var assembly = Assembly.LoadFrom(assPath);
+                //获取程序集中对应实体
+                var objectType = assembly.GetType(configs[2], false);
+                var objInstance = Activator.CreateInstance(objectType, true);
+                var T = objInstance.GetType();
+                var mi = T.GetMethod(configs[3]);
+                mi.Invoke(objInstance, new object[] { conditions });
+                return;
+            }
+
             connstring = "Data Source=.;Initial Catalog=HRMS;Integrated Security=True;";
             try
             {

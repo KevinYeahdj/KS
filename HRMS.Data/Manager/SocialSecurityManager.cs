@@ -234,7 +234,7 @@ namespace HRMS.Data.Manager
         public int GenerateSocialSecurityDetailMonthly(int payMonth, string iPayPlace)
         {
             int affectedRowCount = 0;
-            string sql = @"insert into SocialSecurityDetail select newid()," + payMonth.ToString() + ",iHRInfoGuid, iPayPlace, iPayBase, iIndividualAmount, iCompanyAmount, iAdditionalAmount, iAdditionalMonths,GETDATE(),'系统',GETDATE(),'系统',1,0 from SocialSecurity where iIsPaid='是' and iIsDeleted =0 and iStatus =1 and iPayPlace='"+ iPayPlace+"' ";
+            string sql = @"insert into SocialSecurityDetail select newid()," + payMonth.ToString() + ",iHRInfoGuid, iPayPlace, iPayBase, iIndividualAmount, iCompanyAmount, iAdditionalAmount, iAdditionalMonths,GETDATE(),'系统',GETDATE(),'系统',1,0 from SocialSecurity where (iIsPaid='是' or iAdditionalAmount is not null) and iIsDeleted =0 and iStatus =1 and iPayPlace='" + iPayPlace + "' ";
             string clearsql = "update SocialSecurity set iAdditionalAmount = null, iAdditionalMonths = null where iPayPlace='"+ iPayPlace+"' ";
             using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSDBConnectionString"].ConnectionString))
             {

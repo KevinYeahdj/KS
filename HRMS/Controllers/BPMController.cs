@@ -201,6 +201,9 @@ namespace HRMS.Controllers
 
                 Dictionary<string, string> bizParaDic = new Dictionary<string, string>();
                 bizParaDic.Add("currentUserId", SessionHelper.CurrentUser.UserId);
+                bizParaDic.Add("iAppNo", HttpContext.Request.Params["iAppNo"]);
+                bizParaDic.Add("iApproveDate", HttpContext.Request.Params["iApproveDate"]);
+                bizParaDic.Add("iApproveDate2", HttpContext.Request.Params["iApproveDate2"]);
 
                 int total = 0;
                 BPMManager service = new BPMManager();
