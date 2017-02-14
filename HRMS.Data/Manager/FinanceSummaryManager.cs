@@ -185,16 +185,23 @@ namespace HRMS.Data.Manager
             return Repository.Query<FinanceSummaryEntity>(sql, new { id = iguid }).FirstOrDefault();
         }
 
-        public int GenerateSocialSecurityDetailMonthly(int payMonth, string iPayPlace)
+        public int GenerateFinanceSummaryMonthly(int month)
         {
             int affectedRowCount = 0;
-            string sql = @"insert into SocialSecurityDetail select newid()," + payMonth.ToString() + ",iHRInfoGuid, iPayPlace, iPayBase, iIndividualAmount, iCompanyAmount, iAdditionalAmount, iAdditionalMonths,GETDATE(),'系统',GETDATE(),'系统',1,0 from SocialSecurity where iIsPaid='是' and iIsDeleted =0 and iStatus =1 and iPayPlace='"+ iPayPlace+"' ";
-            string clearsql = "update SocialSecurity set iAdditionalAmount = null, iAdditionalMonths = null where iPayPlace='"+ iPayPlace+"' ";
+            string sql = @"SELECT distinct [iCompanyId] ,[iProjectId] FROM [SysCompanyProjectRelation] where iIsDeleted=0 and iStatus=1";
+            DataSet ds = DbHelperSQL.Query(sql);
+            List<string> insertSqls = new List<string>();
+            string insertTmp = "insert into FinanceSummary (iGuid, iCompanyId, iProjectId, iDate, [iSocialSecurityCompanyPay],[iSocialSecurityPersonalPay][iProvidentFundPersonalPay],[iProvidentFundCompanyPay],[iSocialSecurityAdditional] ,[iReturnFee], [iOfficePay], ,[iCreatedOn],[iCreatedBy] ,[iUpdatedOn] ,[iUpdatedBy],[iStatus],[iIsDeleted]) values(newid(), )";
+            foreach (DataRow dr in ds.Tables[0].Rows)
+            {
+
+            }
+
+
             using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSDBConnectionString"].ConnectionString))
             {
-                Repository.Execute(conn, "delete from SocialSecurityDetail where iPayMonth =" + payMonth.ToString() +" and iPayPlace='"+ iPayPlace+"' ");
+                Repository.Execute(conn, "delete from FinanceSummary where iPayMonth =" + month.ToString());
                 affectedRowCount = Repository.Execute(conn, sql);
-                Repository.Execute(conn, clearsql);
             }
             return affectedRowCount;
         }

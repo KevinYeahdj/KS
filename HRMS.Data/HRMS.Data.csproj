@@ -60,6 +60,7 @@
     <Compile Include="Entity\DicEntity.cs" />
     <Compile Include="Entity\UserEntity.cs" />
     <Compile Include="IRepository.cs" />
+    <Compile Include="LogFileHelper.cs" />
     <Compile Include="ManagerBase.cs" />
     <Compile Include="Manager\ContractManager.cs" />
     <Compile Include="Manager\MaterialBorrowManager.cs" />

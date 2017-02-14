@@ -4,7 +4,7 @@
 }
 <style>
     .modal-body {
-        height: 280px;
+        height: 720px;
     }
 </style>
 <div>
@@ -29,10 +29,10 @@
                         </div>
                         <div class="modal-body">
                             <input style="visibility:hidden" type="hidden" id="iGuid" data-bind="value: iGuid">
-                            <div class="form-group"> 日期：<input type="text" class="form-control" id="iDate" data-bind="value: iDate" placeholder="请输入日期"></div>
+                            <div class="form-group"> 日期：<input type="text" class="form-control" id="iDate" data-bind="value: iDate" placeholder="请输入日期" readonly="readonly"></div>
                             <div class="form-group">
                                 所在公司：
-                                <select class="form-control" id="iCompany" data-bind="value: iCompanyId">
+                                <select class="form-control" id="iCompanyId" data-bind="value: iCompanyId">
                                     <option value="-">请选择</option>
                                     @{
                                         foreach (var item in ViewBag.Companies)
@@ -44,12 +44,12 @@
                             </div>
                             <div class="form-group">
                                 项目名称：
-                                <select class="form-control" id="iItemName" data-bind="value: iProjectId">
+                                <select class="form-control" id="iProjectId" data-bind="value: iProjectId">
                                     <option value="-">请选择</option>
                                     @{
                                         foreach (var item in ViewBag.Projects)
                                         {
-                                    <option value="@item.iGuid">@item.iName</option>
+                                            <option value="@item.iGuid">@item.iName</option>
                                         }
                                     }
                                 </select>
@@ -306,15 +306,7 @@
         $("#sDate").val('@DateTime.Now.AddMonths(-1).ToString("yyyyMM")');
         $("#sDate2").val('@DateTime.Now.AddMonths(-1).ToString("yyyyMM")');
         //弹窗日期绑定
-        $('#iDate').datetimepicker({
-            format: 'yyyymm',
-            weekStart: 1,
-            autoclose: true,
-            startView: 3,
-            minView: 3,
-            forceParse: false,
-            language: 'zh-CN'
-        })
+
         //必填校验
         $("#iCompanyId").change(function () {
             var value = $("#iCompanyId").val();
@@ -381,7 +373,14 @@
                  , { field: "iDate", title: "日期", sortable: true }
                  , { field: "iReceivable", title: "收款情况", sortable: true }
                  , { field: "iInvoice", title: "开票金额", sortable: true }
-                 , { field: "iDiffer", title: "差异", sortable: false }
+                 , {
+                     field: "iDiffer", title: "差异", sortable: false, formatter: function (value, row, index) {
+                         if (row.iInvoice == null || row.iSalaryIn == null || row.iManageFee == null || row.iSocialSecurityIn == "" || row.iProvidentFundIn == null || row.iDisabilityBenefitsIn == "" || row.iDormitoryFeeIn == null || row.iOtherIn == "")
+                             return "";
+                         return Number(row.iInvoice) - Number(row.iSalaryIn) - Number(row.iManageFee) - Number(row.iSocialSecurityIn) - Number(row.iProvidentFundIn) - Number(row.iDisabilityBenefitsIn) - Number(row.iDormitoryFeeIn) - Number(row.iOtherIn);
+
+                     }
+                 }
                  , { field: "iSalaryIn", title: "工资(收)", sortable: true }
                  , { field: "iManageFee", title: "管理费", sortable: true }
                  , { field: "iSocialSecurityIn", title: "社保(收)", sortable: true }
@@ -416,7 +415,21 @@
                  , { field: "iInjuryPay", title: "工伤费用", sortable: true }
                  , { field: "iOtherPay", title: "其它付", sortable: true }
                  , { field: "iPayNote", title: "支出备注", sortable: true }
-                 , { field: "iProfit", title: "利润", sortable: false }
+                 , {
+                     field: "iProfit", title: "利润", sortable: false, formatter: function (value, row, index) {
+                         if (row.iInvoice == null || row.iSalaryOut == null || row.iSocialSecurityCompanyPay == null || row.iSocialSecurityPersonalPay == "" || row.iProvidentFundPersonalPay == null || row.iProvidentFundCompanyPay == ""
+                    || row.iSocialSecurityAdditional == null || row.iReturnFee == "" || row.iDisabilityBenefitsPay == null || row.iBusFee == "" || row.iMealFee == null || row.iDormitoryFeePay == ""
+                    || row.iCommercialInsuranceFeePay == null || row.iBonusPay == "" || row.iCompensationPay == null || row.iTaxFee == "" || row.iAgentFee == null || row.iLaborInsuranceFee == ""
+                    || row.iRentFee == null || row.iUtilitiesFee == "" || row.iOfficePay == null || row.iCompanySalaryPay == "" || row.iCompanySocialSecurityPay == null || row.iCompanyProvidentFundPay == ""
+                    || row.iInjuryPay == null || row.iOtherPay == "")
+                             return "";
+                         return Number(row.iInvoice) - Number(row.iSalaryOut) - Number(row.iSocialSecurityCompanyPay) - Number(row.iSocialSecurityPersonalPay) - Number(row.iProvidentFundPersonalPay) - Number(row.iProvidentFundCompanyPay)
+                             - Number(row.iSocialSecurityAdditional) - Number(row.iReturnFee) - Number(row.iDisabilityBenefitsPay) - Number(row.iBusFee) - Number(row.iMealFee) - Number(row.iDormitoryFeePay)
+                         - Number(row.iCommercialInsuranceFeePay) - Number(row.iBonusPay) - Number(row.iCompensationPay) - Number(row.iTaxFee) - Number(row.iAgentFee) - Number(row.iLaborInsuranceFee)
+                             - Number(row.iRentFee) - Number(row.iUtilitiesFee) - Number(row.iOfficePay) - Number(row.iCompanySalaryPay) - Number(row.iCompanySocialSecurityPay) - Number(row.iCompanyProvidentFundPay)
+                             - Number(row.iInjuryPay) - Number(row.iOtherPay);
+                     }
+                 }
             ],
             onClickRow: function (row, $element) {
                 //$element是当前tr的jquery对象
