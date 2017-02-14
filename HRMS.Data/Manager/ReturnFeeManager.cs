@@ -600,7 +600,7 @@ namespace HRMS.Data.Manager
                 sqls.Add(sql);
                 string sql2 = "select [iReturnFeeLevel], [iReturnFeeGuid] from [ReturnFeeHistory] where [iReturnFeeAppNo]='" + conditions["sys_appno"] + "'";
                 DataTable dt = DbHelperSQL.Query(sql2).Tables[0];
-                string updsql = "update ReturnFeeHistory set {0} = '已付', {1} = getdate() where iguid='{2}'";
+                string updsql = "update ReturnFee set {0} = '已付', {1} = getdate() where iguid='{2}'";
                 foreach (DataRow dr in dt.Rows)
                 {
                     if (dr[0].ToString() == "一级")
@@ -624,7 +624,8 @@ namespace HRMS.Data.Manager
                         sqls.Add(string.Format(updsql, "[iFifthReturnFeePayment]", "[iFifthReturnFeeActualPayDate]", dr[1].ToString()));
                     }
                 }
-                DbHelperSQL.ExecuteSqlTran(sqls);
+                if (DbHelperSQL.ExecuteSqlTran(sqls) == 0)
+                    LogFileHelper.ErrorLog("返费流程结束更新出错！更新了0条。");
             }
             catch (Exception ex)
             {
