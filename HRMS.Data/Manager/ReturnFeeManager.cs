@@ -72,6 +72,34 @@ namespace HRMS.Data.Manager
                 return dic;
             }
         }
+        public static Dictionary<string, string> ReturnFeeHistoryDic
+        {
+            get
+            {
+                Dictionary<string, string> dic = new Dictionary<string, string>();
+
+                dic.Add("项目名称", "iItemName");
+                dic.Add("所在公司", "iCompany");
+                dic.Add("工号", "iEmpNo");
+                dic.Add("姓名", "iName");
+                dic.Add("身份证号", "iIdCard");
+                dic.Add("员工状态", "iEmployeeStatus");
+                dic.Add("入职时间", "iEmployeeDate");
+                dic.Add("离职日期", "iResignDate");
+                dic.Add("劳务名称", "iLaborName");
+                dic.Add("劳务所银行支行", "iLaborCampBank");
+                dic.Add("劳务所账号", "iLaborCampBankAccount");
+                dic.Add("劳务所人姓名", "iLaborCampBankPerson");
+                dic.Add("返费级别", "iReturnFeeLevel");
+                dic.Add("返费金额", "iReturnFeeAmount");
+                dic.Add("返费天数", "iReturnFeeDays");
+                dic.Add("返费日期", "iReturnFeeDate");
+                dic.Add("付款情况", "iReturnFeePayment");
+                dic.Add("实际支付日期", "iReturnFeeActualPayDate");
+                dic.Add("返费单号", "iReturnFeeAppNo");
+                return dic;
+            }
+        }
 
         /// <summary>
         /// 插入一条记录
@@ -243,6 +271,57 @@ namespace HRMS.Data.Manager
             total = int.Parse(Repository.Query<string>(totalSql).ToList()[0]);
             return Repository.Query<ReturnFeeModel>(querySql).ToList();
 
+        }
+
+        public List<ReturnFeeHistoryModel> ReturnFeeHistoryGetSearch(string userType, Dictionary<string, string> para, string sort, string order, int offset, int pageSize, out int total)
+        {
+            if (userType != "普通用户")
+            {
+                para["iCompany"] = para["iCompany"] == "-" ? "" : para["iCompany"];
+                para["iItemName"] = para["iItemName"] == "-" ? "" : para["iItemName"];
+            }
+            StringBuilder commandsb = new StringBuilder("from ReturnFeeHistory fee inner join hrinfo hr on fee.iHRInfoGuid = hr.iguid where fee.iIsDeleted =0 and fee.iStatus =1  ");
+
+            string searchKey = para["search"];
+            para.Remove("search");
+
+            foreach (KeyValuePair<string, string> item in para)
+            {
+                if (!string.IsNullOrEmpty(item.Value) && item.Value != "§")
+                {
+                    if (item.Key.EndsWith("[d]"))
+                    {
+                        commandsb.Append(" and " + item.Key.Replace("[d]", "") + " between '" + (string.IsNullOrEmpty(item.Value.Split('§')[0]) ? "1900-01-01" : item.Value.Split('§')[0]) + "' and '" + (string.IsNullOrEmpty(item.Value.Split('§')[1]) ? DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") : item.Value.Split('§')[1]) + "' ");
+                    }
+                    else
+                    {
+                        commandsb.Append(" and " + item.Key + " like '%" + item.Value + "%'");
+                    }
+
+                }
+            }
+            if (!string.IsNullOrEmpty(searchKey))
+            {
+                commandsb.Append(" and (");
+                foreach (var item in Common.ConvertHelper.DicConvert(ReturnFeeHistoryDic))
+                {
+                    commandsb.Append(item.Key + " like '%" + searchKey + "%' or ");
+                }
+                commandsb.Remove(commandsb.Length - 3, 3);
+                commandsb.Append(")");
+            }
+
+            string commonSql = commandsb.ToString();
+            string querySql = "select fee.*, hr.iItemName, hr.iCompany, hr.iEmpNo, hr.iName, hr.iIdCard,hr.iEmployeeDate, hr.iResignDate, hr.iEmployeeStatus  " + commonSql + "order by {0} {1} offset {2} row fetch next {3} rows only";
+            querySql = string.Format(querySql, sort, order, offset, pageSize);
+            string totalSql = "select cast(count(1) as varchar(8)) " + commonSql;
+            total = int.Parse(Repository.Query<string>(totalSql).ToList()[0]);
+            string sumSql = "select CONVERT(varchar(100),sum(cast(fee.iReturnFeeAmount as decimal(6,2)))) " + commonSql;
+            decimal sum = 0;
+            decimal.TryParse(Repository.Query<string>(sumSql).ToList()[0], out sum);
+            List<ReturnFeeHistoryModel> result = Repository.Query<ReturnFeeHistoryModel>(querySql).ToList();
+            result.Add(new ReturnFeeHistoryModel { iReturnFeeAmount = sum.ToString() });  //多加一列传递总值，记得删除
+            return result;
         }
 
         public List<ReturnFeeModel> GetSearchAll(string userType, Dictionary<string, string> para)

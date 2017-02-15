@@ -181,5 +181,32 @@ namespace HRMS.Data.Entity
         public DateTime? iEmployeeDate { get; set; }
         public DateTime? iResignDate { get; set; }
     }
+
+    public class ReturnFeeHistoryModel
+    {
+        public string iItemName { get; set; } //项目名称
+        public string iCompany { get; set; } //所在公司 
+        public string iEmpNo { get; set; } //工号 
+        public string iName { get; set; } //姓名 
+        public string iIdCard { get; set; } //身份证号        
+        public DateTime? iEmployeeDate { get; set; } //入职时间 
+        public DateTime? iResignDate { get; set; } //离职日期 
+        public string iEmployeeStatus { get; set; }
+        public string iLaborName { get; set; } //劳务名称 
+        public string iLaborCampBank { get; set; } //劳务所银行支行
+        public string iLaborCampBankAccount { get; set; } //劳务所账号
+        public string iLaborCampBankPerson { get; set; } //劳务所人姓名
+
+        public string iReturnFeeLevel { get; set; } //返费级别
+        
+
+        public string iReturnFeeAmount { get; set; } //返费金额 
+        public string iReturnFeeDays { get; set; } //返费天数
+        public DateTime? iReturnFeeDate { get; set; } //返费日期
+        public string iReturnFeePayment { get; set; } //付款情况 
+        public DateTime? iReturnFeeActualPayDate { get; set; } //实际支付日期
+        public string iReturnFeeAppNo { get; set; } // 流程单号
+
+    }
 }
 
