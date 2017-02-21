@@ -191,7 +191,7 @@ namespace HRMS.Data.Manager
             string sql = @"SELECT distinct [iCompanyId] ,[iProjectId] FROM [SysCompanyProjectRelation] where iIsDeleted=0 and iStatus=1";
             DataSet ds = DbHelperSQL.Query(sql);
             List<string> insertSqls = new List<string>();
-            string insertTmp = "insert into FinanceSummary (iGuid, iCompanyId, iProjectId, iDate, [iSocialSecurityCompanyPay],[iSocialSecurityPersonalPay][iProvidentFundPersonalPay],[iProvidentFundCompanyPay],[iSocialSecurityAdditional] ,[iReturnFee], [iOfficePay], ,[iCreatedOn],[iCreatedBy] ,[iUpdatedOn] ,[iUpdatedBy],[iStatus],[iIsDeleted]) values(newid(),'{0}','{1}',{2},{3},{4},{5},{6},{7},{8},{9},getdate(),'system',getdate(),'system',1,0 )";
+            string insertTmp = "insert into FinanceSummary (iGuid, iCompanyId, iProjectId, iDate, [iSocialSecurityCompanyPay],[iSocialSecurityPersonalPay],[iProvidentFundPersonalPay],[iProvidentFundCompanyPay],[iSocialSecurityAdditional] ,[iReturnFee], [iOfficePay], [iCreatedOn],[iCreatedBy] ,[iUpdatedOn] ,[iUpdatedBy],[iStatus],[iIsDeleted]) values(newid(),'{0}','{1}',{2},{3},{4},{5},{6},{7},{8},{9},getdate(),'system',getdate(),'system',1,0 )";
 
 
             string ssSql = "SELECT b.iCompany, b.iItemName, sum([iIndividualAmount]),sum([iCompanyAmount]) ,sum([iAdditionalAmount]) FROM [SocialSecurityDetail] a inner join hrinfo b on a.iHRInfoGuid = b.iGuid where a.iPayMonth=" + month + " group by b.iCompany, b.iItemName";
@@ -234,7 +234,7 @@ namespace HRMS.Data.Manager
                 string officePay = jrDic.ContainsKey(company + "|" + project) ? jrDic[company + "|" + project] : "0";
                 insertSqls.Add(string.Format(insertTmp, company, project, month, ssCompanyPay, ssPersonalPay, pfPersonalPay, pfCompanyPay, ssAdditional, returnFee, officePay));
             }
-            DbHelperSQL.ExecuteSql("delete from FinanceSummary where iPayMonth =" + month.ToString());
+            DbHelperSQL.ExecuteSql("delete from FinanceSummary where iDate =" + month.ToString());
             affectedRowCount = DbHelperSQL.ExecuteSqlTran(insertSqls);
             return affectedRowCount;
         }
