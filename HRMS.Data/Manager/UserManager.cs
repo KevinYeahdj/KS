@@ -119,6 +119,10 @@ namespace HRMS.Data.Manager
                 session.BeginTrans();
                 Repository.Insert<UserEntity>(session.Connection, entity, session.Transaction);
                 session.Commit();
+                //往WFDB 人事里插入一条
+                string sql = string.Format("insert into [WFDB].[dbo].[HPM_LBR_EMPLOYEE] ([EMPLOYEE_ID] ,[EMPLOYEE_CODE],[USED_NAME],[NAME] ,[EMAIL],[PHONE],[MOBIL],[POSITION_EMP_TYPE],[UNIT_ID],[POSITION_ID],[COMPANY_UNIT_NAME],[BRANCH_UNIT_NAME],[POSITION_NAME],[IS_PRIMARY_POSITION]) values({0},'{0}','{1}','{1}','1','1','1','文员',4,10,'上海敏慧','1','文员',1)",  entity.iEmployeeCodeId, entity.iUserName);
+                DbHelperSQL.ExecuteSql(sql);
+
             }
             catch (System.Exception)
             {
@@ -140,6 +144,10 @@ namespace HRMS.Data.Manager
                 session.BeginTrans();
                 Repository.Update<UserEntity>(session.Connection, entity, session.Transaction);
                 session.Commit();
+
+                //往WFDB 人事里更新一条
+                string sql = string.Format("update [WFDB].[dbo].[HPM_LBR_EMPLOYEE] set [NAME] ='{1}' where EMPLOYEE_CODE = '{0}'", entity.iEmployeeCodeId, entity.iUserName);
+                DbHelperSQL.ExecuteSql(sql);
             }
             catch (System.Exception)
             {
