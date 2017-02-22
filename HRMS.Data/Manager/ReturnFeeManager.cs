@@ -104,6 +104,36 @@ namespace HRMS.Data.Manager
             }
         }
 
+        public static Dictionary<string, string> ReturnFeeHistoryDic4Export
+        {
+            get
+            {
+                Dictionary<string, string> dic = new Dictionary<string, string>();
+
+                dic.Add("所在公司", "iCompanyId");
+                dic.Add("项目名称", "iProjectId");
+                dic.Add("工号", "iEmpNo");
+                dic.Add("姓名", "iName");
+                dic.Add("身份证号", "iIdCard");
+                dic.Add("员工状态", "iEmployeeStatus");
+                dic.Add("面试日期", "iInterviewDate");
+                dic.Add("入职日期", "iEmployeeDate");
+                dic.Add("离职日期", "iResignDate");
+                dic.Add("劳务名称", "iLaborName");
+                dic.Add("劳务所银行支行", "iLaborCampBank");
+                dic.Add("劳务所账号", "iLaborCampBankAccount");
+                dic.Add("劳务所人姓名", "iLaborCampBankPerson");
+                dic.Add("劳务所电话", "iLaborCampTel");
+                dic.Add("劳务所地址", "iLaborCampAddress");
+                dic.Add("返费级别", "iReturnFeeLevel");
+                dic.Add("返费金额", "iReturnFeeAmount");
+                dic.Add("返费天数", "iReturnFeeDays");
+                dic.Add("返费日期", "iReturnFeeDate");
+                dic.Add("返费单号", "iReturnFeeAppNo");
+                return dic;
+            }
+        }
+
         /// <summary>
         /// 插入一条记录
         /// </summary>

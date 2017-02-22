@@ -804,6 +804,12 @@ namespace HRMS.Controllers
             ExExcel<ReturnFeeModel>(GetExportData(), path, ConvertHelper.DicConvert(ReturnFeeManager.ReturnFeeDic));
         }
 
+        public void ExportFlowReturnFeeHistory()
+        {
+            string path = "返费申请导出" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
+            ExExcel<ReturnFeeHistoryViewModel>(GetExportDataReturnFeeHistory(), path, ConvertHelper.DicConvert(ReturnFeeManager.ReturnFeeHistoryDic4Export));
+        }
+
         private List<ReturnFeeModel> GetExportData()
         {
             string paraString = Request.Params["searchpara"];
@@ -846,6 +852,26 @@ namespace HRMS.Controllers
 
         }
 
+        private List<ReturnFeeHistoryViewModel> GetExportDataReturnFeeHistory()
+        {
+            string paraString = Request.Params["searchpara"];
+            Dictionary<string, string> paraDic = JsonConvert.DeserializeObject<Dictionary<string, string>>(paraString);
+            string appno = paraDic["sAppNo"];
+            ReturnFeeManager service = new ReturnFeeManager();
+            List<ReturnFeeHistoryViewModel> list = service.GetFlowReturnFeeHistory(appno);
+            DicManager dm = new DicManager();
+            var companies = dm.GetAllCompanies();
+            var projects = dm.GetAllProjects();
+            Dictionary<string, string> comDic = companies.ToDictionary(i => i.iGuid, i => i.iName);
+            Dictionary<string, string> proDic = projects.ToDictionary(i => i.iGuid, i => i.iName);
+            foreach (var item in list)
+            {
+                item.iCompanyId = comDic[item.iCompanyId];
+                item.iProjectId = proDic[item.iProjectId];
+            }
+            return list;
+
+        }
         /// <summary> 
         /// 将一组对象导出成EXCEL 
         /// </summary> 
