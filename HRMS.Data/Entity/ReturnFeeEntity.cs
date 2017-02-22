@@ -17,6 +17,8 @@ namespace HRMS.Data.Entity
         public string iLaborCampBank { get; set; } //劳务所银行支行
         public string iLaborCampBankAccount { get; set; } //劳务所账号
         public string iLaborCampBankPerson { get; set; } //劳务所人姓名
+        public string iLaborCampTel { get; set; } //劳务所电话
+        public string iLaborCampAddress { get; set; } //劳务所地址
         public DateTime? iInterviewDate { get; set; } //面试日期
         public string iFirstReturnFeeAmount { get; set; } //一级返费金额 
         public string iFirstReturnFeeDays { get; set; } //一级返费天数
@@ -85,6 +87,8 @@ namespace HRMS.Data.Entity
         public string iLaborCampBank { get; set; } //劳务所银行支行
         public string iLaborCampBankAccount { get; set; } //劳务所账号
         public string iLaborCampBankPerson { get; set; } //劳务所人姓名
+        public string iLaborCampTel { get; set; } //劳务所电话
+        public string iLaborCampAddress { get; set; } //劳务所地址
         public DateTime? iInterviewDate { get; set; } //面试日期
 
         public DateTime? iEmployeeDate { get; set; } //入职时间 
@@ -150,6 +154,8 @@ namespace HRMS.Data.Entity
         public string iLaborCampBank { get; set; } //劳务所银行支行
         public string iLaborCampBankAccount { get; set; } //劳务所账号
         public string iLaborCampBankPerson { get; set; } //劳务所人姓名
+        public string iLaborCampTel { get; set; } //劳务所电话
+        public string iLaborCampAddress { get; set; } //劳务所地址
         public string iReturnFeeLevel { get; set; } //返费级别
         public string iReturnFeeAmount { get; set; } //返费金额 
         public string iReturnFeeDays { get; set; } //返费天数
@@ -196,6 +202,8 @@ namespace HRMS.Data.Entity
         public string iLaborCampBank { get; set; } //劳务所银行支行
         public string iLaborCampBankAccount { get; set; } //劳务所账号
         public string iLaborCampBankPerson { get; set; } //劳务所人姓名
+        public string iLaborCampTel { get; set; } //劳务所电话
+        public string iLaborCampAddress { get; set; } //劳务所地址
 
         public string iReturnFeeLevel { get; set; } //返费级别
         

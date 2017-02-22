@@ -190,23 +190,27 @@ namespace HRMS.Controllers
                     string iLaborName = list.First().iLaborName;
                     string iLaborCampBank = list.First().iLaborCampBank;
                     string iLaborCampBankPerson = list.First().iLaborCampBankPerson;
+                    string iLaborCampTel = list.First().iLaborCampTel;
+                    string iLaborCampAddress = list.First().iLaborCampAddress;
                     decimal sum = 0;
                     foreach (var item in list)
                     {
                         if (item.iLaborCampBankAccount != iLaborCampBankAccount || (string.IsNullOrEmpty(iLaborCampBankAccount) && item.iLaborName != iLaborName))
                         {
-                            summaryList.Add(new ReturnFeeHistoryViewModel { iLaborName = iLaborName, iLaborCampBankPerson = iLaborCampBankPerson, iLaborCampBank = iLaborCampBank, iLaborCampBankAccount = iLaborCampBankAccount, iReturnFeeAmount = sum.ToString() });
+                            summaryList.Add(new ReturnFeeHistoryViewModel { iLaborName = iLaborName, iLaborCampBankPerson = iLaborCampBankPerson, iLaborCampBank = iLaborCampBank, iLaborCampBankAccount = iLaborCampBankAccount, iLaborCampAddress=iLaborCampAddress, iLaborCampTel=iLaborCampTel, iReturnFeeAmount = sum.ToString() });
 
                             iLaborCampBankAccount = item.iLaborCampBankAccount;
                             iLaborName = item.iLaborName;
                             iLaborCampBank = item.iLaborCampBank;
                             iLaborCampBankPerson = item.iLaborCampBankPerson;
+                            iLaborCampTel = item.iLaborCampTel;
+                            iLaborCampAddress = item.iLaborCampAddress;
                             sum = 0;
                         }
                         sum += decimal.Parse(item.iReturnFeeAmount);
                         summaryList.Add(item);
                     }
-                    summaryList.Add(new ReturnFeeHistoryViewModel { iLaborName = iLaborName, iLaborCampBankPerson = iLaborCampBankPerson, iLaborCampBank = iLaborCampBank, iLaborCampBankAccount = iLaborCampBankAccount, iReturnFeeAmount = sum.ToString() });
+                    summaryList.Add(new ReturnFeeHistoryViewModel { iLaborName = iLaborName, iLaborCampBankPerson = iLaborCampBankPerson, iLaborCampBank = iLaborCampBank, iLaborCampBankAccount = iLaborCampBankAccount, iLaborCampAddress = iLaborCampAddress, iLaborCampTel = iLaborCampTel, iReturnFeeAmount = sum.ToString() });
 
                 }
 
@@ -344,24 +348,28 @@ namespace HRMS.Controllers
                     string iLaborName = list.First().iLaborName;
                     string iLaborCampBank = list.First().iLaborCampBank;
                     string iLaborCampBankPerson = list.First().iLaborCampBankPerson;
+                    string iLaborCampTel = list.First().iLaborCampTel;
+                    string iLaborCampAddress = list.First().iLaborCampAddress;
                     decimal sum = 0;
                     foreach (var item in list)
                     {
                         //if (item.iLaborCampBankAccount != iLaborCampBankAccount)
                         if (item.iLaborCampBankAccount != iLaborCampBankAccount || (string.IsNullOrEmpty(iLaborCampBankAccount) && item.iLaborName != iLaborName))
                         {
-                            summaryList.Add(new ReturnFeeHistoryViewModel { iLaborName = iLaborName, iLaborCampBankPerson = iLaborCampBankPerson, iLaborCampBank = iLaborCampBank, iLaborCampBankAccount = iLaborCampBankAccount, iReturnFeeAmount = sum.ToString() });
+                            summaryList.Add(new ReturnFeeHistoryViewModel { iLaborName = iLaborName, iLaborCampBankPerson = iLaborCampBankPerson, iLaborCampBank = iLaborCampBank, iLaborCampBankAccount = iLaborCampBankAccount, iLaborCampAddress = iLaborCampAddress, iLaborCampTel = iLaborCampTel, iReturnFeeAmount = sum.ToString() });
 
                             iLaborCampBankAccount = item.iLaborCampBankAccount;
                             iLaborName = item.iLaborName;
                             iLaborCampBank = item.iLaborCampBank;
                             iLaborCampBankPerson = item.iLaborCampBankPerson;
+                            iLaborCampTel = item.iLaborCampTel;
+                            iLaborCampAddress = item.iLaborCampAddress;
                             sum = 0;
                         }
                         sum += decimal.Parse(item.iReturnFeeAmount);
                         summaryList.Add(item);
                     }
-                    summaryList.Add(new ReturnFeeHistoryViewModel { iLaborName = iLaborName, iLaborCampBankPerson = iLaborCampBankPerson, iLaborCampBank = iLaborCampBank, iLaborCampBankAccount = iLaborCampBankAccount, iReturnFeeAmount = sum.ToString() });
+                    summaryList.Add(new ReturnFeeHistoryViewModel { iLaborName = iLaborName, iLaborCampBankPerson = iLaborCampBankPerson, iLaborCampBank = iLaborCampBank, iLaborCampBankAccount = iLaborCampBankAccount, iLaborCampAddress = iLaborCampAddress, iLaborCampTel = iLaborCampTel, iReturnFeeAmount = sum.ToString() });
 
                 }
 
@@ -434,23 +442,27 @@ namespace HRMS.Controllers
                     string iLaborName = list.First().iLaborName;
                     string iLaborCampBank = list.First().iLaborCampBank;
                     string iLaborCampBankPerson = list.First().iLaborCampBankPerson;
+                    string iLaborCampTel = list.First().iLaborCampTel;
+                    string iLaborCampAddress = list.First().iLaborCampAddress;
                     decimal sum = 0;
                     foreach (var item in list)
                     {
                         if (item.iLaborCampBankAccount != iLaborCampBankAccount)
                         {
-                            summaryList.Add(new ReturnFeeHistoryViewModel { iLaborName = iLaborName, iLaborCampBankPerson = iLaborCampBankPerson, iLaborCampBank = iLaborCampBank, iLaborCampBankAccount = iLaborCampBankAccount, iReturnFeeAmount = sum.ToString() });
+                            summaryList.Add(new ReturnFeeHistoryViewModel { iLaborName = iLaborName, iLaborCampBankPerson = iLaborCampBankPerson, iLaborCampBank = iLaborCampBank, iLaborCampBankAccount = iLaborCampBankAccount, iLaborCampAddress = iLaborCampAddress, iLaborCampTel = iLaborCampTel, iReturnFeeAmount = sum.ToString() });
 
                             iLaborCampBankAccount = item.iLaborCampBankAccount;
                             iLaborName = item.iLaborName;
                             iLaborCampBank = item.iLaborCampBank;
                             iLaborCampBankPerson = item.iLaborCampBankPerson;
+                            iLaborCampTel = item.iLaborCampTel;
+                            iLaborCampAddress = item.iLaborCampAddress;
                             sum = 0;
                         }
                         sum += decimal.Parse(item.iReturnFeeAmount);
                         summaryList.Add(item);
                     }
-                    summaryList.Add(new ReturnFeeHistoryViewModel { iLaborName = iLaborName, iLaborCampBankPerson = iLaborCampBankPerson, iLaborCampBank = iLaborCampBank, iLaborCampBankAccount = iLaborCampBankAccount, iReturnFeeAmount = sum.ToString() });
+                    summaryList.Add(new ReturnFeeHistoryViewModel { iLaborName = iLaborName, iLaborCampBankPerson = iLaborCampBankPerson, iLaborCampBank = iLaborCampBank, iLaborCampBankAccount = iLaborCampBankAccount, iLaborCampAddress = iLaborCampAddress, iLaborCampTel = iLaborCampTel, iReturnFeeAmount = sum.ToString() });
 
                 }
 

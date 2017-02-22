@@ -35,8 +35,9 @@ namespace HRMS.Data.Manager
                 dic.Add("劳务所银行支行", "iLaborCampBank");
                 dic.Add("劳务所账号", "iLaborCampBankAccount");
                 dic.Add("劳务所人姓名", "iLaborCampBankPerson");
+                dic.Add("劳务所电话", "iLaborCampTel");
+                dic.Add("劳务所地址", "iLaborCampAddress");
                 dic.Add("面试日期", "iInterviewDate");
-
 
                 dic.Add("一级返费金额", "iFirstReturnFeeAmount");
                 dic.Add("一级返费天数", "iFirstReturnFeeDays");
@@ -90,6 +91,8 @@ namespace HRMS.Data.Manager
                 dic.Add("劳务所银行支行", "iLaborCampBank");
                 dic.Add("劳务所账号", "iLaborCampBankAccount");
                 dic.Add("劳务所人姓名", "iLaborCampBankPerson");
+                dic.Add("劳务所电话", "iLaborCampTel");
+                dic.Add("劳务所地址", "iLaborCampAddress");
                 dic.Add("返费级别", "iReturnFeeLevel");
                 dic.Add("返费金额", "iReturnFeeAmount");
                 dic.Add("返费天数", "iReturnFeeDays");
@@ -489,6 +492,8 @@ namespace HRMS.Data.Manager
       ,[iLaborCampBank]
       ,[iLaborCampBankAccount]
       ,[iLaborCampBankPerson]
+      ,[iLaborCampTel]
+      ,[iLaborCampAddress]
       ,'一级' as [iReturnFeeLevel]
       ,[iFirstReturnFeeAmount] as iReturnFeeAmount
       ,[iFirstReturnFeeDays]as iReturnFeeDays
@@ -508,6 +513,8 @@ namespace HRMS.Data.Manager
       ,[iLaborCampBank]
       ,[iLaborCampBankAccount]
       ,[iLaborCampBankPerson]
+      ,[iLaborCampTel]
+      ,[iLaborCampAddress]
       ,'二级' as [iReturnFeeLevel]
       ,[iSecondReturnFeeAmount] as iReturnFeeAmount
       ,[iSecondReturnFeeDays]as iReturnFeeDays
@@ -527,6 +534,8 @@ namespace HRMS.Data.Manager
       ,[iLaborCampBank]
       ,[iLaborCampBankAccount]
       ,[iLaborCampBankPerson]
+      ,[iLaborCampTel]
+      ,[iLaborCampAddress]
       ,'三级' as [iReturnFeeLevel]
       ,[iThirdReturnFeeAmount] as iReturnFeeAmount
       ,[iThirdReturnFeeDays]as iReturnFeeDays
@@ -546,6 +555,8 @@ namespace HRMS.Data.Manager
       ,[iLaborCampBank]
       ,[iLaborCampBankAccount]
       ,[iLaborCampBankPerson]
+      ,[iLaborCampTel]
+      ,[iLaborCampAddress]
       ,'四级' as [iReturnFeeLevel]
       ,[iFourthReturnFeeAmount] as iReturnFeeAmount
       ,[iFourthReturnFeeDays]as iReturnFeeDays
@@ -565,6 +576,8 @@ namespace HRMS.Data.Manager
       ,[iLaborCampBank]
       ,[iLaborCampBankAccount]
       ,[iLaborCampBankPerson]
+      ,[iLaborCampTel]
+      ,[iLaborCampAddress]
       ,'五级' as [iReturnFeeLevel]
       ,[iFifthReturnFeeAmount] as iReturnFeeAmount
       ,[iFifthReturnFeeDays]as iReturnFeeDays

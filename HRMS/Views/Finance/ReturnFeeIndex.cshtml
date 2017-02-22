@@ -165,6 +165,8 @@
                             <div class="form-group"> 劳务所银行支行：<input type="text" class="form-control" id="iLaborCampBank" data-bind="value: iLaborCampBank" placeholder="请输入劳务所银行支行"></div>
                             <div class="form-group"> 劳务所账号：<input type="text" class="form-control" id="iLaborCampBankAccount" data-bind="value: iLaborCampBankAccount" placeholder="请输入劳务所账号"></div>
                             <div class="form-group"> 劳务所人姓名：<input type="text" class="form-control" id="iLaborCampBankPerson" data-bind="value: iLaborCampBankPerson" placeholder="请输入劳务所人姓名"></div>
+                            <div class="form-group"> 劳务所银行支行：<input type="text" class="form-control" id="iLaborCampTel" data-bind="value: iLaborCampTel" placeholder="请输入劳务所电话"></div>
+                            <div class="form-group"> 劳务所银行支行：<input type="text" class="form-control" id="iLaborCampAddress" data-bind="value: iLaborCampAddress" placeholder="请输入劳务所地址"></div>
                             <div class="form-group"> 面试日期：<input type="text" class="form-control" id="iInterviewDate" data-bind="value: iInterviewDate" placeholder="请输入面试日期"></div>
                             <div class="form-group"> 一级返费金额：<input type="text" class="form-control" id="iFirstReturnFeeAmount" data-bind="value: iFirstReturnFeeAmount" onkeyup="clearNoNum(this)" onblur="clearNoNum(this)" placeholder="请输入一级返费金额"></div>
                             <div class="form-group"> 一级返费天数：<input type="text" class="form-control" id="iFirstReturnFeeDays" data-bind="value: iFirstReturnFeeDays" onkeyup="clearNoNum1(this)" onblur="clearNoNum1(this)" placeholder="请输入一级返费天数"></div>
@@ -772,6 +774,8 @@
 , { field: "iLaborCampBank", title: "劳务所银行支行", sortable: true }
 , { field: "iLaborCampBankAccount", title: "劳务所账号", sortable: true }
 , { field: "iLaborCampBankPerson", title: "劳务所人姓名", sortable: true }
+, { field: "iLaborCampTel", title: "劳务所电话", sortable: true }
+, { field: "iLaborCampAddress", title: "劳务所地址", sortable: true }
 , {
     field: "iInterviewDate", title: "面试日期", sortable: true, formatter: function (value, row, index) {
         return ChangeDateFormat(value);
@@ -900,6 +904,8 @@
                         myViewModel.iLaborCampBank(result.data.iLaborCampBank);
                         myViewModel.iLaborCampBankAccount(result.data.iLaborCampBankAccount);
                         myViewModel.iLaborCampBankPerson(result.data.iLaborCampBankPerson);
+                        myViewModel.iLaborCampTel(result.data.iLaborCampTel);
+                        myViewModel.iLaborCampAddress(result.data.iLaborCampAddress);
                         myViewModel.iInterviewDate(ChangeDateFormat(result.data.iInterviewDate));
                         myViewModel.iEmployeeDate(ChangeDateFormat(result.data.iEmployeeDate));
                         myViewModel.iResignDate(ChangeDateFormat(result.data.iResignDate));
@@ -977,6 +983,8 @@
                             
                             $("#iLaborName").attr("readonly", "readonly");
                             $("#iLaborCampBank").attr("readonly", "readonly");
+                            $("#iLaborCampAddress").attr("readonly", "readonly");
+                            $("#iLaborCampTel").attr("readonly", "readonly");
                             $("#iLaborCampBankAccount").attr("readonly", "readonly");
                             $("#iLaborCampBankPerson").attr("readonly", "readonly");
                             $("#iInterviewDate").attr("readonly", "readonly").attr("disabled", true);
@@ -1000,6 +1008,8 @@
                         else {
                             $("#iLaborName").removeAttr("readonly");
                             $("#iLaborCampBank").removeAttr("readonly");
+                            $("#iLaborCampTel").removeAttr("readonly");
+                            $("#iLaborCampAddress").removeAttr("readonly");
                             $("#iLaborCampBankAccount").removeAttr("readonly");
                             $("#iLaborCampBankPerson").removeAttr("readonly");
                             $("#iInterviewDate").removeAttr("readonly").removeAttr("disabled");
@@ -1272,6 +1282,8 @@
         self.iAdvice = ko.observable("");
         self.iLaborName = ko.observable("");
         self.iLaborCampBank = ko.observable("");
+        self.iLaborCampAddress = ko.observable("");
+        self.iLaborCampTel = ko.observable("");
         self.iLaborCampBankAccount = ko.observable("");
         self.iLaborCampBankPerson = ko.observable("");
         self.iInterviewDate = ko.observable("");
