@@ -278,6 +278,9 @@
             para.UserID = "@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId";
             para.UserName = "";
             para.TaskID = Request["taskid"];  //important
+            if (Request["sp"] == 5) {
+                para.CurrentStepName = "出纳";
+            }
 
             $.ajax({
                 url: "/BPMAjax/StartApproval",

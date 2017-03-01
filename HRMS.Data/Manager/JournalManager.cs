@@ -295,5 +295,13 @@ namespace HRMS.Data.Manager
                 return en;
             }
         }
+
+        public bool UpdateNoteByFlow(string note, string appno)
+        {
+            string sql = "update Journal set iNote = iNote+'【" + note + "】' where iAppNo='" + appno + "' ";
+            if (DbHelperSQL.ExecuteSql(sql) > 0)
+                return true;
+            else return false;
+        }
     }
 }

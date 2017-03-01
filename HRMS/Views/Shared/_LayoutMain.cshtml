@@ -58,6 +58,7 @@
         .form-control {
             color: black;
         }
+
         .warning {
             border-color: red;
         }
@@ -66,6 +67,7 @@
             word-break: keep-all;
             white-space: nowrap;
         }
+
         .form-group {
             width: 24%;
             margin-left: 1%;
@@ -78,7 +80,7 @@
 
         $(function () {
             var companySelected = $("#companySelect").val();
-            if (companySelect != "-") {
+            if (companySelected != "-") {
                 ChangeCompany(companySelected);
             }
             //当前页面菜单选中
@@ -102,6 +104,20 @@
         function ChangeCompany(newCompany) {
             if (newCompany == "-" && window.userType == "普通用户" && '@HRMS.WEB.Utils.SessionHelper.CurrentUser.CurrentCompany' != "-")
                 location.reload(); //普通用户切换看所有公司(已选择过公司了)，查看有没有权限
+            if (window.userType != "普通用户") {
+                $.ajax({
+                    url: "/ManageAjax/ChangeProject?newCompany=" + newCompany + "&newProject=@HRMS.WEB.Utils.SessionHelper.CurrentUser.CurrentProject",
+                    type: "GET",
+                    dataType: 'text',
+                    success: function (data) {
+                        if (data == "success") {
+                        }
+                        else {
+                            console.log(data);
+                        }
+                    }
+                });
+            }
 
             $.ajax({
                 url: "/ManageAjax/GetAuthorisedProjectDic?companyCode=" + newCompany,
@@ -128,7 +144,7 @@
         }
         function ChangeProject(newProject) {
             var newCompany = $("#companySelect").val();
-            if (newCompany == "-" || newProject == "-")
+            if (window.userType == "普通用户" && (newCompany == "-" || newProject == "-"))
                 return;
             $.ajax({
                 url: "/ManageAjax/ChangeProject?newCompany=" + newCompany + "&newProject=" + newProject,
@@ -136,7 +152,8 @@
                 dataType: 'text',
                 success: function (data) {
                     if (data == "success") {
-                        location.reload();
+                        if (window.userType == "普通用户")
+                            location.reload();
                     }
                     else {
                         console.log(data);
@@ -285,10 +302,10 @@
         </section>
     </section>
     @*<footer class="site-footer" style="position:absolute;bottom:0;background:#2a3542;height:30px">
-        <div class="text-center">
-            Copyright <span style="font-family: Arial, Helvetica, sans-serif;">©</span> 2016 上海敏慧劳务派遣有限公司 HRMS
-        </div>
-    </footer>*@
+            <div class="text-center">
+                Copyright <span style="font-family: Arial, Helvetica, sans-serif;">©</span> 2016 上海敏慧劳务派遣有限公司 HRMS
+            </div>
+        </footer>*@
 
     <!--common script for all pages-->
     <script src="~/FlatLab/js/common-scripts.js?v=267"></script>

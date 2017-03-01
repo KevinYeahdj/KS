@@ -364,8 +364,14 @@
             if ($("#iCompanyId").val() == "-") {
                 $('#iCompanyId').addClass("warning");
             }
+            else {
+                $('#iCompanyId').removeClass("warning");
+            }
             if ($("#iProjectId").val() == "-") {
                 $('#iProjectId').addClass("warning");
+            }
+            else {
+                $('#iProjectId').removeClass("warning");
             }
             $('#iYearMonth').addClass("warning");
         });

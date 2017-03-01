@@ -59,6 +59,10 @@ namespace ClinBrain.Data.Service
         public List<ApplicationViewModel> GetMyApplicationList(Dictionary<string, string> para, string sort, string order, int offset, int pageSize, out int total)
         {
             string commonSql = string.Format("FROM vwWfActivityInstanceTasks WHERE applicantID='{0}' group by AppInstanceID ", para["currentUserId"]);
+            if (para["currentUserId"] == "sa")
+            {
+                commonSql = "FROM vwWfActivityInstanceTasks group by AppInstanceID ";
+            }
             string querySql = "select min(CreatedDateTime) CreatedDateTime , min(AppName) AppName, min(AppInstanceID) AppInstanceID, max(ProcessState) ProcessState, max(Summary) summary, max(viewPageUrl) viewPageUrl ";
 
             string totalSql = "select cast(count(1) as varchar(8)) from (" + querySql + commonSql + ")t";

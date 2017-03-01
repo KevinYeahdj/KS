@@ -436,7 +436,7 @@
                 //$element.css("background-color", "green");
             },//单击row事件
             onDblClickRow: function (row, $element) {
-                if (window.userType != "超级管理员") {
+                if (window.menuRights == "r") {
                     return;
                 }
                 $('#addModal').modal('toggle');

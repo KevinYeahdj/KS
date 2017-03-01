@@ -115,7 +115,7 @@
                      field: "operation", title: "操作", sortable: false,
                      formatter: function (value, row, index) {
                          if (!row.viewPageUrl) return "";
-                         return '<a target="_blank" href="' + row.viewPageUrl + ((row.viewPageUrl.indexOf("?") > -1) ? '&' : '?') + 'appno=' + row.AppInstanceID + '">点击查看</a>';
+                         return '<a href="' + row.viewPageUrl + ((row.viewPageUrl.indexOf("?") > -1) ? '&' : '?') + 'appno=' + row.AppInstanceID + '">点击查看</a>';
                      }
                  }
             ],

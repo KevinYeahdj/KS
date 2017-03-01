@@ -406,7 +406,13 @@ namespace HRMS.Controllers
                     return new JsonResult { Data = new { success = false, msg = "审批出错!" } };
                 }
                 SaveApproveInfo(runner);
-                return new JsonResult { Data = new { success = true, msg = "审批成功!" } };
+                //保存业务数据
+                if (SaveBusinessDataForBPMApprove(runner))
+                {
+                    return new JsonResult { Data = new { success = true, msg = "审批成功!" } };
+                }
+                else return new JsonResult { Data = new { success = false, msg = "审批成功，但数据出错!" } };
+
             }
             catch (Exception e)
             {
@@ -503,6 +509,28 @@ namespace HRMS.Controllers
                     entities.RemoveAll(i => string.IsNullOrEmpty(i.iReturnFeeGuid));
                     service.BatchInsertReturnFeeHistoryApplication(entities);
                     result = true;
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                log4net.ILog log = log4net.LogManager.GetLogger(this.GetType());
+                log.Error("保存流程业务数据出错！", ex);
+                return false;
+
+            }
+        }
+
+
+        private bool SaveBusinessDataForBPMApprove(WfAppRunner runner)
+        {
+            try
+            {
+                bool result = true;
+                if (runner.ProcessGUID == "09e8624f-ff2d-cc98-0eaa-6a11f3f7d9bc" && runner.CurrentStepName == "出纳") //流水账 将财务意见备注到Note里
+                {
+                    JournalManager service = new JournalManager();
+                    result = service.UpdateNoteByFlow(runner.Conditions["sys_feedback"], runner.AppInstanceID);
                 }
                 return result;
             }

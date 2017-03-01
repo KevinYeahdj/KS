@@ -118,7 +118,7 @@
                      field: "operation", title: "操作", sortable: false,
                      formatter: function (value, row, index) {
                          if (!row.pageUrl) return "";
-                         return '<a target="_blank" href="' + row.pageUrl + ((row.pageUrl.indexOf("?") > -1) ? '&' : '?') + 'pguid=' + row.ProcessGUID + '&piid=' + row.ProcessInstanceID + '&appno=' + row.AppInstanceID + '&taskid=' + row.TaskID + '">点击处理</a>';
+                         return '<a href="' + row.pageUrl + ((row.pageUrl.indexOf("?") > -1) ? '&' : '?') + 'pguid=' + row.ProcessGUID + '&piid=' + row.ProcessInstanceID + '&appno=' + row.AppInstanceID + '&taskid=' + row.TaskID + '">点击处理</a>';
                      }
                  }
             ],

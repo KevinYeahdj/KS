@@ -316,7 +316,7 @@ namespace HRMS.Controllers
 
                 foreach (string para in HttpContext.Request.Params.Keys)
                 {
-                    if (para.StartsWith("s") && (SocialSecurityManager.SocialSecurityViewDic.ContainsValue("i" + para.Substring(1, para.Length - 1)) || (para.Length > 2 && SocialSecurityManager.SocialSecurityViewDic.ContainsValue("i" + para.Substring(1, para.Length - 2)))))
+                    if (para.StartsWith("s") && (ProvidentFundManager.ProvidentFundDetailViewDic.ContainsValue("i" + para.Substring(1, para.Length - 1)) || (para.Length > 2 && ProvidentFundManager.ProvidentFundDetailViewDic.ContainsValue("i" + para.Substring(1, para.Length - 2)))))
                     {
                         bizParaDicTemp.Add("i" + para.Substring(1, para.Length - 1), HttpContext.Request.Params[para]);
                     }
