@@ -28,9 +28,9 @@ namespace HRMS.Controllers
         public ActionResult MaterialBorrow()
         {
             DicManager dm = new DicManager();
-            var companies = dm.GetAllCompanies();
+            var companies = dm.GetAllValidCompanies();
             ViewBag.Companies = companies;
-            var projects = dm.GetAllProjects();
+            var projects = dm.GetAllValidProjects();
             ViewBag.Projects = projects;
             return View();
         }

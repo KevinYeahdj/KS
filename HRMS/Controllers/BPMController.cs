@@ -50,9 +50,9 @@ namespace HRMS.Controllers
         public ActionResult JournalApplication()
         {
             DicManager dm = new DicManager();
-            var companies = dm.GetAllCompanies();
+            var companies = dm.GetAllValidCompanies();
             ViewBag.Companies = companies;
-            var projects = dm.GetAllProjects();
+            var projects = dm.GetAllValidProjects();
             ViewBag.Projects = projects;
 
             var confirmUsers = dm.GetUsersByFlowAndRole(SessionHelper.CurrentUser.CurrentCompany, "流水账申请", "确认").Replace(",", ";").Replace("，", ";");
@@ -71,18 +71,18 @@ namespace HRMS.Controllers
         public ActionResult JournalReApplication()
         {
             DicManager dm = new DicManager();
-            var companies = dm.GetAllCompanies();
+            var companies = dm.GetAllValidCompanies();
             ViewBag.Companies = companies;
-            var projects = dm.GetAllProjects();
+            var projects = dm.GetAllValidProjects();
             ViewBag.Projects = projects;
             return View();
         }
         public ActionResult JournalApprove()
         {
             DicManager dm = new DicManager();
-            var companies = dm.GetAllCompanies();
+            var companies = dm.GetAllValidCompanies();
             ViewBag.Companies = companies;
-            var projects = dm.GetAllProjects();
+            var projects = dm.GetAllValidProjects();
             ViewBag.Projects = projects;
             return View();
         }
@@ -90,9 +90,9 @@ namespace HRMS.Controllers
         public ActionResult JournalView()
         {
             DicManager dm = new DicManager();
-            var companies = dm.GetAllCompanies();
+            var companies = dm.GetAllValidCompanies();
             ViewBag.Companies = companies;
-            var projects = dm.GetAllProjects();
+            var projects = dm.GetAllValidProjects();
             ViewBag.Projects = projects;
             return View();
         }
@@ -116,18 +116,18 @@ namespace HRMS.Controllers
         public ActionResult ReturnFeeReApplication()
         {
             DicManager dm = new DicManager();
-            var companies = dm.GetAllCompanies();
+            var companies = dm.GetAllValidCompanies();
             ViewBag.Companies = companies;
-            var projects = dm.GetAllProjects();
+            var projects = dm.GetAllValidProjects();
             ViewBag.Projects = projects;
             return View();
         }
         public ActionResult ReturnFeeApprove()
         {
             DicManager dm = new DicManager();
-            var companies = dm.GetAllCompanies();
+            var companies = dm.GetAllValidCompanies();
             ViewBag.Companies = companies;
-            var projects = dm.GetAllProjects();
+            var projects = dm.GetAllValidProjects();
             ViewBag.Projects = projects;
             return View();
         }
@@ -135,9 +135,9 @@ namespace HRMS.Controllers
         public ActionResult ReturnFeeView()
         {
             DicManager dm = new DicManager();
-            var companies = dm.GetAllCompanies();
+            var companies = dm.GetAllValidCompanies();
             ViewBag.Companies = companies;
-            var projects = dm.GetAllProjects();
+            var projects = dm.GetAllValidProjects();
             ViewBag.Projects = projects;
             return View();
         }

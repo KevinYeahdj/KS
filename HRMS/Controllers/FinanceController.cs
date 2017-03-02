@@ -28,45 +28,45 @@ namespace HRMS.Controllers
         public ActionResult SalaryIndex()
         {
             DicManager dm = new DicManager();
-            var companies = dm.GetAllCompanies();
+            var companies = dm.GetAllValidCompanies();
             ViewBag.Companies = companies;
-            var projects = dm.GetAllProjects();
+            var projects = dm.GetAllValidProjects();
             ViewBag.Projects = projects;
             return View();
         }
         public ActionResult JournalIndex()
         {
             DicManager dm = new DicManager();
-            var companies = dm.GetAllCompanies();
+            var companies = dm.GetAllValidCompanies();
             ViewBag.Companies = companies;
-            var projects = dm.GetAllProjects();
+            var projects = dm.GetAllValidProjects();
             ViewBag.Projects = projects;
             return View();
         }
         public ActionResult ReturnFeeIndex()
         {
             DicManager dm = new DicManager();
-            var companies = dm.GetAllCompanies();
+            var companies = dm.GetAllValidCompanies();
             ViewBag.Companies = companies;
-            var projects = dm.GetAllProjects();
+            var projects = dm.GetAllValidProjects();
             ViewBag.Projects = projects;
             return View();
         }
         public ActionResult FinanceSummary()
         {
             DicManager dm = new DicManager();
-            var companies = dm.GetAllCompanies();
+            var companies = dm.GetAllValidCompanies();
             ViewBag.Companies = companies;
-            var projects = dm.GetAllProjects();
+            var projects = dm.GetAllValidProjects();
             ViewBag.Projects = projects;
             return View();
         }
         public ActionResult ReturnFeeHistory()
         {
             DicManager dm = new DicManager();
-            var companies = dm.GetAllCompanies();
+            var companies = dm.GetAllValidCompanies();
             ViewBag.Companies = companies;
-            var projects = dm.GetAllProjects();
+            var projects = dm.GetAllValidProjects();
             ViewBag.Projects = projects;
             return View();
         }
@@ -576,8 +576,8 @@ namespace HRMS.Controllers
         {
             //需要验证权限，如果是普通用户，不能导入已存在的返回信息。
             DicManager dm = new DicManager();
-            var companies = dm.GetAllCompanies();
-            var projects = dm.GetAllProjects();
+            var companies = dm.GetAllValidCompanies();
+            var projects = dm.GetAllValidProjects();
             ReturnFeeManager service = new ReturnFeeManager();
 
             List<ReturnFeeEntity> list = new List<ReturnFeeEntity>();

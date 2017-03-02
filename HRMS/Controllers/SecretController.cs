@@ -21,9 +21,9 @@ namespace HRMS.WEB.Controllers
         public ActionResult Contract()
         {
             DicManager dm = new DicManager();
-            var companies = dm.GetAllCompanies();
+            var companies = dm.GetAllValidCompanies();
             ViewBag.Companies = companies;
-            var projects = dm.GetAllProjects();
+            var projects = dm.GetAllValidProjects();
             ViewBag.Projects = projects;
             return View();
         }

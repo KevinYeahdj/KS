@@ -28,27 +28,27 @@ namespace HRMS.Controllers
         public ActionResult BasicIndex()
         {
             DicManager dm = new DicManager();
-            var companies = dm.GetAllCompanies();
+            var companies = dm.GetAllValidCompanies();
             ViewBag.Companies = companies;
-            var projects = dm.GetAllProjects();
+            var projects = dm.GetAllValidProjects();
             ViewBag.Projects = projects;
             return View();
         }
         public ActionResult AccountIndex()
         {
             DicManager dm = new DicManager();
-            var companies = dm.GetAllCompanies();
+            var companies = dm.GetAllValidCompanies();
             ViewBag.Companies = companies;
-            var projects = dm.GetAllProjects();
+            var projects = dm.GetAllValidProjects();
             ViewBag.Projects = projects;
             return View();
         }
         public ActionResult PositionIndex()
         {
             DicManager dm = new DicManager();
-            var companies = dm.GetAllCompanies();
+            var companies = dm.GetAllValidCompanies();
             ViewBag.Companies = companies;
-            var projects = dm.GetAllProjects();
+            var projects = dm.GetAllValidProjects();
             ViewBag.Projects = projects;
             return View();
         }
@@ -262,8 +262,8 @@ namespace HRMS.Controllers
             checkdic.Add("离职原因（公司）$iResignReason", resignressonArray);
 
             DicManager dm = new DicManager();
-            var companies = dm.GetAllCompanies();
-            var projects = dm.GetAllProjects();
+            var companies = dm.GetAllValidCompanies();
+            var projects = dm.GetAllValidProjects();
             HRInfoManager service = new HRInfoManager();
 
             List<HRInfoEntity> list = new List<HRInfoEntity>();

@@ -27,36 +27,36 @@ namespace HRMS.Controllers
         public ActionResult SocialSecurityIndex()
         {
             DicManager dm = new DicManager();
-            var companies = dm.GetAllCompanies();
+            var companies = dm.GetAllValidCompanies();
             ViewBag.Companies = companies;
-            var projects = dm.GetAllProjects();
+            var projects = dm.GetAllValidProjects();
             ViewBag.Projects = projects;
             return View();
         }
         public ActionResult SocialSecurityDetail()
         {
             DicManager dm = new DicManager();
-            var companies = dm.GetAllCompanies();
+            var companies = dm.GetAllValidCompanies();
             ViewBag.Companies = companies;
-            var projects = dm.GetAllProjects();
+            var projects = dm.GetAllValidProjects();
             ViewBag.Projects = projects;
             return View();
         }
         public ActionResult ProvidentFundIndex()
         {
             DicManager dm = new DicManager();
-            var companies = dm.GetAllCompanies();
+            var companies = dm.GetAllValidCompanies();
             ViewBag.Companies = companies;
-            var projects = dm.GetAllProjects();
+            var projects = dm.GetAllValidProjects();
             ViewBag.Projects = projects;
             return View();
         }
         public ActionResult ProvidentFundDetail()
         {
             DicManager dm = new DicManager();
-            var companies = dm.GetAllCompanies();
+            var companies = dm.GetAllValidCompanies();
             ViewBag.Companies = companies;
-            var projects = dm.GetAllProjects();
+            var projects = dm.GetAllValidProjects();
             ViewBag.Projects = projects;
             return View();
         }
@@ -655,8 +655,8 @@ namespace HRMS.Controllers
         {
             //需要验证权限，如果是普通用户，不能导入已存在的返回信息。
             DicManager dm = new DicManager();
-            var companies = dm.GetAllCompanies();
-            var projects = dm.GetAllProjects();
+            var companies = dm.GetAllValidCompanies();
+            var projects = dm.GetAllValidProjects();
             SocialSecurityManager service = new SocialSecurityManager();
 
             List<SocialSecurityModel> list = new List<SocialSecurityModel>();
@@ -862,8 +862,8 @@ namespace HRMS.Controllers
         {
             //需要验证权限，如果是普通用户，不能导入已存在的返回信息。
             DicManager dm = new DicManager();
-            var companies = dm.GetAllCompanies();
-            var projects = dm.GetAllProjects();
+            var companies = dm.GetAllValidCompanies();
+            var projects = dm.GetAllValidProjects();
             ProvidentFundManager service = new ProvidentFundManager();
 
             List<ProvidentFundModel> list = new List<ProvidentFundModel>();

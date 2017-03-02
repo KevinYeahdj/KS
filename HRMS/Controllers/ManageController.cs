@@ -68,7 +68,7 @@ namespace HRMS.Controllers
         public ActionResult ProjectIndex()
         {
             DicManager service = new DicManager();
-            List<CompanyEntity> companies = service.GetAllCompanies();
+            List<CompanyEntity> companies = service.GetAllValidCompanies();
             ViewBag.Companies = companies;
             return View();
         }
@@ -76,7 +76,7 @@ namespace HRMS.Controllers
         public ActionResult CompanyFlowUsersSetting()
         {
             DicManager service = new DicManager();
-            List<CompanyEntity> companies = service.GetAllCompanies();
+            List<CompanyEntity> companies = service.GetAllValidCompanies();
             ViewBag.Companies = companies;
             return View();
         }

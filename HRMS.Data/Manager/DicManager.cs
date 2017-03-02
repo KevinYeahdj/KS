@@ -178,6 +178,10 @@ namespace HRMS.Data.Manager
 
         public List<CompanyEntity> GetAllCompanies()
         {
+            return Repository.GetAll<CompanyEntity>().Where(i => i.iStatus == 1).ToList();
+        }
+        public List<CompanyEntity> GetAllValidCompanies()
+        {
             return Repository.GetAll<CompanyEntity>().Where(i => i.iStatus == 1 && i.iIsDeleted == 0).ToList();
         }
 
@@ -241,6 +245,11 @@ namespace HRMS.Data.Manager
 
         public List<ProjectEntity> GetAllProjects()
         {
+            return Repository.GetAll<ProjectEntity>().Where(i => i.iStatus == 1).ToList();
+        }
+
+        public List<ProjectEntity> GetAllValidProjects()
+        {
             return Repository.GetAll<ProjectEntity>().Where(i => i.iStatus == 1 && i.iIsDeleted == 0).ToList();
         }
 
@@ -293,7 +302,7 @@ namespace HRMS.Data.Manager
             }
             else
             {
-                dic = GetAllCompanies().ToDictionary(i => i.iGuid, i => i.iName);
+                dic = GetAllValidCompanies().ToDictionary(i => i.iGuid, i => i.iName);
             }
             return dic;
         }
