@@ -540,7 +540,7 @@ namespace HRMS.Data.Manager
             {
                 //离职的  入职日期在这个日期之前 且 离职日期在这个日期之后 
                 //在职的  入职日期在这个日期之前
-                commandsb.Append(" and ((iEmployeeStatus='离职' and iEmployeeDate <= '" + iOnJobDay + "' and iResignDate>='" + iOnJobDay + "') or (iEmployeeStatus='在职' and iEmployeeDate <= '" + iOnJobDay + "'))");
+                commandsb.Append(" and ((iEmployeeStatus='离职' and iEmployeeDate <= '" + iOnJobDay + "' and iResignDate>'" + iOnJobDay + "') or (iEmployeeStatus='在职' and iEmployeeDate <= '" + iOnJobDay + "'))");
             }
 
             string commonSql = commandsb.ToString();

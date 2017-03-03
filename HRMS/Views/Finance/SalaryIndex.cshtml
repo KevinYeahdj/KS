@@ -273,10 +273,10 @@
                  , {
                      field: "iOperation", title: "操作", align: "center", formatter: function (value, row, index) {
                          if (window.userType == "普通用户") {
-                             return '<a href="/UploadSalary/' + row.iUrl + '">下载</a>';
+                             return '<a target="_blank" href="/Common/ExcelPreview?fileName='+row.iFileName +"&filePath=" + row.iUrl + '">预览</a>&nbsp;&nbsp;<a href="/UploadSalary/' + row.iUrl + '">下载</a>';
                          }
                          else {
-                             return '<a href="/UploadSalary/' + row.iUrl + '">下载</a>&nbsp;&nbsp;<a href="#" onclick="RemoveItem(\'' + row.iGuid + '\')">删除</a>';
+                             return '<a target="_blank" href="/Common/ExcelPreview?fileName=' + row.iFileName + "&filePath=" + row.iUrl + '">预览</a>&nbsp;&nbsp;<a href="/UploadSalary/' + row.iUrl + '">下载</a>&nbsp;&nbsp;<a href="#" onclick="RemoveItem(\'' + row.iGuid + '\')">删除</a>';
                          }
                      }
                  }

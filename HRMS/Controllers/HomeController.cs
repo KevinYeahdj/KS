@@ -16,6 +16,7 @@ using HRMS.WEB.Models;
 using HRMS.WEB.Utils;
 using Newtonsoft.Json;
 using NPOI.HSSF.UserModel;
+using NPOI.SS.Converter;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 
@@ -36,6 +37,8 @@ namespace HRMS.Controllers
             //ErrorLog(sb.ToString());
             return View();
         }
+
+
 
         //生成sql
         public string CreateSql(Dictionary<string, string> dic, string tableName)
@@ -84,7 +87,7 @@ namespace HRMS.Controllers
             {
                 sb.AppendFormat("myViewModel.{0}(result.data.{0}); \r\n", kvp.Value);
             }
-            return sb.ToString(); 
+            return sb.ToString();
         }
 
         //生成Mvvm modelbinding
