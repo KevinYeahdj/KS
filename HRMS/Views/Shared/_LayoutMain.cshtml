@@ -81,7 +81,7 @@
         $(function () {
             var companySelected = $("#companySelect").val();
             if (companySelected != "-") {
-                ChangeCompany(companySelected);
+                OnLoadSetCompany(companySelected);
             }
             //当前页面菜单选中
             var url = location.search;
@@ -101,24 +101,8 @@
             }
         });
 
-        function ChangeCompany(newCompany) {
-            if (newCompany == "-" && window.userType == "普通用户" && '@HRMS.WEB.Utils.SessionHelper.CurrentUser.CurrentCompany' != "-")
-                location.reload(); //普通用户切换看所有公司(已选择过公司了)，查看有没有权限
-            if (window.userType != "普通用户") {
-                $.ajax({
-                    url: "/ManageAjax/ChangeProject?newCompany=" + newCompany + "&newProject=@HRMS.WEB.Utils.SessionHelper.CurrentUser.CurrentProject",
-                    type: "GET",
-                    dataType: 'text',
-                    success: function (data) {
-                        if (data == "success") {
-                        }
-                        else {
-                            console.log(data);
-                        }
-                    }
-                });
-            }
-
+        //加载时根据公司加载项目列表及设置默认项目
+        function OnLoadSetCompany(newCompany) {
             $.ajax({
                 url: "/ManageAjax/GetAuthorisedProjectDic?companyCode=" + newCompany,
                 type: "GET",
@@ -135,6 +119,46 @@
                             $("select[name='projects']").append(option);
                         }
                         result.data;
+                    }
+                    else {
+                        console.log(result.msg);
+                    }
+                }
+            });
+        }
+
+        //手动切换公司
+        function ChangeCompany(newCompany) {
+            $.ajax({
+                url: "/ManageAjax/ChangeProject?newCompany=" + newCompany + "&newProject=@HRMS.WEB.Utils.SessionHelper.CurrentUser.CurrentProject",
+                type: "GET",
+                dataType: 'text',
+                success: function (data) {
+                    if (data == "success") {
+                    }
+                    else {
+                        console.log(data);
+                    }
+                }
+            });
+            $.ajax({
+                url: "/ManageAjax/GetAuthorisedProjectDic?companyCode=" + newCompany,
+                type: "GET",
+                dataType: 'json',
+                success: function (result) {
+                    if (result.success) {
+                        $("select[name='projects']").empty();
+                        var option = $("<option>").val("-").text("请选择项目");
+                        $("select[name='projects']").append(option);
+                        for (var key in result.data) {
+                            var option = $("<option>").val(key).text(result.data[key]);
+                            if (key == "@HRMS.WEB.Utils.SessionHelper.CurrentUser.CurrentProject")
+                                option = $("<option selected = 'selected'>").val(key).text(result.data[key]);
+                            $("select[name='projects']").append(option);
+                        }
+                        if (window.userType == "普通用户" && $("#projectSelect").val() != "-") { //普通用户在切换公司时，当前项目也生效了
+                            location.reload();
+                        }
                     }
                     else {
                         console.log(result.msg);
@@ -240,7 +264,7 @@
                         <span>流程中心</span>
                     </a>
                     <ul class="sub">
-                        <li><a href="~/BPM/todo">我的待办(<span style="color:red">@{ ClinBrain.Data.Service.BPMManager service = new ClinBrain.Data.Service.BPMManager(); @Html.Raw(service.GetMyTodoCount(HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId).ToString())}</span>)</a></li>
+                        <li><a href="~/BPM/todo">我的待办(<span style="color:red">@{ ClinBrain.Data.Service.BPMManager service = new ClinBrain.Data.Service.BPMManager(); @Html.Raw(service.GetMyTodoCount(HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId).ToString())}<</span>)</a></li>
                     </ul>
                     <ul class="sub">
                         <li><a href="~/BPM/done">我的完成</a></li>
@@ -305,8 +329,11 @@
             <div class="text-center">
                 Copyright <span style="font-family: Arial, Helvetica, sans-serif;">©</span> 2016 上海敏慧劳务派遣有限公司 HRMS
             </div>
-        </footer>*@
-
+        </footer>*@<footer class="site-footer" style="position:absolute;bottom:0;background:#2a3542;height:30px">
+        <div class="text-center">
+            <span style="font-family: Arial, Helvetica, sans-serif;"></span>
+        </div>
+    </footer>
     <!--common script for all pages-->
     <script src="~/FlatLab/js/common-scripts.js?v=267"></script>
     <!--script for this page-->

@@ -14,6 +14,7 @@
             <div id="toolbar" class="toolbar">
                 <div style="float:left;"><span>日期：</span></div><div style="float: left; margin-left: 10px;width:15%"><input id="sDate" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 15%"><input id="sDate2" class="form-control" /></div>
                 <div style="float: right; margin-left: 10px; margin-top: 5px; visibility:hidden" class="btn btn-primary" onclick="ExportData()">导出</div>
+                <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" onclick="ReRun()">重新汇总</div>
                 <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" onclick="Search()">查询</div>
             </div>
 
@@ -37,7 +38,7 @@
                                     @{
                                         foreach (var item in ViewBag.Companies)
                                         {
-                                    <option value="@item.iGuid">@item.iName</option>
+                                            <option value="@item.iGuid">@item.iName</option>
                                         }
                                     }
                                 </select>
@@ -154,6 +155,31 @@
     function Search() {
         $('#mytab').bootstrapTable('refresh');
     }
+    //重新生成
+    function ReRun() {
+        var sPayMonth = $("#sDate").val();
+        if (confirm("确认要重新汇总【" + sPayMonth + "】所有数据？")) {
+            var param = {};
+            param.payMonth = sPayMonth;
+            $.ajax({
+                url: "/FinanceAjax/ReRunFinanceSummary",
+                type: "POST",
+                data: param,
+                dataType: 'text',
+                success: function (data) {
+                    if (data == "success") {
+                        toastr.success('重新汇总成功！');
+                        $('#mytab').bootstrapTable('refresh');
+                    }
+                    else {
+                        console.log(data);
+                        toastr.error('重新汇总失败！');
+                    }
+                }
+            });
+        }
+    }
+
     function ViewModel() {
         var self = this;
         self.iGuid = ko.observable("");

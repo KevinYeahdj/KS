@@ -10,6 +10,7 @@ using ClinBrain.WorkFlowEngine.Business.Entity;
 using ClinBrain.WorkFlowEngine.Business.Manager;
 using ClinBrain.WorkFlowEngine.Common;
 using ClinBrain.WorkFlowEngine.Service;
+using HRMS.Data;
 using HRMS.Data.Entity;
 using HRMS.Data.Manager;
 using HRMS.WEB.Models;
@@ -526,8 +527,13 @@ namespace HRMS.Controllers
         {
             try
             {
+                if (runner.ProcessGUID == "09e8624f-ff2d-cc98-0eaa-6a11f3f7d9bc")  //临时记录排错
+                {
+                    LogFileHelper.ErrorLog(runner.Other + "--" + runner.AppInstanceID + "--" + runner.Conditions["sys_feedback"]);
+                }
+
                 bool result = true;
-                if (runner.ProcessGUID == "09e8624f-ff2d-cc98-0eaa-6a11f3f7d9bc" && runner.CurrentStepName == "出纳") //流水账 将财务意见备注到Note里
+                if (runner.ProcessGUID == "09e8624f-ff2d-cc98-0eaa-6a11f3f7d9bc" && runner.Other == "出纳") //流水账 将财务意见备注到Note里
                 {
                     JournalManager service = new JournalManager();
                     result = service.UpdateNoteByFlow(runner.Conditions["sys_feedback"], runner.AppInstanceID);

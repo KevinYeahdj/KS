@@ -70,7 +70,7 @@ namespace HRMS.Controllers
             ViewBag.Projects = projects;
             return View();
         }
-        
+
     }
 
     public class FinanceAjaxController : Controller
@@ -197,7 +197,7 @@ namespace HRMS.Controllers
                     {
                         if (item.iLaborCampBankAccount != iLaborCampBankAccount || (string.IsNullOrEmpty(iLaborCampBankAccount) && item.iLaborName != iLaborName))
                         {
-                            summaryList.Add(new ReturnFeeHistoryViewModel { iLaborName = iLaborName, iLaborCampBankPerson = iLaborCampBankPerson, iLaborCampBank = iLaborCampBank, iLaborCampBankAccount = iLaborCampBankAccount, iLaborCampAddress=iLaborCampAddress, iLaborCampTel=iLaborCampTel, iReturnFeeAmount = sum.ToString() });
+                            summaryList.Add(new ReturnFeeHistoryViewModel { iLaborName = iLaborName, iLaborCampBankPerson = iLaborCampBankPerson, iLaborCampBank = iLaborCampBank, iLaborCampBankAccount = iLaborCampBankAccount, iLaborCampAddress = iLaborCampAddress, iLaborCampTel = iLaborCampTel, iReturnFeeAmount = sum.ToString() });
 
                             iLaborCampBankAccount = item.iLaborCampBankAccount;
                             iLaborName = item.iLaborName;
@@ -1502,7 +1502,7 @@ namespace HRMS.Controllers
                 int total = 0;
                 FinanceSummaryManager service = new FinanceSummaryManager();
                 List<FinanceSummaryEntity> list = service.GetSearch(SessionHelper.CurrentUser.UserType, bizParaDic, sort, order, offset, pageSize, out total);
-                
+
                 DicManager dm = new DicManager();
                 var companies = dm.GetAllCompanies();
                 var projects = dm.GetAllProjects();
@@ -1575,7 +1575,23 @@ namespace HRMS.Controllers
                 return e.ToString();
             }
         }
-        
+
+        public string ReRunFinanceSummary(string payMonth)
+        {
+            try
+            {
+                FinanceSummaryManager service = new FinanceSummaryManager();
+                if (service.UpdateFinanceSummaryByMonth(int.Parse(payMonth)) > 0)
+                    return "success";
+                else return "error";
+            }
+            catch (Exception e)
+            {
+                return e.ToString();
+            }
+        }
+
+
         #endregion
     }
 

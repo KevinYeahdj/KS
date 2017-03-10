@@ -279,8 +279,8 @@
             para.UserName = "";
             para.TaskID = Request["taskid"];  //important
             if (Request["sp"] == 5) {
-                para.CurrentStepName = "出纳";
-            }
+                para.Other = "出纳";
+            }  //使用other 而不使用currentstep  防止流程步骤被修改，不把这些写死在程序里
 
             $.ajax({
                 url: "/BPMAjax/StartApproval",

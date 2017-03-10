@@ -225,7 +225,7 @@ namespace HRMS.Data.Manager
             {
                 string company = dr[0].ToString();
                 string project = dr[1].ToString();
-                string ssCompanyPay = ssCompanyDic.ContainsKey(company + "|" + project)?ssCompanyDic[company + "|" + project]:"0";
+                string ssCompanyPay = ssCompanyDic.ContainsKey(company + "|" + project) ? ssCompanyDic[company + "|" + project] : "0";
                 string ssPersonalPay = ssPersonalDic.ContainsKey(company + "|" + project) ? ssPersonalDic[company + "|" + project] : "0";
                 string pfPersonalPay = pfPersonallDic.ContainsKey(company + "|" + project) ? pfPersonallDic[company + "|" + project] : "0";
                 string pfCompanyPay = pfCompanyDic.ContainsKey(company + "|" + project) ? pfCompanyDic[company + "|" + project] : "0";
@@ -236,6 +236,59 @@ namespace HRMS.Data.Manager
             }
             DbHelperSQL.ExecuteSql("delete from FinanceSummary where iDate =" + month.ToString());
             affectedRowCount = DbHelperSQL.ExecuteSqlTran(insertSqls);
+            return affectedRowCount;
+        }
+
+        public int UpdateFinanceSummaryByMonth(int month)
+        {
+            int affectedRowCount = 0;
+            string sql = @"SELECT distinct [iCompanyId] ,[iProjectId] FROM [SysCompanyProjectRelation] where iIsDeleted=0 and iStatus=1";
+            DataSet ds = DbHelperSQL.Query(sql);
+            List<string> updateSqls = new List<string>();
+            string updateTmp = "update FinanceSummary set [iSocialSecurityCompanyPay]={0},[iSocialSecurityPersonalPay]={1},[iProvidentFundPersonalPay]={2},[iProvidentFundCompanyPay]={3},[iSocialSecurityAdditional]={4} ,[iReturnFee]={5}, [iOfficePay]={6} where iCompanyId='{7}' and iProjectId= '{8}' and iDate=" + month;
+
+
+            string ssSql = "SELECT b.iCompany, b.iItemName, sum([iIndividualAmount]),sum([iCompanyAmount]) ,sum([iAdditionalAmount]) FROM [SocialSecurityDetail] a inner join hrinfo b on a.iHRInfoGuid = b.iGuid where a.iPayMonth=" + month + " group by b.iCompany, b.iItemName";
+            string pfSql = "SELECT b.iCompany, b.iItemName, sum([iIndividualAmount]),sum([iCompanyAmount]) ,sum([iAdditionalAmount]) FROM [ProvidentFundDetail] a inner join hrinfo b on a.iHRInfoGuid = b.iGuid where a.iPayMonth=" + month + " group by b.iCompany, b.iItemName";
+            string rfSql = "select hr.iCompany, hr.iItemName, sum(cast(rh.iReturnFeeAmount as decimal(6,2))) FROM [ReturnFeeHistory] rh inner join dbo.HRInfo hr on rh.iHRInfoGuid=hr.iGuid where left(CONVERT(varchar(100), rh.iReturnFeeActualPayDate, 112),6) ='" + month + "' and iReturnFeePayment='已付' group by hr.iCompany, hr.iItemName";
+            string jrSql = "SELECT [iCompanyId] ,[iProjectId] ,sum([iAmount]) FROM [Journal] where left(CONVERT(varchar(100), iPaidDate, 112),6) ='" + month + "' and iChecked='是' group by iCompanyId, iProjectId";
+            DataTable ssdt = DbHelperSQL.Query(ssSql).Tables[0];
+            DataTable pfdt = DbHelperSQL.Query(pfSql).Tables[0];
+            DataTable rfdt = DbHelperSQL.Query(rfSql).Tables[0];
+            DataTable jrdt = DbHelperSQL.Query(jrSql).Tables[0];
+            Dictionary<string, string> ssCompanyDic = new Dictionary<string, string>();
+            ssCompanyDic = ssdt.Rows.Cast<DataRow>().ToDictionary(x => x[0].ToString() + "|" + x[1].ToString(), x => x[3].ToString());
+            Dictionary<string, string> ssPersonalDic = new Dictionary<string, string>();
+            ssPersonalDic = ssdt.Rows.Cast<DataRow>().ToDictionary(x => x[0].ToString() + "|" + x[1].ToString(), x => x[2].ToString());
+            Dictionary<string, string> ssAditionalDic = new Dictionary<string, string>();
+            ssAditionalDic = ssdt.Rows.Cast<DataRow>().ToDictionary(x => x[0].ToString() + "|" + x[1].ToString(), x => x[4].ToString());
+
+
+            Dictionary<string, string> pfPersonallDic = new Dictionary<string, string>();
+            pfPersonallDic = pfdt.Rows.Cast<DataRow>().ToDictionary(x => x[0].ToString() + "|" + x[1].ToString(), x => x[2].ToString());
+            Dictionary<string, string> pfCompanyDic = new Dictionary<string, string>();
+            pfCompanyDic = pfdt.Rows.Cast<DataRow>().ToDictionary(x => x[0].ToString() + "|" + x[1].ToString(), x => x[3].ToString());
+
+
+            Dictionary<string, string> rfDic = new Dictionary<string, string>();
+            rfDic = rfdt.Rows.Cast<DataRow>().ToDictionary(x => x[0].ToString() + "|" + x[1].ToString(), x => x[2].ToString());
+            Dictionary<string, string> jrDic = new Dictionary<string, string>();
+            jrDic = jrdt.Rows.Cast<DataRow>().ToDictionary(x => x[0].ToString() + "|" + x[1].ToString(), x => x[2].ToString());
+
+            foreach (DataRow dr in ds.Tables[0].Rows)
+            {
+                string company = dr[0].ToString();
+                string project = dr[1].ToString();
+                string ssCompanyPay = ssCompanyDic.ContainsKey(company + "|" + project) ? ssCompanyDic[company + "|" + project] : "0";
+                string ssPersonalPay = ssPersonalDic.ContainsKey(company + "|" + project) ? ssPersonalDic[company + "|" + project] : "0";
+                string pfPersonalPay = pfPersonallDic.ContainsKey(company + "|" + project) ? pfPersonallDic[company + "|" + project] : "0";
+                string pfCompanyPay = pfCompanyDic.ContainsKey(company + "|" + project) ? pfCompanyDic[company + "|" + project] : "0";
+                string ssAdditional = ssAditionalDic.ContainsKey(company + "|" + project) ? ssAditionalDic[company + "|" + project] : "0";
+                string returnFee = rfDic.ContainsKey(company + "|" + project) ? rfDic[company + "|" + project] : "0";
+                string officePay = jrDic.ContainsKey(company + "|" + project) ? jrDic[company + "|" + project] : "0";
+                updateSqls.Add(string.Format(updateTmp, ssCompanyPay, ssPersonalPay, pfPersonalPay, pfCompanyPay, ssAdditional, returnFee, officePay,company, project));
+            }
+            affectedRowCount = DbHelperSQL.ExecuteSqlTran(updateSqls);
             return affectedRowCount;
         }
 
