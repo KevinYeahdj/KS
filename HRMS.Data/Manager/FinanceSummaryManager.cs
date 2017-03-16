@@ -194,10 +194,10 @@ namespace HRMS.Data.Manager
             string insertTmp = "insert into FinanceSummary (iGuid, iCompanyId, iProjectId, iDate, [iSocialSecurityCompanyPay],[iSocialSecurityPersonalPay],[iProvidentFundPersonalPay],[iProvidentFundCompanyPay],[iSocialSecurityAdditional] ,[iReturnFee], [iOfficePay], [iCreatedOn],[iCreatedBy] ,[iUpdatedOn] ,[iUpdatedBy],[iStatus],[iIsDeleted]) values(newid(),'{0}','{1}',{2},{3},{4},{5},{6},{7},{8},{9},getdate(),'system',getdate(),'system',1,0 )";
 
 
-            string ssSql = "SELECT b.iCompany, b.iItemName, sum([iIndividualAmount]),sum([iCompanyAmount]) ,sum([iAdditionalAmount]) FROM [SocialSecurityDetail] a inner join hrinfo b on a.iHRInfoGuid = b.iGuid where a.iPayMonth=" + month + " group by b.iCompany, b.iItemName";
-            string pfSql = "SELECT b.iCompany, b.iItemName, sum([iIndividualAmount]),sum([iCompanyAmount]) ,sum([iAdditionalAmount]) FROM [ProvidentFundDetail] a inner join hrinfo b on a.iHRInfoGuid = b.iGuid where a.iPayMonth=" + month + " group by b.iCompany, b.iItemName";
-            string rfSql = "select hr.iCompany, hr.iItemName, sum(cast(rh.iReturnFeeAmount as decimal(6,2))) FROM [ReturnFeeHistory] rh inner join dbo.HRInfo hr on rh.iHRInfoGuid=hr.iGuid where left(CONVERT(varchar(100), rh.iReturnFeeActualPayDate, 112),6) ='" + month + "' and iReturnFeePayment='已付' group by hr.iCompany, hr.iItemName";
-            string jrSql = "SELECT [iCompanyId] ,[iProjectId] ,sum([iAmount]) FROM [Journal] where left(CONVERT(varchar(100), iPaidDate, 112),6) ='" + month + "' and iChecked='是' group by iCompanyId, iProjectId";
+            string ssSql = "SELECT b.iCompany, b.iItemName, sum([iIndividualAmount]),sum([iCompanyAmount]) ,sum([iAdditionalAmount]) FROM [SocialSecurityDetail] a inner join hrinfo b on a.iHRInfoGuid = b.iGuid and a.iisdeleted=0 and b.iisdeleted=0 where a.iPayMonth=" + month + " group by b.iCompany, b.iItemName";
+            string pfSql = "SELECT b.iCompany, b.iItemName, sum([iIndividualAmount]),sum([iCompanyAmount]) ,sum([iAdditionalAmount]) FROM [ProvidentFundDetail] a inner join hrinfo b on a.iHRInfoGuid = b.iGuid and a.iisdeleted=0 and b.iisdeleted=0 where a.iPayMonth=" + month + " group by b.iCompany, b.iItemName";
+            string rfSql = "select hr.iCompany, hr.iItemName, sum(cast(rh.iReturnFeeAmount as decimal(6,2))) FROM [ReturnFeeHistory] rh inner join dbo.HRInfo hr on rh.iHRInfoGuid=hr.iGuid and rh.iisdeleted=0 and hr.iisdeleted=0  where left(CONVERT(varchar(100), rh.iReturnFeeActualPayDate, 112),6) ='" + month + "' and iReturnFeePayment='已付' group by hr.iCompany, hr.iItemName";
+            string jrSql = "SELECT [iCompanyId] ,[iProjectId] ,sum([iAmount]) FROM [Journal] where left(CONVERT(varchar(100), iPaidDate, 112),6) ='" + month + "' and iChecked='是' and iisdeleted=0 group by iCompanyId, iProjectId";
             DataTable ssdt = DbHelperSQL.Query(ssSql).Tables[0];
             DataTable pfdt = DbHelperSQL.Query(pfSql).Tables[0];
             DataTable rfdt = DbHelperSQL.Query(rfSql).Tables[0];
@@ -248,10 +248,10 @@ namespace HRMS.Data.Manager
             string updateTmp = "update FinanceSummary set [iSocialSecurityCompanyPay]={0},[iSocialSecurityPersonalPay]={1},[iProvidentFundPersonalPay]={2},[iProvidentFundCompanyPay]={3},[iSocialSecurityAdditional]={4} ,[iReturnFee]={5}, [iOfficePay]={6} where iCompanyId='{7}' and iProjectId= '{8}' and iDate=" + month;
 
 
-            string ssSql = "SELECT b.iCompany, b.iItemName, sum([iIndividualAmount]),sum([iCompanyAmount]) ,sum([iAdditionalAmount]) FROM [SocialSecurityDetail] a inner join hrinfo b on a.iHRInfoGuid = b.iGuid where a.iPayMonth=" + month + " group by b.iCompany, b.iItemName";
-            string pfSql = "SELECT b.iCompany, b.iItemName, sum([iIndividualAmount]),sum([iCompanyAmount]) ,sum([iAdditionalAmount]) FROM [ProvidentFundDetail] a inner join hrinfo b on a.iHRInfoGuid = b.iGuid where a.iPayMonth=" + month + " group by b.iCompany, b.iItemName";
-            string rfSql = "select hr.iCompany, hr.iItemName, sum(cast(rh.iReturnFeeAmount as decimal(6,2))) FROM [ReturnFeeHistory] rh inner join dbo.HRInfo hr on rh.iHRInfoGuid=hr.iGuid where left(CONVERT(varchar(100), rh.iReturnFeeActualPayDate, 112),6) ='" + month + "' and iReturnFeePayment='已付' group by hr.iCompany, hr.iItemName";
-            string jrSql = "SELECT [iCompanyId] ,[iProjectId] ,sum([iAmount]) FROM [Journal] where left(CONVERT(varchar(100), iPaidDate, 112),6) ='" + month + "' and iChecked='是' group by iCompanyId, iProjectId";
+            string ssSql = "SELECT b.iCompany, b.iItemName, sum([iIndividualAmount]),sum([iCompanyAmount]) ,sum([iAdditionalAmount]) FROM [SocialSecurityDetail] a inner join hrinfo b on a.iHRInfoGuid = b.iGuid and a.iisdeleted=0 and b.iisdeleted=0 where a.iPayMonth=" + month + " group by b.iCompany, b.iItemName";
+            string pfSql = "SELECT b.iCompany, b.iItemName, sum([iIndividualAmount]),sum([iCompanyAmount]) ,sum([iAdditionalAmount]) FROM [ProvidentFundDetail] a inner join hrinfo b on a.iHRInfoGuid = b.iGuid and a.iisdeleted=0 and b.iisdeleted=0 where a.iPayMonth=" + month + " group by b.iCompany, b.iItemName";
+            string rfSql = "select hr.iCompany, hr.iItemName, sum(cast(rh.iReturnFeeAmount as decimal(6,2))) FROM [ReturnFeeHistory] rh inner join dbo.HRInfo hr on rh.iHRInfoGuid=hr.iGuid and rh.iisdeleted=0 and hr.iisdeleted=0  where left(CONVERT(varchar(100), rh.iReturnFeeActualPayDate, 112),6) ='" + month + "' and iReturnFeePayment='已付' group by hr.iCompany, hr.iItemName";
+            string jrSql = "SELECT [iCompanyId] ,[iProjectId] ,sum([iAmount]) FROM [Journal] where left(CONVERT(varchar(100), iPaidDate, 112),6) ='" + month + "' and iChecked='是' and iisdeleted=0 group by iCompanyId, iProjectId";
             DataTable ssdt = DbHelperSQL.Query(ssSql).Tables[0];
             DataTable pfdt = DbHelperSQL.Query(pfSql).Tables[0];
             DataTable rfdt = DbHelperSQL.Query(rfSql).Tables[0];
