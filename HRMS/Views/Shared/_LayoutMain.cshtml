@@ -264,7 +264,7 @@
                         <span>流程中心</span>
                     </a>
                     <ul class="sub">
-                        <li><a href="~/BPM/todo">我的待办(<span style="color:red">@{ ClinBrain.Data.Service.BPMManager service = new ClinBrain.Data.Service.BPMManager(); @Html.Raw(service.GetMyTodoCount(HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId).ToString())}<</span>)</a></li>
+                        <li><a href="~/BPM/todo">我的待办(<span style="color:red">@{ ClinBrain.Data.Service.BPMManager service = new ClinBrain.Data.Service.BPMManager(); @Html.Raw(service.GetMyTodoCount(HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId).ToString())}</span>)</a></li>
                     </ul>
                     <ul class="sub">
                         <li><a href="~/BPM/done">我的完成</a></li>

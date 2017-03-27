@@ -3642,6 +3642,10 @@
     <Content Include="Views\Finance\FinanceSummary.cshtml" />
     <Content Include="Views\Finance\ReturnFeeHistory.cshtml" />
     <Content Include="Views\Common\ExcelPreview.cshtml" />
+    <Content Include="Views\BPM\SalaryApplication.cshtml" />
+    <Content Include="Views\BPM\SalaryApprove.cshtml" />
+    <Content Include="Views\BPM\SalaryReApplication.cshtml" />
+    <Content Include="Views\BPM\SalaryView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

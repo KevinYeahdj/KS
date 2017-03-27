@@ -1,0 +1,379 @@
+﻿@{
+    ViewBag.Title = "流水账再申请";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+}
+<style>
+    .modal-body {
+        height: 230px;
+    }
+</style>
+
+<div>
+    <div>
+        <div class="col-*-12">
+            <input type="hidden" id="action" />
+            <div id="toolbar" class="toolbar">
+                <div style="float: left; margin-left: -100px"><span>合计：</span></div>
+                <div style="float: left; margin-left: 10px; width: 30%"><input id="totalThis" class="form-control" readonly="readonly" value="0" /></div>
+
+                <div style="float: left; margin-left: 10px"><span>处理意见：</span></div>
+                <div style="float: left; margin-left: 10px; width: 30%"><input id="sys_feedback" class="form-control" /></div>
+                <div style="float: right; margin-left: 10px; margin-top: 5px; " class="btn btn-primary" id="SubmitApplication">提交申请</div>
+                <div style="float: right; margin-left: 10px; margin-top: 5px; " class="btn btn-primary" id="CancelApplication">撤销申请</div>
+                <div style="float: right; margin-left: 10px; margin-top: 5px; " class="btn btn-primary" id="GetLatest">获取最新</div>
+
+            </div>
+
+            <table id="mytab" class="table table-hover"></table>
+
+            <table id="logtab" class="table table-hover"></table>
+
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    //获取当前url参数
+    function GetRequest(imitateurl) {
+        var url = location.search; //获取url中"?"符后的字串
+        if (imitateurl) url = imitateurl;
+        var theRequest = new Object();
+        if (url.indexOf("?") != -1) {
+            var str = url.substr(1);
+            strs = str.split("&");
+            for (var i = 0; i < strs.length; i++) {
+                theRequest[strs[i].split("=")[0]] = unescape(strs[i].split("=")[1]);
+            }
+        }
+        return theRequest;
+    }
+
+
+    //bootstraptable 高度
+    function tableHeight() {
+        return $(window).height() * 0.6;
+    }
+    function ChangeDateFormat(jsondate) {
+        if (!jsondate) return "";
+        jsondate = jsondate.replace("/Date(", "").replace(")/", "");
+        if (jsondate.indexOf("+") > 0) {
+            jsondate = jsondate.substring(0, jsondate.indexOf("+"));
+        }
+        else if (jsondate.indexOf("-") > 0) {
+            jsondate = jsondate.substring(0, jsondate.indexOf("-"));
+        }
+
+        var date = new Date(parseInt(jsondate, 10));
+        var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+        var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+
+        return date.getFullYear()
+            + "-"
+            + month
+            + "-"
+            + currentDate;
+    }
+    function ChangeDateTimeFormat(jsondate) {
+        if (!jsondate) return "";
+        jsondate = jsondate.replace("/Date(", "").replace(")/", "");
+        if (jsondate.indexOf("+") > 0) {
+            jsondate = jsondate.substring(0, jsondate.indexOf("+"));
+        }
+        else if (jsondate.indexOf("-") > 0) {
+            jsondate = jsondate.substring(0, jsondate.indexOf("-"));
+        }
+
+        var date = new Date(parseInt(jsondate, 10));
+        var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+        var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+
+        return date.getFullYear()
+            + "-"
+            + month
+            + "-"
+            + currentDate
+            + " "
+            + date.getHours()
+            + ":"
+            + date.getMinutes();
+    }
+    $(function () {
+        var Request = GetRequest();
+        //重置函数
+        $("div.icon-reorder").click(function () {
+            $('#mytab').bootstrapTable('resetView', {
+                height: tableHeight()
+            })
+        })
+        //根据窗口调整表格高度
+        $(window).resize(function () {
+            $('#mytab').bootstrapTable('resetView', {
+                height: tableHeight()
+            })
+        })
+        $('#mytab').bootstrapTable({
+            url: "/FinanceAjax/GetFlowJournalAction",//数据源
+            dataField: "rows",//服务端返回数据键值 就是说记录放的键值是rows，分页时使用总记录数的键值为total
+            sortName: "iUpdatedOn",//排序列
+            sortOrder: "desc",
+            cache: false,
+            striped: true,//條紋行
+            clickToSelect: true,//选择行即选择checkbox
+            searchOnEnterKey: false,//ENTER键搜索
+            height: tableHeight(),//高度调整
+            search: false,//是否搜索
+            pagination: false,//是否分页
+            pageSize: 15,//单页记录数
+            pageNumber: 1,//起始页
+            pageList: [15, 100, 500, 1000, 10000],//分页步进值
+            sidePagination: "server",//服务端分页
+            contentType: "application/x-www-form-urlencoded",//请求数据内容格式 默认是 application/json 自己根据格式自行服务端处理
+            dataType: "json",//期待返回数据类型
+            method: "post",//请求方式
+            searchAlign: "left",//查询框对齐方式
+            queryParamsType: "limit",//查询参数组织方式
+            showRefresh: false,//刷新按钮
+            showColumns: false,//列选择按钮
+            buttonsAlign: "left",//按钮对齐方式
+            toolbar: "#toolbar",//指定工具栏
+            toolbarAlign: "right",//工具栏对齐方式
+            queryParams: function getParams(params) {
+                params.iCompanyId = $("#companySelect").val();
+                params.iProjectId = $("#projectSelect").val();
+                params.sAppNo = Request["appno"];
+                params.limit = 10000;
+                params.action = $("#action").val();
+                return params;
+            },
+            columns: [
+                 {
+                     field: 'Number',
+                     title: '序号',
+                     formatter: function (value, row, index) {
+                         return ($('#mytab').bootstrapTable('getOptions').pageNumber - 1) * $('#mytab').bootstrapTable('getOptions').pageSize + index + 1;
+                     }
+                 },
+                 { field: "iGuid", title: "iGuid", visible: false, switchable: false }
+                 , { field: "iCompanyId", title: "公司", visible: false, switchable: false }
+                 , { field: "iCompanyName", title: "公司", visible: true }
+                 , { field: "iProjectId", title: "项目", visible: false, switchable: false }
+                 , { field: "iProjectName", title: "项目", visible: true }
+                 , { field: "iDate", title: "日期" }
+                 , { field: "iEvent", title: "事项" }
+                 , { field: "iType", title: "科目" }
+                 , { field: "iApplicant", title: "提报人" }
+                 , { field: "iAmount", title: "金额" }
+                 , { field: "iNote", title: "备注" }
+                 , {
+                     field: "operation", title: "操作", sortable: false, align: "center",
+                     formatter: function (value, row, index) {
+                         return '<a href="#" onclick="RemoveRow(\'' + row.iGuid + '\')">暂不提交</a>';
+                     }
+                 }
+            ],
+            onClickRow: function (row, $element) {
+                //$element是当前tr的jquery对象
+                //$element.css("background-color", "green");
+            },//单击row事件
+            onDblClickRow: function (row, $element) {
+                return;
+            },
+            locale: "zh-CN",//中文支持,
+            detailView: false, //是否显示详情折叠
+            detailFormatter: function (index, row, element) {
+                var html = '';
+                $.each(row, function (key, val) {
+                    html += "<p>" + key + ":" + val + "</p>"
+                });
+                return html;
+            },
+            data: [],
+            uniqueId: "iGuid",
+            onLoadSuccess: function (data) {
+                $("#totalThis").val(data.sum);
+            }
+        });
+        $('#logtab').bootstrapTable({
+            url: "/BPMAjax/GetFlowLogs",//数据源
+            dataField: "rows",//服务端返回数据键值 就是说记录放的键值是rows，分页时使用总记录数的键值为total
+            sortName: "ApproveTime",//排序列
+            sortOrder: "desc",
+            cache: false,
+            striped: true,//條紋行
+            clickToSelect: true,//选择行即选择checkbox
+            searchOnEnterKey: false,//ENTER键搜索
+            height: $(window).height() * 0.35,//高度调整
+            search: false,//是否搜索
+            pagination: false,//是否分页
+            pageSize: 15,//单页记录数
+            pageNumber: 1,//起始页
+            pageList: [15, 100, 500, 1000, 10000],//分页步进值
+            sidePagination: "server",//服务端分页
+            contentType: "application/x-www-form-urlencoded",//请求数据内容格式 默认是 application/json 自己根据格式自行服务端处理
+            dataType: "json",//期待返回数据类型
+            method: "post",//请求方式
+            searchAlign: "left",//查询框对齐方式
+            queryParamsType: "limit",//查询参数组织方式
+            showRefresh: false,//刷新按钮
+            showColumns: false,//列选择按钮
+            buttonsAlign: "left",//按钮对齐方式
+            //toolbar: "#toolbar",//指定工具栏
+            toolbarAlign: "right",//工具栏对齐方式
+            queryParams: function getParams(params) {
+                params.appno = Request["appno"];
+                params.limit = 1000;
+                return params;
+            },
+            columns: [
+                 {
+                     field: 'Number',
+                     title: '序号',
+                     formatter: function (value, row, index) {
+                         return ($('#logtab').bootstrapTable('getOptions').pageNumber - 1) * $('#logtab').bootstrapTable('getOptions').pageSize + index + 1;
+                     }
+                 }
+                 , {
+                     field: "ApproverName", title: "审批人", formatter: function (value, row, index) {
+                         return row.ApproverName + "(" + row.ApproverId + ")";
+                     }
+                 }
+                 , { field: "StepName", title: "步骤名称" }
+                 , { field: "ApproveTypeName", title: "审批结果" }
+                 , { field: "FeedBack", title: "审批意见" }
+                 , {
+                     field: "CreateTime", title: "审批时间", formatter: function (value, row, index) {
+                         return ChangeDateTimeFormat(value);
+                     }
+                 }
+            ],
+            onClickRow: function (row, $element) {
+            },//单击row事件
+            onDblClickRow: function (row, $element) {
+                return;
+            },
+            locale: "zh-CN",//中文支持,
+            detailView: false, //是否显示详情折叠
+            detailFormatter: function (index, row, element) {
+                var html = '';
+                $.each(row, function (key, val) {
+                    html += "<p>" + key + ":" + val + "</p>"
+                });
+                return html;
+            }
+            ,
+            onLoadSuccess: function (data) {
+                $.each(data.rows, function (i, item) {
+                    if (item.AppNo == "active") {
+                        $("#logtab").find("tr[data-index=" + i + "]").css("color", "red");
+                    }
+                })
+            }
+        });
+
+        $("#SubmitApplication").click(function () {
+            if (confirm("确认再申请？")) {
+                var data = $('#mytab').bootstrapTable('getData', true);
+                if (data.length == 0) {
+                    toastr.error('请填写至少一条流水账信息！');
+                    return;
+                }
+
+                $(this).attr({ "disabled": "disabled" });
+                var para = {};
+                var conditions = {};
+                conditions.sys_approve = "1";
+                conditions.sys_approvecn = "再提交申请";
+                conditions.sys_feedback = $("#sys_feedback").val();
+                conditions.sys_summary = "合计：" + $('#totalThis').val();
+                para.Conditions = conditions;
+                para.ProcessInstanceID = Request["piid"]; //important
+                para.AppName = "";
+                para.AppInstanceID = Request["appno"]; //important
+                para.ProcessGUID = Request["pguid"];  //申请时必要 important
+                para.UserID = "@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId";
+                para.UserName = "";
+                para.TaskID = Request["taskid"];  //important
+                para.Other = JSON.stringify(data);
+
+                $.ajax({
+                    url: "/BPMAjax/ReStartApplication",
+                    type: "POST",
+                    data: para,
+                    dataType: 'text',
+                    success: function (result) {
+                        result = $.parseJSON(result);
+                        if (result.success) {
+                            toastr.success('提交成功！');
+                            //$('#mytab').bootstrapTable('removeAll');
+                            setTimeout("window.location.href='/BPM/done'", 3000);
+                        }
+                        else {
+                            toastr.error('提交失败！');
+                        }
+                        $("#SubmitApplication").removeAttr("disabled");
+                    }
+                });
+            }
+
+        });
+        $("#CancelApplication").click(function () {
+            if (confirm("确认要撤销申请？")) {
+                $(this).attr({ "disabled": "disabled" });
+                var para = {};
+                var conditions = {};
+                conditions.sys_approve = "-10";
+                conditions.sys_approvecn = "撤销申请";
+                conditions.sys_feedback = $("#sys_feedback").val();
+                conditions.sys_summary = "合计：" + $('#totalThis').val();
+                para.Conditions = conditions;
+                para.ProcessInstanceID = Request["piid"]; //important
+                para.AppName = "";
+                para.AppInstanceID = Request["appno"]; //important
+                para.ProcessGUID = Request["pguid"];  //申请时必要 important
+                para.UserID = "@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId";
+                para.UserName = "";
+                para.TaskID = Request["taskid"];  //important
+                para.Other = JSON.stringify(data);
+
+                $.ajax({
+                    url: "/BPMAjax/CancelApplication",
+                    type: "POST",
+                    data: para,
+                    dataType: 'text',
+                    success: function (result) {
+                        result = $.parseJSON(result);
+                        if (result.success) {
+                            toastr.success('撤销成功！');
+                            //$('#mytab').bootstrapTable('removeAll');
+                            setTimeout("window.location.href='/BPM/done'", 3000);
+                        }
+                        else {
+                            toastr.error('撤销失败！');
+                        }
+                        $("#CancelApplication").removeAttr("disabled");
+                    }
+                });
+            }
+
+        });
+        
+
+        $("#GetLatest").click(function () {
+            $("#action").val("init");
+            $('#mytab').bootstrapTable('refresh');
+        });
+
+        window.RemoveRow = function (iguid) {
+            if (confirm("确认要删除？")) {
+                $('#mytab').bootstrapTable('removeByUniqueId', iguid);
+                var datas = $('#mytab').bootstrapTable('getData', true);
+                var sum = 0;
+                datas.forEach(function (data) {
+                    sum += parseFloat(data.iAmount);
+                })
+                $('#totalThis').val(sum);
+            }
+        }
+    })
+</script>

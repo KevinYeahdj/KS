@@ -1,13 +1,27 @@
 ﻿@{
     Layout = null;
 }
-@Html.Raw(ViewBag.html)
 
-<script>
-    var table = document.getElementsByTagName("table");
-    //设置 div 属性，如 id
-    table[0].setAttribute("border", "1");
-</script>
+@Html.Raw(ViewBag.html.Replace("thin solid white", "thin solid black"))
+<style>
+    table {
+        border: 1px;
+        border-color: black;
+    }
+
+    td {
+        border: 1px;
+        border-color: black;
+    }
+</style>
+@*<script>
+        var table = document.getElementsByTagName("table");
+        //设置 div 属性，如 id
+        var count = table.length;
+        for (var i = 0; i < count; i++) {
+            table[i].setAttribute("border", "1");
+        }
+    </script>*@
 
 
 

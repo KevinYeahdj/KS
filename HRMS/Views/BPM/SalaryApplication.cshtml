@@ -1,0 +1,202 @@
+﻿@{
+    ViewBag.Title = "工资申请";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+}
+<style>
+    .modal-body {
+        height: 230px;
+    }
+</style>
+
+<div>
+    <div>
+        <div class="col-*-12">
+            <div id="toolbar" class="toolbar">
+                <div style="float: right; margin-left: 10px; margin-top: 5px; " class="btn btn-primary" id="SubmitApplication">提交申请</div>
+
+            </div>
+
+            <table id="mytab" class="table table-hover"></table>
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var bossUsers = "@ViewBag.bossUsers";
+    var tellerUsers = "@ViewBag.tellerUsers";
+
+    //bootstraptable 高度
+    function tableHeight() {
+        return $(window).height() * 0.86;
+    }
+
+    $(function () {
+        //重置函数
+        $("div.icon-reorder").click(function () {
+            $('#mytab').bootstrapTable('resetView', {
+                height: tableHeight()
+            })
+        })
+        //根据窗口调整表格高度
+        $(window).resize(function () {
+            $('#mytab').bootstrapTable('resetView', {
+                height: tableHeight()
+            })
+        })
+        $('#mytab').bootstrapTable({
+            url: "/FinanceAjax/GetFlowJournalDraft",//数据源
+            dataField: "rows",//服务端返回数据键值 就是说记录放的键值是rows，分页时使用总记录数的键值为total
+            sortName: "iUpdatedOn",//排序列
+            sortOrder: "desc",
+            cache: false,
+            striped: true,//條紋行
+            clickToSelect: true,//选择行即选择checkbox
+            searchOnEnterKey: false,//ENTER键搜索
+            height: tableHeight(),//高度调整
+            search: false,//是否搜索
+            pagination: false,//是否分页
+            pageSize: 15,//单页记录数
+            pageNumber: 1,//起始页
+            pageList: [15, 100, 500, 1000, 10000],//分页步进值
+            sidePagination: "server",//服务端分页
+            contentType: "application/x-www-form-urlencoded",//请求数据内容格式 默认是 application/json 自己根据格式自行服务端处理
+            dataType: "json",//期待返回数据类型
+            method: "post",//请求方式
+            searchAlign: "left",//查询框对齐方式
+            queryParamsType: "limit",//查询参数组织方式
+            showRefresh: false,//刷新按钮
+            showColumns: false,//列选择按钮
+            buttonsAlign: "left",//按钮对齐方式
+            toolbar: "#toolbar",//指定工具栏
+            toolbarAlign: "right",//工具栏对齐方式
+            queryParams: function getParams(params) {
+                params.iCompanyId = $("#companySelect").val();
+                params.iProjectId = $("#projectSelect").val();
+                params.limit = 10000;
+                return params;
+            },
+            columns: [
+                 {
+                     field: 'Number',
+                     title: '序号',
+                     formatter: function (value, row, index) {
+                         return ($('#mytab').bootstrapTable('getOptions').pageNumber - 1) * $('#mytab').bootstrapTable('getOptions').pageSize + index + 1;
+                     }
+                 },
+                 { field: "iGuid", title: "iGuid", visible: false, switchable: false }
+                 , { field: "iCompanyId", title: "公司", visible: false, switchable: false }
+                 , { field: "iProjectId", title: "项目", visible: false, switchable: false }
+                 , { field: "iCompanyName", title: "公司" }
+                 , { field: "iProjectName", title: "项目" }
+                 , { field: "iDate", title: "日期" }
+                 , { field: "iEvent", title: "事项" }
+                 , { field: "iType", title: "科目" }
+                 , { field: "iApplicant", title: "提报人" }
+                 , { field: "iAmount", title: "金额" }
+                 , { field: "iNote", title: "备注" }
+                 , {
+                     field: "operation", title: "操作", sortable: false, align: "center",
+                     formatter: function (value, row, index) {
+                         return '<a href="#" onclick="RemoveRow(\'' + row.iGuid + '\')">暂不提交</a>';
+                     }
+                 }
+            ],
+            onClickRow: function (row, $element) {
+                //$element是当前tr的jquery对象
+                //$element.css("background-color", "green");
+            },//单击row事件
+            onDblClickRow: function (row, $element) {
+                return;
+            },
+            locale: "zh-CN",//中文支持,
+            detailView: false, //是否显示详情折叠
+            detailFormatter: function (index, row, element) {
+                var html = '';
+                $.each(row, function (key, val) {
+                    html += "<p>" + key + ":" + val + "</p>"
+                });
+                return html;
+            },
+            uniqueId: "iGuid",
+            onLoadSuccess: function (data) {
+                $("#totalThis").val(data.sum);
+            }
+        });
+
+        $("#SubmitApplication").click(function () {
+            if (confirm("确认申请？")) {
+                var data = $('#mytab').bootstrapTable('getData', true);
+                if (data.length == 0) {
+                    toastr.error('请填写至少一条流水账信息！');
+                    return;
+                }
+
+                $(this).attr({ "disabled": "disabled" });
+                var isManager = 0;
+                if (managerUsers.split(';').indexOf('@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId') > -1) {
+                    isManager = 1;
+                }
+                var isBoss = 0;
+                if (bossUsers.split(';').indexOf('@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId') > -1) {
+                    isBoss = 1;
+                }
+
+                var para = {};
+                var conditions = {};
+                conditions.sys_approve = "1";
+                conditions.sys_approvecn = "提交申请";
+                conditions.sys_feedback = "提交申请";
+                conditions.sys_summary = "合计：" + $('#totalThis').val();
+                conditions.confirmUsers = confirmUsers;
+                conditions.managerUsers = managerUsers;
+                conditions.bossUsers = bossUsers;
+                conditions.tellerUsers = tellerUsers;
+                //conditions.recordUsers = recordUsers;
+                conditions.isManager = isManager;
+                conditions.isBoss = isBoss;
+                para.Conditions = conditions;
+                para.ProcessInstanceID = ""; //important
+                para.AppName = "";
+                para.AppInstanceID = ""; //important
+                para.ProcessGUID = "09e8624f-ff2d-cc98-0eaa-6a11f3f7d9bc";  //申请时必要 important
+                para.UserID = "@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId";
+                para.UserName = "";
+                para.TaskID = "";  //important
+                para.Other = JSON.stringify(data);
+
+                $.ajax({
+                    url: "/BPMAjax/StartApplication",
+                    type: "POST",
+                    data: para,
+                    dataType: 'text',
+                    success: function (result) {
+                        result = $.parseJSON(result);
+                        if (result.success) {
+                            toastr.success('申请成功！流程单号：【' + result.msg + '】');
+                            //$('#mytab').bootstrapTable('removeAll');
+                            setTimeout("window.location.href='/BPM/myapp'", 3000);
+                        }
+                        else {
+                            toastr.error('申请失败！');
+                        }
+                        $("#SubmitApplication").removeAttr("disabled");
+                    }
+                });
+            }
+
+        });
+
+        window.RemoveRow = function (iguid) {
+            if (confirm("确认移出？")) {
+                $('#mytab').bootstrapTable('removeByUniqueId', iguid);
+                var datas = $('#mytab').bootstrapTable('getData', true);
+                var sum = 0;
+                datas.forEach(function (data) {
+                    sum += parseFloat(data.iAmount);
+                })
+                $('#totalThis').val(sum);
+            }
+        }
+    })
+</script>

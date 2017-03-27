@@ -34,17 +34,19 @@ namespace HRMS.Data.Entity
         public decimal? iSocialSecurityAdditional { get; set; } //社保补缴 
         public decimal? iReturnFee { get; set; } //返费 
         public decimal? iDisabilityBenefitsPay { get; set; } //残保金(付) 
-        public decimal? iBusFee { get; set; } //班车费(付) 
+        //public decimal? iBusFee { get; set; } //班车费(付) 
         public decimal? iMealFee { get; set; } //餐费(付)
         public decimal? iDormitoryFeePay { get; set; } //宿舍费(付) 
         public decimal? iCommercialInsuranceFeePay { get; set; } //商保费(付)
-        public decimal? iBonusPay { get; set; } //奖金类(付)
-        public decimal? iCompensationPay { get; set; } //赔付款(付)
+        //public decimal? iBonusPay { get; set; } //奖金类(付)
+        //public decimal? iCompensationPay { get; set; } //赔付款(付)
         public decimal? iTaxFee { get; set; } //税金
-        public decimal? iAgentFee { get; set; } //代理费
-        public decimal? iLaborInsuranceFee { get; set; } //劳保费支出
-        public decimal? iRentFee { get; set; } //租金
-        public decimal? iUtilitiesFee { get; set; } //水电物管费
+        //public decimal? iAgentFee { get; set; } //代理费
+        //public decimal? iLaborInsuranceFee { get; set; } //劳保费支出
+        //public decimal? iRentFee { get; set; } //租金        
+        public decimal? iPersonalTax { get; set; } //个调税
+        
+        //public decimal? iUtilitiesFee { get; set; } //水电物管费
         public decimal? iOfficePay { get; set; } //办公费
         public decimal? iCompanySalaryPay { get; set; } //公司人员工资
         public decimal? iCompanySocialSecurityPay { get; set; } //公司人员社保
@@ -60,6 +62,10 @@ namespace HRMS.Data.Entity
         public string iUpdatedBy { get; set; } //修改人
         public int iStatus { get; set; }  //状态
         public int iIsDeleted { get; set; } //假删
+
+        public decimal? iTemporarySalaryIn { get; set; } //临时工工资收
+        public decimal? iTemporarySalaryOut { get; set; } //临时工工资付
+        public decimal? iTemporaryFee { get; set; } //临时工支出
 
     }
 }
