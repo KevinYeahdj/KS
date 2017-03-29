@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DbHelperSQL.cs" />
     <Compile Include="IRepository.cs" />
     <Compile Include="LogFileHelper.cs" />
     <Compile Include="ManagerBase.cs" />

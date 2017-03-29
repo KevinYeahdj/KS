@@ -82,6 +82,13 @@ namespace HRMS.Controllers
         }
 
 
+        public ActionResult CompanyRoleIndex()
+        {
+            DicManager service = new DicManager();
+            List<CompanyEntity> companies = service.GetAllValidCompanies();
+            ViewBag.Companies = companies;
+            return View();
+        }
     }
     public class ManageAjaxController : Controller
     {
@@ -961,7 +968,7 @@ namespace HRMS.Controllers
             //普通用户
             if (SessionHelper.CurrentUser.UserType == "普通用户")
             {
-                if(SessionHelper.CurrentUser.CurrentCompany == "-")
+                if (SessionHelper.CurrentUser.CurrentCompany == "-")
                 {
                     return "";
                 }
@@ -1303,6 +1310,111 @@ namespace HRMS.Controllers
             catch (Exception e)
             {
                 return e.ToString();
+            }
+        }
+        #endregion
+
+        #region 流程角色人员
+        public void GetAllRoles()
+        {
+            //用于序列化实体类的对象  
+            JavaScriptSerializer jss = new JavaScriptSerializer();
+
+            //请求中携带的条件  
+            string order = HttpContext.Request.Params["order"];
+            string sort = HttpContext.Request.Params["sort"];
+            int offset = Convert.ToInt32(HttpContext.Request.Params["offset"]);  //0
+            int pageSize = Convert.ToInt32(HttpContext.Request.Params["limit"]);
+            string searchKey = HttpContext.Request.Params["search"];
+            Dictionary<string, string> bizParaDic = new Dictionary<string, string>();
+            bizParaDic.Add("search", searchKey);
+
+            int total = 0;
+            DicManager dm = new DicManager();
+            List<RoleEntity> list = dm.RoleGetSearch(bizParaDic, sort, order, offset, pageSize, out total);
+            //给分页实体赋值  
+            PageModels<RoleEntity> model = new PageModels<RoleEntity>();
+            model.total = total;
+            if (total % pageSize == 0)
+                model.page = total / pageSize;
+            else
+                model.page = (total / pageSize) + 1;
+
+            model.rows = list;
+
+            //将查询结果返回  
+            HttpContext.Response.Write(jss.Serialize(model));
+        }
+        public string CheckRoleValid(string iName)
+        {
+            DicManager dm = new DicManager();
+            if (dm.CheckRoleValid(iName))
+            {
+                return "valid";
+            }
+            return "invalid";
+
+        }
+        public string RoleSaveChanges(string jsonString)
+        {
+            try
+            {
+                RoleEntity en = JsonConvert.DeserializeObject<RoleEntity>(jsonString);
+                DicManager dm = new DicManager();
+                if (string.IsNullOrEmpty(en.iGuid))
+                {
+                    en.iGuid = Guid.NewGuid().ToString();
+                    en.iCreatedBy = SessionHelper.CurrentUser.UserName;
+                    en.iUpdatedBy = SessionHelper.CurrentUser.UserName;
+                    dm.InsertRole(en);
+                }
+                else
+                {
+                    RoleEntity enOld = dm.RoleFirstOrDefault(en.iGuid);
+                    enOld.iName = en.iName;
+                    enOld.iIsDeleted = en.iIsDeleted;
+                    enOld.iUpdatedBy = SessionHelper.CurrentUser.UserName;
+                    dm.UpdateRole(enOld);
+                }
+                return "success";
+            }
+            catch (Exception e)
+            {
+                return e.ToString();
+            }
+        }
+        public string RoleUsersSaveChanges(string usersStr)
+        {
+            try
+            {
+                string roleid = usersStr.Split('$')[0];
+                List<string> sqls = new List<string>();
+                sqls.Add("delete from [SysRoleUsers] where iRoleGuid = '" + roleid + "'");
+                string tmpl = "insert into SysRoleUsers values(newid(),'{0}','{1}','{2}',getdate(),'sys',getdate(),'sys',1,0 )";
+                foreach (string node in usersStr.Split('$')[1].Split('|'))
+                {
+                    sqls.Add(string.Format(tmpl, roleid, node.Split('§')[0], node.Split('§')[1]));
+                }
+                DbHelperSQL.ExecuteSqlTran(sqls);
+                return "success";
+            }
+            catch (Exception e)
+            {
+                return e.ToString();
+            }
+        }
+        public JsonResult GetRoleUsers(string roleid)
+        {
+            try
+            {
+                DicManager dm = new DicManager();
+                List<RoleUsersEntity> result = dm.GetRoleUsers(roleid);
+                return new JsonResult { Data = new { success = true, data = result }, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+
+            }
+            catch (Exception e)
+            {
+                return new JsonResult { Data = new { success = false, msg = e.ToString() }, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
             }
         }
         #endregion

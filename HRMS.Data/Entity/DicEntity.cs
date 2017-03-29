@@ -107,4 +107,41 @@ namespace HRMS.Data.Entity
         public string iNote { get; set; }
         public DateTime? iUpdatedOn { get; set; }
     }
+
+
+    //流程公司角色定义
+    /// <summary>
+    /// 角色对象
+    /// </summary>
+    [Table("SysRole")]
+    public class RoleEntity
+    {
+        public string iGuid { get; set; }
+        public string iName { get; set; }       
+        public string iNote { get; set; }
+        public DateTime? iCreatedOn { get; set; }
+        public string iCreatedBy { get; set; }
+        public DateTime? iUpdatedOn { get; set; }
+        public string iUpdatedBy { get; set; }
+        public int iStatus { get; set; }
+        public int iIsDeleted { get; set; }
+    }
+
+    /// <summary>
+    /// 角色对象
+    /// </summary>
+    [Table("SysRoleUsers")]
+    public class RoleUsersEntity
+    {
+        public string iGuid { get; set; }
+        public string iRoleGuid { get; set; }
+        public string iCompanyId { get; set; }
+        public string iUsers { get; set; }
+        public DateTime? iCreatedOn { get; set; }
+        public string iCreatedBy { get; set; }
+        public DateTime? iUpdatedOn { get; set; }
+        public string iUpdatedBy { get; set; }
+        public int iStatus { get; set; }
+        public int iIsDeleted { get; set; }
+    }
 }

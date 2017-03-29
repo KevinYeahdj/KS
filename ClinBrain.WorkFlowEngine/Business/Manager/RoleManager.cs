@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,6 +31,24 @@ namespace ClinBrain.WorkFlowEngine.Business.Manager
                            WHERE R.ID = @roleCode
                            ORDER BY e.employee_code";
             List<UserEntity> list = Repository.Query<UserEntity>(strSQL, new { roleCode = roleCode }).ToList();
+            return list;
+        }
+
+        public List<UserEntity> GetByRoleCode(string roleCode, string companyId)
+        {
+            var strSQL = "SELECT iUsers from [HRMS].[dbo].[SysRoleUsers] where iRoleGuid ='{0}' and iCompanyId='{1}' and istatus=1 and iisdeleted =0";
+            DataSet ds = DbHelperSQL.Query(strSQL);
+            List<string> ids = ds.Tables[0].Rows[0][0].ToString().Split(';').ToList();
+            StringBuilder sb = new StringBuilder();
+            foreach (string id in ids)
+            {
+                sb.Append("'" + id + "',");
+            }
+            if (sb.Length > 0)
+            {
+                sb.Remove(sb.Length - 2, 1);
+            }
+            List<UserEntity> list = Repository.Query<UserEntity>("SELECT employee_code as ID, name as UserName FROM dbo.HPM_LBR_EMPLOYEE where  employee_code in(" + sb.ToString() + ")").ToList();
             return list;
         }
 

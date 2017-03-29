@@ -257,7 +257,9 @@ namespace HRMS.Data.Manager
             string updateTmp = "update FinanceSummary set [iSocialSecurityCompanyPay]={3},[iSocialSecurityPersonalPay]={4},[iProvidentFundPersonalPay]={5},[iProvidentFundCompanyPay]={6},[iSocialSecurityAdditional]={7} ,[iReturnFee]={8}, [iOfficePay]={9},[iTemporaryFee]={10} where iCompanyId='{1}' and iProjectId= '{2}' and iDate={0}";
 
 
-            string sql = @"SELECT distinct [iCompanyId] ,[iProjectId] FROM [SysCompanyProjectRelation] where iIsDeleted=0 and iStatus=1";
+            string sql = @"SELECT distinct [iCompanyId] ,[iProjectId] FROM [SysCompanyProjectRelation] m inner join SysCompany a on a.iGuid=m.iCompanyId and a.iIsDeleted=0
+              inner join SysProject b on b.iGuid=m.iProjectId and b.iIsDeleted=0
+              where m.iIsDeleted=0 and m.iStatus=1";
             DataSet ds = DbHelperSQL.Query(sql);
             if (month.ToString() == DateTime.Now.ToString("yyyyMM")) //当前月，生成空的新数据
             {

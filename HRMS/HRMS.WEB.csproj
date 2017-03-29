@@ -3646,6 +3646,7 @@
     <Content Include="Views\BPM\SalaryApprove.cshtml" />
     <Content Include="Views\BPM\SalaryReApplication.cshtml" />
     <Content Include="Views\BPM\SalaryView.cshtml" />
+    <Content Include="Views\Manage\CompanyRoleIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

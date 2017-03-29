@@ -319,6 +319,7 @@ namespace HRMS.Controllers
             string appNo = "";
             try
             {
+                initiator.Conditions.Add("SysCurrentCompany",SessionHelper.CurrentUser.CurrentCompany);
                 OrganizationService oc = new OrganizationService();
                 UserInfo ur = oc.GetUserInfoByLoginName(initiator.UserID);
                 initiator.UserName = ur == null ? "" : ur.Name;
@@ -361,6 +362,7 @@ namespace HRMS.Controllers
         {
             try
             {
+                initiator.Conditions.Add("SysCurrentCompany", SessionHelper.CurrentUser.CurrentCompany);
                 //保存业务数据
                 if (SaveBusinessDataForBPM(initiator.Other, initiator.ProcessGUID, initiator.AppInstanceID))
                 {
@@ -396,6 +398,7 @@ namespace HRMS.Controllers
         {
             try
             {
+                runner.Conditions.Add("SysCurrentCompany", SessionHelper.CurrentUser.CurrentCompany);
                 OrganizationService oc = new OrganizationService();
                 UserInfo ur = oc.GetUserInfoByLoginName(runner.UserID);
                 runner.UserName = ur == null ? "" : ur.Name;

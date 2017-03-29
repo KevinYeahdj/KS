@@ -404,11 +404,11 @@ union all
 
 ) t";
 
-  //          union all  
-  // select b.iGuid, a.iguid as icompanyId, a.iName as iCompanyName, '流水账申请' as iFlowSign, '登记' as iRoleName, b.iUsers, b.iNote , b.iUpdatedOn from [dbo].[SysCompany] a
-  //left join [dbo].[BpmUser] b
-  //on a.iguid = b.iCompanyId and b.iFlowSign='流水账申请' and b.iRoleName='登记'
-  //and b.iIsDeleted =0 and b.iStatus =1  where a.iisdeleted=0 and a.istatus=1
+            //          union all  
+            // select b.iGuid, a.iguid as icompanyId, a.iName as iCompanyName, '流水账申请' as iFlowSign, '登记' as iRoleName, b.iUsers, b.iNote , b.iUpdatedOn from [dbo].[SysCompany] a
+            //left join [dbo].[BpmUser] b
+            //on a.iguid = b.iCompanyId and b.iFlowSign='流水账申请' and b.iRoleName='登记'
+            //and b.iIsDeleted =0 and b.iStatus =1  where a.iisdeleted=0 and a.istatus=1
 
             string querySql = "select * " + commonSql + " order by {0} {1} offset {2} row fetch next {3} rows only";
             querySql = string.Format(querySql, sort, order, offset, pageSize);
@@ -422,6 +422,79 @@ union all
             string sql = "select iUsers from [dbo].[BpmUser] where iisdeleted=0 and istatus=1 and iCompanyId='" + companyId + "' and iFlowSign='" + flowSign + "' and iRoleName='" + roleName + "'";
             List<string> result = Repository.Query<string>(sql).ToList();
             return (result == null || result.Count == 0) ? "sa" : result[0];
+        }
+
+        //流程公司角色人员相关
+        public void InsertRole(RoleEntity entity)
+        {
+            entity.iCreatedOn = DateTime.Now;
+            entity.iUpdatedOn = DateTime.Now;
+            entity.iStatus = 1;
+            entity.iIsDeleted = 0;
+            IDbSession session = SessionFactory.CreateSession();
+            try
+            {
+                session.BeginTrans();
+                Repository.Insert<RoleEntity>(session.Connection, entity, session.Transaction);
+                session.Commit();
+            }
+            catch (System.Exception)
+            {
+                session.Rollback();
+                throw;
+            }
+            finally
+            {
+                session.Dispose();
+            }
+        }
+        public void UpdateRole(RoleEntity entity)
+        {
+            entity.iUpdatedOn = DateTime.Now;
+            IDbSession session = SessionFactory.CreateSession();
+            try
+            {
+                session.BeginTrans();
+                Repository.Update<RoleEntity>(session.Connection, entity, session.Transaction);
+                session.Commit();
+            }
+            catch (System.Exception)
+            {
+                session.Rollback();
+                throw;
+            }
+            finally
+            {
+                session.Dispose();
+            }
+        }
+        public RoleEntity RoleFirstOrDefault(string iguid)
+        {
+            return Repository.GetById<RoleEntity>(iguid);
+        }
+        public bool CheckRoleValid(string name)
+        {
+            var result = Repository.Query<RoleEntity>("select * from SysRole where iIsdeleted = 0 and iStatus = 1 and iName =@iname", new { iname = name });
+            if (result != null && result.Count() > 0)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public List<RoleEntity> RoleGetSearch(Dictionary<string, string> para, string sort, string order, int offset, int pageSize, out int total)
+        {
+            string commonSql = string.Format(" from SysRole where iIsDeleted =0 and iStatus =1 {0} ", string.IsNullOrEmpty(para["search"]) ? "" : " and iName like '%" + para["search"] + "%' or iNote like '%" + para["search"] + "%' ");
+            string querySql = "select * " + commonSql + " order by {0} {1} offset {2} row fetch next {3} rows only";
+            querySql = string.Format(querySql, sort, order, offset, pageSize);
+            string totalSql = "select cast(count(1) as varchar(8)) " + commonSql;
+            total = int.Parse(Repository.Query<string>(totalSql).ToList()[0]);
+            return Repository.Query<RoleEntity>(querySql).ToList();
+        }
+
+        public List<RoleUsersEntity> GetRoleUsers(string roleid)
+        {
+            return Repository.Query<RoleUsersEntity>("select * from SysRoleUsers where iRoleGuid ='" + roleid + "'").ToList();
         }
     }
 }

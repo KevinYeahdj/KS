@@ -1025,7 +1025,7 @@ namespace ClinBrain.WorkFlowEngine.Service
                                 }
                             case "Role":
                                 {
-                                    List<UserEntity> users = rm.GetByRoleCode(outerid);
+                                    List<UserEntity> users = rm.GetByRoleCode(outerid, initiator.Conditions["SysCurrentCompany"]);
                                     foreach (UserEntity ur in users)
                                     {
                                         //UserInfo user = os.GetUserInfoByLoginName(ur.ID.ToString());
@@ -1130,7 +1130,7 @@ namespace ClinBrain.WorkFlowEngine.Service
                                 }
                             case "Role":
                                 {
-                                    List<UserEntity> users = rm.GetByRoleCode(outerid);
+                                    List<UserEntity> users = rm.GetByRoleCode(outerid, runner.Conditions["SysCurrentCompany"]);
                                     foreach (UserEntity ur in users)
                                     {
                                         //UserInfo user = os.GetUserInfoByLoginName(ur.ID.ToString());
