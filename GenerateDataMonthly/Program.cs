@@ -30,10 +30,10 @@ namespace GenerateDataMonthly
                 count = serviceProvidentFund.GenerateProvidentFundDetailMonthly(paidMonth);
                 LogFileHelper.WriteLog("公积金【" + paidMonth.ToString() + "】生成成功，生成条数【" + count.ToString() + "】");
 
-                //每月生成每个公司每个项目的 财务汇总记录
-                FinanceSummaryManager service = new FinanceSummaryManager();
-                count = service.GenerateFinanceSummaryMonthly(paidMonth);
-                LogFileHelper.WriteLog("财务汇总【" + paidMonth.ToString() + "】生成成功，生成条数【" + count.ToString() + "】");
+                //每月生成每个公司每个项目的 财务汇总记录--让他们手动生成
+                //FinanceSummaryManager service = new FinanceSummaryManager();
+                //count = service.GenerateFinanceSummaryMonthly(paidMonth);
+                //LogFileHelper.WriteLog("财务汇总【" + paidMonth.ToString() + "】生成成功，生成条数【" + count.ToString() + "】");
 
             }
         }
