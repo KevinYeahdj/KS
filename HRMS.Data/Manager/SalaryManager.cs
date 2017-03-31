@@ -28,6 +28,8 @@ namespace HRMS.Data.Manager
                 dic.Add("下载地址", "iUrl");
                 dic.Add("内容", "iContent");
                 dic.Add("备注", "iNote");
+                dic.Add("单号", "iAppNo");
+                dic.Add("审核状态", "iApproveStatus");
                 dic.Add("iCreatedOn", "iCreatedOn");
                 dic.Add("iCreatedBy", "iCreatedBy");
                 dic.Add("iUpdatedOn", "iUpdatedOn");

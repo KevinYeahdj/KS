@@ -24,6 +24,7 @@ namespace HRMS.Data.Entity
         public string iUpdatedBy { get; set; } //修改人
         public int iStatus { get; set; }  //状态
         public int iIsDeleted { get; set; } //假删
-
+        public string iAppNo { get; set; } //单号
+        public string iApproveStatus { get; set; } //审核状态
     }
 }

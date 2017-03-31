@@ -143,6 +143,55 @@ namespace HRMS.Controllers
             return View();
         }
 
+        public ActionResult SalaryApplication()
+        {
+            DicManager dm = new DicManager();
+            var confirmUsers = dm.GetUsersByFlowAndRole(SessionHelper.CurrentUser.CurrentCompany, "流水账申请", "确认").Replace(",", ";").Replace("，", ";");
+            var managerUsers = dm.GetUsersByFlowAndRole(SessionHelper.CurrentUser.CurrentCompany, "流水账申请", "经理").Replace(",", ";").Replace("，", ";");
+            var bossUsers = dm.GetUsersByFlowAndRole(SessionHelper.CurrentUser.CurrentCompany, "流水账申请", "高管").Replace(",", ";").Replace("，", ";");
+            var tellerUsers = dm.GetUsersByFlowAndRole(SessionHelper.CurrentUser.CurrentCompany, "流水账申请", "出纳").Replace(",", ";").Replace("，", ";");
+            //var recordUsers = dm.GetUsersByFlowAndRole(SessionHelper.CurrentUser.CurrentCompany, "流水账申请", "登记").Replace(",", ";").Replace("，", ";");
+            var companies = dm.GetAllValidCompanies();
+            ViewBag.Companies = companies;
+            var projects = dm.GetAllValidProjects();
+            ViewBag.Projects = projects;
+            ViewBag.confirmUsers = confirmUsers;
+            ViewBag.managerUsers = managerUsers;
+            ViewBag.bossUsers = bossUsers;
+            ViewBag.tellerUsers = tellerUsers;
+            //ViewBag.recordUsers = recordUsers;
+            return View();
+        }
+
+        public ActionResult SalaryReApplication()
+        {
+            DicManager dm = new DicManager();
+            var companies = dm.GetAllValidCompanies();
+            ViewBag.Companies = companies;
+            var projects = dm.GetAllValidProjects();
+            ViewBag.Projects = projects;
+            return View();
+        }
+        public ActionResult SalaryApprove()
+        {
+            DicManager dm = new DicManager();
+            var companies = dm.GetAllValidCompanies();
+            ViewBag.Companies = companies;
+            var projects = dm.GetAllValidProjects();
+            ViewBag.Projects = projects;
+            return View();
+        }
+
+        public ActionResult SalaryFeeView()
+        {
+            DicManager dm = new DicManager();
+            var companies = dm.GetAllValidCompanies();
+            ViewBag.Companies = companies;
+            var projects = dm.GetAllValidProjects();
+            ViewBag.Projects = projects;
+            return View();
+        }
+
     }
 
     public class BPMAjaxController : Controller
@@ -530,10 +579,10 @@ namespace HRMS.Controllers
         {
             try
             {
-                if (runner.ProcessGUID == "09e8624f-ff2d-cc98-0eaa-6a11f3f7d9bc")  //临时记录排错
-                {
-                    LogFileHelper.ErrorLog(runner.Other + "--" + runner.AppInstanceID + "--" + runner.Conditions["sys_feedback"]);
-                }
+                //if (runner.ProcessGUID == "09e8624f-ff2d-cc98-0eaa-6a11f3f7d9bc")  //临时记录排错
+                //{
+                //    LogFileHelper.ErrorLog(runner.Other + "--" + runner.AppInstanceID + "--" + runner.Conditions["sys_feedback"]);
+                //}
 
                 bool result = true;
                 if (runner.ProcessGUID == "09e8624f-ff2d-cc98-0eaa-6a11f3f7d9bc" && runner.Other == "出纳") //流水账 将财务意见备注到Note里

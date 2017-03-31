@@ -118,6 +118,8 @@
         self.iUpdatedBy = ko.observable("");
         self.iStatus = ko.observable("1");
         self.iIsDeleted = ko.observable("0");
+        self.iAppNo = ko.observable("");
+        self.iApproveStatus = ko.observable("未审核");
     }
 
     $(function () {
@@ -270,6 +272,8 @@
                      field: "iFileName", title: "文件名", sortable: true
                  }
                  , { field: "iNote", title: "备注", sortable: true }
+                 , { field: "iApproveStatus", title: "审核状态", sortable: true }
+                 , { field: "iAppNo", title: "流程单号", sortable: true }
                  , {
                      field: "iOperation", title: "操作", align: "center", formatter: function (value, row, index) {
                          if (window.userType == "普通用户") {
@@ -355,6 +359,8 @@
             myViewModel.iYearMonth("");
             myViewModel.iFileName("");
             myViewModel.iNote("");
+            myViewModel.iAppNo("");
+            myViewModel.iApproveStatus("未审核");
             myViewModel.iCreatedOn("");
             myViewModel.iCreatedBy("");
             myViewModel.iUpdatedOn("");
