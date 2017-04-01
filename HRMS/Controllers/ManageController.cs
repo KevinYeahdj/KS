@@ -1372,6 +1372,7 @@ namespace HRMS.Controllers
                 {
                     RoleEntity enOld = dm.RoleFirstOrDefault(en.iGuid);
                     enOld.iName = en.iName;
+                    enOld.iNote = en.iNote;
                     enOld.iIsDeleted = en.iIsDeleted;
                     enOld.iUpdatedBy = SessionHelper.CurrentUser.UserName;
                     dm.UpdateRole(enOld);

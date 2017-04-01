@@ -50,7 +50,7 @@
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
                                 &times;
                             </button>
-                            <h4 class="modal-title">设置角色用户</h4>
+                            <h4 class="modal-title">设置角色用户(多人用分号;分隔)</h4>
                         </div>
                         <div class="modal-body">
                             <input type="hidden" id="settingRoleId" />
@@ -77,6 +77,10 @@
     //设置角色用户
     function SetRoleUser(iguid) {
         $('#settingRoleId').val(iguid);
+        $.each($('input[name=RoleUsers]'), function (index, item) {
+            $(item).val('');
+        });
+
         $.get("/ManageAjax/GetRoleUsers?roleid=" + iguid, function (result) {
             if (result.success) {
                 $.each(result.data, function (index, item) {
@@ -237,7 +241,9 @@
                 //$element.css("background-color", "green");
             },//单击row事件
             onDblClickRow: function (row, $element) {
-                $('#iName').addClass("warning");
+                if ($('#iName').hasClass("warning")) {
+                    $('#iName').removeClass("warning");
+                }
                 myViewModel.iGuid(row.iGuid);
                 myViewModel.iName(row.iName);
                 myViewModel.iNote(row.iNote);
