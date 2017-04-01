@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "流水账申请查看";
+    ViewBag.Title = "工资申请查看";
     Layout = "~/Views/Shared/_LayoutMain.cshtml";
 }
 <style>
@@ -13,9 +13,7 @@
         <div class="col-*-12">
 
             <div id="toolbar" class="toolbar">
-                <div style="float: left; margin-left: 10px"><span>合计：</span></div>
-                <div style="float: left; margin-left: 10px; width: 30%"><input id="totalThis" class="form-control" readonly="readonly" value="0" /></div>
-
+               
             </div>
 
             <table id="mytab" class="table table-hover"></table>
@@ -90,6 +88,24 @@
             + ":"
             + date.getMinutes();
     }
+
+    function ChangeDateFormat2YearMonth(jsondate) {
+        if (!jsondate) return "";
+        jsondate = jsondate.replace("/Date(", "").replace(")/", "");
+        if (jsondate.indexOf("+") > 0) {
+            jsondate = jsondate.substring(0, jsondate.indexOf("+"));
+        }
+        else if (jsondate.indexOf("-") > 0) {
+            jsondate = jsondate.substring(0, jsondate.indexOf("-"));
+        }
+
+        var date = new Date(parseInt(jsondate, 10));
+        var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+        var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+        return date.getFullYear()
+        + "-"
+        + month
+    }
     $(function () {
 
         var Request = GetRequest();
@@ -106,7 +122,7 @@
             })
         })
         $('#mytab').bootstrapTable({
-            url: "/FinanceAjax/GetFlowJournal",//数据源
+            url: "/FinanceAjax/GetAllSalary",//数据源
             dataField: "rows",//服务端返回数据键值 就是说记录放的键值是rows，分页时使用总记录数的键值为total
             sortName: "iUpdatedOn",//排序列
             sortOrder: "desc",
@@ -116,7 +132,7 @@
             searchOnEnterKey: false,//ENTER键搜索
             height: tableHeight(),//高度调整
             search: false,//是否搜索
-            pagination: false,//是否分页
+            pagination: true,//是否分页
             pageSize: 15,//单页记录数
             pageNumber: 1,//起始页
             pageList: [15, 100, 500, 1000, 10000],//分页步进值
@@ -127,13 +143,15 @@
             searchAlign: "left",//查询框对齐方式
             queryParamsType: "limit",//查询参数组织方式
             showRefresh: false,//刷新按钮
-            showColumns: false,//列选择按钮
+            showColumns: true,//列选择按钮
             buttonsAlign: "left",//按钮对齐方式
             toolbar: "#toolbar",//指定工具栏
             toolbarAlign: "right",//工具栏对齐方式
             queryParams: function getParams(params) {
                 params.sAppNo = Request["appno"];
-                params.limit = 10000;
+                params.sCompanyId = "-";
+                params.sProjectId = "-";
+                params.limit = 1000;
                 return params;
             },
             columns: [
@@ -145,23 +163,30 @@
                      }
                  },
                  { field: "iGuid", title: "iGuid", visible: false, switchable: false }
-                 , { field: "iCompanyId", title: "公司", visible: false, switchable: false }
-                 , { field: "iProjectId", title: "项目", visible: false, switchable: false }
-                 , { field: "iCompanyName", title: "公司", visible: true }
-                 , { field: "iProjectName", title: "项目", visible: true }
-                 , { field: "iDate", title: "日期" }
-                 , { field: "iEvent", title: "事项" }
-                 , { field: "iType", title: "科目" }
-                 , { field: "iApplicant", title: "提报人" }
-                 , { field: "iAmount", title: "金额" }
-                 , { field: "iNote", title: "备注" }
+                 , { field: "iCompanyId", title: "公司", visible: false }
+                 , { field: "iProjectId", title: "项目", visible: false }
+                 , {
+                     field: "iYearMonth", title: "工资发放年月", sortable: true, formatter: function (value, row, index) {
+                         return ChangeDateFormat2YearMonth(value);
+                     }
+                 }, {
+                     field: "iFileName", title: "文件名", sortable: true
+                 }
+                 , { field: "iNote", title: "备注", sortable: true }
+                 , { field: "iApproveStatus", title: "审核状态", sortable: true }
+                 , { field: "iAppNo", title: "流程单号", sortable: true }
+                 , {
+                     field: "iOperation", title: "操作", align: "center", formatter: function (value, row, index) {
+                         return '<a target="_blank" href="/Common/ExcelPreview?fileName=' + row.iFileName + "&filePath=" + row.iUrl + '">预览</a>&nbsp;&nbsp;<a href="/UploadSalary/' + row.iUrl + '">下载</a>';
+
+                     }
+                 }
             ],
             onClickRow: function (row, $element) {
                 //$element是当前tr的jquery对象
                 //$element.css("background-color", "green");
             },//单击row事件
             onDblClickRow: function (row, $element) {
-                return;
             },
             locale: "zh-CN",//中文支持,
             detailView: false, //是否显示详情折叠
@@ -171,9 +196,6 @@
                     html += "<p>" + key + ":" + val + "</p>"
                 });
                 return html;
-            },
-            onLoadSuccess: function (data) {
-                $("#totalThis").val(data.sum);
             }
         });
         $('#logtab').bootstrapTable({

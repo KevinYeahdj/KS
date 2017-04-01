@@ -92,6 +92,37 @@ namespace HRMS.Data.Manager
             }
         }
 
+        //同一流程所有数据操作
+        public void BatchUpdate4Flow(List<SalaryEntity> entities, string appNo)
+        {
+            if (entities == null || entities.Count == 0)
+                return;
+            IDbSession session = SessionFactory.CreateSession();
+            try
+            {
+                session.BeginTrans();
+                List<SalaryEntity> upds = new List<SalaryEntity>();
+                foreach (var entity in entities)
+                {
+                    var item = Repository.GetById<SalaryEntity>(entity.iGuid);
+                    item.iApproveStatus = "待审核";
+                    item.iAppNo = appNo;
+                    upds.Add(item);
+                }
+                Repository.UpdateBatch<SalaryEntity>(session.Connection, upds, session.Transaction);
+                session.Commit();
+            }
+            catch (System.Exception)
+            {
+                session.Rollback();
+                throw;
+            }
+            finally
+            {
+                session.Dispose();
+            }
+        }
+
         public SalaryEntity FirstOrDefault(string guid)
         {
             string sql = @"select * from Salary where iGuid=@id and iIsDeleted =0 and iStatus =1";

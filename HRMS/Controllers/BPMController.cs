@@ -146,20 +146,10 @@ namespace HRMS.Controllers
         public ActionResult SalaryApplication()
         {
             DicManager dm = new DicManager();
-            var confirmUsers = dm.GetUsersByFlowAndRole(SessionHelper.CurrentUser.CurrentCompany, "流水账申请", "确认").Replace(",", ";").Replace("，", ";");
-            var managerUsers = dm.GetUsersByFlowAndRole(SessionHelper.CurrentUser.CurrentCompany, "流水账申请", "经理").Replace(",", ";").Replace("，", ";");
-            var bossUsers = dm.GetUsersByFlowAndRole(SessionHelper.CurrentUser.CurrentCompany, "流水账申请", "高管").Replace(",", ";").Replace("，", ";");
-            var tellerUsers = dm.GetUsersByFlowAndRole(SessionHelper.CurrentUser.CurrentCompany, "流水账申请", "出纳").Replace(",", ";").Replace("，", ";");
-            //var recordUsers = dm.GetUsersByFlowAndRole(SessionHelper.CurrentUser.CurrentCompany, "流水账申请", "登记").Replace(",", ";").Replace("，", ";");
             var companies = dm.GetAllValidCompanies();
             ViewBag.Companies = companies;
             var projects = dm.GetAllValidProjects();
             ViewBag.Projects = projects;
-            ViewBag.confirmUsers = confirmUsers;
-            ViewBag.managerUsers = managerUsers;
-            ViewBag.bossUsers = bossUsers;
-            ViewBag.tellerUsers = tellerUsers;
-            //ViewBag.recordUsers = recordUsers;
             return View();
         }
 
@@ -182,7 +172,7 @@ namespace HRMS.Controllers
             return View();
         }
 
-        public ActionResult SalaryFeeView()
+        public ActionResult SalaryView()
         {
             DicManager dm = new DicManager();
             var companies = dm.GetAllValidCompanies();
@@ -536,7 +526,7 @@ namespace HRMS.Controllers
             try
             {
                 bool result = false;
-                if (pguid == "09e8624f-ff2d-cc98-0eaa-6a11f3f7d9bc")
+                if (pguid == "09e8624f-ff2d-cc98-0eaa-6a11f3f7d9bc") //流水账
                 {
                     JournalManager service = new JournalManager();
                     JsonSerializerSettings st = new JsonSerializerSettings();
@@ -545,7 +535,7 @@ namespace HRMS.Controllers
                     service.BatchUpdate(entities, appNo);
                     result = true;
                 }
-                else if (pguid == "eb2844bd-0ffd-9eaa-6068-910b66fad9d9")
+                else if (pguid == "eb2844bd-0ffd-9eaa-6068-910b66fad9d9") //返费
                 {
                     ReturnFeeManager service = new ReturnFeeManager();
                     JsonSerializerSettings st = new JsonSerializerSettings();
@@ -562,6 +552,16 @@ namespace HRMS.Controllers
                     entities.RemoveAll(i => string.IsNullOrEmpty(i.iReturnFeeGuid));
                     service.BatchInsertReturnFeeHistoryApplication(entities);
                     result = true;
+                }
+                else if (pguid == "117ca726-3b23-2906-54d9-d6872f59e943")   //工资
+                {
+                    SalaryManager service = new SalaryManager();
+                    JsonSerializerSettings st = new JsonSerializerSettings();
+                    st.DateTimeZoneHandling = DateTimeZoneHandling.Local;
+                    List<SalaryEntity> entities = JsonConvert.DeserializeObject<List<SalaryEntity>>(buzJson, st);
+                    service.BatchUpdate4Flow(entities, appNo);
+                    result = true;
+                    
                 }
                 return result;
             }

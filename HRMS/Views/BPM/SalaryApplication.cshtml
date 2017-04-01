@@ -107,7 +107,7 @@
         self.iStatus = ko.observable("1");
         self.iIsDeleted = ko.observable("0");
         self.iAppNo = ko.observable("");
-        self.iApproveStatus = ko.observable("未审核");
+        self.iApproveStatus = ko.observable("草稿");
     }
     $(function () {
         //重置函数
@@ -122,8 +122,51 @@
                 height: tableHeight()
             })
         })
+
+        //弹窗日期绑定
+        $('#iYearMonth').datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            clearBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 3,
+            minView: 3,
+            forceParse: 0,
+            format: "yyyy-mm",
+        });
+        //必填校验
+        $("#iCompanyId").change(function () {
+            var value = $("#iCompanyId").val();
+            if (value != "-") {
+                $('#iCompanyId').removeClass("warning");
+            }
+            else {
+                $('#iCompanyId').addClass("warning");
+            }
+        });
+        $("#iProjectId").change(function () {
+            var value = $("#iProjectId").val();
+            if (value != "-") {
+                $('#iProjectId').removeClass("warning");
+            }
+            else {
+                $('#iProjectId').addClass("warning");
+            }
+        });
+
+        $("#iYearMonth").change(function () {
+            var value = $("#iYearMonth").val();
+            if (value.length > 0) {
+                $('#iYearMonth').removeClass("warning");
+            }
+            else {
+                $('#iYearMonth').addClass("warning");
+            }
+        });
+
         $('#mytab').bootstrapTable({
-            url: "/FinanceAjax/GetAllSalary",//数据源
+            url: "/FinanceAjax/GetAllSalaryDraft",//数据源
             dataField: "rows",//服务端返回数据键值 就是说记录放的键值是rows，分页时使用总记录数的键值为total
             sortName: "iUpdatedOn",//排序列
             sortOrder: "desc",
@@ -132,7 +175,7 @@
             clickToSelect: true,//选择行即选择checkbox
             searchOnEnterKey: false,//ENTER键搜索
             height: tableHeight(),//高度调整
-            search: true,//是否搜索
+            search: false,//是否搜索
             pagination: true,//是否分页
             pageSize: 15,//单页记录数
             pageNumber: 1,//起始页
@@ -178,12 +221,7 @@
                  , { field: "iAppNo", title: "流程单号", sortable: true }
                  , {
                      field: "iOperation", title: "操作", align: "center", formatter: function (value, row, index) {
-                         if (window.userType == "普通用户") {
-                             return '<a target="_blank" href="/Common/ExcelPreview?fileName=' + row.iFileName + "&filePath=" + row.iUrl + '">预览</a>&nbsp;&nbsp;<a href="/UploadSalary/' + row.iUrl + '">下载</a>';
-                         }
-                         else {
-                             return '<a target="_blank" href="/Common/ExcelPreview?fileName=' + row.iFileName + "&filePath=" + row.iUrl + '">预览</a>&nbsp;&nbsp;<a href="/UploadSalary/' + row.iUrl + '">下载</a>&nbsp;&nbsp;<a href="#" onclick="RemoveItem(\'' + row.iGuid + '\')">删除</a>';
-                         }
+                         return '<a target="_blank" href="/Common/ExcelPreview?fileName=' + row.iFileName + "&filePath=" + row.iUrl + '">预览</a>&nbsp;&nbsp;<a href="/UploadSalary/' + row.iUrl + '">下载</a>&nbsp;&nbsp;<a href="#" onclick="RemoveItem(\'' + row.iGuid + '\')">删除</a>';
                      }
                  }
             ],
@@ -258,7 +296,7 @@
             myViewModel.iFileName("");
             myViewModel.iNote("");
             myViewModel.iAppNo("");
-            myViewModel.iApproveStatus("未审核");
+            myViewModel.iApproveStatus("草稿");
             myViewModel.iCreatedOn("");
             myViewModel.iCreatedBy("");
             myViewModel.iUpdatedOn("");
@@ -280,42 +318,62 @@
             $('#iYearMonth').addClass("warning");
         });
 
+        $("#submitUpload").click(function () {
+            var warnings = $(".warning");
+            if (warnings && warnings.length > 0) {
+                toastr.error('数据验证未通过！');
+                return;
+            }
+            if (myViewModel.iFileName() == "") {
+                toastr.error('请上传工资文件！');
+                return;
+            }
+
+            $(this).attr({ "disabled": "disabled" });
+            var param = {};
+            param.jsonString = ko.toJSON(myViewModel);
+            $.ajax({
+                url: "/FinanceAjax/SalarySaveChanges",
+                type: "POST",
+                data: param,
+                dataType: 'text',
+                success: function (data) {
+                    if (data == "success") {
+                        toastr.success('保存成功！');
+                        $('#mytab').bootstrapTable('refresh');
+                    }
+                    else {
+                        console.log(data);
+                        toastr.error('保存数据失败！');
+                    }
+                    $('#importModal').modal('toggle');
+                    $("#submitUpload").removeAttr("disabled");
+                }
+            });
+        });
+
         $("#SubmitApplication").click(function () {
             if (confirm("确认申请？")) {
                 var data = $('#mytab').bootstrapTable('getData', true);
                 if (data.length == 0) {
-                    toastr.error('请填写至少一条流水账信息！');
+                    toastr.error('请填写至少一条工资信息！');
                     return;
                 }
 
                 $(this).attr({ "disabled": "disabled" });
-                var isManager = 0;
-                if (managerUsers.split(';').indexOf('@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId') > -1) {
-                    isManager = 1;
-                }
-                var isBoss = 0;
-                if (bossUsers.split(';').indexOf('@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId') > -1) {
-                    isBoss = 1;
-                }
 
                 var para = {};
                 var conditions = {};
                 conditions.sys_approve = "1";
                 conditions.sys_approvecn = "提交申请";
                 conditions.sys_feedback = "提交申请";
-                conditions.sys_summary = "合计：" + $('#totalThis').val();
-                conditions.confirmUsers = confirmUsers;
-                conditions.managerUsers = managerUsers;
-                conditions.bossUsers = bossUsers;
-                conditions.tellerUsers = tellerUsers;
-                //conditions.recordUsers = recordUsers;
-                conditions.isManager = isManager;
-                conditions.isBoss = isBoss;
+                conditions.sys_summary = "工资：" +  data.length + "条";
+                
                 para.Conditions = conditions;
                 para.ProcessInstanceID = ""; //important
                 para.AppName = "";
                 para.AppInstanceID = ""; //important
-                para.ProcessGUID = "09e8624f-ff2d-cc98-0eaa-6a11f3f7d9bc";  //申请时必要 important
+                para.ProcessGUID = "117ca726-3b23-2906-54d9-d6872f59e943";  //申请时必要 important
                 para.UserID = "@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId";
                 para.UserName = "";
                 para.TaskID = "";  //important
@@ -342,6 +400,8 @@
             }
 
         });
+        var myViewModel = new ViewModel();
+        ko.applyBindings(myViewModel);
 
         window.RemoveItem = function (iguid) {
             if (confirm("确认要删除？")) {

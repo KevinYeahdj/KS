@@ -75,24 +75,24 @@ namespace ClinBrain.Data.Service
 
         public void UpdateSysSummary(string summary, string appNo)
         {
-            string sql = "update WfProcessInstance set summary = '" + summary + "' where AppInstanceID='" + appNo + "'";
-            IDbSession session = SessionFactory.CreateSession();
-            try
-            {
-                session.BeginTrans();
-                Repository.Execute(session.Connection, sql, session.Transaction);
-                session.Commit();
-            }
-            catch (System.Exception)
-            {
-                session.Rollback();
-                throw;
-            }
-            finally
-            {
-                session.Dispose();
-            }
-
+            string sql = "update wfdb.dbo.WfProcessInstance set summary = '" + summary + "' where AppInstanceID='" + appNo + "'";
+            DbHelperSQL.ExecuteSql(sql);
+            //IDbSession session = SessionFactory.CreateSession();
+            //try
+            //{
+            //    session.BeginTrans();
+            //    Repository.Execute(session.Connection, sql, session.Transaction);
+            //    session.Commit();
+            //}
+            //catch (System.Exception)
+            //{
+            //    session.Rollback();
+            //    throw;
+            //}
+            //finally
+            //{
+            //    session.Dispose();
+            //}
         }
     }
     public class TodoViewModel
