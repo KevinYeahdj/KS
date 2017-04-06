@@ -642,6 +642,15 @@
             forceParse: 1,
             format: 'yyyy-mm-dd'
         });
+        $("#iPayPlace").change(function () {
+            var value = $("#iPayPlace").val();
+            if (value != "") {
+                $('#iPayPlace').removeClass("warning");
+            }
+            else {
+                $('#iPayPlace').addClass("warning");
+            }
+        });
         $('#mytab').bootstrapTable({
             url: "/FundAjax/GetAllSocialSecurity",//数据源
             dataField: "rows",//服务端返回数据键值 就是说记录放的键值是rows，分页时使用总记录数的键值为total
@@ -790,7 +799,7 @@
                 $('#iName').removeClass("warning");
                 $('#iEmpNo').removeClass("warning");
                 $('#iIdCard').removeClass("warning");
-
+                $('#iPayPlace').removeClass("warning");
 
                 $("#iEmpNo").attr("readonly", "readonly");
                 $("#iName").attr("readonly", "readonly");
@@ -849,8 +858,14 @@
                         myViewModel.iUpdatedBy(result.data.iUpdatedBy);
                         myViewModel.iStatus(result.data.iStatus);
                         myViewModel.iIsDeleted(result.data.iIsDeleted);
+                        if (result.data.iIndividualAmount == null) result.data.iIndividualAmount = 0;
+                        if (result.data.iCompanyAmount == null) result.data.iCompanyAmount = 0;
+                        if (result.data.iAdditionalAmount == null) result.data.iAdditionalAmount = 0;
                         var total = result.data.iIndividualAmount.add(result.data.iCompanyAmount).add(result.data.iAdditionalAmount);
                         $("#iTotal").val(total);
+                        if (!result.data.iPayPlace) {
+                            $('#iPayPlace').addClass("warning");
+                        }
                     }
                     else {
                         console.log(result.msg);

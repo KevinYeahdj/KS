@@ -732,6 +732,9 @@
                         myViewModel.iUpdatedBy(result.data.iUpdatedBy);
                         myViewModel.iStatus(result.data.iStatus);
                         myViewModel.iIsDeleted(result.data.iIsDeleted);
+                        if (result.data.iIndividualAmount == null) result.data.iIndividualAmount = 0;
+                        if (result.data.iCompanyAmount == null) result.data.iCompanyAmount = 0;
+                        if (result.data.iAdditionalAmount == null) result.data.iAdditionalAmount = 0;
                         var total = result.data.iIndividualAmount.add(result.data.iCompanyAmount).add(result.data.iAdditionalAmount);
                         $("#iTotal").val(total);
                     }

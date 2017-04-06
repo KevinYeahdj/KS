@@ -682,6 +682,11 @@ namespace HRMS.Controllers
                     string company = sheet.GetRow(i).GetCell(keycolumns["iCompany"]).ToString().Trim();
                     string empcode = sheet.GetRow(i).GetCell(keycolumns["iEmpNo"]).ToString().Trim();
                     string idcard = sheet.GetRow(i).GetCell(keycolumns["iIdCard"]).ToString().Trim();
+                    string payPlace = sheet.GetRow(i).GetCell(keycolumns["iPayPlace"]).ToString().Trim();
+                    if (string.IsNullOrEmpty(payPlace))
+                    {
+                        errorLog += "第【" + (i + 1).ToString() + "】行缴纳地不能为空；";
+                    }
                     if (string.IsNullOrEmpty(empcode))
                     {
                         errorLog += "第【" + (i + 1).ToString() + "】行工号不能为空,临时工用-；";
@@ -1226,7 +1231,7 @@ namespace HRMS.Controllers
                     continue;
                 if (paraDic.ContainsKey(item.Key + "2"))
                 {
-                    bizParaDic.Add("i" + item.Key.Substring(1, item.Key.Length - 1), item.Value + "§" + paraDic[item.Key + "2"]);
+                    bizParaDic.Add("i" + item.Key.Substring(1, item.Key.Length - 1) + "[d]", item.Value + "§" + paraDic[item.Key + "2"]);
                 }
                 else
                 {
@@ -1265,7 +1270,7 @@ namespace HRMS.Controllers
                     continue;
                 if (paraDic.ContainsKey(item.Key + "2"))
                 {
-                    bizParaDic.Add("i" + item.Key.Substring(1, item.Key.Length - 1), item.Value + "§" + paraDic[item.Key + "2"]);
+                    bizParaDic.Add("i" + item.Key.Substring(1, item.Key.Length - 1) + "[d]", item.Value + "§" + paraDic[item.Key + "2"]);
                 }
                 else
                 {

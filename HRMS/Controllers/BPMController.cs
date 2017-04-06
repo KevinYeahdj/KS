@@ -553,7 +553,7 @@ namespace HRMS.Controllers
                     service.BatchInsertReturnFeeHistoryApplication(entities);
                     result = true;
                 }
-                else if (pguid == "117ca726-3b23-2906-54d9-d6872f59e943")   //工资
+                else if (pguid == "c6f4e09b-e355-b8cd-ac9f-ec7995c23f6f")   //工资
                 {
                     SalaryManager service = new SalaryManager();
                     JsonSerializerSettings st = new JsonSerializerSettings();
