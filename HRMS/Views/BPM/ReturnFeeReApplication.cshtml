@@ -303,6 +303,10 @@
 
 
         $("#SubmitApplication").click(function () {
+            if ($("#companySelect").val() == "-") {
+                toastr.error('请先选择当前公司！');
+                return;
+            }
             if (confirm("确认再申请？")) {
                 var data = $('#mytab').bootstrapTable('getData', true);
                 if (data.length == 0) {
