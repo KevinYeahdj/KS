@@ -332,7 +332,7 @@ namespace HRMS.Data.Manager
                     string returnFee = rfDic.ContainsKey(company + "|" + project) ? rfDic[company + "|" + project] : "0";
                     string officePay = jrDic.ContainsKey(company + "|" + project) ? jrDic[company + "|" + project] : "0";
                     string tempPay = jrtmpDic.ContainsKey(company + "|" + project) ? jrtmpDic[company + "|" + project] : "0";
-                    exeSqls.Add(string.Format(updateTmp, month.ToString(), ssCompanyPay, ssPersonalPay, pfPersonalPay, pfCompanyPay, ssAdditional, returnFee, officePay, tempPay, company, project));
+                    exeSqls.Add(string.Format(updateTmp, month.ToString(), company, project, ssCompanyPay, ssPersonalPay, pfPersonalPay, pfCompanyPay, ssAdditional, returnFee, officePay, tempPay));
                 }
             }
             affectedRowCount = DbHelperSQL.ExecuteSqlTran(exeSqls);

@@ -251,13 +251,13 @@
         });
         self.iProfit = ko.computed({
             read: function () {
-                if (self.iInvoice() === "" || self.iSalaryOut() === "" || self.iSocialSecurityCompanyPay() === "" || self.iSocialSecurityPersonalPay() === "" || self.iProvidentFundPersonalPay() === "" || self.iProvidentFundCompanyPay() === ""
+                if (self.iInvoice() === "" || self.iTemporarySalaryIn() === "" || self.iSalaryOut() === "" || self.iSocialSecurityCompanyPay() === "" || self.iSocialSecurityPersonalPay() === "" || self.iProvidentFundPersonalPay() === "" || self.iProvidentFundCompanyPay() === ""
                     || self.iSocialSecurityAdditional() === "" || self.iReturnFee() === "" || self.iDisabilityBenefitsPay() === "" || self.iMealFee() === "" || self.iDormitoryFeePay() === ""
                     || self.iCommercialInsuranceFeePay() === "" || self.iTaxFee() === "" || self.iPersonalTax() === ""
                     || self.iOfficePay() === "" || self.iCompanySalaryPay() === "" || self.iCompanySocialSecurityPay() === "" || self.iCompanyProvidentFundPay() === ""
                     || self.iInjuryPay() === "" || self.iOtherPay() === "")
                     return "";
-                return (Number(self.iInvoice()) - Number(self.iSalaryOut()) - Number(self.iSocialSecurityCompanyPay()) - Number(self.iSocialSecurityPersonalPay()) - Number(self.iProvidentFundPersonalPay()) - Number(self.iProvidentFundCompanyPay())
+                return (Number(self.iInvoice()) - Number(self.iTemporarySalaryIn()) - Number(self.iSalaryOut()) - Number(self.iSocialSecurityCompanyPay()) - Number(self.iSocialSecurityPersonalPay()) - Number(self.iProvidentFundPersonalPay()) - Number(self.iProvidentFundCompanyPay())
                     - Number(self.iSocialSecurityAdditional()) - Number(self.iReturnFee()) - Number(self.iDisabilityBenefitsPay()) - Number(self.iMealFee()) - Number(self.iDormitoryFeePay())
                 - Number(self.iCommercialInsuranceFeePay()) - Number(self.iTaxFee()) - Number(self.iPersonalTax())
                     - Number(self.iOfficePay()) - Number(self.iCompanySalaryPay()) - Number(self.iCompanySocialSecurityPay()) - Number(self.iCompanyProvidentFundPay())
@@ -469,23 +469,31 @@
                  , { field: "iPayNote", title: "支出备注", sortable: true }
                  , {
                      field: "iProfit", title: "利润", sortable: false, formatter: function (value, row, index) {
-                         if (row.iInvoice === "" || row.iSalaryOut === "" || row.iSocialSecurityCompanyPay === "" || row.iSocialSecurityPersonalPay === "" || row.iProvidentFundPersonalPay === "" || row.iProvidentFundCompanyPay === ""
+                         if (row.iInvoice == "" || row.iTemporarySalaryIn === "" || row.iSalaryOut === "" || row.iSocialSecurityCompanyPay === "" || row.iSocialSecurityPersonalPay === "" || row.iProvidentFundPersonalPay === "" || row.iProvidentFundCompanyPay === ""
                     || row.iSocialSecurityAdditional === "" || row.iReturnFee === "" || row.iDisabilityBenefitsPay === "" || row.iMealFee === "" || row.iDormitoryFeePay === ""
                     || row.iCommercialInsuranceFeePay === "" || row.iTaxFee === "" || row.iPersonalTax === ""
                     || row.iOfficePay === "" || row.iCompanySalaryPay === "" || row.iCompanySocialSecurityPay === "" || row.iCompanyProvidentFundPay === ""
                     || row.iInjuryPay === "" || row.iOtherPay === "")
+                         {
+                             row.iProfit = 0;
                              return "";
-                         return (Number(row.iInvoice) - Number(row.iSalaryOut) - Number(row.iSocialSecurityCompanyPay) - Number(row.iSocialSecurityPersonalPay) - Number(row.iProvidentFundPersonalPay) - Number(row.iProvidentFundCompanyPay)
+                         }
+                         row.iProfit = (Number(row.iInvoice) - Number(row.iTemporarySalaryIn) - Number(row.iSalaryOut) - Number(row.iSocialSecurityCompanyPay) - Number(row.iSocialSecurityPersonalPay) - Number(row.iProvidentFundPersonalPay) - Number(row.iProvidentFundCompanyPay)
                              - Number(row.iSocialSecurityAdditional) - Number(row.iReturnFee) - Number(row.iDisabilityBenefitsPay) - Number(row.iMealFee) - Number(row.iDormitoryFeePay)
                          - Number(row.iCommercialInsuranceFeePay) - Number(row.iTaxFee) - Number(row.iPersonalTax)
                              - Number(row.iOfficePay) - Number(row.iCompanySalaryPay) - Number(row.iCompanySocialSecurityPay) - Number(row.iCompanyProvidentFundPay)
                              - Number(row.iInjuryPay) - Number(row.iOtherPay)).toFixed(2);
+                         return row.iProfit;
                      }
                  }, {
                      field: "iTemporaryProfit", title: "临时工利润", sortable: false, formatter: function (value, row, index) {
                          if (row.iTemporarySalaryOut === "" || row.iTemporarySalaryIn === "" || row.iTemporaryFee === "")
+                         {
+                             row.iTemporaryProfit = 0;
                              return "";
-                         return (Number(row.iTemporarySalaryIn) - Number(row.iTemporarySalaryOut) - Number(row.iTemporaryFee)).toFixed(2);
+                         }
+                         row.iTemporaryProfit = (Number(row.iTemporarySalaryIn) - Number(row.iTemporarySalaryOut) - Number(row.iTemporaryFee)).toFixed(2);
+                         return row.iTemporaryProfit;
                      }
                  }, {
                      field: "iTotalProfit", title: "总利润", sortable: false, formatter: function (value, row, index) {

@@ -15,7 +15,7 @@
             <div id="toolbar" class="toolbar">
                 <div style="float: left; margin-left: 10px; "><span>工资发放年月：</span></div><div style="float: left; margin-left: 10px; width: 16%"><input id="sYearMonth" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 16%"><input id="sYearMonth2" class="form-control" /></div>
                 <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" onclick="Search()">查询</div>
-                <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" data-toggle="modal" data-target="#importModal" id="importSalary">工资导入</div>
+                @*<div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" data-toggle="modal" data-target="#importModal" id="importSalary">工资导入</div>*@
             </div>
 
             <table id="mytab" class="table table-hover"></table>
@@ -276,6 +276,8 @@
                  , { field: "iAppNo", title: "流程单号", sortable: true }
                  , {
                      field: "iOperation", title: "操作", align: "center", formatter: function (value, row, index) {
+                         return '<a target="_blank" href="/Common/ExcelPreview?fileName=' + row.iFileName + "&filePath=" + row.iUrl + '">预览</a>&nbsp;&nbsp;<a href="/UploadSalary/' + row.iUrl + '">下载</a>';
+
                          if (window.userType == "普通用户") {
                              return '<a target="_blank" href="/Common/ExcelPreview?fileName='+row.iFileName +"&filePath=" + row.iUrl + '">预览</a>&nbsp;&nbsp;<a href="/UploadSalary/' + row.iUrl + '">下载</a>';
                          }
