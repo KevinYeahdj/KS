@@ -269,7 +269,7 @@ namespace HRMS.Data.Manager
                 {
                     if (!dicOld.ContainsKey(dr[0].ToString() + "|" + dr[1].ToString()))
                     {
-                        exeSqls.Add(string.Format(insertTmp, dr[0].ToString(), dr[1].ToString(), month.ToString(), null, null, null, null, null, null, null, null));
+                        exeSqls.Add(string.Format(insertTmp, dr[0].ToString(), dr[1].ToString(), month.ToString(), "Null", "Null", "Null", "Null", "Null", "Null", "Null", "Null"));
                     }
                 }
                 if (exeSqls.Count == 0)
@@ -286,7 +286,7 @@ namespace HRMS.Data.Manager
                 {
                     if (!dicOld.ContainsKey(dr[0].ToString() + "|" + dr[1].ToString()))
                     {
-                        exeSqls.Add(string.Format(insertTmp, dr[0].ToString(), dr[1].ToString(), month.ToString(), null, null, null, null, null, null, null, null));
+                        exeSqls.Add(string.Format(insertTmp, dr[0].ToString(), dr[1].ToString(), month.ToString(), "Null", "Null", "Null", "Null", "Null", "Null", "Null", "Null"));
                     }
                 }
                 string ssSql = "SELECT b.iCompany, b.iItemName, sum([iIndividualAmount]),sum([iCompanyAmount]) ,sum([iAdditionalAmount]) FROM [SocialSecurityDetail] a inner join hrinfo b on a.iHRInfoGuid = b.iGuid and a.iisdeleted=0 and b.iisdeleted=0 where a.iPayMonth=" + month + " group by b.iCompany, b.iItemName";
@@ -332,12 +332,12 @@ namespace HRMS.Data.Manager
                     string returnFee = rfDic.ContainsKey(company + "|" + project) ? rfDic[company + "|" + project] : "0";
                     string officePay = jrDic.ContainsKey(company + "|" + project) ? jrDic[company + "|" + project] : "0";
                     string tempPay = jrtmpDic.ContainsKey(company + "|" + project) ? jrtmpDic[company + "|" + project] : "0";
-                    exeSqls.Add(string.Format(updateTmp, month.ToString(), company, project, ssCompanyPay, ssPersonalPay, pfPersonalPay, pfCompanyPay, ssAdditional, returnFee, officePay, tempPay));
+                    exeSqls.Add(string.Format(updateTmp, month.ToString(), company, project, string.IsNullOrEmpty(ssCompanyPay) ? "0" : ssCompanyPay, string.IsNullOrEmpty(ssPersonalPay) ? "0" : ssPersonalPay, string.IsNullOrEmpty(pfPersonalPay) ? "0" : pfPersonalPay, string.IsNullOrEmpty(pfCompanyPay) ? "0" : pfCompanyPay, string.IsNullOrEmpty(ssAdditional) ? "0" : ssAdditional, string.IsNullOrEmpty(returnFee) ? "0" : returnFee, string.IsNullOrEmpty(officePay) ? "0" : officePay, string.IsNullOrEmpty(tempPay) ? "0" : tempPay));
                 }
             }
             affectedRowCount = DbHelperSQL.ExecuteSqlTran(exeSqls);
             return affectedRowCount;
-            
+
         }
         public int UpdateFinanceSummaryByMonthOld(int month)
         {

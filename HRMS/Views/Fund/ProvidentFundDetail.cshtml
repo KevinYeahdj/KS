@@ -157,7 +157,7 @@
         self.iAdditionalMonths = ko.observable("");
         self.iTotal = ko.computed({
             read: function () {
-                if (self.iIndividualAmount() == null || self.iCompanyAmount() == null || self.iAdditionalAmount() == null || self.iIndividualAmount() == "" || self.iCompanyAmount() == null || self.iAdditionalAmount() == "")
+                if (self.iIndividualAmount() == null || self.iCompanyAmount() == null || self.iAdditionalAmount() == null || self.iIndividualAmount() == "" || self.iCompanyAmount() == "" || self.iAdditionalAmount() == "")
                     return "";
                 return Number(self.iIndividualAmount()) + Number(self.iCompanyAmount()) + Number(self.iAdditionalAmount());
 
