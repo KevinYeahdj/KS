@@ -706,8 +706,11 @@
                 }
                 $("#addModalLabel").html("修改记录");
                 $('#addModal').modal('toggle');
-                if (window.userType != "普通用户") {
+                if (window.userType == "超级管理员") {
                     $("#removeRecord").show();
+                }
+                else {
+                    $("#removeRecord").hide();
                 }
                 $("#iItemName").removeClass("warning");
                 $('#iCompany').removeClass("warning");
@@ -802,6 +805,13 @@
                         else {
                             $("input[name='iIsReturnFee']").removeAttr("disabled");
                         }
+                        if (result.data.iEmployeeStatus == "离职" && window.userType != "超级管理员") {
+                            $("input[name=iEmployeeStatus]").attr("disabled", true);
+                        }
+                        else {
+                            $("input[name=iEmployeeStatus]").removeAttr("disabled");
+                        }
+
                     }
                     else {
                         console.log(result.msg);

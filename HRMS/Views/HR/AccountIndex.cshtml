@@ -436,8 +436,11 @@
                 $("#addModalLabel").html("修改记录");
                 $('#addModal').modal('toggle');
 
-                if (window.userType != "普通用户") {
+                if (window.userType == "超级管理员") {
                     $("#removeRecord").show();
+                }
+                else {
+                    $("#removeRecord").hide();
                 }
 
                 $("#iItemName").removeClass("warning");
