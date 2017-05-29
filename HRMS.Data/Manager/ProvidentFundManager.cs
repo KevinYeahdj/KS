@@ -224,6 +224,18 @@ namespace HRMS.Data.Manager
             }
             return affectedRowCount;
         }
+        public int GenerateProvidentFundDetail(int payMonth, string iguid)
+        {
+            int affectedRowCount = 0;
+            string sql = @"insert into ProvidentFundDetail select newid()," + payMonth.ToString() + ",iHRInfoGuid, iPayPlace, iPayBase, iIndividualAmount, iCompanyAmount, isnull(iAdditionalAmount,0), iAdditionalMonths,GETDATE(),'系统',GETDATE(),'系统',1,0 from ProvidentFund where iGuid='" + iguid + "'";
+            string clearsql = "update ProvidentFund set iAdditionalAmount = null, iAdditionalMonths = null where iGuid='" + iguid + "'";
+            using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSDBConnectionString"].ConnectionString))
+            {
+                affectedRowCount = Repository.Execute(conn, sql);
+                Repository.Execute(conn, clearsql);
+            }
+            return affectedRowCount;
+        }
         public ProvidentFundDetailModel GetDetailFirstOrDefault(string iguid)
         {
             string sql = @"select pf.iIndividualAmount + pf.iCompanyAmount + pf.iAdditionalAmount  as iTotal, pf.*, hr.iItemName, hr.iCompany, hr.iName, hr.iIdCard, hr.iEmpNo, hr.iEmployeeStatus from ProvidentFundDetail pf inner join hrinfo hr on pf.iHRInfoGuid = hr.iguid and pf.iIsDeleted =0 and pf.iStatus =1  where hr.iisdeleted=0 and hr.istatus=1 and pf.iguid=@id ";

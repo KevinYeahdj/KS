@@ -183,6 +183,8 @@
                             </div>
                         </div>
                         <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" id="addToLastMonthDetail">添加到上月明细</button>
+                            <button type="button" class="btn btn-primary" id="addToCurrentMonthDetail">添加到本月明细</button>
                             <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
                             <button type="button" class="btn btn-primary" id="addRecord">提交</button>
                         </div>
@@ -392,6 +394,10 @@
         self.iIsDeleted = ko.observable("");
     }
     $(function () {
+        if (window.userType != "超级管理员") {
+            $("#addToLastMonthDetail").hide();
+            $("#addToCurrentMonthDetail").hide();
+        }
         if (window.userType == "普通用户") {
             $("#sEditType").val("未编辑");
         }
@@ -858,7 +864,30 @@
             });
         });
 
+        $("#addToLastMonthDetail").click(function () {
+            var date = new Date;
+            var year = date.getFullYear();
+            var month = date.getMonth() + 1;
+            if (month == 1) {
+                year = year - 1;
+                month = 12;
+            }
+            else {
+                month = month - 1;
+            }
+            month = (month < 10 ? "0" + month : month);
+            var mydate = (year.toString() + month.toString());
+            addToDetail(mydate);
+        });
 
+        $("#addToCurrentMonthDetail").click(function () {
+            var date = new Date;
+            var year = date.getFullYear();
+            var month = date.getMonth() + 1;
+            month = (month < 10 ? "0" + month : month);
+            var mydate = (year.toString() + month.toString());
+            addToDetail(mydate);
+        });
         //初始化fileinput
         var FileInput = function () {
             var oFile = new Object();
@@ -906,4 +935,32 @@
         var myViewModel = new ViewModel();
         ko.applyBindings(myViewModel);
     })
+
+
+    function addToDetail(month) {
+        var tip = "确认要加入到【" + month + "】的缴纳明细？";
+        if (confirm(tip)) {
+            var iguid = $("#iGuid").val();
+            var param = {};
+            param.month = month;
+            param.iguid = iguid;
+            $.ajax({
+                url: "/FundAjax/AddToProvidentFundDetail",
+                type: "POST",
+                data: param,
+                dataType: 'text',
+                success: function (data) {
+                    if (data == "success") {
+                        toastr.success('加入成功！');
+                    }
+                    else {
+                        console.log(data);
+                        toastr.error('加入失败！');
+                    }
+                    $('#addModal').modal('toggle');
+                }
+            });
+        }
+
+    }
 </script>

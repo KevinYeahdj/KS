@@ -355,7 +355,7 @@ namespace HRMS.Controllers
                 }
 
                 //给分页实体赋值  
-                PageModels3<ProvidentFundDetailModel> model = new PageModels3<ProvidentFundDetailModel>(); 
+                PageModels3<ProvidentFundDetailModel> model = new PageModels3<ProvidentFundDetailModel>();
                 model.personalSum = personalSum ?? 0;
                 model.companySum = companySum ?? 0;
                 model.totalSum = totalSum ?? 0;
@@ -1436,6 +1436,56 @@ namespace HRMS.Controllers
             Response.AddHeader("content-disposition", "attachment;  filename=" + encodefileName);
             Response.Flush();
             Response.End();
+
+        }
+
+        public string AddToSocialSecurityDetail(string month, string iguid)
+        {
+            try
+            {
+                SocialSecurityManager service = new SocialSecurityManager();
+                if (service.GenerateSocialSecurityDetail(int.Parse(month), iguid) > 0)
+                {
+                    return "success";
+
+                }
+                else
+                {
+                    return "fail";
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                log4net.ILog log = log4net.LogManager.GetLogger(this.GetType());
+                log.Error(ex);
+                return ex.ToString();
+            }
+
+        }
+        public string AddToProvidentFundDetail(string month, string iguid)
+        {
+            try
+            {
+                ProvidentFundManager service = new ProvidentFundManager();
+                if (service.GenerateProvidentFundDetail(int.Parse(month), iguid) > 0)
+                {
+                    return "success";
+
+                }
+                else
+                {
+                    return "fail";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                log4net.ILog log = log4net.LogManager.GetLogger(this.GetType());
+                log.Error(ex);
+                return ex.ToString();
+            }
 
         }
     }

@@ -245,6 +245,19 @@ namespace HRMS.Data.Manager
             return affectedRowCount;
         }
 
+        public int GenerateSocialSecurityDetail(int payMonth, string iguid)
+        {
+            int affectedRowCount = 0;
+            string sql = @"insert into SocialSecurityDetail select newid()," + payMonth.ToString() + ",iHRInfoGuid, iPayPlace, iPayBase, iIndividualAmount, iCompanyAmount,  isnull(iAdditionalAmount,0), iAdditionalMonths,GETDATE(),'系统',GETDATE(),'系统',1,0 from SocialSecurity where iGuid='" + iguid + "' ";
+            string clearsql = "update SocialSecurity set iAdditionalAmount = null, iAdditionalMonths = null where iGuid='" + iguid + "' ";
+            using (IDbConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["HRMSDBConnectionString"].ConnectionString))
+            {
+                affectedRowCount = Repository.Execute(conn, sql);
+                Repository.Execute(conn, clearsql);
+            }
+            return affectedRowCount;
+        }
+
         public List<SocialSecurityModel> GetSearch(string userType, Dictionary<string, string> para, string sort, string order, int offset, int pageSize, out int total)
         {
             string commonSql = GenerateQuerySql(userType, para);
