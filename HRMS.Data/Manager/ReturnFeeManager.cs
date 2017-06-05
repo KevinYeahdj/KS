@@ -357,6 +357,51 @@ namespace HRMS.Data.Manager
             return result;
         }
 
+        public List<ReturnFeeHistoryModel> ReturnFeeHistoryGetSearch(string userType, Dictionary<string, string> para)
+        {
+            if (userType != "普通用户")
+            {
+                para["iCompany"] = para["iCompany"] == "-" ? "" : para["iCompany"];
+                para["iItemName"] = para["iItemName"] == "-" ? "" : para["iItemName"];
+            }
+            StringBuilder commandsb = new StringBuilder("from ReturnFeeHistory fee inner join hrinfo hr on fee.iHRInfoGuid = hr.iguid where fee.iIsDeleted =0 and fee.iStatus =1  ");
+
+            string searchKey = para["search"];
+            para.Remove("search");
+
+            foreach (KeyValuePair<string, string> item in para)
+            {
+                if (!string.IsNullOrEmpty(item.Value) && item.Value != "§")
+                {
+                    if (item.Key.EndsWith("[d]"))
+                    {
+                        commandsb.Append(" and " + item.Key.Replace("[d]", "") + " between '" + (string.IsNullOrEmpty(item.Value.Split('§')[0]) ? "1900-01-01" : item.Value.Split('§')[0]) + "' and '" + (string.IsNullOrEmpty(item.Value.Split('§')[1]) ? DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") : item.Value.Split('§')[1]) + "' ");
+                    }
+                    else
+                    {
+                        commandsb.Append(" and " + item.Key + " like '%" + item.Value + "%'");
+                    }
+
+                }
+            }
+            if (!string.IsNullOrEmpty(searchKey))
+            {
+                commandsb.Append(" and (");
+                foreach (var item in Common.ConvertHelper.DicConvert(ReturnFeeHistoryDic))
+                {
+                    commandsb.Append(item.Key + " like '%" + searchKey + "%' or ");
+                }
+                commandsb.Remove(commandsb.Length - 3, 3);
+                commandsb.Append(")");
+            }
+
+            string commonSql = commandsb.ToString();
+            string querySql = "select fee.*, hr.iItemName, hr.iCompany, hr.iEmpNo, hr.iName, hr.iIdCard,hr.iEmployeeDate, hr.iResignDate, hr.iEmployeeStatus  " + commonSql;
+            querySql = string.Format(querySql);
+            List<ReturnFeeHistoryModel> result = Repository.Query<ReturnFeeHistoryModel>(querySql).ToList();
+            return result;
+        }
+
         public List<ReturnFeeModel> GetSearchAll(string userType, Dictionary<string, string> para)
         {
             if (userType != "普通用户")

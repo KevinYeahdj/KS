@@ -797,6 +797,47 @@ namespace HRMS.Controllers
 
         }
 
+        public void ExportAllReturnFeeHistory()
+        {
+            string path = "返费历史导出" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
+            ExExcel<ReturnFeeHistoryModel>(GetAllReturnFeeHistoryExportData(), path, ConvertHelper.DicConvert(ReturnFeeManager.ReturnFeeHistoryDic4Export));
+
+        }
+
+        public List<ReturnFeeHistoryModel> GetAllReturnFeeHistoryExportData()
+        {
+            string paraString = Request.Params["searchpara"];
+            Dictionary<string, string> paraDic = JsonConvert.DeserializeObject<Dictionary<string, string>>(paraString);
+            Dictionary<string, string> bizParaDic = new Dictionary<string, string>();
+            bizParaDic.Add("search", paraDic["search"]);
+            Dictionary<string, string> bizParaDicTemp = new Dictionary<string, string>();
+
+            foreach (string para in paraDic.Keys)
+            {
+                if (para.StartsWith("s") && (ReturnFeeManager.ReturnFeeHistoryDic.ContainsValue("i" + para.Substring(1, para.Length - 1)) || (para.Length > 2 && ReturnFeeManager.ReturnFeeHistoryDic.ContainsValue("i" + para.Substring(1, para.Length - 2)))))
+                {
+                    bizParaDicTemp.Add("i" + para.Substring(1, para.Length - 1), paraDic[para]);
+                }
+            }
+            foreach (var item in bizParaDicTemp)
+            {
+                if (item.Key.EndsWith("2"))
+                    continue;
+                if (bizParaDicTemp.ContainsKey(item.Key + "2"))
+                {
+                    bizParaDic.Add(item.Key + "[d]", item.Value + "§" + bizParaDicTemp[item.Key + "2"]);
+                }
+                else
+                {
+                    bizParaDic.Add(item.Key, item.Value);
+                }
+            }
+
+            ReturnFeeManager service = new ReturnFeeManager();
+            List<ReturnFeeHistoryModel> list = service.ReturnFeeHistoryGetSearch(SessionHelper.CurrentUser.UserType, bizParaDic);
+            return list;
+
+        }
 
         public void ExportReturnFee()
         {
