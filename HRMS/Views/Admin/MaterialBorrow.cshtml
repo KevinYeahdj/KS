@@ -63,10 +63,16 @@
                                 </select>
                             </div>
                             <div class="form-group">
+                                卡片编号：<input type="text" class="form-control" id="iCardNo" data-bind="value: iCardNo" placeholder="请输入卡片编号">
+                            </div>
+                            <div class="form-group">
                                 领用人：<input type="text" class="form-control" id="iBorrower" data-bind="value: iBorrower" placeholder="请输入领用人">
                             </div>
                             <div class="form-group">
                                 领用日期：<input type="text" class="form-control" id="iBorrowedDate" data-bind="value: iBorrowedDate" placeholder="请输入领用日期">
+                            </div>
+                            <div class="form-group">
+                                资产编号：<input type="text" class="form-control" id="iMaterialNo" data-bind="value: iMaterialNo" placeholder="请输入资产编号">
                             </div>
                             <div class="form-group">
                                 资产名称：<input type="text" class="form-control" id="iMaterialName" data-bind="value: iMaterialName" placeholder="请输入资产名称">
@@ -91,6 +97,14 @@
                             </div>
                             <div class="form-group">
                                 归还日期：<input type="text" class="form-control" id="iReturnedDate" data-bind="value: iReturnedDate" placeholder="请输入归还日期">
+                            </div>
+
+                            <div class="form-group">
+                                使用部门：<input type="text" class="form-control" id="iUsedDep" data-bind="value: iUsedDep" placeholder="请输入使用部门">
+                            </div>
+
+                            <div class="form-group">
+                                存放地点：<input type="text" class="form-control" id="iLocation" data-bind="value: iLocation" placeholder="请输入存放地点">
                             </div>
                             <div class="form-group">
                                 备注：<input type="text" class="form-control" id="iNote" data-bind="value: iNote" placeholder="请输入备注">
@@ -214,6 +228,10 @@
         self.iBorrower = ko.observable("");
         self.iBorrowedDate = ko.observable("");
         self.iMaterialName = ko.observable("");
+        self.iMaterialNo = ko.observable("");
+        self.iCardNo = ko.observable("");
+        self.iUsedDep = ko.observable("");
+        self.iLocation = ko.observable("");
         self.iBrand = ko.observable("");
         self.iModelNo = ko.observable("");
         self.iSerialNo = ko.observable("");
@@ -453,12 +471,14 @@
                  { field: "iGuid", title: "iGuid", visible: false, switchable: false }
                  , { field: "iCompanyId", title: "公司" }
                  , { field: "iProjectId", title: "项目" }
+                 , { field: "iCardNo", title: "卡片编号", sortable: true }
                  , { field: "iBorrower", title: "领用人", sortable: true }
                  , {
                      field: "iBorrowedDate", title: "领用日期", sortable: true, formatter: function (value, row, index) {
                          return ChangeDateFormat(value);
                      }
                  }
+                 , { field: "iMaterialNo", title: "资产编号", sortable: true }
                  , { field: "iMaterialName", title: "资产名称", sortable: true }
                  , { field: "iBrand", title: "品牌", sortable: true }
                  , { field: "iModelNo", title: "型号", sortable: true }
@@ -475,6 +495,8 @@
                      }
                  }
                  , { field: "iPersonInChargeOnSpotTel", title: "现场负责人电话", sortable: true }
+                 , { field: "iUsedDep", title: "使用部门", sortable: true }
+                 , { field: "iLocation", title: "存放地点", sortable: true }
                  , { field: "iNote", title: "备注", sortable: true }
             ],
             onClickRow: function (row, $element) {
@@ -515,6 +537,10 @@
                         myViewModel.iBorrower(result.data.iBorrower);
                         myViewModel.iBorrowedDate(ChangeDateFormat(result.data.iBorrowedDate));
                         myViewModel.iMaterialName(result.data.iMaterialName);
+                        myViewModel.iMaterialNo(result.data.iMaterialNo);
+                        myViewModel.iCardNo(result.data.iCardNo);
+                        myViewModel.iUsedDep(result.data.iUsedDep);
+                        myViewModel.iLocation(result.data.iLocation);
                         myViewModel.iBrand(result.data.iBrand);
                         myViewModel.iModelNo(result.data.iModelNo);
                         myViewModel.iSerialNo(result.data.iSerialNo);
@@ -624,6 +650,10 @@
             myViewModel.iBorrower("");
             myViewModel.iBorrowedDate("");
             myViewModel.iMaterialName("");
+            myViewModel.iMaterialNo("");
+            myViewModel.iCardNo("");
+            myViewModel.iUsedDep("");
+            myViewModel.iLocation("");
             myViewModel.iBrand("");
             myViewModel.iModelNo("");
             myViewModel.iSerialNo("");

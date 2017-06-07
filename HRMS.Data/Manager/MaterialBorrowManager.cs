@@ -26,6 +26,10 @@ namespace HRMS.Data.Manager
                 dic.Add("领用人", "iBorrower");
                 dic.Add("领用日期", "iBorrowedDate");
                 dic.Add("资产名称", "iMaterialName");
+                dic.Add("资产编号", "iMaterialNo");
+                dic.Add("卡片编号", "iCardNo");
+                dic.Add("使用部门", "iUsedDep");
+                dic.Add("存放地点", "iLocation");
                 dic.Add("品牌", "iBrand");
                 dic.Add("型号", "iModelNo");
                 dic.Add("序列号", "iSerialNo");

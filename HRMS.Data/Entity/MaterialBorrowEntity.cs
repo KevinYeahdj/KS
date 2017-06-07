@@ -13,8 +13,10 @@ namespace HRMS.Data.Entity
         public string iGuid { get; set; } //惟一标识
         public string iCompanyId { get; set; } //公司
         public string iProjectId { get; set; } //项目
+        public string iCardNo { get; set; } //卡片编号 --
         public string iBorrower { get; set; } //领用人 
         public DateTime? iBorrowedDate { get; set; } //领用日期
+        public string iMaterialNo { get; set; } //固定资产编号--
         public string iMaterialName { get; set; } //资产名称
         public string iBrand { get; set; } //品牌
         public string iModelNo { get; set; } //型号
@@ -23,6 +25,8 @@ namespace HRMS.Data.Entity
         public decimal? iPrice { get; set; } //购买金额
         public DateTime? iBoughtDate { get; set; } //购买日期
         public DateTime? iReturnedDate { get; set; } //归还日期
+        public string iUsedDep { get; set; } //使用部门--
+        public string iLocation { get; set; } //存放地点--
         public string iNote { get; set; } // 备注
         public DateTime? iCreatedOn { get; set; }  //创建时间
         public string iCreatedBy { get; set; } //创建人
