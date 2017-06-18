@@ -31,7 +31,9 @@ namespace HRMS.Data.Manager
                 dic.Add("工资(收)", "iSalaryIn");
                 dic.Add("临时工工资(收)", "iTemporarySalaryIn");
                 dic.Add("管理费", "iManageFee");
-                dic.Add("社保(收)", "iSocialSecurityIn");
+                //dic.Add("社保(收)", "iSocialSecurityIn");
+                dic.Add("个人社保(收)", "iSocialSecurityInP");
+                dic.Add("公司社保(收)", "iSocialSecurityInC");
                 dic.Add("公积金(收)", "iProvidentFundIn");
                 dic.Add("残保(收)", "iDisabilityBenefitsIn");
                 dic.Add("宿舍费(收)", "iDormitoryFeeIn");
@@ -46,7 +48,7 @@ namespace HRMS.Data.Manager
                 dic.Add("社保补缴", "iSocialSecurityAdditional");
                 dic.Add("返费", "iReturnFee");
                 dic.Add("临时工费用", "iTemporaryFee");
-                dic.Add("残保金(付)", "iDisabilityBenefitsPay");
+                dic.Add("个人社保(退)", "iDisabilityBenefitsPay");
                 //dic.Add("班车费(付)", "iBusFee");
                 dic.Add("餐费(付)", "iMealFee");
                 dic.Add("宿舍费(付)", "iDormitoryFeePay");
@@ -91,7 +93,9 @@ namespace HRMS.Data.Manager
 
                 dic.Add("工资(收)", "iSalaryIn");
                 dic.Add("管理费", "iManageFee");
-                dic.Add("社保(收)", "iSocialSecurityIn");
+                //dic.Add("社保(收)", "iSocialSecurityIn");
+                dic.Add("个人社保(收)", "iSocialSecurityInP");
+                dic.Add("公司社保(收)", "iSocialSecurityInC");
                 dic.Add("公积金(收)", "iProvidentFundIn");
                 dic.Add("残保(收)", "iDisabilityBenefitsIn");
                 dic.Add("宿舍费(收)", "iDormitoryFeeIn");
@@ -104,7 +108,7 @@ namespace HRMS.Data.Manager
                 dic.Add("公积金公司(付)", "iProvidentFundCompanyPay");
                 dic.Add("社保补缴", "iSocialSecurityAdditional");
                 dic.Add("返费", "iReturnFee");
-                dic.Add("残保金(付)", "iDisabilityBenefitsPay");
+                dic.Add("个人社保(退)", "iDisabilityBenefitsPay");
                 dic.Add("班车费(付)", "iBusFee");
                 dic.Add("餐费(付)", "iMealFee");
                 dic.Add("宿舍费(付)", "iDormitoryFeePay");

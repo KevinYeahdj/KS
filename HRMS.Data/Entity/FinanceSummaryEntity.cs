@@ -20,7 +20,9 @@ namespace HRMS.Data.Entity
         //public decimal? iDiffer { get; set; } //差异  差异=开票金额-工资（收）-管理费-社保（收）-公积金（收）-残保金（收）-宿舍费（收）-其它（收)
         public decimal? iSalaryIn { get; set; } //工资(收)
         public decimal? iManageFee { get; set; } //管理费
-        public decimal? iSocialSecurityIn { get; set; } //社保(收)
+        //public decimal? iSocialSecurityIn { get; set; } //社保(收)--拆分成 个人社保(收)，公司社保(收)--个人社保(收)
+        public decimal? iSocialSecurityInP { get; set; } //个人社保(收)
+        public decimal? iSocialSecurityInC { get; set; } //公司社保(收)
         public decimal? iProvidentFundIn { get; set; } //公积金(收)
         public decimal? iDisabilityBenefitsIn { get; set; } //残保(收)
         public decimal? iDormitoryFeeIn { get; set; } //宿舍费(收)
@@ -33,7 +35,7 @@ namespace HRMS.Data.Entity
         public decimal? iProvidentFundCompanyPay { get; set; } //公积金公司(付) 
         public decimal? iSocialSecurityAdditional { get; set; } //社保补缴 
         public decimal? iReturnFee { get; set; } //返费 
-        public decimal? iDisabilityBenefitsPay { get; set; } //残保金(付) 
+        public decimal? iDisabilityBenefitsPay { get; set; } //残保金(付) --个人社保(退)
         //public decimal? iBusFee { get; set; } //班车费(付) 
         public decimal? iMealFee { get; set; } //餐费(付)
         public decimal? iDormitoryFeePay { get; set; } //宿舍费(付) 
