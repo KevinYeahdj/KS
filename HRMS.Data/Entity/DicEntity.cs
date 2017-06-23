@@ -76,7 +76,7 @@ namespace HRMS.Data.Entity
     }
 
     /// <summary>
-    /// 流程人员对象
+    /// 流程人员对象--废弃
     /// </summary>
     [Table("BpmUser")]
     public class BpmUserEntity

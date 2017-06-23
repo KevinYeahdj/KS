@@ -359,6 +359,10 @@ namespace HRMS.Controllers
             try
             {
                 initiator.Conditions.Add("SysCurrentCompany", SessionHelper.CurrentUser.CurrentCompany); //将发起人公司添加到流程变量里
+                DicManager dm = new DicManager();
+                initiator.Conditions["sys_summary"] += "申请公司:" + dm.CompanyFirstOrDefault(SessionHelper.CurrentUser.CurrentCompany).iName;
+                
+
                 OrganizationService oc = new OrganizationService();
                 UserInfo ur = oc.GetUserInfoByLoginName(initiator.UserID);
                 initiator.UserName = ur == null ? "" : ur.Name;
@@ -402,7 +406,8 @@ namespace HRMS.Controllers
             try
             {
                 initiator.Conditions.Add("SysCurrentCompany", SessionHelper.CurrentUser.CurrentCompany); //将发起人公司添加到流程变量里
-                
+                DicManager dm = new DicManager();
+                initiator.Conditions["sys_summary"] += "申请公司:" + dm.CompanyFirstOrDefault(SessionHelper.CurrentUser.CurrentCompany).iName;
                 //保存业务数据
                 if (SaveBusinessDataForBPM(initiator.Other, initiator.ProcessGUID, initiator.AppInstanceID))
                 {

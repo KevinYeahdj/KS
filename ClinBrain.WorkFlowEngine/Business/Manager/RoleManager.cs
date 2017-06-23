@@ -45,7 +45,7 @@ namespace ClinBrain.WorkFlowEngine.Business.Manager
                 defaultList.Add(new UserEntity { ID = "sa", UserName = "超级管理员" });
                 return defaultList;
             }
-            List<string> ids = ds.Tables[0].Rows[0][0].ToString().Split(';').ToList();
+            List<string> ids = ds.Tables[0].Rows[0][0].ToString().Split(';','；').ToList();
             StringBuilder sb = new StringBuilder();
             foreach (string id in ids)
             {
@@ -56,6 +56,11 @@ namespace ClinBrain.WorkFlowEngine.Business.Manager
                 sb.Remove(sb.Length - 1, 1);
             }
             List<UserEntity> list = Repository.Query<UserEntity>("SELECT employee_code as ID, name as UserName FROM dbo.HPM_LBR_EMPLOYEE where  employee_code in(" + sb.ToString() + ")").ToList();
+            if (list.Count == 0)
+            {
+                LogFileHelper.ErrorLog("未找到角色" + roleCode + "的人员设置里的人员");
+                list.Add(new UserEntity { ID = "sa", UserName = "超级管理员" });
+            }
             return list;
         }
 

@@ -178,7 +178,9 @@ namespace HRMS.Data.Manager
 
         public List<CompanyEntity> GetAllCompanies()
         {
-            return Repository.GetAll<CompanyEntity>().Where(i => i.iStatus == 1).ToList();
+            var result = Repository.GetAll<CompanyEntity>().Where(i => i.iStatus == 1).ToList();
+            result.Add(new CompanyEntity { iGuid="-", iName="-" });  //防止生成字典时解析不了-这种数据
+            return result;
         }
         public List<CompanyEntity> GetAllValidCompanies()
         {
@@ -245,7 +247,9 @@ namespace HRMS.Data.Manager
 
         public List<ProjectEntity> GetAllProjects()
         {
-            return Repository.GetAll<ProjectEntity>().Where(i => i.iStatus == 1).ToList();
+            var result = Repository.GetAll<ProjectEntity>().Where(i => i.iStatus == 1).ToList();
+            result.Add(new ProjectEntity { iGuid = "-", iName = "-" });  //防止生成字典时解析不了-这种数据
+            return result;
         }
 
         public List<ProjectEntity> GetAllValidProjects()
