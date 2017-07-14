@@ -96,7 +96,11 @@ namespace HRMS.Data.Manager
         public void BatchUpdate4Flow(List<SalaryEntity> entities, string appNo)
         {
             if (entities == null || entities.Count == 0)
+            {
+                DbHelperSQL.ExecuteSql("update Salary set iRecordStatus = '草稿', iAppNo = '' where iisdeleted=0 and istatus=1 and iAppNo='" + appNo + "'");
                 return;
+
+            }
             IDbSession session = SessionFactory.CreateSession();
             try
             {

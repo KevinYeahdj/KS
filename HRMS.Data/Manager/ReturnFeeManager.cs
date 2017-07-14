@@ -684,6 +684,7 @@ namespace HRMS.Data.Manager
             string sql3 = "update returnFee set iThirdAppNo=null where iThirdAppNo='" + appNo + "'";
             string sql4 = "update returnFee set iFourthAppNo=null where iFourthAppNo='" + appNo + "'";
             string sql5 = "update returnFee set iFifthAppNo=null where iFifthAppNo='" + appNo + "'";
+            string sql6 = "delete from ReturnFeeHistory where iisdeleted=0 and istatus=1 and iReturnFeeAppNo='" + appNo + "'";
             List<string> clearSqls = new List<string>();
             clearSqls.Add(sql1);
             clearSqls.Add(sql2);

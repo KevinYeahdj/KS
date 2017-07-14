@@ -116,9 +116,9 @@ namespace HRMS.Data.Manager
         //同一流程所有数据操作
         public void BatchUpdate(List<JournalEntity> entities, string appNo)
         {
+            DbHelperSQL.ExecuteSql("update Journal set iRecordStatus = '草稿', iAppNo = '' where iisdeleted=0 and istatus=1 and iAppNo='" + appNo + "'");
             if (entities == null || entities.Count == 0)
                 return;
-            DbHelperSQL.ExecuteSql("update Journal set iRecordStatus = '草稿', iAppNo = '' where iisdeleted=0 and istatus=1 and iAppNo='" + appNo + "'");
             IDbSession session = SessionFactory.CreateSession();
             try
             {

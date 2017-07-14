@@ -361,7 +361,7 @@ namespace HRMS.Controllers
                 initiator.Conditions.Add("SysCurrentCompany", SessionHelper.CurrentUser.CurrentCompany); //将发起人公司添加到流程变量里
                 DicManager dm = new DicManager();
                 initiator.Conditions["sys_summary"] += "申请公司:" + dm.CompanyFirstOrDefault(SessionHelper.CurrentUser.CurrentCompany).iName;
-                
+
 
                 OrganizationService oc = new OrganizationService();
                 UserInfo ur = oc.GetUserInfoByLoginName(initiator.UserID);
@@ -477,6 +477,7 @@ namespace HRMS.Controllers
                 string result = service.CancelApplication(runner);
                 if (result == "success")
                 {
+                    SaveBusinessDataForCancelApplication(runner.ProcessGUID, runner.AppInstanceID);  //撤销时对业务数据的处理
                     return new JsonResult { Data = new { success = true, msg = "撤销成功!" } };
                 }
                 return new JsonResult { Data = new { success = false, msg = result } };
@@ -579,6 +580,42 @@ namespace HRMS.Controllers
             }
         }
 
+        private bool SaveBusinessDataForCancelApplication(string pguid, string appNo)
+        {
+            try
+            {
+                bool result = false;
+                if (pguid == "09e8624f-ff2d-cc98-0eaa-6a11f3f7d9bc") //流水账
+                {
+                    JournalManager service = new JournalManager();
+                    List<JournalEntity> entities = new List<JournalEntity>();//清空所有关联项
+                    service.BatchUpdate(entities, appNo);
+                    result = true;
+                }
+                else if (pguid == "eb2844bd-0ffd-9eaa-6068-910b66fad9d9") //返费
+                {
+                    ReturnFeeManager service = new ReturnFeeManager();
+                    List<ReturnFeeHistoryEntity> entities = new List<ReturnFeeHistoryEntity>();
+                    service.ResetValidReturnFeeList(appNo);
+                    result = true;
+                }
+                else if (pguid == "c6f4e09b-e355-b8cd-ac9f-ec7995c23f6f")   //工资
+                {
+                    SalaryManager service = new SalaryManager();
+                    service.BatchUpdate4Flow(null, appNo);
+                    result = true;
+
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                log4net.ILog log = log4net.LogManager.GetLogger(this.GetType());
+                log.Error("撤销流程业务数据出错！", ex);
+                return false;
+
+            }
+        }
 
         private bool SaveBusinessDataForBPMApprove(WfAppRunner runner)
         {
