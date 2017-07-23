@@ -129,6 +129,8 @@ namespace HRMS.Data.Manager
                 dic.Add("返费金额", "iReturnFeeAmount");
                 dic.Add("返费天数", "iReturnFeeDays");
                 dic.Add("返费日期", "iReturnFeeDate");
+                dic.Add("付款情况", "iReturnFeePayment");
+                dic.Add("实际支付日期", "iReturnFeeActualPayDate");
                 dic.Add("返费单号", "iReturnFeeAppNo");
                 return dic;
             }
