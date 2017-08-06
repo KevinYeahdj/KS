@@ -87,13 +87,12 @@
                             <div class="form-group"> 姓名：<input type="text" class="form-control" id="iName" data-bind="value: iName" placeholder="请输入姓名"></div>
                             <div class="form-group"> 身份证号：<input maxlength="18" onkeyup="value=value.replace(/^[a-zA-Z]+\D*|^\d{0,16}[a-zA-Z]+|[^0-9Xx]/g,'') " type="text" class="form-control" id="iIdCard" data-bind="value: iIdCard" placeholder="请输入身份证号"></div>
                             <div class="form-group">
-                                性别： <br />
-                                <label class="radio-inline">
-                                    <input type="radio" name="iSex" data-bind="checked: iSex" value="男"> 男
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="iSex" data-bind="checked: iSex" value="女"> 女
-                                </label>
+                                性别： 
+                                <select class="form-control" id="iSex" data-bind="value: iSex">
+                                    <option value="">请选择</option>
+                                    <option value="男">男</option>
+                                    <option value="女">女</option>
+                                </select>
                             </div>
                             <div class="form-group">
                                 出生日期：
@@ -102,13 +101,12 @@
                             <div class="form-group"> 户籍：<input type="text" class="form-control" id="iRegistry" data-bind="value: iRegistry" placeholder="请输入户籍"></div>
                             <div class="form-group"> 民族：<input type="text" class="form-control" id="iNation" data-bind="value: iNation" placeholder="请输入民族"></div>
                             <div class="form-group">
-                                户口性质：<br />
-                                <label class="radio-inline">
-                                    <input type="radio" name="iResidenceProperty" data-bind="checked: iResidenceProperty" value="农业户口"> 农业户口
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="iResidenceProperty" data-bind="checked: iResidenceProperty" value="非农业户口">非农业户口
-                                </label>
+                                户口性质：
+                                <select class="form-control" id="iResidenceProperty" data-bind="value: iResidenceProperty">
+                                    <option value="">请选择</option>
+                                    <option value="农业户口">农业户口</option>
+                                    <option value="非农业户口">非农业户口</option>
+                                </select>
                             </div>
                             <div class="form-group"> 户籍地址：<input type="text" class="form-control" id="iRegistryAddress" data-bind="value: iRegistryAddress" placeholder="请输入户籍地址"></div>
                             <div class="form-group"> 签发机关：<input type="text" class="form-control" id="iIssuedBy" data-bind="value: iIssuedBy" placeholder="请输入签发机关"></div>
@@ -125,83 +123,58 @@
                             <div class="form-group"> 身高（cm）：<input onkeyup="value = value.replace(/[^\d]/g, '');" maxlength="3" type="text" class="form-control" id="iHeight" data-bind="value: iHeight" placeholder="请输入身高（cm）"></div>
                             <div class="form-group"> 体重：<input onkeyup="value = value.replace(/[^\d]/g, '');" maxlength="3" type="text" class="form-control" id="iWeight" data-bind="value: iWeight" placeholder="请输入体重"></div>
                             <div class="form-group">
-                                血型：<br />
-                                <label class="radio-inline">
-                                    <input type="radio" name="iBloodType" data-bind="checked: iBloodType" value="A"> A
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="iBloodType" data-bind="checked: iBloodType" value="B">B
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="iBloodType" data-bind="checked: iBloodType" value="AB">AB
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="iBloodType" data-bind="checked: iBloodType" value="O">O
-                                </label>
+                                血型：
+                                <select class="form-control" id="iBloodType" data-bind="value: iBloodType">
+                                    <option value="">请选择</option>
+                                    <option value="A">A</option>
+                                    <option value="B">B</option>
+                                    <option value="AB">AB</option>
+                                    <option value="O">O</option>
+                                </select>
                             </div>
 
                             <div class="form-group"> 年龄：<input onkeyup="value = value.replace(/[^\d]/g, '');" maxlength="2" type="text" class="form-control" id="iAge" data-bind="value: iAge" placeholder="请输入年龄"></div>
 
                             <div class="form-group">
-                                婚姻状况：<br />
-                                <label class="radio-inline">
-                                    <input type="radio" name="iMariage" data-bind="checked: iMariage" value="已婚"> 已婚
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="iMariage" data-bind="checked: iMariage" value="未婚">未婚
-                                </label>
+                                婚姻状况：
+                                <select class="form-control" id="iMariage" data-bind="value: iMariage">
+                                    <option value="">请选择</option>
+                                    <option value="已婚">已婚</option>
+                                    <option value="未婚">未婚</option>
+                                </select>
                             </div>
 
                             <div class="form-group">
-                                体检：<br />
-                                <label class="radio-inline">
-                                    <input type="radio" name="iHealthCheck" data-bind="checked: iHealthCheck" value="是"> 是
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="iHealthCheck" data-bind="checked: iHealthCheck" value="否">否
-                                </label>
+                                体检：
+                                <select class="form-control" id="iHealthCheck" data-bind="value: iHealthCheck">
+                                    <option value="">请选择</option>
+                                    <option value="是">是</option>
+                                    <option value="否">否</option>
+                                </select>
                             </div>
                             <div class="form-group">
-                                政治面貌：<br />
-                                <label class="radio-inline">
-                                    <input type="radio" name="iPolitical" data-bind="checked: iPolitical" value="群众"> 群众
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="iPolitical" data-bind="checked: iPolitical" value="团员">团员
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="iPolitical" data-bind="checked: iPolitical" value="共产党员">共产党员
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="iPolitical" data-bind="checked: iPolitical" value="其它">其它
-                                </label>
+                                政治面貌：
+                                <select class="form-control" id="iPolitical" data-bind="value: iPolitical">
+                                    <option value="">请选择</option>
+                                    <option value="群众">群众</option>
+                                    <option value="团员">团员</option>
+                                    <option value="共产党员">共产党员</option>
+                                    <option value="其它">其它</option>
+                                </select>
                             </div>
                             <div class="form-group">
-                                文化水平：<br />
-                                <label class="radio-inline" style="margin-left:0">
-                                    <input type="radio" name="iEducationLevel" data-bind="checked: iEducationLevel" value="小学"> 小学
-                                </label>
-                                <label class="radio-inline" style="margin-left:0">
-                                    <input type="radio" name="iEducationLevel" data-bind="checked: iEducationLevel" value="初中">初中
-                                </label>
-                                <label class="radio-inline" style="margin-left:0">
-                                    <input type="radio" name="iEducationLevel" data-bind="checked: iEducationLevel" value="中专">中专
-                                </label>
-                                <label class="radio-inline" style="margin-left:0">
-                                    <input type="radio" name="iEducationLevel" data-bind="checked: iEducationLevel" value="高中">高中
-                                </label>
-                                <label class="radio-inline" style="margin-left:0">
-                                    <input type="radio" name="iEducationLevel" data-bind="checked: iEducationLevel" value="大专"> 大专
-                                </label>
-                                <label class="radio-inline" style="margin-left:0">
-                                    <input type="radio" name="iEducationLevel" data-bind="checked: iEducationLevel" value="本科">本科
-                                </label>
-                                <label class="radio-inline" style="margin-left:0">
-                                    <input type="radio" name="iEducationLevel" data-bind="checked: iEducationLevel" value="硕士">硕士
-                                </label>
-                                <label class="radio-inline" style="margin-left:0">
-                                    <input type="radio" name="iEducationLevel" data-bind="checked: iEducationLevel" value="博士">博士
-                                </label>
+                                文化水平：
+                                <select class="form-control" id="iEducationLevel" data-bind="value: iEducationLevel">
+                                    <option value="">请选择</option>
+                                    <option value="小学">小学</option>
+                                    <option value="初中">初中</option>
+                                    <option value="中专">中专</option>
+                                    <option value="高中">高中</option>
+                                    <option value="大专">大专</option>
+                                    <option value="本科">本科</option>
+                                    <option value="硕士">硕士</option>
+                                    <option value="博士">博士</option>
+                                </select>
                             </div>
                             <div class="form-group"> 专业：<input type="text" class="form-control" id="iMajor" data-bind="value: iMajor" placeholder="请输入专业"></div>
                             <div class="form-group"> 毕业学校：<input type="text" class="form-control" id="iGraduatedSchool" data-bind="value: iGraduatedSchool" placeholder="请输入毕业学校"></div>

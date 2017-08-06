@@ -103,116 +103,95 @@
                             <div class="form-group"> 所属五级部门：<input type="text" class="form-control" id="iFifthDep" data-bind="value: iFifthDep" placeholder="请输入所属五级部门"></div>
 
                             <div class="form-group">
-                                员工状态：<br />
-                                <label class="radio-inline">
-                                    <input type="radio" name="iEmployeeStatus" data-bind="checked: iEmployeeStatus" value="在职"> 在职
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="iEmployeeStatus" data-bind="checked: iEmployeeStatus" value="离职">离职
-                                </label>
+                                员工状态：
+                                <select class="form-control" id="iEmployeeStatus" data-bind="value: iEmployeeStatus">
+                                    <option value="">请选择</option>
+                                    <option value="在职">在职</option>
+                                    <option value="离职">离职</option>
+                                </select>
                             </div>
 
                             <div class="form-group"> 入职时间：<input type="text" class="form-control" id="iEmployeeDate" data-bind="value: iEmployeeDate" placeholder="请输入入职时间"></div>
                             <div class="form-group"> 转正时间：<input type="text" class="form-control" id="iPositiveDate" data-bind="value: iPositiveDate" placeholder="请输入转正时间"></div>
                             <div class="form-group"> 档案位置：<input type="text" class="form-control" id="iFileLocation" data-bind="value: iFileLocation" placeholder="请输入档案位置"></div>
                             <div class="form-group">
-                                合同类型：<br />
-                                <label class="radio-inline">
-                                    <input type="radio" name="iContractType" data-bind="checked: iContractType" value="派遣"> 派遣
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="iContractType" data-bind="checked: iContractType" value="外包">外包
-                                </label>
+                                合同类型：
+                                <select class="form-control" id="iContractType" data-bind="value: iContractType">
+                                    <option value="">请选择</option>
+                                    <option value="派遣">派遣</option>
+                                    <option value="外包">外包</option>
+                                </select>
                             </div>
 
                             <div class="form-group">
-                                合同签订情况：<br />
-                                <label class="radio-inline">
-                                    <input type="radio" name="iContractSignStatus" data-bind="checked: iContractSignStatus" value="一次签订"> 一次签订
-                                </label><label class="radio-inline">
-                                    <input type="radio" name="iContractSignStatus" data-bind="checked: iContractSignStatus" value="二次签订"> 二次签订
-                                </label><label class="radio-inline">
-                                    <input type="radio" name="iContractSignStatus" data-bind="checked: iContractSignStatus" value="三次签订"> 三次签订
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="iContractSignStatus" data-bind="checked: iContractSignStatus" value="否">否
-                                </label>
+                                合同签订情况：
+                                <select class="form-control" id="iContractSignStatus" data-bind="value: iContractSignStatus">
+                                    <option value="">请选择</option>
+                                    <option value="一次签订">一次签订</option>
+                                    <option value="二次签订">二次签订</option>
+                                    <option value="三次签订">三次签订</option>
+                                    <option value="否">否</option>
+                                </select>
                             </div>
                             <div class="form-group"> 合同/协议期限：<input type="text" class="form-control" id="iContractTerm" data-bind="value: iContractTerm" placeholder="请输入合同/协议期限(年)"></div>
                             <div class="form-group"> 合同到期日期：<input type="text" class="form-control" id="iContractDeadLine" data-bind="value: iContractDeadLine" placeholder="请输入合同到期日期"></div>
                             <div class="form-group">
-                                离职类型：<br />
-                                <label class="radio-inline">
-                                    <input type="radio" name="iResignType" data-bind="checked: iResignType" value="自离"> 自离
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="iResignType" data-bind="checked: iResignType" value="旷工">旷工
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="iResignType" data-bind="checked: iResignType" value="辞职">辞职
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="iResignType" data-bind="checked: iResignType" value="辞退">辞退
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="iResignType" data-bind="checked: iResignType" value="开除">开除
-                                </label>
+                                离职类型：
+                                <select class="form-control" id="iResignType" data-bind="value: iResignType">
+                                    <option value="">请选择</option>
+                                    <option value="自离">自离</option>
+                                    <option value="旷工">旷工</option>
+                                    <option value="辞职">辞职</option>
+                                    <option value="辞退">辞退</option>
+                                    <option value="开除">开除</option>
+                                </select>
                             </div>
 
                             <div class="form-group"> 离职日期：<input type="text" class="form-control" id="iResignDate" data-bind="value: iResignDate" placeholder="请输入离职日期"></div>
                             <div class="form-group">
-                                离职原因（公司）：<br />
-                                <label class="radio-inline" style="margin-left:0">
-                                    <input type="radio" name="iResignReason" data-bind="checked: iResignReason" value="身体原因"> 身体原因
-                                </label>
-                                <label class="radio-inline" style="margin-left:0">
-                                    <input type="radio" name="iResignReason" data-bind="checked: iResignReason" value="工作原因">工作原因
-                                </label>
-                                <label class="radio-inline" style="margin-left:0">
-                                    <input type="radio" name="iResignReason" data-bind="checked: iResignReason" value="家族原因">家族原因
-                                </label>
-                                <label class="radio-inline" style="margin-left:0">
-                                    <input type="radio" name="iResignReason" data-bind="checked: iResignReason" value="其他">其他
-                                </label>
+                                离职原因（公司）：
+                                <select class="form-control" id="iResignReason" data-bind="value: iResignReason">
+                                    <option value="">请选择</option>
+                                    <option value="身体原因">身体原因</option>
+                                    <option value="工作原因">工作原因</option>
+                                    <option value="家族原因">家族原因</option>
+                                    <option value="其他">其他</option>
+                                </select>
                             </div>
 
 
 
                             <div class="form-group">
-                                是否返费：<br />
-                                <label class="radio-inline">
-                                    <input type="radio" name="iIsReturnFee" data-bind="checked: iIsReturnFee" value="是"> 是
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="iIsReturnFee" data-bind="checked: iIsReturnFee" value="否">否
-                                </label>
+                                是否返费：
+                                <select class="form-control" id="iIsReturnFee" data-bind="value: iIsReturnFee">
+                                    <option value="">请选择</option>
+                                    <option value="是">是</option>
+                                    <option value="否">否</option>
+                                </select>
                             </div>
                             <div class="form-group">
-                                员工保险缴纳意愿：<br />
-                                <label class="radio-inline">
-                                    <input type="radio" name="iSocialInsurancePaidWilling" data-bind="checked: iSocialInsurancePaidWilling" value="是"> 是
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="iSocialInsurancePaidWilling" data-bind="checked: iSocialInsurancePaidWilling" value="否">否
-                                </label>
+                                员工保险缴纳意愿：
+                                <select class="form-control" id="iSocialInsurancePaidWilling" data-bind="value: iSocialInsurancePaidWilling">
+                                    <option value="">请选择</option>
+                                    <option value="是">是</option>
+                                    <option value="否">否</option>
+                                </select>
                             </div>
                             <div class="form-group">
-                                员工公积金缴纳意愿：<br />
-                                <label class="radio-inline">
-                                    <input type="radio" name="iProvidentFundPaidWilling" data-bind="checked: iProvidentFundPaidWilling" value="是"> 是
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="iProvidentFundPaidWilling" data-bind="checked: iProvidentFundPaidWilling" value="否">否
-                                </label>
+                                员工公积金缴纳意愿：
+                                <select class="form-control" id="iProvidentFundPaidWilling" data-bind="value: iProvidentFundPaidWilling">
+                                    <option value="">请选择</option>
+                                    <option value="是">是</option>
+                                    <option value="否">否</option>
+                                </select>
                             </div>
                             <div class="form-group">
-                                是否缴纳商业保险：<br />
-                                <label class="radio-inline">
-                                    <input type="radio" name="iIsCommercialInsurancePaid" data-bind="checked: iIsCommercialInsurancePaid" value="是"> 是
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="iIsCommercialInsurancePaid" data-bind="checked: iIsCommercialInsurancePaid" value="否">否
-                                </label>
+                                是否缴纳商业保险：
+                                <select class="form-control" id="iIsCommercialInsurancePaid" data-bind="value: iIsCommercialInsurancePaid">
+                                    <option value="">请选择</option>
+                                    <option value="是">是</option>
+                                    <option value="否">否</option>
+                                </select>
                             </div>
                             <div class="form-group"> 职位信息备注：<input type="text" class="form-control" id="iPositionInfoNote" data-bind="value: iPositionInfoNote" placeholder="请输入职位信息备注"></div>
                         </div>
