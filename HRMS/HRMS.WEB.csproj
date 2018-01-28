@@ -150,6 +150,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\AdvanceFundController.cs" />
     <Compile Include="Controllers\BPMController.cs" />
     <Compile Include="Controllers\CommonAjaxController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
@@ -3586,7 +3587,9 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\mytools.js" />
     <Content Include="Scripts\_references.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -3647,6 +3650,11 @@
     <Content Include="Views\BPM\SalaryReApplication.cshtml" />
     <Content Include="Views\BPM\SalaryView.cshtml" />
     <Content Include="Views\Manage\CompanyRoleIndex.cshtml" />
+    <Content Include="Views\BPM\AdvanceFundApplication.cshtml" />
+    <Content Include="Views\BPM\AdvanceFundApprove.cshtml" />
+    <Content Include="Views\BPM\AdvanceFundView.cshtml" />
+    <Content Include="Views\BPM\AdvanceFundReApplication.cshtml" />
+    <Content Include="Views\BPM\AdvanceFundReturnApplication.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

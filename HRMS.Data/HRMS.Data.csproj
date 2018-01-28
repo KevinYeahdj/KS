@@ -47,6 +47,7 @@
     <Compile Include="DbHelperSQL.cs" />
     <Compile Include="Entity\ContractEntity.cs" />
     <Compile Include="Entity\FinanceSummaryEntity.cs" />
+    <Compile Include="Entity\AdvanceFundEntity.cs" />
     <Compile Include="Entity\MaterialBorrowEntity.cs" />
     <Compile Include="Entity\SalaryEntity.cs" />
     <Compile Include="Entity\JournalEntity.cs" />
@@ -63,6 +64,7 @@
     <Compile Include="LogFileHelper.cs" />
     <Compile Include="ManagerBase.cs" />
     <Compile Include="Manager\ContractManager.cs" />
+    <Compile Include="Manager\AdvanceFundManager.cs" />
     <Compile Include="Manager\MaterialBorrowManager.cs" />
     <Compile Include="Manager\SalaryManager.cs" />
     <Compile Include="Manager\FinanceSummaryManager.cs" />

@@ -24,6 +24,8 @@ namespace HRMS.Data.Manager
                 dic.Add("公司", "iCompanyId");
                 dic.Add("项目", "iProjectId");
                 dic.Add("工资发放年月", "iYearMonth");
+                dic.Add("总金额", "iTotal");
+                dic.Add("分类", "iCategory");
                 dic.Add("文件名称", "iFileName");
                 dic.Add("下载地址", "iUrl");
                 dic.Add("内容", "iContent");

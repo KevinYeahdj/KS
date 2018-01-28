@@ -178,9 +178,11 @@
                      field: "iYearMonth", title: "工资发放年月", sortable: true, formatter: function (value, row, index) {
                          return ChangeDateFormat2YearMonth(value);
                      }
-                 }, {
+                 }
+                 , { field: "iCategory", title: "分类" }, {
                      field: "iFileName", title: "文件名", sortable: true
                  }
+                 , { field: "iTotal", title: "总金额", sortable: true }
                  , { field: "iNote", title: "备注", sortable: true }
                  , { field: "iApproveStatus", title: "审核状态", sortable: true }
                  , { field: "iAppNo", title: "流程单号", sortable: true }

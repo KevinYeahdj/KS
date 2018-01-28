@@ -33,7 +33,7 @@
                             <h4 class="modal-title" id="">工资Excel文件导入</h4>
                         </div>
                         <div class="modal-body" style="height:400px">
-                            <div class="form-group">
+                            <div class="form-group" style="width:15%;">
                                 所在公司：
                                 <select class="form-control" id="iCompanyId" data-bind="value: iCompanyId">
                                     <option value="-">请选择</option>
@@ -45,7 +45,7 @@
                                     }
                                 </select>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" style="width:15%;">
                                 项目名称：
                                 <select class="form-control" id="iProjectId" data-bind="value: iProjectId">
                                     <option value="-">请选择</option>
@@ -57,8 +57,18 @@
                                     }
                                 </select>
                             </div>
-                            <div class="form-group"> 工资发放年月：<input type="text" class="form-control" id="iYearMonth" data-bind="value: iYearMonth" placeholder="请输入工资发放年月"></div>
-                            <div class="form-group"> 备注：<input type="text" class="form-control" id="iNote" data-bind="value: iNote" placeholder="请输入备注"></div>
+                            <div class="form-group" style="width:10%;"> 工资发放年月：<input type="text" class="form-control" id="iYearMonth" data-bind="value: iYearMonth" placeholder="请输入工资发放年月"></div>
+                            <div class="form-group" style="width:10%;">
+                                分类：<select class="form-control" id="iCategory" data-bind="value: iCategory">
+                                    <option value="">请选择</option>
+                                    <option value="派遣工">派遣工</option>
+                                    <option value="外包工">外包工</option>
+                                    <option value="临时工">临时工</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="width:10%;"> 总金额：<input type="text" class="form-control" id="iTotal" data-bind="value: iTotal" onkeyup="clearNoNum(this)" onblur="clearNoNum(this)" maxlength="11" placeholder="请输入总金额"></div>
+
+                            <div class="form-group" style="width:33%;"> 备注：<input type="text" class="form-control" id="iNote" data-bind="value: iNote" placeholder="请输入备注"></div>
 
                             <form style="margin-top:60px">
                                 <input type="file" name="txt_file" id="txt_file" multiple class="file-loading" />
@@ -166,7 +176,9 @@
         self.iCompanyId = ko.observable("");
         self.iProjectId = ko.observable("");
         self.iYearMonth = ko.observable("");
+        self.iCategory = ko.observable("");
         self.iFileName = ko.observable("");
+        self.iTotal = ko.observable("");
         self.iUrl = ko.observable("");
         self.iNote = ko.observable("");
         self.iCreatedOn = ko.observable("");
@@ -284,9 +296,11 @@
                      field: "iYearMonth", title: "工资发放年月", sortable: true, formatter: function (value, row, index) {
                          return ChangeDateFormat2YearMonth(value);
                      }
-                 }, {
+                 }
+                 , { field: "iCategory", title: "分类" }, {
                      field: "iFileName", title: "文件名", sortable: true
                  }
+                 , { field: "iTotal", title: "总金额", sortable: true }
                  , { field: "iNote", title: "备注", sortable: true }
                  , { field: "iApproveStatus", title: "审核状态", sortable: true }
                  , { field: "iAppNo", title: "流程单号", sortable: true }
@@ -442,7 +456,9 @@
             myViewModel.iProjectId('@HRMS.WEB.Utils.SessionHelper.CurrentUser.CurrentProject');
             myViewModel.iCompanyId('@HRMS.WEB.Utils.SessionHelper.CurrentUser.CurrentCompany');
             myViewModel.iYearMonth("");
+            myViewModel.iCategory("");
             myViewModel.iFileName("");
+            myViewModel.iTotal("");
             myViewModel.iNote("");
             myViewModel.iAppNo(Request["appno"]);
             myViewModel.iApproveStatus("待审核");

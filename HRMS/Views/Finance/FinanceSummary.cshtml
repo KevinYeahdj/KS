@@ -59,8 +59,9 @@
                             <div class="form-group"> 开票金额：<input type="text" class="form-control" id="iInvoice" data-bind="value: iInvoice" placeholder="请输入开票金额"></div>
                             <div class="form-group"> 差异：<input type="text" class="form-control" id="iDiffer" data-bind="value: iDiffer" readonly="readonly"></div>
 
-                            <div class="form-group"> 工资(收)：<input type="text" class="form-control" id="iSalaryIn" data-bind="value: iSalaryIn" placeholder="请输入工资(收)"></div>
-                            <div class="form-group"> 临时工工资(收)：<input type="text" class="form-control" id="iTemporarySalaryIn" data-bind="value: iTemporarySalaryIn" placeholder="临时工工资(收)"></div>
+                            <div class="form-group"> 派遣工工资(收)：<input type="text" class="form-control" id="iSalaryIn" data-bind="value: iSalaryIn" placeholder="请输入派遣工工资(收)"></div>
+                            <div class="form-group"> 外包工工资(收)：<input type="text" class="form-control" id="iOutSourceSalaryIn" data-bind="value: iOutSourceSalaryIn" placeholder="请输入外包工工资(收)"></div>
+                            <div class="form-group"> 临时工工资(收)：<input type="text" class="form-control" id="iTemporarySalaryIn" data-bind="value: iTemporarySalaryIn" placeholder="请输入临时工工资(收)"></div>
                             <div class="form-group"> 管理费：<input type="text" class="form-control" id="iManageFee" data-bind="value: iManageFee" placeholder="请输入管理费"></div>
                             <div class="form-group"> 个人社保(收)：<input type="text" class="form-control" id="iSocialSecurityInP" data-bind="value: iSocialSecurityInP" placeholder="请输入个人社保(收)"></div>
                             <div class="form-group"> 公司社保(收)：<input type="text" class="form-control" id="iSocialSecurityInC" data-bind="value: iSocialSecurityInC" placeholder="请输入公司社保(收)"></div>
@@ -69,8 +70,9 @@
                             <div class="form-group"> 宿舍费(收)：<input type="text" class="form-control" id="iDormitoryFeeIn" data-bind="value: iDormitoryFeeIn" placeholder="请输入宿舍费(收)"></div>
                             <div class="form-group"> 其它(收)：<input type="text" class="form-control" id="iOtherIn" data-bind="value: iOtherIn" placeholder="请输入其它(收)"></div>
                             <div class="form-group"> 收款备注：<input type="text" class="form-control" id="iInNote" data-bind="value: iInNote" placeholder="请输入收款备注"></div>
-                            <div class="form-group"> 工资(付)：<input type="text" class="form-control" id="iSalaryOut" data-bind="value: iSalaryOut" placeholder="请输入工资(付)"></div>
-                            <div class="form-group"> 临时工工资(付)：<input type="text" class="form-control" id="iTemporarySalaryOut" data-bind="value: iTemporarySalaryOut" placeholder="请输入临时工工资(付)"></div>
+                            <div class="form-group"> 派遣工工资(付)：<input type="text" class="form-control" id="iSalaryOut" data-bind="value: iSalaryOut" placeholder="请输入派遣工工资(付)" readonly="readonly"></div>
+                            <div class="form-group"> 外包工工资(付)：<input type="text" class="form-control" id="iOutSourceSalaryOut" data-bind="value: iOutSourceSalaryOut" placeholder="请输入外包工工资(付)" readonly="readonly"></div>
+                            <div class="form-group"> 临时工工资(付)：<input type="text" class="form-control" id="iTemporarySalaryOut" data-bind="value: iTemporarySalaryOut" placeholder="请输入临时工工资(付)" readonly="readonly"></div>
                             <div class="form-group"> 社保公司(付)：<input type="text" class="form-control" id="iSocialSecurityCompanyPay" data-bind="value: iSocialSecurityCompanyPay" placeholder="请输入社保公司(付)" readonly="readonly"></div>
                             <div class="form-group"> 社保个人(付)：<input type="text" class="form-control" id="iSocialSecurityPersonalPay" data-bind="value: iSocialSecurityPersonalPay" placeholder="请输入社保个人(付)" readonly="readonly"></div>
                             <div class="form-group"> 公积金个人(付) ：<input type="text" class="form-control" id="iProvidentFundPersonalPay" data-bind="value: iProvidentFundPersonalPay" placeholder="请输入公积金个人(付) " readonly="readonly"></div>
@@ -98,8 +100,9 @@
                             <div class="form-group"> 工伤费用：<input type="text" class="form-control" id="iInjuryPay" data-bind="value: iInjuryPay" placeholder="请输入工伤费用"></div>
                             <div class="form-group"> 其它付：<input type="text" class="form-control" id="iOtherPay" data-bind="value: iOtherPay" placeholder="请输入其它付"></div>
                             <div class="form-group"> 支出备注：<input type="text" class="form-control" id="iPayNote" data-bind="value: iPayNote" placeholder="请输入支出备注"></div>
-                            <div class="form-group"> 临时工利润：<input type="text" class="form-control" id="iTemporaryProfit" data-bind="value: iTemporaryProfit" readonly="readonly"></div>
-                            <div class="form-group"> 正式工利润：<input type="text" class="form-control" id="iProfit" data-bind="value: iProfit" readonly="readonly"></div>
+                            <div class="form-group" title="临时工利润=临时工工资收-临时工工资付-临时工费用"> 临时工利润：<input type="text" class="form-control" id="iTemporaryProfit" data-bind="value: iTemporaryProfit" readonly="readonly"></div>
+                            <div class="form-group" title="派遣工利润=派遣工工资收-派遣工工资付-其它所有费用。注意：因为外包工费用也在里面，所以可能出现负数"> 派遣工利润：<input type="text" class="form-control" id="iProfit" data-bind="value: iProfit" readonly="readonly"></div>
+                            <div class="form-group" title="外包工利润=外包工工资收-外包工工资付。注意：其它开销放到了派遣工里面了"> 外包工利润：<input type="text" class="form-control" id="iOutSourceProfit" data-bind="value: iOutSourceProfit" readonly="readonly"></div>
                             <div class="form-group"> 总利润：<input type="text" class="form-control" id="iTotalProfit" data-bind="value: iTotalProfit" readonly="readonly"></div>
 
                         </div>
@@ -196,6 +199,7 @@
         self.iReceivable = ko.observable("");
         self.iInvoice = ko.observable("");
         self.iSalaryIn = ko.observable("");
+        self.iOutSourceSalaryIn = ko.observable("");
         self.iManageFee = ko.observable("");
         self.iSocialSecurityInP = ko.observable("");
         self.iSocialSecurityInC = ko.observable("");
@@ -205,6 +209,7 @@
         self.iOtherIn = ko.observable("");
         self.iInNote = ko.observable("");
         self.iSalaryOut = ko.observable("");
+        self.iOutSourceSalaryOut = ko.observable("");
         self.iSocialSecurityCompanyPay = ko.observable("");
         self.iSocialSecurityPersonalPay = ko.observable("");
         self.iProvidentFundPersonalPay = ko.observable("");
@@ -268,6 +273,15 @@
             write: function (value) {
             }
         });
+        self.iOutSourceProfit = ko.computed({
+            read: function () {
+                if (self.iOutSourceSalaryOut() === "" || self.iOutSourceSalaryIn() === "")
+                    return "";
+                return (Number(self.iOutSourceSalaryIn()) - Number(self.iOutSourceSalaryOut())).toFixed(2);
+            },
+            write: function (value) {
+            }
+        });
         self.iTemporaryProfit = ko.computed({
             read: function () {
                 if (self.iTemporarySalaryOut() === "" || self.iTemporarySalaryIn() === "" || self.iTemporaryFee() === "")
@@ -279,9 +293,9 @@
         });
         self.iTotalProfit = ko.computed({
             read: function () {
-                if (self.iTemporaryProfit() === "" || self.iProfit() === "")
+                if (self.iTemporaryProfit() === "" || self.iProfit() === "" || self.iOutSourceProfit() === "")
                     return "";
-                return (Number(self.iTemporaryProfit()) + Number(self.iProfit())).toFixed(2);
+                return (Number(self.iTemporaryProfit()) + Number(self.iProfit()) + Number(self.iOutSourceProfit())).toFixed(2);
             },
             write: function (value) {
             }
@@ -438,7 +452,8 @@
 
                      }
                  }
-                 , { field: "iSalaryIn", title: "工资(收)", sortable: true }
+                 , { field: "iSalaryIn", title: "派遣工工资(收)", sortable: true }
+                 , { field: "iOutSourceSalaryIn", title: "外包工工资(收)", sortable: true }
                  , { field: "iTemporarySalaryIn", title: "临时工工资(收)", sortable: true }
                  , { field: "iManageFee", title: "管理费", sortable: true }
                  , { field: "iSocialSecurityInP", title: "个人社保(收)", sortable: true }
@@ -448,7 +463,8 @@
                  , { field: "iDormitoryFeeIn", title: "宿舍费(收)", sortable: true }
                  , { field: "iOtherIn", title: "其它(收)", sortable: true }
                  , { field: "iInNote", title: "收款备注", sortable: true }
-                 , { field: "iSalaryOut", title: "工资(付)", sortable: true }
+                 , { field: "iSalaryOut", title: "派遣工工资(付)", sortable: true }
+                 , { field: "iOutSourceSalaryOut", title: "外包工工资(付)", sortable: true }
                  , { field: "iTemporarySalaryOut", title: "临时工工资(付)", sortable: true }
                  , { field: "iSocialSecurityCompanyPay", title: "社保公司(付)", sortable: true }
                  , { field: "iSocialSecurityPersonalPay", title: "社保个人(付)", sortable: true }
@@ -471,7 +487,7 @@
                  , { field: "iOtherPay", title: "其它付", sortable: true }
                  , { field: "iPayNote", title: "支出备注", sortable: true }
                  , {
-                     field: "iProfit", title: "利润", sortable: false, formatter: function (value, row, index) {
+                     field: "iProfit", title: "派遣工利润", sortable: false, formatter: function (value, row, index) {
                          if (row.iInvoice == "" || row.iTemporarySalaryIn === "" || row.iSalaryOut === "" || row.iSocialSecurityCompanyPay === "" || row.iSocialSecurityPersonalPay === "" || row.iProvidentFundPersonalPay === "" || row.iProvidentFundCompanyPay === ""
                     || row.iSocialSecurityAdditional === "" || row.iReturnFee === "" || row.iDisabilityBenefitsPay === "" || row.iMealFee === "" || row.iDormitoryFeePay === ""
                     || row.iCommercialInsuranceFeePay === "" || row.iTaxFee === "" || row.iPersonalTax === ""
@@ -487,6 +503,15 @@
                              - Number(row.iOfficePay) - Number(row.iCompanySalaryPay) - Number(row.iCompanySocialSecurityPay) - Number(row.iCompanyProvidentFundPay)
                              - Number(row.iInjuryPay) - Number(row.iOtherPay)).toFixed(2);
                          return row.iProfit;
+                     }
+                 }, {
+                     field: "iOutSourceProfit", title: "外包工利润", sortable: false, formatter: function (value, row, index) {
+                         if (row.iOutSourceSalaryOut === "" || row.iOutSourceSalaryIn === "") {
+                             row.iOutSourceProfit = 0;
+                             return "";
+                         }
+                         row.iOutSourceProfit = (Number(row.iOutSourceSalaryIn) - Number(row.iOutSourceSalaryOut)).toFixed(2);
+                         return row.iOutSourceProfit;
                      }
                  }, {
                      field: "iTemporaryProfit", title: "临时工利润", sortable: false, formatter: function (value, row, index) {
@@ -532,6 +557,7 @@
                         myViewModel.iReceivable(result.data.iReceivable);
                         myViewModel.iInvoice(result.data.iInvoice);
                         myViewModel.iSalaryIn(result.data.iSalaryIn);
+                        myViewModel.iOutSourceSalaryIn(result.data.iOutSourceSalaryIn);
                         myViewModel.iTemporarySalaryIn(result.data.iTemporarySalaryIn);
                         myViewModel.iManageFee(result.data.iManageFee);
                         myViewModel.iSocialSecurityInP(result.data.iSocialSecurityInP);
@@ -542,6 +568,7 @@
                         myViewModel.iOtherIn(result.data.iOtherIn);
                         myViewModel.iInNote(result.data.iInNote);
                         myViewModel.iSalaryOut(result.data.iSalaryOut);
+                        myViewModel.iOutSourceSalaryOut(result.data.iOutSourceSalaryOut);
                         myViewModel.iTemporarySalaryOut(result.data.iTemporarySalaryOut);
                         myViewModel.iSocialSecurityCompanyPay(result.data.iSocialSecurityCompanyPay);
                         myViewModel.iSocialSecurityPersonalPay(result.data.iSocialSecurityPersonalPay);

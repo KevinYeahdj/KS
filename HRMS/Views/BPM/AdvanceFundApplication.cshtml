@@ -1,0 +1,139 @@
+﻿@{
+    ViewBag.Title = "备用金申请";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+}
+
+<div>
+    <div>
+        <div class="row col-*-12">
+
+            <div id="toolbar" class="toolbar">
+                <div style="float: right; margin-left: 10px; margin-top: 5px; " class="btn btn-primary" id="SubmitApplication">提交申请</div>
+
+            </div>
+
+        </div>
+        <div class="row" style="margin-top:10px;">
+            <ul>
+                <li class="list-group-item">
+                    <div class="input-group input-group">
+                        <span class="input-group-addon">申请事由：</span>
+                        <input type="text" class="form-control" id="iReason" data-bind="value: iReason" placeholder="请输入事由">
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    <div class="input-group input-group">
+                        <span class="input-group-addon">申请金额：</span>
+                        <input type="text" class="form-control" id="iAmount" data-bind="value: iAmount" onkeyup="clearNoNum(this)" onblur="clearNoNum(this)" maxlength="11" placeholder="请输入申请金额">
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    <div class="input-group input-group">
+                        <span class="input-group-addon">额外说明：</span>
+                        <input type="text" class="form-control" id="iNote" data-bind="value: iNote" placeholder="请输入说明">
+                    </div>
+                </li>
+            </ul>
+
+        </div>
+
+    </div>
+</div>
+
+<script type="text/javascript">
+    //正则校验两位小数
+    function clearNoNum(obj) {
+        //先把非数字的都替换掉，除了数字和.
+        obj.value = obj.value.replace(/[^\d.]/g, "");
+        //保证只有出现一个.而没有多个.
+        obj.value = obj.value.replace(/\.{2,}/g, ".");
+        //必须保证第一个为数字而不是.
+        obj.value = obj.value.replace(/^\./g, "");
+        //保证.只出现一次，而不能出现两次以上
+        obj.value = obj.value.replace(".", "$#$").replace(/\./g, "").replace("$#$", ".");
+        //只能输入两个小数
+        obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3');
+        $(obj).trigger("change");
+    }
+    function ViewModel() {
+        var self = this;
+        self.iReason = ko.observable("");
+        self.iAmount = ko.observable("");
+        self.iNote = ko.observable("");
+    }
+    $(function () {
+        $('#iReason').addClass("warning");
+        $('#iAmount').addClass("warning");
+        $("#iReason").change(function () {
+            var value = $("#iReason").val();
+            if (value != "") {
+                $('#iReason').removeClass("warning");
+            }
+            else {
+                $('#iReason').addClass("warning");
+            }
+        });
+        $("#iAmount").change(function () {
+            var value = $("#iAmount").val();
+            if (value != "") {
+                $('#iAmount').removeClass("warning");
+            }
+            else {
+                $('#iAmount').addClass("warning");
+            }
+        });
+
+
+        $("#SubmitApplication").click(function () {
+            if ($("#companySelect").val() == "-") {
+                toastr.error('请先选择当前公司！');
+                return;
+            }
+            var warnings = $(".warning");
+            if (warnings && warnings.length > 0) {
+                toastr.error('数据验证未通过！');
+                return;
+            }
+            if (confirm("确认申请？")) {
+                $(this).attr({ "disabled": "disabled" });
+
+                var para = {};
+                var conditions = {};
+                conditions.sys_approve = "1";
+                conditions.sys_approvecn = "提交申请";
+                conditions.sys_feedback = "提交申请";
+                conditions.sys_summary = "申请备用金：" + $('#iAmount').val();
+                para.Conditions = conditions;
+                para.ProcessInstanceID = ""; //important
+                para.AppName = "";
+                para.AppInstanceID = ""; //important
+                para.ProcessGUID = "843f9b74-2264-8c32-fb36-15e8efb94959";  //申请时必要 important
+                para.UserID = "@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId";
+                para.UserName = "";
+                para.TaskID = "";  //important
+                para.Other = ko.toJSON(myViewModel);
+
+                $.ajax({
+                    url: "/BPMAjax/StartApplication",
+                    type: "POST",
+                    data: para,
+                    dataType: 'text',
+                    success: function (result) {
+                        result = $.parseJSON(result);
+                        if (result.success) {
+                            toastr.success('申请成功！流程单号：【' + result.msg + '】');
+                            //$('#mytab').bootstrapTable('removeAll');
+                            setTimeout("window.location.href='/BPM/myapp'", 3000);
+                        }
+                        else {
+                            toastr.error('申请失败！');
+                        }
+                        $("#SubmitApplication").removeAttr("disabled");
+                    }
+                });
+            }
+        });
+        var myViewModel = new ViewModel();
+        ko.applyBindings(myViewModel);
+    })
+</script>

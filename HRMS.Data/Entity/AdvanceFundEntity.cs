@@ -6,27 +6,30 @@ using System.Threading.Tasks;
 
 namespace HRMS.Data.Entity
 {
-    //工资 信息
-    [Table("Salary")]
-    public class SalaryEntity
+    //备用金申请 信息
+    [Table("AdvanceFund")]
+    public class AdvanceFundEntity
     {
         public string iGuid { get; set; } //惟一标识
         public string iCompanyId { get; set; } //公司
-        public string iProjectId { get; set; } //项目
-        public DateTime? iYearMonth { get; set; } //工资发放年月
-        public string iCategory { get; set; } //分类
-        public string iFileName { get; set; } //文件名称
-        public decimal? iTotal { get; set; } //总金额
-        public string iUrl { get; set; } //文件地址
-        public string iContent { get; set; } //文件内容
+        public string iProjectId { get; set; } //项目  
+        public string iReason { get; set; } //事由
+        public decimal? iAmount { get; set; } //金额
+        public string iChecked { get; set; } //是否核销
+        public string iCheckedBy { get; set; } //核销人
+        public DateTime? iPaidDate { get; set; } //支付日期
         public string iNote { get; set; } //备注 
+        public string iAppNo { get; set; } //流程单号 
+
+        public string iRecordNote { get; set; } //数据说明  --备用金还款 /返费抵冲/流水帐抵冲
+        public string iApplicant { get; set; } //申请人工号
+
         public DateTime? iCreatedOn { get; set; }  //创建时间
         public string iCreatedBy { get; set; } //创建人
         public DateTime? iUpdatedOn { get; set; } //修改时间
         public string iUpdatedBy { get; set; } //修改人
         public int iStatus { get; set; }  //状态
         public int iIsDeleted { get; set; } //假删
-        public string iAppNo { get; set; } //单号
-        public string iApproveStatus { get; set; } //审核状态
+
     }
 }

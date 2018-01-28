@@ -18,7 +18,7 @@ namespace HRMS.Data.Entity
         public decimal? iInvoice { get; set; } //开票金额
 
         //public decimal? iDiffer { get; set; } //差异  差异=开票金额-工资（收）-管理费-社保（收）-公积金（收）-残保金（收）-宿舍费（收）-其它（收)
-        public decimal? iSalaryIn { get; set; } //工资(收)
+        public decimal? iSalaryIn { get; set; } //派遣工工资(收)  数据来源手填
         public decimal? iManageFee { get; set; } //管理费
         //public decimal? iSocialSecurityIn { get; set; } //社保(收)--拆分成 个人社保(收)，公司社保(收)--个人社保(收)
         public decimal? iSocialSecurityInP { get; set; } //个人社保(收)
@@ -28,7 +28,7 @@ namespace HRMS.Data.Entity
         public decimal? iDormitoryFeeIn { get; set; } //宿舍费(收)
         public decimal? iOtherIn { get; set; } //其它(收)
         public string iInNote { get; set; } //收款备注 
-        public decimal? iSalaryOut { get; set; } //工资(付) 
+        public decimal? iSalaryOut { get; set; } //工资(付)  数据来源工资流程
         public decimal? iSocialSecurityCompanyPay { get; set; } //社保公司(付) 
         public decimal? iSocialSecurityPersonalPay { get; set; } //社保个人(付) 
         public decimal? iProvidentFundPersonalPay { get; set; } //公积金个人(付) 
@@ -65,9 +65,11 @@ namespace HRMS.Data.Entity
         public int iStatus { get; set; }  //状态
         public int iIsDeleted { get; set; } //假删
 
-        public decimal? iTemporarySalaryIn { get; set; } //临时工工资收
+        public decimal? iTemporarySalaryIn { get; set; } //临时工工资收 数据来源手填
         public decimal? iTemporarySalaryOut { get; set; } //临时工工资付
-        public decimal? iTemporaryFee { get; set; } //临时工支出
+        public decimal? iTemporaryFee { get; set; } //临时工支出  数据来源工资流程
+        public decimal? iOutSourceSalaryIn { get; set; } //外包工工资收 数据来源手填
+        public decimal? iOutSourceSalaryOut { get; set; } //外包工工资付 数据来源工资流程
 
     }
 }

@@ -182,6 +182,40 @@ namespace HRMS.Controllers
             return View();
         }
 
+        public ActionResult AdvanceFundApplication()
+        {
+            return View();
+        }
+        public ActionResult AdvanceFundReApplication()
+        {
+            return View();
+        }
+        public ActionResult AdvanceFundApprove()
+        {
+            return View();
+        }
+        public ActionResult AdvanceFundView()
+        {
+            return View();
+        }
+
+        public ActionResult AdvanceFundReturnApplication()
+        {
+            return View();
+        }
+        public ActionResult AdvanceFundReturnReApplication()
+        {
+            return View();
+        }
+        public ActionResult AdvanceFundReturnApprove()
+        {
+            return View();
+        }
+        public ActionResult AdvanceFundReturnView()
+        {
+            return View();
+        }
+
     }
 
     public class BPMAjaxController : Controller
@@ -569,6 +603,26 @@ namespace HRMS.Controllers
                     result = true;
 
                 }
+                else if (pguid == "843f9b74-2264-8c32-fb36-15e8efb94959")   //备用金
+                {
+                    AdvanceFundManager service = new AdvanceFundManager();
+                    JsonSerializerSettings st = new JsonSerializerSettings();
+                    st.DateTimeZoneHandling = DateTimeZoneHandling.Local;
+                    AdvanceFundEntity entity = JsonConvert.DeserializeObject<AdvanceFundEntity>(buzJson, st);
+                    entity.iApplicant = SessionHelper.CurrentUser.UserName + "(" + SessionHelper.CurrentUser.UserId + ")";
+                    entity.iCompanyId = SessionHelper.CurrentUser.CurrentCompany;
+                    entity.iProjectId = SessionHelper.CurrentUser.CurrentProject;
+                    entity.iAppNo = appNo;
+                    entity.iRecordNote = "备用金申请";
+                    if(string.IsNullOrEmpty(entity.iGuid)){
+                        service.Insert(entity);
+                    }
+                    else
+                    {
+                        service.Update(entity);
+                    }
+                    result = true;
+                }
                 return result;
             }
             catch (Exception ex)
@@ -605,6 +659,16 @@ namespace HRMS.Controllers
                     service.BatchUpdate4Flow(null, appNo);
                     result = true;
 
+                }
+                else if (pguid == "843f9b74-2264-8c32-fb36-15e8efb94959")   //备用金
+                {
+                    AdvanceFundManager service = new AdvanceFundManager();
+                    JsonSerializerSettings st = new JsonSerializerSettings();
+                    st.DateTimeZoneHandling = DateTimeZoneHandling.Local;
+                    AdvanceFundEntity entity = service.FirstOrDefault(appNo);
+                    entity.iIsDeleted = 1;
+                    service.Update(entity);
+                    result = true;
                 }
                 return result;
             }
