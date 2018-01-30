@@ -15,7 +15,9 @@
             <div id="toolbar" class="toolbar">
                 <div style="float: left; margin-left: -100px"><span>合计：</span></div>
                 <div style="float: left; margin-left: 10px; width: 30%"><input id="totalThis" class="form-control" readonly="readonly" value="0" /></div>
-
+                <div style="float: left; margin-left: 10px"><span>核销方式：</span></div><div style="float: left; margin-left: 10px; width: 20%">
+                    <select id="iCheckWay" class="form-control"><option value="现金">现金</option><option value="备用金">备用金</option></select>
+                </div>
                 <div style="float: left; margin-left: 10px"><span>处理意见：</span></div>
                 <div style="float: left; margin-left: 10px; width: 30%"><input id="sys_feedback" class="form-control" /></div>
                 <div style="float: right; margin-left: 10px; margin-top: 5px; " class="btn btn-primary" id="SubmitApplication">提交申请</div>
@@ -192,6 +194,10 @@
             uniqueId: "iGuid",
             onLoadSuccess: function (data) {
                 $("#totalThis").val(data.sum);
+                if (data.AdvanceFundPay)
+                    $("#iCheckWay").val("备用金");
+                else
+                    $("#iCheckWay").val("现金");
             }
         });
         $('#logtab').bootstrapTable({

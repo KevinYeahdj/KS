@@ -568,6 +568,39 @@ namespace HRMS.Controllers
                 bool result = false;
                 if (pguid == "09e8624f-ff2d-cc98-0eaa-6a11f3f7d9bc") //流水账
                 {
+                    if (buzJson.StartsWith("|"))
+                    {
+                        string amount = buzJson.Split('|')[1];
+                        AdvanceFundManager afService = new AdvanceFundManager();
+                        var af = afService.FirstOrDefault(appNo);
+                        if (af != null)
+                        {
+                            af.iAmount = decimal.Parse(amount);
+                            afService.Update(af);
+                        }
+                        else
+                        {
+                            AdvanceFundEntity afNew = new AdvanceFundEntity();
+                            afNew.iAmount = decimal.Parse(amount);
+                            afNew.iApplicant = SessionHelper.CurrentUser.UserName + "(" + SessionHelper.CurrentUser.UserId + ")";
+                            afNew.iCompanyId = SessionHelper.CurrentUser.CurrentCompany;
+                            afNew.iProjectId = SessionHelper.CurrentUser.CurrentProject;
+                            afNew.iAppNo = appNo;
+                            afNew.iRecordNote = "流水账备用金核销";
+                            afService.Insert(afNew);
+                        }
+                        buzJson = buzJson.Substring(amount.Length + 2);
+                    }
+                    else
+                    {
+                        AdvanceFundManager afService = new AdvanceFundManager();
+                        var af = afService.FirstOrDefault(appNo);
+                        if (af != null)  //从备用金核销到现金
+                        {
+                            af.iIsDeleted = 1;
+                            afService.Update(af);
+                        }
+                    }
                     JournalManager service = new JournalManager();
                     JsonSerializerSettings st = new JsonSerializerSettings();
                     st.DateTimeZoneHandling = DateTimeZoneHandling.Local;
@@ -577,6 +610,39 @@ namespace HRMS.Controllers
                 }
                 else if (pguid == "eb2844bd-0ffd-9eaa-6068-910b66fad9d9") //返费
                 {
+                    if (buzJson.StartsWith("|"))
+                    {
+                        string amount = buzJson.Split('|')[1];
+                        AdvanceFundManager afService = new AdvanceFundManager();
+                        var af = afService.FirstOrDefault(appNo);
+                        if (af != null)
+                        {
+                            af.iAmount = decimal.Parse(amount);
+                            afService.Update(af);
+                        }
+                        else
+                        {
+                            AdvanceFundEntity afNew = new AdvanceFundEntity();
+                            afNew.iAmount = decimal.Parse(amount);
+                            afNew.iApplicant = SessionHelper.CurrentUser.UserName + "(" + SessionHelper.CurrentUser.UserId + ")";
+                            afNew.iCompanyId = SessionHelper.CurrentUser.CurrentCompany;
+                            afNew.iProjectId = SessionHelper.CurrentUser.CurrentProject;
+                            afNew.iAppNo = appNo;
+                            afNew.iRecordNote = "返费备用金核销";
+                            afService.Insert(afNew);
+                        }
+                        buzJson = buzJson.Substring(amount.Length + 2);
+                    }
+                    else
+                    {
+                        AdvanceFundManager afService = new AdvanceFundManager();
+                        var af = afService.FirstOrDefault(appNo);
+                        if (af != null)  //从备用金核销到现金
+                        {
+                            af.iIsDeleted = 1;
+                            afService.Update(af);
+                        }
+                    }
                     ReturnFeeManager service = new ReturnFeeManager();
                     JsonSerializerSettings st = new JsonSerializerSettings();
                     st.DateTimeZoneHandling = DateTimeZoneHandling.Local;
@@ -614,7 +680,8 @@ namespace HRMS.Controllers
                     entity.iProjectId = SessionHelper.CurrentUser.CurrentProject;
                     entity.iAppNo = appNo;
                     entity.iRecordNote = "备用金申请";
-                    if(string.IsNullOrEmpty(entity.iGuid)){
+                    if (string.IsNullOrEmpty(entity.iGuid))
+                    {
                         service.Insert(entity);
                     }
                     else

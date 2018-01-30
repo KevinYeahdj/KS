@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "流水账申请查看";
+    ViewBag.Title = "备用金还款查看";
     Layout = "~/Views/Shared/_LayoutMain.cshtml";
 }
 <style>
@@ -7,23 +7,23 @@
         height: 230px;
     }
 </style>
-
 <div>
     <div>
-        <div class="col-*-12">
-
-            <div id="toolbar" class="toolbar">
-                <div style="float: left; margin-left: 10px"><span>合计：</span></div>
-                <div style="float: left; margin-left: 10px; width: 30%"><input id="totalThis" class="form-control" readonly="readonly" value="0" /></div>
-                <div style="float: left; margin-left: -100px"><span>核销方式：</span></div>
-                <div style="float: left; margin-left: 10px; width: 30%"><label id="iCheckWay"></label></div>
-
-            </div>
-
-            <table id="mytab" class="table table-hover"></table>
-            <table id="logtab" class="table table-hover"></table>
-
+        <div class="row" style="margin-top:10px;">
+            <ul>
+                <li class="list-group-item">
+                    <div class="input-group input-group">
+                        <span class="input-group-addon">待还金额：</span>
+                        <label class="form-control" id="iAmountLeft" data-bind="value: iAmountLeft"></label>
+                    </div>
+                </li>
+            </ul>
         </div>
+        <h2>最后一次还款至今</h2>
+        <h3>备用金还款可以是从本流程发起，也可以是流水账冲账以及返费冲账。此处只显示流程已完成的账单，审核中及未通过的不显示，也不计入还款金额。</h3>
+        <table id="mytab" class="table table-hover"></table>
+        <table id="logtab" class="table table-hover"></table>
+
     </div>
 </div>
 
@@ -44,57 +44,11 @@
     }
     //bootstraptable 高度
     function tableHeight() {
-        return $(window).height() * 0.6;
-    }
-    //json 日期转字符串
-    function ChangeDateFormat(jsondate) {
-        if (!jsondate) return "";
-        jsondate = jsondate.replace("/Date(", "").replace(")/", "");
-        if (jsondate.indexOf("+") > 0) {
-            jsondate = jsondate.substring(0, jsondate.indexOf("+"));
-        }
-        else if (jsondate.indexOf("-") > 0) {
-            jsondate = jsondate.substring(0, jsondate.indexOf("-"));
-        }
-
-        var date = new Date(parseInt(jsondate, 10));
-        var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
-        var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
-
-        return date.getFullYear()
-            + "-"
-            + month
-            + "-"
-            + currentDate;
-    }
-
-    function ChangeDateTimeFormat(jsondate) {
-        if (!jsondate) return "";
-        jsondate = jsondate.replace("/Date(", "").replace(")/", "");
-        if (jsondate.indexOf("+") > 0) {
-            jsondate = jsondate.substring(0, jsondate.indexOf("+"));
-        }
-        else if (jsondate.indexOf("-") > 0) {
-            jsondate = jsondate.substring(0, jsondate.indexOf("-"));
-        }
-
-        var date = new Date(parseInt(jsondate, 10));
-        var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
-        var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
-
-        return date.getFullYear()
-            + "-"
-            + month
-            + "-"
-            + currentDate
-            + " "
-            + date.getHours()
-            + ":"
-            + date.getMinutes();
+        return $(window).height() * 0.86;
     }
     $(function () {
-
         var Request = GetRequest();
+       
         //重置函数
         $("div.icon-reorder").click(function () {
             $('#mytab').bootstrapTable('resetView', {
@@ -108,14 +62,12 @@
             })
         })
         $('#mytab').bootstrapTable({
-            url: "/FinanceAjax/GetFlowJournal",//数据源
+            url: "/AdvanceFundAjax/GetUndoBillByAppno",//数据源
             dataField: "rows",//服务端返回数据键值 就是说记录放的键值是rows，分页时使用总记录数的键值为total
-            sortName: "iUpdatedOn",//排序列
+            sortName: "iPaidDate",//排序列
             sortOrder: "desc",
             cache: false,
             striped: true,//條紋行
-            clickToSelect: true,//选择行即选择checkbox
-            searchOnEnterKey: false,//ENTER键搜索
             height: tableHeight(),//高度调整
             search: false,//是否搜索
             pagination: false,//是否分页
@@ -134,8 +86,7 @@
             toolbar: "#toolbar",//指定工具栏
             toolbarAlign: "right",//工具栏对齐方式
             queryParams: function getParams(params) {
-                params.sAppNo = Request["appno"];
-                params.limit = 10000;
+                params.applicant = Request["appno"];
                 return params;
             },
             columns: [
@@ -145,18 +96,11 @@
                      formatter: function (value, row, index) {
                          return ($('#mytab').bootstrapTable('getOptions').pageNumber - 1) * $('#mytab').bootstrapTable('getOptions').pageSize + index + 1;
                      }
-                 },
-                 { field: "iGuid", title: "iGuid", visible: false, switchable: false }
-                 , { field: "iCompanyId", title: "公司", visible: false, switchable: false }
-                 , { field: "iProjectId", title: "项目", visible: false, switchable: false }
-                 , { field: "iCompanyName", title: "公司", visible: true }
-                 , { field: "iProjectName", title: "项目", visible: true }
-                 , { field: "iDate", title: "日期" }
-                 , { field: "iEvent", title: "事项" }
-                 , { field: "iType", title: "科目" }
-                 , { field: "iApplicant", title: "提报人" }
+                 }
+                 , { field: "iCreatedOn", title: "日期" }
+                 , { field: "iAppNo", title: "单号" }
                  , { field: "iAmount", title: "金额" }
-                 , { field: "iNote", title: "备注" }
+                 , { field: "iAmountLeft", title: "待还金额" }
             ],
             onClickRow: function (row, $element) {
                 //$element是当前tr的jquery对象
@@ -166,22 +110,17 @@
                 return;
             },
             locale: "zh-CN",//中文支持,
-            detailView: false, //是否显示详情折叠
+            detailView: true, //是否显示详情折叠
             detailFormatter: function (index, row, element) {
                 var html = '';
                 $.each(row, function (key, val) {
-                    html += "<p>" + key + ":" + val + "</p>"
+                    if (key == "iNote" || key == "iReason")
+                        html += "<p>" + key + ":" + val + "</p>"
                 });
                 return html;
-            },
-            onLoadSuccess: function (data) {
-                $("#totalThis").val(data.sum);
-                if (data.AdvanceFundPay)
-                    $("#iCheckWay").text("备用金");
-                else
-                    $("#iCheckWay").text("现金");
             }
         });
+
         $('#logtab').bootstrapTable({
             url: "/BPMAjax/GetFlowLogs",//数据源
             dataField: "rows",//服务端返回数据键值 就是说记录放的键值是rows，分页时使用总记录数的键值为total
@@ -210,7 +149,7 @@
             toolbarAlign: "right",//工具栏对齐方式
             queryParams: function getParams(params) {
                 params.appno = Request["appno"];
-                params.limit = 1000;
+                params.limit = 10000;
                 return params;
             },
             columns: [

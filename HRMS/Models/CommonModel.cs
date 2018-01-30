@@ -15,6 +15,7 @@ namespace HRMS.WEB.Models
     public class PageModels2<T> : PageModels<T>
     {
         public decimal sum { get; set; }
+        public bool AdvanceFundPay { get; set; }
     }
     public class PageModels3<T> : PageModels<T>
     {

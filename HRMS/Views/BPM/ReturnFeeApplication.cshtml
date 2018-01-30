@@ -15,6 +15,10 @@
             <div id="toolbar" class="toolbar">
                 <div style="float: left; margin-left: 10px"><span>合计：</span></div>
                 <div style="float: left; margin-left: 10px; width: 30%"><input id="totalThis" class="form-control" readonly="readonly" value="0" /></div>
+
+                <div style="float: left; margin-left: 10px"><span>核销方式：</span></div><div style="float: left; margin-left: 10px; width: 20%">
+                    <select id="iCheckWay" class="form-control"><option value="现金">现金</option><option value="备用金">备用金</option></select>
+                </div>
                 <div style="float: right; margin-left: 10px; margin-top: 5px; " class="btn btn-primary" id="SubmitApplication">提交申请</div>
 
             </div>
@@ -209,7 +213,7 @@
                 conditions.sys_approve = "1";
                 conditions.sys_approvecn = "提交申请";
                 conditions.sys_feedback = "提交申请";
-                conditions.sys_summary = "返费" + data.length + "条";
+                conditions.sys_summary = "返费" + data.length + "条 " + $('#iCheckWay').val();
                 conditions.confirmUsers = confirmUsers;
                 conditions.managerUsers = managerUsers;
                 conditions.bossUsers = bossUsers;
@@ -226,6 +230,9 @@
                 para.UserName = "";
                 para.TaskID = "";  //important
                 para.Other = JSON.stringify(data);
+                if ($('#iCheckWay').val() == "备用金") {
+                    para.Other = "|"+$('#totalThis').val() + "|" + para.Other;
+                }
 
                 $.ajax({
                     url: "/BPMAjax/StartApplication",

@@ -374,7 +374,7 @@ namespace HRMS.Controllers
                 }
 
                 //给分页实体赋值  
-                PageModels<ReturnFeeHistoryViewModel> model = new PageModels<ReturnFeeHistoryViewModel>();
+                PageModels2<ReturnFeeHistoryViewModel> model = new PageModels2<ReturnFeeHistoryViewModel>();
                 int total = summaryList.Count();
                 model.total = total;
                 if (total % pageSize == 0)
@@ -384,6 +384,9 @@ namespace HRMS.Controllers
 
                 model.rows = summaryList;
 
+                AdvanceFundManager adm = new AdvanceFundManager();
+                if (adm.FirstOrDefault(HttpContext.Request.Params["sAppNo"]) != null)
+                    model.AdvanceFundPay = true;
                 //将查询结果返回  
                 HttpContext.Response.Write(jss.Serialize(model));
             }
@@ -467,7 +470,7 @@ namespace HRMS.Controllers
                 }
 
                 //给分页实体赋值  
-                PageModels<ReturnFeeHistoryViewModel> model = new PageModels<ReturnFeeHistoryViewModel>();
+                PageModels2<ReturnFeeHistoryViewModel> model = new PageModels2<ReturnFeeHistoryViewModel>();
                 int total = summaryList.Count();
                 model.total = total;
                 if (total % pageSize == 0)
@@ -476,6 +479,10 @@ namespace HRMS.Controllers
                     model.page = (total / pageSize) + 1;
 
                 model.rows = summaryList;
+
+                AdvanceFundManager adm = new AdvanceFundManager();
+                if (adm.FirstOrDefault(HttpContext.Request.Params["sAppNo"]) != null)
+                    model.AdvanceFundPay = true;
 
                 //将查询结果返回  
                 HttpContext.Response.Write(jss.Serialize(model));
@@ -1144,6 +1151,10 @@ namespace HRMS.Controllers
                 model.rows = result;
                 model.sum = sum ?? 0;
 
+                AdvanceFundManager adm = new AdvanceFundManager();
+                if (adm.FirstOrDefault(HttpContext.Request.Params["sAppNo"]) != null)
+                    model.AdvanceFundPay = true;
+
                 //将查询结果返回  
                 HttpContext.Response.Write(jss.Serialize(model));
             }
@@ -1293,6 +1304,10 @@ namespace HRMS.Controllers
                 model.rows = result;
                 model.sum = sum ?? 0;
 
+                AdvanceFundManager adm = new AdvanceFundManager();
+                if (adm.FirstOrDefault(HttpContext.Request.Params["sAppNo"]) != null)
+                    model.AdvanceFundPay = true;
+
                 //将查询结果返回  
                 HttpContext.Response.Write(jss.Serialize(model));
             }
@@ -1437,7 +1452,7 @@ namespace HRMS.Controllers
 
                 Dictionary<string, string> bizParaDic = new Dictionary<string, string>();
                 bizParaDic.Add("search", searchKey);
-                bizParaDic.Add("iApproveStatus","草稿");
+                bizParaDic.Add("iApproveStatus", "草稿");
                 bizParaDic.Add("iCreatedBy", SessionHelper.CurrentUser.UserName);
                 Dictionary<string, string> bizParaDicTemp = new Dictionary<string, string>();
 
