@@ -15,19 +15,7 @@
             <div id="toolbar" class="toolbar">
                 <div style="float: left; margin-left: 10px; "><span>提报人：</span></div>
                 <div style="float: left; margin-left: 10px; width: 8%; "><input id="sApplicant" class="form-control" /></div>
-                <div style="float: left; margin-left: 10px; ">
-                    <span>是否核销：</span>
-                </div>
-                <div style="float: left; margin-left: 10px; ">
-                    <select class="form-control" id="sChecked">
-                        <option value="" selected="selected">全部</option>
-                        <option value="是">是</option>
-                        <option value="否">否</option>
-                    </select>
-                </div>
-                <div style="float: left; margin-left: 10px; "><span>发起日期：</span></div><div style="float: left; margin-left: 5px; width: 7%"><input id="sDate" class="form-control" /></div><div style="float: left; margin-left: 5px"><span>至</span></div><div style="float: left; margin-left: 5px; width: 7%"><input id="sDate2" class="form-control" /></div>
-                <div style="float: left; margin-left: 10px; "><span>核销日期：</span></div><div style="float: left; margin-left: 5px; width: 7%"><input id="sPaidDate" class="form-control" /></div><div style="float: left; margin-left: 5px"><span>至</span></div><div style="float: left; margin-left: 5px; width: 7%"><input id="sPaidDate2" class="form-control" /></div>
-
+ 
                 <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" onclick="Search()">查询</div>
 
             </div>
@@ -105,86 +93,17 @@
             $("#iProjectId").attr("disabled", true);
         }
 
-        //查询日期选择绑定
-        $("#sDate").datetimepicker({
-            language: 'zh-CN',
-            format: "yyyy-mm-dd",
-            autoclose: true,
-            minView: "month",
-            maxView: "decade",
-            todayBtn: true,
-            pickerPosition: "bottom-left"
-        }).on("click", function (ev) {
-            $("#sDate").datetimepicker("setEndDate", $("#sDate2").val());
-        });
-        $("#sDate2").datetimepicker({
-            language: 'zh-CN',
-            format: "yyyy-mm-dd",
-            autoclose: true,
-            minView: "month",
-            maxView: "decade",
-            todayBtn: true,
-            pickerPosition: "bottom-left"
-        }).on("click", function (ev) {
-            $("#sDate2").datetimepicker("setStartDate", $("#sDate").val());
-        });
-        $("#sPaidDate").datetimepicker({
-            language: 'zh-CN',
-            format: "yyyy-mm-dd",
-            autoclose: true,
-            minView: "month",
-            maxView: "decade",
-            todayBtn: true,
-            pickerPosition: "bottom-left"
-        }).on("click", function (ev) {
-            $("#sPaidDate").datetimepicker("setEndDate", $("#sPaidDate2").val());
-        });
-        $("#sPaidDate2").datetimepicker({
-            language: 'zh-CN',
-            format: "yyyy-mm-dd",
-            autoclose: true,
-            minView: "month",
-            maxView: "decade",
-            todayBtn: true,
-            pickerPosition: "bottom-left"
-        }).on("click", function (ev) {
-            $("#sPaidDate2").datetimepicker("setStartDate", $("#sPaidDate").val());
-        });
-        //弹窗日期绑定
-        $('#iDate').datetimepicker({
-            language: 'zh-CN',
-            weekStart: 1,
-            clearBtn: 1,
-            autoclose: 1,
-            todayHighlight: 1,
-            startView: 2,
-            minView: 2,
-            forceParse: 1,
-            format: 'yyyy-mm-dd'
-        });
-        $('#iPaidDate').datetimepicker({
-            language: 'zh-CN',
-            weekStart: 1,
-            clearBtn: 1,
-            autoclose: 1,
-            todayHighlight: 1,
-            startView: 2,
-            minView: 2,
-            forceParse: 1,
-            format: 'yyyy-mm-dd'
-        });
-
         $('#mytab').bootstrapTable({
             url: "/AdvanceFundAjax/SearchAdvanceFund",//数据源
             dataField: "rows",//服务端返回数据键值 就是说记录放的键值是rows，分页时使用总记录数的键值为total
-            sortName: "iCreatedOn",//排序列
+            sortName: "ISNULL(iPaidDate, iCreatedOn)",//排序列
             sortOrder: "desc",
             cache: false,
             striped: true,//條紋行
             clickToSelect: true,//选择行即选择checkbox
             searchOnEnterKey: false,//ENTER键搜索
             height: tableHeight(),//高度调整
-            search: true,//是否搜索
+            search: false,//是否搜索
             pagination: true,//是否分页
             pageSize: 15,//单页记录数
             pageNumber: 1,//起始页
@@ -202,11 +121,9 @@
             toolbarAlign: "right",//工具栏对齐方式
             queryParams: function getParams(params) {
                 params.sApplicant = $("#sApplicant").val();
-                params.sChecked = $("#sChecked").val();
-                params.sCreatedOn = $("#sDate").val();
-                params.sCreatedOn2 = $("#sDate2").val();
-                params.sPaidDate = $("#sPaidDate").val();
-                params.sPaidDate2 = $("#sPaidDate2").val();
+                if (params.sApplicant == "") {
+                    params.sApplicant = "@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserName" + "(" + "@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId" + ")";
+                }
                 return params;
             },
             columns: [
@@ -222,22 +139,23 @@
                  , { field: "iProjectId", title: "项目", visible: false }
                  , { field: "iApplicant", title: "提报人", sortable: true }
                  , {
-                     field: "iCreatedOn", title: "发起日期", sortable: true, formatter: function (value, row, index) {
+                     field: "iCreatedOn", title: "发起日期", sortable: false, formatter: function (value, row, index) {
                          return ChangeDateTimeFormat(value);
                      }
                  }
-                 , { field: "iAmount", title: "金额", sortable: true }
-                 , { field: "iChecked", title: "是否核销", sortable: true }
+                 , { field: "iAmount", title: "金额", sortable: false }
+                 , { field: "iChecked", title: "是否核销", sortable: false }
                  , {
-                     field: "iPaidDate", title: "核销日期", sortable: true, formatter: function (value, row, index) {
+                     field: "iPaidDate", title: "核销日期", sortable: false, formatter: function (value, row, index) {
                          return ChangeDateTimeFormat(value);
                      }
                  }
                  , { field: "iRecordNote", title: "系统备注", sortable: false }
-                 , { field: "iAppNo", title: "流程单号", sortable: true }
+                 , { field: "iLeft", title: "流程单号", sortable: false }
+                 , { field: "iTotal", title: "剩余待还", sortable: false }
 
-                 , { field: "iReason", title: "申请事由", sortable: true }
-                 , { field: "iNote", title: "备注", sortable: true }
+                 , { field: "iReason", title: "申请事由", sortable: false }
+                 , { field: "iNote", title: "备注", sortable: false }
             ],
             onClickRow: function (row, $element) {
                 //$element是当前tr的jquery对象
@@ -247,6 +165,17 @@
                 return;
             },
             onLoadSuccess: function (data) {
+                var temp = data.sum;
+                var firstProcess = false;
+                $.each(data.rows, function (i, item) {
+                    if (item.iChecked == "是") {
+                        if (!firstProcess) {
+                            temp = temp + data.rows[0].iAmount;
+                            firstProcess = true;
+                        }
+                        item.iLeft = temp - item.iAmount;
+                    }
+                })
             },
             locale: "zh-CN",//中文支持,
             detailView: false, //是否显示详情折叠

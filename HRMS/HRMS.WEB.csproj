@@ -3658,6 +3658,7 @@
     <Content Include="Views\BPM\AdvanceFundReturnApprove.cshtml" />
     <Content Include="Views\BPM\AdvanceFundReturnView.cshtml" />
     <Content Include="Views\Finance\AdvanceFundIndex.cshtml" />
+    <Content Include="Views\BPM\AdvanceFundReturnReApplication.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

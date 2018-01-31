@@ -44,19 +44,41 @@ namespace HRMS.WEB.Controllers
             }
         }
 
-        public JsonResult GetUndoBillByUser(string applicant)
+        public void GetUndoBillByUser()
         {
             try
             {
+                PageModels5<AdvanceFundEntity> model = new PageModels5<AdvanceFundEntity>();
+                //用于序列化实体类的对象  
+                JavaScriptSerializer jss = new JavaScriptSerializer();
+                jss.MaxJsonLength = Int32.MaxValue;
                 AdvanceFundManager service = new AdvanceFundManager();
+                string appno = Request.Params["appno"];
+                string applicant = Request.Params["applicant"];
+                if (!string.IsNullOrEmpty(appno))
+                {
+                    var entity = service.FirstOrDefault(Request.Params["appno"]);
+                    applicant = entity.iApplicant;
+                    model.appAmount = (decimal)entity.iAmount;
+                }
+                model.sum = service.GetTotalBill(applicant);
+                if (string.IsNullOrEmpty(appno))
+                {
+                    model.appAmount = model.sum;
+                }
                 List<AdvanceFundEntity> list = service.GetUndoBillByUser(applicant);
-                return new JsonResult { Data = new { success = false, data = list, JsonRequestBehavior = JsonRequestBehavior.AllowGet } };
+                model.total = 10;
+                model.page = 1;
+                model.rows = list;
+
+                //将查询结果返回  
+                HttpContext.Response.Write(jss.Serialize(model));
 
             }
             catch (Exception ex)
             {
-
-                return new JsonResult { Data = new { success = false, msg = ex.ToString() } };
+                log4net.ILog log = log4net.LogManager.GetLogger(this.GetType());
+                log.Error(ex);
             }
         }
 
@@ -131,7 +153,7 @@ namespace HRMS.WEB.Controllers
                 }
 
                 //给分页实体赋值  
-                PageModels<AdvanceFundEntity> model = new PageModels<AdvanceFundEntity>();
+                PageModels2<AdvanceFundEntity> model = new PageModels2<AdvanceFundEntity>();
                 model.total = total;
                 if (total % pageSize == 0)
                     model.page = total / pageSize;
@@ -139,6 +161,7 @@ namespace HRMS.WEB.Controllers
                     model.page = (total / pageSize) + 1;
 
                 model.rows = list;
+                model.sum = service.GetTotalBill(HttpContext.Request.Params["sApplicant"]);
 
                 //将查询结果返回  
                 HttpContext.Response.Write(jss.Serialize(model));

@@ -374,7 +374,7 @@ namespace HRMS.Controllers
                 }
 
                 //给分页实体赋值  
-                PageModels2<ReturnFeeHistoryViewModel> model = new PageModels2<ReturnFeeHistoryViewModel>();
+                PageModels4<ReturnFeeHistoryViewModel> model = new PageModels4<ReturnFeeHistoryViewModel>();
                 int total = summaryList.Count();
                 model.total = total;
                 if (total % pageSize == 0)
@@ -470,7 +470,7 @@ namespace HRMS.Controllers
                 }
 
                 //给分页实体赋值  
-                PageModels2<ReturnFeeHistoryViewModel> model = new PageModels2<ReturnFeeHistoryViewModel>();
+                PageModels4<ReturnFeeHistoryViewModel> model = new PageModels4<ReturnFeeHistoryViewModel>();
                 int total = summaryList.Count();
                 model.total = total;
                 if (total % pageSize == 0)
@@ -1141,7 +1141,7 @@ namespace HRMS.Controllers
                     result.Add(jf);
                 }
                 //给分页实体赋值  
-                PageModels2<Journal4Flow> model = new PageModels2<Journal4Flow>();
+                PageModels4<Journal4Flow> model = new PageModels4<Journal4Flow>();
                 model.total = total;
                 if (total % pageSize == 0)
                     model.page = total / pageSize;
@@ -1294,7 +1294,7 @@ namespace HRMS.Controllers
                     result.Add(jf);
                 }
                 //给分页实体赋值  
-                PageModels2<Journal4Flow> model = new PageModels2<Journal4Flow>();
+                PageModels4<Journal4Flow> model = new PageModels4<Journal4Flow>();
                 model.total = total;
                 if (total % pageSize == 0)
                     model.page = total / pageSize;

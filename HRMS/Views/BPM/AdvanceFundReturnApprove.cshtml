@@ -97,7 +97,7 @@
             toolbar: "#toolbar",//指定工具栏
             toolbarAlign: "right",//工具栏对齐方式
             queryParams: function getParams(params) {
-                params.applicant = Request["appno"];
+                params.appno = Request["appno"];
                 return params;
             },
             columns: [
@@ -111,7 +111,7 @@
                  , { field: "iCreatedOn", title: "日期" }
                  , { field: "iAppNo", title: "单号" }
                  , { field: "iAmount", title: "金额" }
-                 , { field: "iAmountLeft", title: "待还金额" }
+                 , { field: "iLeft", title: "待还金额" }
             ],
             onClickRow: function (row, $element) {
                 //$element是当前tr的jquery对象
@@ -119,6 +119,15 @@
             },//单击row事件
             onDblClickRow: function (row, $element) {
                 return;
+            },
+            onLoadSuccess: function (data) {
+                $("#iAmountLeft").text(data.appAmount);
+                if (data.rows.length > 0) {
+                    var temp = data.sum + data.rows[0].iAmount;
+                    $.each(data.rows, function (i, item) {
+                        item.iLeft = data.total - item.iAmount;
+                    })
+                }
             },
             locale: "zh-CN",//中文支持,
             detailView: true, //是否显示详情折叠

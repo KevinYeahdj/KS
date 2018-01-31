@@ -1,14 +1,22 @@
 ﻿@{
-    ViewBag.Title = "备用金还款查看";
+    ViewBag.Title = "备用金还款再申请";
     Layout = "~/Views/Shared/_LayoutMain.cshtml";
 }
-<style>
-    .modal-body {
-        height: 230px;
-    }
-</style>
+
 <div>
     <div>
+        <div class="row col-*-12">
+            <input type="hidden" id="action" />
+            <div id="toolbar" class="toolbar">
+                <div style="float: left; margin-left: 10px"><span>处理意见：</span></div>
+                <div style="float: left; margin-left: 10px; width: 30%"><input id="sys_feedback" class="form-control" /></div>
+                <div style="float: right; margin-left: 10px; margin-top: 5px; " class="btn btn-primary" id="SubmitApplication">提交申请</div>
+                <div style="float: right; margin-left: 10px; margin-top: 5px; " class="btn btn-primary" id="CancelApplication">撤销申请</div>
+
+            </div>
+
+        </div>
+
         <div class="row" style="margin-top:10px;">
             <ul>
                 <li class="list-group-item">
@@ -22,12 +30,15 @@
         <h2>最后一次还款至今</h2>
         <h3>备用金还款可以是从本流程发起，也可以是流水账冲账以及返费冲账。此处只显示流程已完成的账单，审核中及未通过的不显示，也不计入还款金额。</h3>
         <table id="mytab" class="table table-hover"></table>
-        <table id="logtab" class="table table-hover"></table>
 
     </div>
+
+    <table id="logtab" class="table table-hover"></table>
 </div>
 
 <script type="text/javascript">
+
+
     //获取当前url参数
     function GetRequest(imitateurl) {
         var url = location.search; //获取url中"?"符后的字串
@@ -42,13 +53,14 @@
         }
         return theRequest;
     }
+
+
     //bootstraptable 高度
     function tableHeight() {
-        return $(window).height() * 0.86;
+        return $(window).height() * 0.6;
     }
     $(function () {
         var Request = GetRequest();
-       
         //重置函数
         $("div.icon-reorder").click(function () {
             $('#mytab').bootstrapTable('resetView', {
@@ -62,7 +74,7 @@
             })
         })
         $('#mytab').bootstrapTable({
-            url: "/AdvanceFundAjax/GetUndoBillByAppno",//数据源
+            url: "/AdvanceFundAjax/GetUndoBillByUser",//数据源
             dataField: "rows",//服务端返回数据键值 就是说记录放的键值是rows，分页时使用总记录数的键值为total
             sortName: "iPaidDate",//排序列
             sortOrder: "desc",
@@ -110,7 +122,7 @@
                 return;
             },
             onLoadSuccess: function (data) {
-                $("#iAmountLeft").text(data.appAmount);
+                $("iAmountLeft").text(data.sum);
                 if (data.rows.length > 0) {
                     var temp = data.sum + data.rows[0].iAmount;
                     $.each(data.rows, function (i, item) {
@@ -158,7 +170,7 @@
             toolbarAlign: "right",//工具栏对齐方式
             queryParams: function getParams(params) {
                 params.appno = Request["appno"];
-                params.limit = 10000;
+                params.limit = 1000;
                 return params;
             },
             columns: [
@@ -199,11 +211,110 @@
             }
             ,
             onLoadSuccess: function (data) {
+                $("#iAmountLeft").text(data.appAmount);
                 $.each(data.rows, function (i, item) {
                     if (item.AppNo == "active") {
                         $("#logtab").find("tr[data-index=" + i + "]").css("color", "red");
                     }
                 })
+            }
+        });
+
+        $("#SubmitApplication").click(function () {
+            if ($("#companySelect").val() == "-") {
+                toastr.error('请先选择当前公司！');
+                return;
+            }
+            if (confirm("确认再申请？")) {
+
+                $(this).attr({ "disabled": "disabled" });
+                var para = {};
+                var conditions = {};
+                conditions.sys_approve = "1";
+                conditions.sys_approvecn = "再提交申请";
+                conditions.sys_feedback = $("#sys_feedback").val();
+                conditions.sys_summary = "申请备用金还款：" + $('#iAmount').val();
+                para.Conditions = conditions;
+                para.ProcessInstanceID = Request["piid"]; //important
+                para.AppName = "";
+                para.AppInstanceID = Request["appno"]; //important
+                para.ProcessGUID = Request["pguid"];  //申请时必要 important
+                para.UserID = "@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId";
+                para.UserName = "";
+                para.TaskID = Request["taskid"];  //important
+                para.Other = ko.toJSON(myViewModel);
+
+                $.ajax({
+                    url: "/BPMAjax/ReStartApplication",
+                    type: "POST",
+                    data: para,
+                    dataType: 'text',
+                    success: function (result) {
+                        result = $.parseJSON(result);
+                        if (result.success) {
+                            toastr.success('提交成功！');
+                            //$('#mytab').bootstrapTable('removeAll');
+                            setTimeout("window.location.href='/BPM/done'", 3000);
+                        }
+                        else {
+                            toastr.error('提交失败！');
+                        }
+                        $("#SubmitApplication").removeAttr("disabled");
+                    }
+                });
+            }
+
+        });
+        $("#CancelApplication").click(function () {
+            if (confirm("确认要撤销申请？")) {
+                $(this).attr({ "disabled": "disabled" });
+                var para = {};
+                var conditions = {};
+                conditions.sys_approve = "-10";
+                conditions.sys_approvecn = "撤销申请";
+                conditions.sys_feedback = $("#sys_feedback").val();
+                conditions.sys_summary = "申请备用金还款：" + $('#iAmount').val();
+                para.Conditions = conditions;
+                para.ProcessInstanceID = Request["piid"]; //important
+                para.AppName = "";
+                para.AppInstanceID = Request["appno"]; //important
+                para.ProcessGUID = Request["pguid"];  //申请时必要 important
+                para.UserID = "@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId";
+                para.UserName = "";
+                para.TaskID = Request["taskid"];  //important
+                para.Other = "";
+
+                $.ajax({
+                    url: "/BPMAjax/CancelApplication",
+                    type: "POST",
+                    data: para,
+                    dataType: 'text',
+                    success: function (result) {
+                        result = $.parseJSON(result);
+                        if (result.success) {
+                            toastr.success('撤销成功！');
+                            //$('#mytab').bootstrapTable('removeAll');
+                            setTimeout("window.location.href='/BPM/done'", 3000);
+                        }
+                        else {
+                            toastr.error('撤销失败！');
+                        }
+                        $("#CancelApplication").removeAttr("disabled");
+                    }
+                });
+            }
+        });
+
+        $.get("/AdvanceFundAjax/GetApplicationRecord?appno=" + Request["appno"], function (result) {
+            result = $.parseJSON(result);
+            if (result.success) {
+                myViewModel.iApplicant(result.data.iApplicant);
+                myViewModel.iReason(result.data.iReason);
+                myViewModel.iAmount(result.data.iAmount);
+                myViewModel.iNote(result.data.iNote);
+            }
+            else {
+                toastr.error('获取数据失败！');
             }
         });
     })

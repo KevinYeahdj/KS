@@ -162,5 +162,13 @@ namespace HRMS.Data.Manager
             return result;
         }
 
+        public decimal GetTotalBill(string applicant)
+        {
+            string queryTotal = "select sum(iAmount) from AdvanceFund where iPaidDate is not null and iApplicant = '" + applicant + "' and iIsDeleted = 0 and iStatus =1";
+            string total = DbHelperSQL.Query(queryTotal).Tables[0].Rows[0][0].ToString();
+            if (string.IsNullOrEmpty(total))
+                total = "0";
+            return decimal.Parse(total);
+        }
     }
 }
