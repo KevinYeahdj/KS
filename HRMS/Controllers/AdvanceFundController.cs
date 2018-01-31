@@ -44,7 +44,7 @@ namespace HRMS.WEB.Controllers
             }
         }
 
-        public void GetUndoBillByUser()
+        public void GetUndoBill()
         {
             try
             {
@@ -82,22 +82,6 @@ namespace HRMS.WEB.Controllers
             }
         }
 
-        public JsonResult GetUndoBillByAppno(string appno)
-        {
-            try
-            {
-                AdvanceFundManager service = new AdvanceFundManager();
-                var record = service.FirstOrDefault(appno);
-                List<AdvanceFundEntity> list = service.GetUndoBillByUser(record.iApplicant);
-                return new JsonResult { Data = new { success = false, data = list, JsonRequestBehavior = JsonRequestBehavior.AllowGet } };
-
-            }
-            catch (Exception ex)
-            {
-
-                return new JsonResult { Data = new { success = false, msg = ex.ToString() } };
-            }
-        }
 
         public void SearchAdvanceFund()
         {

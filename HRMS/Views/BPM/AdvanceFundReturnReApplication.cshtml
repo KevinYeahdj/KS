@@ -74,7 +74,7 @@
             })
         })
         $('#mytab').bootstrapTable({
-            url: "/AdvanceFundAjax/GetUndoBillByUser",//数据源
+            url: "/AdvanceFundAjax/GetUndoBill",//数据源
             dataField: "rows",//服务端返回数据键值 就是说记录放的键值是rows，分页时使用总记录数的键值为total
             sortName: "iPaidDate",//排序列
             sortOrder: "desc",
@@ -305,17 +305,5 @@
             }
         });
 
-        $.get("/AdvanceFundAjax/GetApplicationRecord?appno=" + Request["appno"], function (result) {
-            result = $.parseJSON(result);
-            if (result.success) {
-                myViewModel.iApplicant(result.data.iApplicant);
-                myViewModel.iReason(result.data.iReason);
-                myViewModel.iAmount(result.data.iAmount);
-                myViewModel.iNote(result.data.iNote);
-            }
-            else {
-                toastr.error('获取数据失败！');
-            }
-        });
     })
 </script>
