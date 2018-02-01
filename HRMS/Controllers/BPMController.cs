@@ -581,7 +581,7 @@ namespace HRMS.Controllers
                         else
                         {
                             AdvanceFundEntity afNew = new AdvanceFundEntity();
-                            afNew.iAmount = decimal.Parse(amount);
+                            afNew.iAmount = decimal.Parse(amount) * -1;
                             afNew.iApplicant = SessionHelper.CurrentUser.UserName + "(" + SessionHelper.CurrentUser.UserId + ")";
                             afNew.iCompanyId = SessionHelper.CurrentUser.CurrentCompany;
                             afNew.iProjectId = SessionHelper.CurrentUser.CurrentProject;
@@ -623,7 +623,7 @@ namespace HRMS.Controllers
                         else
                         {
                             AdvanceFundEntity afNew = new AdvanceFundEntity();
-                            afNew.iAmount = decimal.Parse(amount);
+                            afNew.iAmount = decimal.Parse(amount) * -1;
                             afNew.iApplicant = SessionHelper.CurrentUser.UserName + "(" + SessionHelper.CurrentUser.UserId + ")";
                             afNew.iCompanyId = SessionHelper.CurrentUser.CurrentCompany;
                             afNew.iProjectId = SessionHelper.CurrentUser.CurrentProject;
@@ -674,19 +674,44 @@ namespace HRMS.Controllers
                     AdvanceFundManager service = new AdvanceFundManager();
                     JsonSerializerSettings st = new JsonSerializerSettings();
                     st.DateTimeZoneHandling = DateTimeZoneHandling.Local;
-                    AdvanceFundEntity entity = JsonConvert.DeserializeObject<AdvanceFundEntity>(buzJson, st);
-                    entity.iApplicant = SessionHelper.CurrentUser.UserName + "(" + SessionHelper.CurrentUser.UserId + ")";
-                    entity.iCompanyId = SessionHelper.CurrentUser.CurrentCompany;
-                    entity.iProjectId = SessionHelper.CurrentUser.CurrentProject;
-                    entity.iAppNo = appNo;
-                    entity.iRecordNote = "备用金申请";
-                    if (string.IsNullOrEmpty(entity.iGuid))
+                    AdvanceFundEntity en = JsonConvert.DeserializeObject<AdvanceFundEntity>(buzJson, st);
+                    AdvanceFundEntity entity = service.FirstOrDefault(appNo);
+                    if (entity != null)
                     {
-                        service.Insert(entity);
+                        entity.iAmount = en.iAmount;
+                        service.Update(entity);
                     }
                     else
                     {
+                        en.iApplicant = SessionHelper.CurrentUser.UserName + "(" + SessionHelper.CurrentUser.UserId + ")";
+                        en.iCompanyId = SessionHelper.CurrentUser.CurrentCompany;
+                        en.iProjectId = SessionHelper.CurrentUser.CurrentProject;
+                        en.iAppNo = appNo;
+                        en.iRecordNote = "备用金申请";
+                        entity = en;
+                        service.Insert(entity);
+                    }
+                    result = true;
+                }
+                else if (pguid == "9b388219-a16f-95da-5d2c-8379880dcd08")   //备用金还款
+                {
+                    AdvanceFundManager service = new AdvanceFundManager();
+                    AdvanceFundEntity entity = service.FirstOrDefault(appNo);
+                    if (entity != null)
+                    {
+                        entity.iAmount = decimal.Parse(buzJson) * -1;
                         service.Update(entity);
+                    }
+                    else
+                    {
+                        entity = new AdvanceFundEntity();
+                        entity.iApplicant = SessionHelper.CurrentUser.UserName + "(" + SessionHelper.CurrentUser.UserId + ")";
+                        entity.iCompanyId = SessionHelper.CurrentUser.CurrentCompany;
+                        entity.iProjectId = SessionHelper.CurrentUser.CurrentProject;
+                        entity.iAppNo = appNo;
+                        entity.iAmount = decimal.Parse(buzJson) * -1;
+                        entity.iRecordNote = "备用金还款";
+                        service.Insert(entity);
                     }
                     result = true;
                 }
@@ -730,8 +755,14 @@ namespace HRMS.Controllers
                 else if (pguid == "843f9b74-2264-8c32-fb36-15e8efb94959")   //备用金
                 {
                     AdvanceFundManager service = new AdvanceFundManager();
-                    JsonSerializerSettings st = new JsonSerializerSettings();
-                    st.DateTimeZoneHandling = DateTimeZoneHandling.Local;
+                    AdvanceFundEntity entity = service.FirstOrDefault(appNo);
+                    entity.iIsDeleted = 1;
+                    service.Update(entity);
+                    result = true;
+                }
+                else if (pguid == "9b388219-a16f-95da-5d2c-8379880dcd08")   //备用金还款
+                {
+                    AdvanceFundManager service = new AdvanceFundManager();
                     AdvanceFundEntity entity = service.FirstOrDefault(appNo);
                     entity.iIsDeleted = 1;
                     service.Update(entity);

@@ -46,6 +46,31 @@
 </div>
 
 <script type="text/javascript">
+    //json 日期转字符串
+    function ChangeDateTimeFormat(jsondate) {
+        if (!jsondate) return "";
+        jsondate = jsondate.replace("/Date(", "").replace(")/", "");
+        if (jsondate.indexOf("+") > 0) {
+            jsondate = jsondate.substring(0, jsondate.indexOf("+"));
+        }
+        else if (jsondate.indexOf("-") > 0) {
+            jsondate = jsondate.substring(0, jsondate.indexOf("-"));
+        }
+
+        var date = new Date(parseInt(jsondate, 10));
+        var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+        var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+        return date.getFullYear()
+               + "-"
+               + month
+               + "-"
+               + currentDate
+               + " "
+               + ((date.getHours() < 10) ? ("0" + date.getHours()) : date.getHours())
+               + ":"
+               + ((date.getMinutes() < 10) ? ("0" + date.getMinutes()) : date.getMinutes());
+
+    }
     //正则校验两位小数
     function clearNoNum(obj) {
         //先把非数字的都替换掉，除了数字和.
@@ -89,8 +114,6 @@
         return $(window).height() * 0.6;
     }
     $(function () {
-        $('#iReason').addClass("warning");
-        $('#iAmount').addClass("warning");
         $("#iReason").change(function () {
             var value = $("#iReason").val();
             if (value != "") {
@@ -282,9 +305,7 @@
         ko.applyBindings(myViewModel);
 
         $.get("/AdvanceFundAjax/GetApplicationRecord?appno=" + Request["appno"], function (result) {
-            result = $.parseJSON(result);
             if (result.success) {
-                myViewModel.iApplicant(result.data.iApplicant);
                 myViewModel.iReason(result.data.iReason);
                 myViewModel.iAmount(result.data.iAmount);
                 myViewModel.iNote(result.data.iNote);

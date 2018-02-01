@@ -14,7 +14,7 @@
 
             <div id="toolbar" class="toolbar">
                 <div style="float: left; margin-left: 10px; "><span>提报人：</span></div>
-                <div style="float: left; margin-left: 10px; width: 8%; "><input id="sApplicant" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px; width: 50%; "><input id="sApplicant" class="form-control" /></div>
  
                 <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" onclick="Search()">查询</div>
 
@@ -143,19 +143,20 @@
                          return ChangeDateTimeFormat(value);
                      }
                  }
-                 , { field: "iAmount", title: "金额", sortable: false }
                  , { field: "iChecked", title: "是否核销", sortable: false }
                  , {
                      field: "iPaidDate", title: "核销日期", sortable: false, formatter: function (value, row, index) {
                          return ChangeDateTimeFormat(value);
                      }
                  }
-                 , { field: "iRecordNote", title: "系统备注", sortable: false }
-                 , { field: "iLeft", title: "流程单号", sortable: false }
-                 , { field: "iTotal", title: "剩余待还", sortable: false }
-
-                 , { field: "iReason", title: "申请事由", sortable: false }
-                 , { field: "iNote", title: "备注", sortable: false }
+                 , {
+                     field: "iRecordNote", title: "系统备注", sortable: false, formatter: function (value, row, index) {
+                         return value + ((row.iChecked == null)?"<span style='color:red'>[审核中]</span>":"");
+                     }
+                 }
+                 , { field: "iAppNo", title: "流程单号", sortable: false }
+                 , { field: "iAmount", title: "金额", sortable: false }
+                 , { field: "iLeft", title: "剩余待还", sortable: false }
             ],
             onClickRow: function (row, $element) {
                 //$element是当前tr的jquery对象
@@ -165,24 +166,44 @@
                 return;
             },
             onLoadSuccess: function (data) {
-                var temp = data.sum;
-                var firstProcess = false;
-                $.each(data.rows, function (i, item) {
-                    if (item.iChecked == "是") {
-                        if (!firstProcess) {
-                            temp = temp + data.rows[0].iAmount;
-                            firstProcess = true;
-                        }
-                        item.iLeft = temp - item.iAmount;
+                if (data.rows.length > 0) {
+                    var temp = data.sum;
+                    var tempValidAmountForNextCal = 0;
+                    var firstRowSettled = false;
+                    if (data.rows[0].iChecked != null) {
+                        $("#mytab").find("tr[data-index=0] td:last").text(temp);
+                        firstRowSettled = true;
                     }
-                })
+
+                    for (var i = 1; i < data.rows.length; i++) {
+                        if (!firstRowSettled) {
+                            if (data.rows[i].iChecked != null) {
+                                $("#mytab").find("tr[data-index=" + i + "] td:last").text(temp);
+                                firstRowSettled = true;
+                                tempValidAmountForNextCal = data.rows[i].iAmount;
+                            }
+                        }
+                        else {
+                            if (data.rows[i].iChecked == null) {
+                                continue;
+                            }
+                            temp = temp - tempValidAmountForNextCal;
+                            $("#mytab").find("tr[data-index=" + i + "] td:last").text(temp);
+                            tempValidAmountForNextCal = data.rows[i].iAmount;
+                        }
+                    }
+                }
             },
             locale: "zh-CN",//中文支持,
-            detailView: false, //是否显示详情折叠
+            detailView: true, //是否显示详情折叠
             detailFormatter: function (index, row, element) {
                 var html = '';
                 $.each(row, function (key, val) {
-                    html += "<p>" + key + ":" + val + "</p>"
+                    if (key == "iReason")
+                        html += "<p>事由：" + val + "</p>"
+                    else if (key == "iNote")
+                        html += "<p>备注：" + val + "</p>"
+
                 });
                 return html;
             }

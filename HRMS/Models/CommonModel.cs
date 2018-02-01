@@ -25,12 +25,12 @@ namespace HRMS.WEB.Models
     public class PageModels4<T> : PageModels<T>
     {
         public decimal sum { get; set; }
-        public bool AdvanceFundPay { get; set; }
+        public bool AdvanceFundPay { get; set; }  //用于流水账，返费等对于备用金核销
     }
     public class PageModels5<T> : PageModels<T>
     {
         public decimal sum { get; set; }
-        public decimal appAmount { get; set; }
+        public decimal appAmount { get; set; }  //用于备用金核销时记录流程中当时核销的数字
 
     }
 

@@ -102,30 +102,18 @@ namespace HRMS.Data.Manager
             return Repository.Query<AdvanceFundEntity>(sql, new { appno = appno }).FirstOrDefault();
         }
 
-        public List<AdvanceFundEntity> GetUndoBillByUser(string applicant)
-        {
-            string queryLast = "select top 1* from AdvanceFund where iPaidDate is not null and iApplicant = '" + applicant + "' and iIsDeleted = 0 and iStatus =1 order by iPaidDate desc";
-            List<AdvanceFundEntity> last = Repository.Query<AdvanceFundEntity>(queryLast).ToList();
-            DateTime dtm = DateTime.Parse("2018/01/01 12:00:00");
-            if (last.Count == 1)
-                dtm = (DateTime)last[1].iPaidDate;
-            string querySql = "select * from AdvanceFund where iPaidDate is not null and iPaidDate>@dtm and  iApplicant = '" + applicant + "' and iIsDeleted = 0 and iStatus =1 order by iPaidDate desc";
-            DynamicParameters pars = new DynamicParameters();
-            pars.Add("dtm", dtm, System.Data.DbType.DateTime);
-            return Repository.Query<AdvanceFundEntity>(querySql, pars).ToList();
-        }
 
         public List<AdvanceFundEntity> GetSearch(string userType, Dictionary<string, string> para, string sort, string order, int offset, int pageSize, out int total)
         {
-            if (userType != "普通用户")
-            {
-                para["iCompanyId"] = para["iCompanyId"] == "-" ? "" : para["iCompanyId"];
-                para["iProjectId"] = para["iProjectId"] == "-" ? "" : para["iProjectId"];
-            }
+
             StringBuilder commandsb = new StringBuilder("from AdvanceFund where iisdeleted=0 and istatus=1 ");
 
             string searchKey = para["search"];
             para.Remove("search");
+
+            //只能针对人查询
+            if (!para["iApplicant"].EndsWith(")"))
+                para["iApplicant"] = "(" + para["iApplicant"] + ")";
 
             foreach (KeyValuePair<string, string> item in para)
             {
@@ -165,6 +153,23 @@ namespace HRMS.Data.Manager
         public decimal GetTotalBill(string applicant)
         {
             string queryTotal = "select sum(iAmount) from AdvanceFund where iPaidDate is not null and iApplicant = '" + applicant + "' and iIsDeleted = 0 and iStatus =1";
+            string total = DbHelperSQL.Query(queryTotal).Tables[0].Rows[0][0].ToString();
+            if (string.IsNullOrEmpty(total))
+                total = "0";
+            return decimal.Parse(total);
+        }
+        public decimal GetTotalBillWithDate(string applicant, string untilDtStr)
+        {
+            string queryTotal = "select sum(iAmount) from AdvanceFund where iPaidDate is not null and iApplicant = '" + applicant + "' and iIsDeleted = 0 and iStatus =1";
+            if (!applicant.EndsWith(")"))
+            {
+                queryTotal = "select sum(iAmount) from AdvanceFund where iPaidDate is not null and  iApplicant like '%(" + applicant + ")' and iIsDeleted = 0 and iStatus =1";
+
+            }
+            if (untilDtStr != null)
+            {
+                queryTotal += " and ISNULL(iPaidDate, iCreatedOn) <= '" + untilDtStr + "'";
+            }
             string total = DbHelperSQL.Query(queryTotal).Tables[0].Rows[0][0].ToString();
             if (string.IsNullOrEmpty(total))
                 total = "0";

@@ -34,51 +34,13 @@ namespace HRMS.WEB.Controllers
             {
                 AdvanceFundManager service = new AdvanceFundManager();
                 AdvanceFundEntity entity = service.FirstOrDefault(appno);
-                return new JsonResult { Data = new { success = false, data = entity, JsonRequestBehavior = JsonRequestBehavior.AllowGet } };
+                return new JsonResult { Data = new { success = true, data = entity }, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
 
             }
             catch (Exception ex)
             {
 
                 return new JsonResult { Data = new { success = false, msg = ex.ToString() } };
-            }
-        }
-
-        public void GetUndoBill()
-        {
-            try
-            {
-                PageModels5<AdvanceFundEntity> model = new PageModels5<AdvanceFundEntity>();
-                //用于序列化实体类的对象  
-                JavaScriptSerializer jss = new JavaScriptSerializer();
-                jss.MaxJsonLength = Int32.MaxValue;
-                AdvanceFundManager service = new AdvanceFundManager();
-                string appno = Request.Params["appno"];
-                string applicant = Request.Params["applicant"];
-                if (!string.IsNullOrEmpty(appno))
-                {
-                    var entity = service.FirstOrDefault(Request.Params["appno"]);
-                    applicant = entity.iApplicant;
-                    model.appAmount = (decimal)entity.iAmount;
-                }
-                model.sum = service.GetTotalBill(applicant);
-                if (string.IsNullOrEmpty(appno))
-                {
-                    model.appAmount = model.sum;
-                }
-                List<AdvanceFundEntity> list = service.GetUndoBillByUser(applicant);
-                model.total = 10;
-                model.page = 1;
-                model.rows = list;
-
-                //将查询结果返回  
-                HttpContext.Response.Write(jss.Serialize(model));
-
-            }
-            catch (Exception ex)
-            {
-                log4net.ILog log = log4net.LogManager.GetLogger(this.GetType());
-                log.Error(ex);
             }
         }
 
@@ -121,9 +83,19 @@ namespace HRMS.WEB.Controllers
                         bizParaDic.Add(item.Key, item.Value);
                     }
                 }
-
                 int total = 0;
                 AdvanceFundManager service = new AdvanceFundManager();
+
+                string appno = Request.Params["appno"];
+                decimal appAmount = 0;
+                if (!string.IsNullOrEmpty(appno))
+                {
+                    var entity = service.FirstOrDefault(appno);
+                    bizParaDic["iApplicant"] = entity.iApplicant;
+                    appAmount = (decimal)entity.iAmount * -1;
+                }
+
+
                 List<AdvanceFundEntity> list = service.GetSearch(SessionHelper.CurrentUser.UserType, bizParaDic, sort, order, offset, pageSize, out total);
                 DicManager dm = new DicManager();
                 var companies = dm.GetAllCompanies();
@@ -137,7 +109,7 @@ namespace HRMS.WEB.Controllers
                 }
 
                 //给分页实体赋值  
-                PageModels2<AdvanceFundEntity> model = new PageModels2<AdvanceFundEntity>();
+                PageModels5<AdvanceFundEntity> model = new PageModels5<AdvanceFundEntity>();
                 model.total = total;
                 if (total % pageSize == 0)
                     model.page = total / pageSize;
@@ -145,7 +117,14 @@ namespace HRMS.WEB.Controllers
                     model.page = (total / pageSize) + 1;
 
                 model.rows = list;
-                model.sum = service.GetTotalBill(HttpContext.Request.Params["sApplicant"]);
+                string untilDtStr = null;
+                if (offset != 0)
+                {
+                    DateTime untilDt = model.rows.First().iPaidDate == null ? (DateTime)model.rows.First().iCreatedOn : (DateTime)model.rows.First().iPaidDate;
+                    untilDtStr = untilDt.ToString("yyyy-MM-dd HH:mm:ss.fff");
+                }
+                model.sum = service.GetTotalBillWithDate(bizParaDic["iApplicant"], untilDtStr);
+                model.appAmount = appAmount;
 
                 //将查询结果返回  
                 HttpContext.Response.Write(jss.Serialize(model));
@@ -156,6 +135,6 @@ namespace HRMS.WEB.Controllers
                 log.Error(ex);
             }
         }
-        
+
     }
 }

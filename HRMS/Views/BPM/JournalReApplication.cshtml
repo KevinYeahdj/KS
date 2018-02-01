@@ -13,13 +13,13 @@
         <div class="col-*-12">
             <input type="hidden" id="action" />
             <div id="toolbar" class="toolbar">
-                <div style="float: left; margin-left: -100px"><span>合计：</span></div>
-                <div style="float: left; margin-left: 10px; width: 30%"><input id="totalThis" class="form-control" readonly="readonly" value="0" /></div>
-                <div style="float: left; margin-left: 10px"><span>核销方式：</span></div><div style="float: left; margin-left: 10px; width: 20%">
+                <div style="float: left; margin-left: 0px"><span>合计：</span></div>
+                <div style="float: left; margin-left: 5px; width: 15%"><input id="totalThis" class="form-control" readonly="readonly" value="0" /></div>
+                <div style="float: left; margin-left: 10px"><span>核销方式：</span></div><div style="float: left; margin-left: 5px; width: 10%">
                     <select id="iCheckWay" class="form-control"><option value="现金">现金</option><option value="备用金">备用金</option></select>
                 </div>
                 <div style="float: left; margin-left: 10px"><span>处理意见：</span></div>
-                <div style="float: left; margin-left: 10px; width: 30%"><input id="sys_feedback" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px; width: 20%"><input id="sys_feedback" class="form-control" /></div>
                 <div style="float: right; margin-left: 10px; margin-top: 5px; " class="btn btn-primary" id="SubmitApplication">提交申请</div>
                 <div style="float: right; margin-left: 10px; margin-top: 5px; " class="btn btn-primary" id="CancelApplication">撤销申请</div>
                 <div style="float: right; margin-left: 10px; margin-top: 5px; " class="btn btn-primary" id="GetLatest">获取最新</div>
@@ -367,7 +367,7 @@
             }
 
         });
-        
+
 
         $("#GetLatest").click(function () {
             $("#action").val("init");

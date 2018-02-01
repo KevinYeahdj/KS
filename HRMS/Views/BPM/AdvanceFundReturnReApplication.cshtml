@@ -6,29 +6,21 @@
 <div>
     <div>
         <div class="row col-*-12">
-            <input type="hidden" id="action" />
+            <span style="color:red">说明：</span>备用金还款可以是从本流程发起，也可以是流水账冲账以及返费冲账。此处只抵扣流程已通过审核的流程账单。
+
             <div id="toolbar" class="toolbar">
+                <div style="float: left;margin-left:-150px;"><span>原流程待还金额：</span><span id="iAmountLeftOld"></span></div>
+                <div style="float: left;margin-left:0;"><span>待还金额：</span></div>
+                <div style="float: left; margin-left: 50px; width: 20%"><input id="iAmountLeft" class="form-control" readonly="readonly" value="0" /></div>
+
                 <div style="float: left; margin-left: 10px"><span>处理意见：</span></div>
-                <div style="float: left; margin-left: 10px; width: 30%"><input id="sys_feedback" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px; width: 25%"><input id="sys_feedback" class="form-control" /></div>
                 <div style="float: right; margin-left: 10px; margin-top: 5px; " class="btn btn-primary" id="SubmitApplication">提交申请</div>
                 <div style="float: right; margin-left: 10px; margin-top: 5px; " class="btn btn-primary" id="CancelApplication">撤销申请</div>
 
             </div>
 
         </div>
-
-        <div class="row" style="margin-top:10px;">
-            <ul>
-                <li class="list-group-item">
-                    <div class="input-group input-group">
-                        <span class="input-group-addon">待还金额：</span>
-                        <label class="form-control" id="iAmountLeft" data-bind="value: iAmountLeft"></label>
-                    </div>
-                </li>
-            </ul>
-        </div>
-        <h2>最后一次还款至今</h2>
-        <h3>备用金还款可以是从本流程发起，也可以是流水账冲账以及返费冲账。此处只显示流程已完成的账单，审核中及未通过的不显示，也不计入还款金额。</h3>
         <table id="mytab" class="table table-hover"></table>
 
     </div>
@@ -37,7 +29,31 @@
 </div>
 
 <script type="text/javascript">
+    //json 日期转字符串
+    function ChangeDateTimeFormat(jsondate) {
+        if (!jsondate) return "";
+        jsondate = jsondate.replace("/Date(", "").replace(")/", "");
+        if (jsondate.indexOf("+") > 0) {
+            jsondate = jsondate.substring(0, jsondate.indexOf("+"));
+        }
+        else if (jsondate.indexOf("-") > 0) {
+            jsondate = jsondate.substring(0, jsondate.indexOf("-"));
+        }
 
+        var date = new Date(parseInt(jsondate, 10));
+        var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+        var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+        return date.getFullYear()
+               + "-"
+               + month
+               + "-"
+               + currentDate
+               + " "
+               + ((date.getHours() < 10) ? ("0" + date.getHours()) : date.getHours())
+               + ":"
+               + ((date.getMinutes() < 10) ? ("0" + date.getMinutes()) : date.getMinutes());
+
+    }
 
     //获取当前url参数
     function GetRequest(imitateurl) {
@@ -74,15 +90,15 @@
             })
         })
         $('#mytab').bootstrapTable({
-            url: "/AdvanceFundAjax/GetUndoBill",//数据源
+            url: "/AdvanceFundAjax/SearchAdvanceFund",//数据源
             dataField: "rows",//服务端返回数据键值 就是说记录放的键值是rows，分页时使用总记录数的键值为total
-            sortName: "iPaidDate",//排序列
+            sortName: "ISNULL(iPaidDate, iCreatedOn)",//排序列
             sortOrder: "desc",
             cache: false,
             striped: true,//條紋行
             height: tableHeight(),//高度调整
             search: false,//是否搜索
-            pagination: false,//是否分页
+            pagination: true,//是否分页
             pageSize: 15,//单页记录数
             pageNumber: 1,//起始页
             pageList: [15, 100, 500, 1000, 10000],//分页步进值
@@ -108,11 +124,30 @@
                      formatter: function (value, row, index) {
                          return ($('#mytab').bootstrapTable('getOptions').pageNumber - 1) * $('#mytab').bootstrapTable('getOptions').pageSize + index + 1;
                      }
+                 },
+                 { field: "iGuid", title: "iGuid", visible: false, switchable: false }
+                 , { field: "iCompanyId", title: "公司", visible: false }
+                 , { field: "iProjectId", title: "项目", visible: false }
+                 , { field: "iApplicant", title: "提报人", visible: false, sortable: true }
+                 , {
+                     field: "iCreatedOn", title: "发起日期", sortable: false, formatter: function (value, row, index) {
+                         return ChangeDateTimeFormat(value);
+                     }
                  }
-                 , { field: "iCreatedOn", title: "日期" }
-                 , { field: "iAppNo", title: "单号" }
-                 , { field: "iAmount", title: "金额" }
-                 , { field: "iLeft", title: "待还金额" }
+                 , { field: "iChecked", title: "是否核销", visible: false, sortable: false }
+                 , {
+                     field: "iPaidDate", title: "核销日期", sortable: false, formatter: function (value, row, index) {
+                         return ChangeDateTimeFormat(value);
+                     }
+                 }
+                 , {
+                     field: "iRecordNote", title: "系统备注", sortable: false, formatter: function (value, row, index) {
+                         return value + ((row.iChecked == null) ? "<span style='color:red'>[审核中]</span>" : "");
+                     }
+                 }
+                 , { field: "iAppNo", title: "流程单号", sortable: false }
+                 , { field: "iAmount", title: "金额", sortable: false }
+                 , { field: "iLeft", title: "剩余待还", sortable: false }
             ],
             onClickRow: function (row, $element) {
                 //$element是当前tr的jquery对象
@@ -122,12 +157,34 @@
                 return;
             },
             onLoadSuccess: function (data) {
-                $("iAmountLeft").text(data.sum);
+                $("#iAmountLeft").val(data.sum);
+                $("#iAmountLeftOld").text(data.appAmount);
                 if (data.rows.length > 0) {
-                    var temp = data.sum + data.rows[0].iAmount;
-                    $.each(data.rows, function (i, item) {
-                        item.iLeft = data.total - item.iAmount;
-                    })
+                    var temp = data.sum;
+                    var tempValidAmountForNextCal = 0;
+                    var firstRowSettled = false;
+                    if (data.rows[0].iChecked != null) {
+                        $("#mytab").find("tr[data-index=0] td:last").text(temp);
+                        firstRowSettled = true;
+                    }
+
+                    for (var i = 1; i < data.rows.length; i++) {
+                        if (!firstRowSettled) {
+                            if (data.rows[i].iChecked != null) {
+                                $("#mytab").find("tr[data-index=" + i + "] td:last").text(temp);
+                                firstRowSettled = true;
+                                tempValidAmountForNextCal = data.rows[i].iAmount;
+                            }
+                        }
+                        else {
+                            if (data.rows[i].iChecked == null) {
+                                continue;
+                            }
+                            temp = temp - tempValidAmountForNextCal;
+                            $("#mytab").find("tr[data-index=" + i + "] td:last").text(temp);
+                            tempValidAmountForNextCal = data.rows[i].iAmount;
+                        }
+                    }
                 }
             },
             locale: "zh-CN",//中文支持,
@@ -135,8 +192,11 @@
             detailFormatter: function (index, row, element) {
                 var html = '';
                 $.each(row, function (key, val) {
-                    if (key == "iNote" || key == "iReason")
-                        html += "<p>" + key + ":" + val + "</p>"
+                    if (key == "iReason")
+                        html += "<p>事由：" + val + "</p>"
+                    else if (key == "iNote")
+                        html += "<p>备注：" + val + "</p>"
+
                 });
                 return html;
             }
@@ -242,7 +302,7 @@
                 para.UserID = "@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId";
                 para.UserName = "";
                 para.TaskID = Request["taskid"];  //important
-                para.Other = ko.toJSON(myViewModel);
+                para.Other = $("#iAmountLeft").val();
 
                 $.ajax({
                     url: "/BPMAjax/ReStartApplication",

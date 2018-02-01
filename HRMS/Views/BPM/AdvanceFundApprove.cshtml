@@ -53,7 +53,31 @@
 </div>
 
 <script type="text/javascript">
+    //json 日期转字符串
+    function ChangeDateTimeFormat(jsondate) {
+        if (!jsondate) return "";
+        jsondate = jsondate.replace("/Date(", "").replace(")/", "");
+        if (jsondate.indexOf("+") > 0) {
+            jsondate = jsondate.substring(0, jsondate.indexOf("+"));
+        }
+        else if (jsondate.indexOf("-") > 0) {
+            jsondate = jsondate.substring(0, jsondate.indexOf("-"));
+        }
 
+        var date = new Date(parseInt(jsondate, 10));
+        var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+        var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+        return date.getFullYear()
+               + "-"
+               + month
+               + "-"
+               + currentDate
+               + " "
+               + ((date.getHours() < 10) ? ("0" + date.getHours()) : date.getHours())
+               + ":"
+               + ((date.getMinutes() < 10) ? ("0" + date.getMinutes()) : date.getMinutes());
+
+    }
     //获取当前url参数
     function GetRequest(imitateurl) {
         var url = location.search; //获取url中"?"符后的字串
@@ -80,7 +104,6 @@
         }
 
         $.get("/AdvanceFundAjax/GetApplicationRecord?appno=" + Request["appno"], function (result) {
-            result = $.parseJSON(result);
             if (result.success) {
                 $("#iApplicant").text(result.data.iApplicant);
                 $("#iReason").text(result.data.iReason);
