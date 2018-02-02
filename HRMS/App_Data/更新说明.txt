@@ -1,0 +1,24 @@
+﻿  20180201
+  alter table [HRMS].[dbo].[Salary] add iCategory nvarchar(4000) null, iTotal decimal(18,2) null
+  alter table [HRMS].[dbo].[FinanceSummary] add [iOutSourceSalaryIn] decimal(10,2) null, [iOutSourceSalaryOut] decimal(10,2) null
+  
+CREATE TABLE [dbo].[AdvanceFund](
+	[iGuid] [nvarchar](4000) NULL,
+	[iCompanyId] [nvarchar](4000) NULL,
+	[iProjectId] [nvarchar](4000) NULL,
+	[iApplicant] [nvarchar](4000) NULL,
+	[iReason] [nvarchar](4000) NULL,
+	[iAmount] [decimal](10, 2) NULL,
+	[iChecked] [nvarchar](4000) NULL,
+	[iCheckedBy] [nvarchar](4000) NULL,
+	[iPaidDate] [datetime] NULL,
+	[iNote] [nvarchar](4000) NULL,
+	[iAppNo] [nvarchar](4000) NULL,
+	[iRecordNote] [nvarchar](4000) NULL,
+	[iCreatedOn] [datetime] NULL,
+	[iCreatedBy] [nvarchar](4000) NULL,
+	[iUpdatedOn] [datetime] NULL,
+	[iUpdatedBy] [nvarchar](4000) NULL,
+	[iStatus] [int] NULL,
+	[iIsDeleted] [int] NULL
+) 
