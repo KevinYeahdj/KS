@@ -178,7 +178,11 @@ namespace HRMS.Data.Manager
             querySql = string.Format(querySql, sort, order, offset, pageSize);
             string totalSql = "select cast(count(1) as varchar(8)) " + commonSql;
             total = int.Parse(Repository.Query<string>(totalSql).ToList()[0]);
+            string sumSql = "select CONVERT(varchar(100),sum(iTotal)) " + commonSql;
+            decimal sum = 0;
+            decimal.TryParse(Repository.Query<string>(sumSql).ToList()[0], out sum);
             List<SalaryEntity> result = Repository.Query<SalaryEntity>(querySql).ToList();
+            result.Add(new SalaryEntity { iTotal = sum });  //多加一列传递总值，记得删除
             return result;
         }
 
