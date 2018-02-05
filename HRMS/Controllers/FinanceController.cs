@@ -1484,6 +1484,8 @@ namespace HRMS.Controllers
                 int total = 0;
                 SalaryManager service = new SalaryManager();
                 List<SalaryEntity> list = service.GetSearch(SessionHelper.CurrentUser.UserType, bizParaDic, sort, order, offset, pageSize, out total);
+                decimal? sum = list.Last().iTotal;
+                list.RemoveAt(list.Count - 1);
                 DicManager dm = new DicManager();
                 var companies = dm.GetAllCompanies();
                 var projects = dm.GetAllProjects();
@@ -1496,13 +1498,14 @@ namespace HRMS.Controllers
                 }
 
                 //给分页实体赋值  
-                PageModels<SalaryEntity> model = new PageModels<SalaryEntity>();
+                PageModels2<SalaryEntity> model = new PageModels2<SalaryEntity>();
                 model.total = total;
                 if (total % pageSize == 0)
                     model.page = total / pageSize;
                 else
                     model.page = (total / pageSize) + 1;
 
+                model.sum = sum ?? 0;
                 model.rows = list;
 
                 //将查询结果返回  
