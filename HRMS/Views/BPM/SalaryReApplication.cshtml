@@ -535,7 +535,7 @@
                 conditions.sys_approve = "1";
                 conditions.sys_approvecn = "再提交申请";
                 conditions.sys_feedback = $("#sys_feedback").val();
-                conditions.sys_summary = "工资：" + data.length + "条";
+                conditions.sys_summary = "工资：" + $("#iYearMonth").val() + $("#iCategory").val() + $("#iTotal").val() + "元,附件" + data.length + "条";
                 para.Conditions = conditions;
                 para.ProcessInstanceID = Request["piid"]; //important
                 para.AppName = "";

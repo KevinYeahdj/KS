@@ -183,7 +183,7 @@
         });
 
         $("#SubmitApplication").click(function () {
-            if ($("#iAmountLeft").val() == "0") {
+            if ($("#iAmountLeft").val() <= 0) {
                 toastr.error('您目前无需还款！');
                 return;
             }

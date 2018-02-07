@@ -402,7 +402,7 @@
                 conditions.sys_approve = "1";
                 conditions.sys_approvecn = "提交申请";
                 conditions.sys_feedback = "提交申请";
-                conditions.sys_summary = "工资：" + data.length + "条";
+                conditions.sys_summary = "工资：" + $("#iYearMonth").val() + $("#iCategory").val() + $("#iTotal").val() + "元,附件"+ data.length + "条";
 
                 para.Conditions = conditions;
                 para.ProcessInstanceID = ""; //important
