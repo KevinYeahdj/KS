@@ -183,6 +183,10 @@
         });
 
         $("#SubmitApplication").click(function () {
+            if ($("#iAmountLeft").val() == "0") {
+                toastr.error('您目前无需还款！');
+                return;
+            }
             if ($("#companySelect").val() == "-") {
                 toastr.error('请先选择当前公司！');
                 return;

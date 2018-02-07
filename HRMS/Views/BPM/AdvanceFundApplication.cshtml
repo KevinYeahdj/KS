@@ -75,7 +75,7 @@
         });
         $("#iAmount").change(function () {
             var value = $("#iAmount").val();
-            if (value != "") {
+            if (value != "" && value != "0") {
                 $('#iAmount').removeClass("warning");
             }
             else {
