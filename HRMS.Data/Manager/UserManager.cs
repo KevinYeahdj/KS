@@ -191,5 +191,12 @@ namespace HRMS.Data.Manager
             return Repository.Query<UserEntity>(querySql).ToList();
 
         }
+
+        public DataRowCollection GetUserCollection()
+        {
+            string sql = "select iusername +'('+iEmployeeCodeId +')' FROM [SysUser] where iIsDeleted=0 and istatus =1 order by iUserName asc";
+            return DbHelperSQL.Query(sql).Tables[0].Rows;
+
+        }
     }
 }

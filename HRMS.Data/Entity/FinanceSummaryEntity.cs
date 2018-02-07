@@ -34,6 +34,7 @@ namespace HRMS.Data.Entity
         public decimal? iProvidentFundPersonalPay { get; set; } //公积金个人(付) 
         public decimal? iProvidentFundCompanyPay { get; set; } //公积金公司(付) 
         public decimal? iSocialSecurityAdditional { get; set; } //社保补缴 
+        public decimal? iProvidentFundAdditional { get; set; } //公积金补缴 
         public decimal? iReturnFee { get; set; } //返费 
         public decimal? iDisabilityBenefitsPay { get; set; } //残保金(付) --个人社保(退)
         //public decimal? iBusFee { get; set; } //班车费(付) 

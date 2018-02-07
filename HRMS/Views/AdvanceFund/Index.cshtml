@@ -14,8 +14,19 @@
 
             <div id="toolbar" class="toolbar">
                 <div style="float: left; margin-left: 10px; "><span>提报人：</span></div>
-                <div style="float: left; margin-left: 10px; width: 50%; "><input id="sApplicant" class="form-control" /></div>
- 
+                <div style="float: left; margin-left: 10px; width: 50%; ">
+                    <select id="sApplicant" class="form-control">
+                        <option value="">请选择</option>
+                        @{
+                            HRMS.Data.Manager.UserManager um = new HRMS.Data.Manager.UserManager();
+                            foreach (System.Data.DataRow item in um.GetUserCollection())
+                            {
+                                <option value="@item[0]">@item[0].ToString()</option>
+                            }
+                        }
+                    </select>
+                </div>
+
                 <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" onclick="Search()">查询</div>
 
             </div>
@@ -92,6 +103,10 @@
             $("#iCompanyId").attr("disabled", true);
             $("#iProjectId").attr("disabled", true);
         }
+        if (window.userType == "普通用户") {
+            $("#sApplicant").val("@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserName" + "(" + "@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId" + ")");
+            $("#sApplicant").attr("disabled", true);
+        }
 
         $('#mytab').bootstrapTable({
             url: "/AdvanceFundAjax/SearchAdvanceFund",//数据源
@@ -121,9 +136,6 @@
             toolbarAlign: "right",//工具栏对齐方式
             queryParams: function getParams(params) {
                 params.sApplicant = $("#sApplicant").val();
-                if (params.sApplicant == "") {
-                    params.sApplicant = "@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserName" + "(" + "@HRMS.WEB.Utils.SessionHelper.CurrentUser.UserId" + ")";
-                }
                 return params;
             },
             columns: [
@@ -151,7 +163,7 @@
                  }
                  , {
                      field: "iRecordNote", title: "系统备注", sortable: false, formatter: function (value, row, index) {
-                         return value + ((row.iChecked == null)?"<span style='color:red'>[审核中]</span>":"");
+                         return value + ((row.iChecked == null) ? "<span style='color:red'>[审核中]</span>" : "");
                      }
                  }
                  , { field: "iAppNo", title: "流程单号", sortable: false }
@@ -166,6 +178,8 @@
                 return;
             },
             onLoadSuccess: function (data) {
+                if ($("#sApplicant").val() == "")
+                    return;
                 if (data.rows.length > 0) {
                     var temp = data.sum;
                     var tempValidAmountForNextCal = 0;
@@ -173,6 +187,7 @@
                     if (data.rows[0].iChecked != null) {
                         $("#mytab").find("tr[data-index=0] td:last").text(temp);
                         firstRowSettled = true;
+                        tempValidAmountForNextCal = data.rows[0].iAmount;
                     }
 
                     for (var i = 1; i < data.rows.length; i++) {

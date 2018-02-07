@@ -48,6 +48,7 @@ namespace HRMS.Data.Manager
                 dic.Add("公积金个人(付) ", "iProvidentFundPersonalPay");
                 dic.Add("公积金公司(付)", "iProvidentFundCompanyPay");
                 dic.Add("社保补缴", "iSocialSecurityAdditional");
+                dic.Add("公积金补缴", "iProvidentFundAdditional");
                 dic.Add("返费", "iReturnFee");
                 dic.Add("临时工费用", "iTemporaryFee");
                 dic.Add("个人社保(退)", "iDisabilityBenefitsPay");
@@ -113,6 +114,7 @@ namespace HRMS.Data.Manager
                 dic.Add("公积金个人(付) ", "iProvidentFundPersonalPay");
                 dic.Add("公积金公司(付)", "iProvidentFundCompanyPay");
                 dic.Add("社保补缴", "iSocialSecurityAdditional");
+                dic.Add("公积金补缴", "iProvidentFundAdditional");
                 dic.Add("返费", "iReturnFee");
                 dic.Add("个人社保(退)", "iDisabilityBenefitsPay");
                 dic.Add("班车费(付)", "iBusFee");
@@ -262,9 +264,9 @@ namespace HRMS.Data.Manager
             int affectedRowCount = 0;
             List<string> exeSqls = new List<string>();
 
-            string insertTmp = "insert into FinanceSummary (iGuid, iCompanyId, iProjectId, iDate, [iSocialSecurityCompanyPay],[iSocialSecurityPersonalPay],[iProvidentFundPersonalPay],[iProvidentFundCompanyPay],[iSocialSecurityAdditional] ,[iReturnFee], [iOfficePay],[iTemporaryFee], [iSalaryOut],[iOutSourceSalaryOut],[iTemporarySalaryOut],[iCreatedOn],[iCreatedBy] ,[iUpdatedOn] ,[iUpdatedBy],[iStatus],[iIsDeleted]) values(newid(),'{0}','{1}',{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},getdate(),'system',getdate(),'system',1,0 )";
+            string insertTmp = "insert into FinanceSummary (iGuid, iCompanyId, iProjectId, iDate, [iSocialSecurityCompanyPay],[iSocialSecurityPersonalPay],[iProvidentFundPersonalPay],[iProvidentFundCompanyPay],[iSocialSecurityAdditional] ,[iReturnFee], [iOfficePay],[iTemporaryFee], [iSalaryOut],[iOutSourceSalaryOut],[iTemporarySalaryOut],[iProvidentFundAdditional] ,[iCreatedOn],[iCreatedBy] ,[iUpdatedOn] ,[iUpdatedBy],[iStatus],[iIsDeleted]) values(newid(),'{0}','{1}',{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},getdate(),'system',getdate(),'system',1,0 )";
 
-            string updateTmp = "update FinanceSummary set [iSocialSecurityCompanyPay]={3},[iSocialSecurityPersonalPay]={4},[iProvidentFundPersonalPay]={5},[iProvidentFundCompanyPay]={6},[iSocialSecurityAdditional]={7} ,[iReturnFee]={8}, [iOfficePay]={9},[iTemporaryFee]={10},[iSalaryOut]={11},[iOutSourceSalaryOut]={12},[iTemporarySalaryOut]={13} where iCompanyId='{1}' and iProjectId= '{2}' and iDate={0}";
+            string updateTmp = "update FinanceSummary set [iSocialSecurityCompanyPay]={3},[iSocialSecurityPersonalPay]={4},[iProvidentFundPersonalPay]={5},[iProvidentFundCompanyPay]={6},[iSocialSecurityAdditional]={7} ,[iReturnFee]={8}, [iOfficePay]={9},[iTemporaryFee]={10},[iSalaryOut]={11},[iOutSourceSalaryOut]={12},[iTemporarySalaryOut]={13},[iProvidentFundAdditional] ={14} where iCompanyId='{1}' and iProjectId= '{2}' and iDate={0}";
 
 
             string sql = @"SELECT distinct [iCompanyId] ,[iProjectId] FROM [SysCompanyProjectRelation] m inner join SysCompany a on a.iGuid=m.iCompanyId and a.iIsDeleted=0
@@ -279,7 +281,7 @@ namespace HRMS.Data.Manager
                 {
                     if (!dicOld.ContainsKey(dr[0].ToString() + "|" + dr[1].ToString()))
                     {
-                        exeSqls.Add(string.Format(insertTmp, dr[0].ToString(), dr[1].ToString(), month.ToString(), "Null", "Null", "Null", "Null", "Null", "Null", "Null", "Null","Null","Null","Null"));
+                        exeSqls.Add(string.Format(insertTmp, dr[0].ToString(), dr[1].ToString(), month.ToString(), "Null", "Null", "Null", "Null", "Null", "Null", "Null", "Null","Null","Null","Null","Null"));
                     }
                 }
                 if (exeSqls.Count == 0)
@@ -296,7 +298,7 @@ namespace HRMS.Data.Manager
                 {
                     if (!dicOld.ContainsKey(dr[0].ToString() + "|" + dr[1].ToString()))
                     {
-                        exeSqls.Add(string.Format(insertTmp, dr[0].ToString(), dr[1].ToString(), month.ToString(), "Null", "Null", "Null", "Null", "Null", "Null", "Null", "Null", "Null", "Null", "Null"));
+                        exeSqls.Add(string.Format(insertTmp, dr[0].ToString(), dr[1].ToString(), month.ToString(), "Null", "Null", "Null", "Null", "Null", "Null", "Null", "Null", "Null", "Null", "Null", "Null"));
                     }
                 }
                 string ssSql = "SELECT b.iCompany, b.iItemName, sum([iIndividualAmount]),sum([iCompanyAmount]) ,sum([iAdditionalAmount]) FROM [SocialSecurityDetail] a inner join hrinfo b on a.iHRInfoGuid = b.iGuid and a.iisdeleted=0 and b.iisdeleted=0 where a.iPayMonth=" + month + " group by b.iCompany, b.iItemName";
@@ -327,6 +329,8 @@ namespace HRMS.Data.Manager
                 pfPersonallDic = pfdt.Rows.Cast<DataRow>().ToDictionary(x => x[0].ToString() + "|" + x[1].ToString(), x => x[2].ToString());
                 Dictionary<string, string> pfCompanyDic = new Dictionary<string, string>();
                 pfCompanyDic = pfdt.Rows.Cast<DataRow>().ToDictionary(x => x[0].ToString() + "|" + x[1].ToString(), x => x[3].ToString());
+                Dictionary<string, string> pfAditionalDic = new Dictionary<string, string>();
+                pfAditionalDic = pfdt.Rows.Cast<DataRow>().ToDictionary(x => x[0].ToString() + "|" + x[1].ToString(), x => x[4].ToString());
 
 
                 Dictionary<string, string> rfDic = new Dictionary<string, string>();
@@ -351,6 +355,7 @@ namespace HRMS.Data.Manager
                     string pfPersonalPay = pfPersonallDic.ContainsKey(company + "|" + project) ? pfPersonallDic[company + "|" + project] : "0";
                     string pfCompanyPay = pfCompanyDic.ContainsKey(company + "|" + project) ? pfCompanyDic[company + "|" + project] : "0";
                     string ssAdditional = ssAditionalDic.ContainsKey(company + "|" + project) ? ssAditionalDic[company + "|" + project] : "0";
+                    string pfAdditional = pfAditionalDic.ContainsKey(company + "|" + project) ? pfAditionalDic[company + "|" + project] : "0";
                     string returnFee = rfDic.ContainsKey(company + "|" + project) ? rfDic[company + "|" + project] : "0";
                     string officePay = jrDic.ContainsKey(company + "|" + project) ? jrDic[company + "|" + project] : "0";
                     string tempPay = jrtmpDic.ContainsKey(company + "|" + project) ? jrtmpDic[company + "|" + project] : "0";
@@ -359,7 +364,7 @@ namespace HRMS.Data.Manager
                     string osSalaryPay = osSalaryDic.ContainsKey(company + "|" + project) ? osSalaryDic[company + "|" + project] : "0";
                     string temSalaryPay = temSalaryDic.ContainsKey(company + "|" + project) ? temSalaryDic[company + "|" + project] : "0";
 
-                    exeSqls.Add(string.Format(updateTmp, month.ToString(), company, project, string.IsNullOrEmpty(ssCompanyPay) ? "0" : ssCompanyPay, string.IsNullOrEmpty(ssPersonalPay) ? "0" : ssPersonalPay, string.IsNullOrEmpty(pfPersonalPay) ? "0" : pfPersonalPay, string.IsNullOrEmpty(pfCompanyPay) ? "0" : pfCompanyPay, string.IsNullOrEmpty(ssAdditional) ? "0" : ssAdditional, string.IsNullOrEmpty(returnFee) ? "0" : returnFee, string.IsNullOrEmpty(officePay) ? "0" : officePay, string.IsNullOrEmpty(tempPay) ? "0" : tempPay, string.IsNullOrEmpty(salaryPay) ? "0" : salaryPay, string.IsNullOrEmpty(osSalaryPay) ? "0" : osSalaryPay, string.IsNullOrEmpty(temSalaryPay) ? "0" : temSalaryPay));
+                    exeSqls.Add(string.Format(updateTmp, month.ToString(), company, project, string.IsNullOrEmpty(ssCompanyPay) ? "0" : ssCompanyPay, string.IsNullOrEmpty(ssPersonalPay) ? "0" : ssPersonalPay, string.IsNullOrEmpty(pfPersonalPay) ? "0" : pfPersonalPay, string.IsNullOrEmpty(pfCompanyPay) ? "0" : pfCompanyPay, string.IsNullOrEmpty(ssAdditional) ? "0" : ssAdditional, string.IsNullOrEmpty(returnFee) ? "0" : returnFee, string.IsNullOrEmpty(officePay) ? "0" : officePay, string.IsNullOrEmpty(tempPay) ? "0" : tempPay, string.IsNullOrEmpty(salaryPay) ? "0" : salaryPay, string.IsNullOrEmpty(osSalaryPay) ? "0" : osSalaryPay, string.IsNullOrEmpty(temSalaryPay) ? "0" : temSalaryPay, string.IsNullOrEmpty(pfAdditional) ? "0" : pfAdditional));
                 }
             }
             affectedRowCount = DbHelperSQL.ExecuteSqlTran(exeSqls);

@@ -111,10 +111,6 @@ namespace HRMS.Data.Manager
             string searchKey = para["search"];
             para.Remove("search");
 
-            //只能针对人查询
-            if (!para["iApplicant"].EndsWith(")"))
-                para["iApplicant"] = "(" + para["iApplicant"] + ")";
-
             foreach (KeyValuePair<string, string> item in para)
             {
                 if (!string.IsNullOrEmpty(item.Value) && item.Value != "§")
@@ -161,10 +157,9 @@ namespace HRMS.Data.Manager
         public decimal GetTotalBillWithDate(string applicant, string untilDtStr)
         {
             string queryTotal = "select sum(iAmount) from AdvanceFund where iPaidDate is not null and iApplicant = '" + applicant + "' and iIsDeleted = 0 and iStatus =1";
-            if (!applicant.EndsWith(")"))
+            if (string.IsNullOrEmpty(applicant))
             {
-                queryTotal = "select sum(iAmount) from AdvanceFund where iPaidDate is not null and  iApplicant like '%(" + applicant + ")' and iIsDeleted = 0 and iStatus =1";
-
+                return 0;   //如果不是针对某个人的查询，没办法汇总，直接返回0吧
             }
             if (untilDtStr != null)
             {

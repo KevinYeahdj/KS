@@ -20,7 +20,7 @@ namespace GenerateDataMonthly
                 return;
             int paidMonth = int.Parse(DateTime.Now.ToString("yyyyMM"));
             string iPayPlace = args[0];
-            if (iPayPlace == "上海")   //上海生成上月
+            if (iPayPlace == "上海" || iPayPlace == "无锡")   //上海生成上月  ---上海无锡都是生成上月
             {
                 paidMonth = int.Parse(DateTime.Now.AddMonths(-1).ToString("yyyyMM"));
             }
