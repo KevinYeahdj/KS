@@ -190,6 +190,24 @@
                 $('#iYearMonth').addClass("warning");
             }
         });
+        $("#iCategory").change(function () {
+            var value = $("#iCategory").val();
+            if (value.length > 0) {
+                $('#iCategory').removeClass("warning");
+            }
+            else {
+                $('#iCategory').addClass("warning");
+            }
+        });
+        $("#iTotal").change(function () {
+            var value = $("#iTotal").val();
+            if (value.length > 0) {
+                $('#iTotal').removeClass("warning");
+            }
+            else {
+                $('#iTotal').addClass("warning");
+            }
+        });
 
         $('#mytab').bootstrapTable({
             url: "/FinanceAjax/GetAllSalaryDraft",//数据源
@@ -347,6 +365,8 @@
                 $('#iProjectId').removeClass("warning");
             }
             $('#iYearMonth').addClass("warning");
+            $('#iCategory').addClass("warning");
+            $('#iTotal').addClass("warning");
         });
 
         $("#submitUpload").click(function () {
