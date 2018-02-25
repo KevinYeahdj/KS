@@ -51,7 +51,9 @@ namespace HRMS.Data.Manager
                 dic.Add("公积金补缴", "iProvidentFundAdditional");
                 dic.Add("返费", "iReturnFee");
                 dic.Add("临时工费用", "iTemporaryFee");
-                dic.Add("个人社保(退)", "iDisabilityBenefitsPay");
+                dic.Add("残保(付)", "iDisabilityBenefitsPay");
+                dic.Add("个人社保(退)", "iPersonalSocialSecurityBack");
+                
                 //dic.Add("班车费(付)", "iBusFee");
                 dic.Add("餐费(付)", "iMealFee");
                 dic.Add("宿舍费(付)", "iDormitoryFeePay");
@@ -116,7 +118,8 @@ namespace HRMS.Data.Manager
                 dic.Add("社保补缴", "iSocialSecurityAdditional");
                 dic.Add("公积金补缴", "iProvidentFundAdditional");
                 dic.Add("返费", "iReturnFee");
-                dic.Add("个人社保(退)", "iDisabilityBenefitsPay");
+                dic.Add("残保(付)", "iDisabilityBenefitsPay");
+                dic.Add("个人社保(退)", "iPersonalSocialSecurityBack");
                 dic.Add("班车费(付)", "iBusFee");
                 dic.Add("餐费(付)", "iMealFee");
                 dic.Add("宿舍费(付)", "iDormitoryFeePay");
