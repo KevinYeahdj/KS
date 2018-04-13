@@ -156,7 +156,7 @@
                                 option = $("<option selected = 'selected'>").val(key).text(result.data[key]);
                             $("select[name='projects']").append(option);
                         }
-                        if (window.userType == "普通用户" && $("#projectSelect").val() != "-") { //普通用户在切换公司时，当前项目也生效了
+                        if (window.userType == "普通用户") { //普通用户在切换公司时，当前项目也生效了
                             location.reload();
                         }
                     }
@@ -168,8 +168,10 @@
         }
         function ChangeProject(newProject) {
             var newCompany = $("#companySelect").val();
-            if (window.userType == "普通用户" && (newCompany == "-" || newProject == "-"))
+            if (window.userType == "普通用户" && newProject == "-") {
+                location.reload();
                 return;
+            }
             $.ajax({
                 url: "/ManageAjax/ChangeProject?newCompany=" + newCompany + "&newProject=" + newProject,
                 type: "GET",

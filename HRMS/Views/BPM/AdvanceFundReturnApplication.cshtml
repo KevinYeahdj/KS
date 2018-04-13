@@ -13,8 +13,8 @@
             <span style="color:red">说明：</span>备用金还款可以是从本流程发起，也可以是流水账冲账以及返费冲账。此处只抵扣流程已通过审核的流程账单。
 
             <div id="toolbar" class="toolbar">
-                <div style="float: left;margin-left:0;"><span>待还金额：</span></div>
-                <div style="float: left; margin-left: 50px; width: 30%"><input id="iAmountLeft" class="form-control" readonly="readonly" value="0" /></div>
+                <div style="float: left;margin-left:0;"><span>还款金额：</span></div>
+                <div style="float: left; margin-left: 50px; width: 30%"><input id="iAmountLeft" class="form-control" onkeyup="clearNoNum(this)" onblur="clearNoNum(this)" maxlength="11" placeholder="请输入还款金额" /><input type="hidden" id="iAmountLeftMost" /></div>
                 <div style="float: right; margin-left: 10px; margin-top: 5px; " class="btn btn-primary" id="SubmitApplication">提交申请</div>
             </div>
             <table id="mytab" class="table table-hover"></table>
@@ -24,6 +24,20 @@
 </div>
 
 <script type="text/javascript">
+    //正则校验两位小数
+    function clearNoNum(obj) {
+        //先把非数字的都替换掉，除了数字和.
+        obj.value = obj.value.replace(/[^\d.]/g, "");
+        //保证只有出现一个.而没有多个.
+        obj.value = obj.value.replace(/\.{2,}/g, ".");
+        //必须保证第一个为数字而不是.
+        obj.value = obj.value.replace(/^\./g, "");
+        //保证.只出现一次，而不能出现两次以上
+        obj.value = obj.value.replace(".", "$#$").replace(/\./g, "").replace("$#$", ".");
+        //只能输入两个小数
+        obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3');
+        $(obj).trigger("change");
+    }
     //bootstraptable 高度
     function tableHeight() {
         return $(window).height() * 0.86;
@@ -139,6 +153,7 @@
             },
             onLoadSuccess: function (data) {
                 $("#iAmountLeft").val(data.sum);
+                $("#iAmountLeftMost").val(data.sum);
                 if (data.rows.length > 0) {
                     var temp = data.sum;
                     var tempValidAmountForNextCal = 0;
@@ -146,6 +161,7 @@
                     if (data.rows[0].iChecked != null) {
                         $("#mytab").find("tr[data-index=0] td:last").text(temp);
                         firstRowSettled = true;
+                        tempValidAmountForNextCal = data.rows[0].iAmount;
                     }
 
                     for (var i = 1; i < data.rows.length; i++) {
@@ -183,8 +199,16 @@
         });
 
         $("#SubmitApplication").click(function () {
-            if ($("#iAmountLeft").val() <= 0) {
+            if ($("#iAmountLeftMost").val() <= 0) {
                 toastr.error('您目前无需还款！');
+                return;
+            }
+            if ($("#iAmountLeft").val() == "") {
+                toastr.error('请输入还款金额！');
+                return;
+            }
+            if ($("#iAmountLeft").val() > $("#iAmountLeftMost").val()) {
+                toastr.error('还款金额不能大于' + $("#iAmountLeftMost").val());
                 return;
             }
             if ($("#companySelect").val() == "-") {

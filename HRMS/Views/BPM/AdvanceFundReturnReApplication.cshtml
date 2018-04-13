@@ -10,8 +10,8 @@
 
             <div id="toolbar" class="toolbar">
                 <div style="float: left;margin-left:-150px;"><span>原流程待还金额：</span><span id="iAmountLeftOld"></span></div>
-                <div style="float: left;margin-left:0;"><span>待还金额：</span></div>
-                <div style="float: left; margin-left: 50px; width: 20%"><input id="iAmountLeft" class="form-control" readonly="readonly" value="0" /></div>
+                <div style="float: left;margin-left:0;"><span>还款金额：</span></div>
+                <div style="float: left; margin-left: 50px; width: 20%"><input id="iAmountLeft" class="form-control" onkeyup="clearNoNum(this)" onblur="clearNoNum(this)" maxlength="11" placeholder="请输入还款金额" /><input type="hidden" id="iAmountLeftMost" /></div>
 
                 <div style="float: left; margin-left: 10px"><span>处理意见：</span></div>
                 <div style="float: left; margin-left: 10px; width: 25%"><input id="sys_feedback" class="form-control" /></div>
@@ -29,6 +29,20 @@
 </div>
 
 <script type="text/javascript">
+    //正则校验两位小数
+    function clearNoNum(obj) {
+        //先把非数字的都替换掉，除了数字和.
+        obj.value = obj.value.replace(/[^\d.]/g, "");
+        //保证只有出现一个.而没有多个.
+        obj.value = obj.value.replace(/\.{2,}/g, ".");
+        //必须保证第一个为数字而不是.
+        obj.value = obj.value.replace(/^\./g, "");
+        //保证.只出现一次，而不能出现两次以上
+        obj.value = obj.value.replace(".", "$#$").replace(/\./g, "").replace("$#$", ".");
+        //只能输入两个小数
+        obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3');
+        $(obj).trigger("change");
+    }
     //json 日期转字符串
     function ChangeDateTimeFormat(jsondate) {
         if (!jsondate) return "";
@@ -158,6 +172,7 @@
             },
             onLoadSuccess: function (data) {
                 $("#iAmountLeft").val(data.sum);
+                $("#iAmountLeftMost").val(data.sum);
                 $("#iAmountLeftOld").text(data.appAmount);
                 if (data.rows.length > 0) {
                     var temp = data.sum;
@@ -272,7 +287,6 @@
             }
             ,
             onLoadSuccess: function (data) {
-                $("#iAmountLeft").text(data.appAmount);
                 $.each(data.rows, function (i, item) {
                     if (item.AppNo == "active") {
                         $("#logtab").find("tr[data-index=" + i + "]").css("color", "red");
@@ -282,6 +296,18 @@
         });
 
         $("#SubmitApplication").click(function () {
+            if ($("#iAmountLeftMost").val() <= 0) {
+                toastr.error('您目前无需还款！');
+                return;
+            }
+            if ($("#iAmountLeft").val() == "") {
+                toastr.error('请输入还款金额！');
+                return;
+            }
+            if ($("#iAmountLeft").val() > $("#iAmountLeftMost").val()) {
+                toastr.error('还款金额不能大于' + $("#iAmountLeftMost").val());
+                return;
+            }
             if ($("#companySelect").val() == "-") {
                 toastr.error('请先选择当前公司！');
                 return;
