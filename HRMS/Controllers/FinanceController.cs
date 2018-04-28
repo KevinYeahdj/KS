@@ -1639,7 +1639,7 @@ namespace HRMS.Controllers
                 int total = 0;
                 FinanceSummaryManager service = new FinanceSummaryManager();
                 List<FinanceSummaryEntity> list = service.GetSearch(SessionHelper.CurrentUser.UserType, bizParaDic, sort, order, offset, pageSize, out total);
-
+                
                 DicManager dm = new DicManager();
                 var companies = dm.GetAllCompanies();
                 var projects = dm.GetAllProjects();

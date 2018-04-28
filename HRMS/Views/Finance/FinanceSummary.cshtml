@@ -13,6 +13,8 @@
 
             <div id="toolbar" class="toolbar">
                 <div style="float:left;"><span>日期：</span></div><div style="float: left; margin-left: 10px;width:15%"><input id="sDate" class="form-control" /></div><div style="float: left; margin-left: 10px"><span>至</span></div><div style="float: left; margin-left: 10px; width: 15%"><input id="sDate2" class="form-control" /></div>
+                <div style="float: left; margin-left: 10px"><span>当前页面总利润合计：</span></div>
+                <div style="float: left; margin-left: 10px; width: 20%"><input id="totalThis" class="form-control" readonly="readonly" value="0" /><input id="totalThisTemp" type="hidden" value="0" /></div>
                 <div style="float: right; margin-left: 10px; margin-top: 5px; visibility:hidden" class="btn btn-primary" onclick="ExportData()">导出</div>
                 <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" onclick="ReRun()">重新汇总</div>
                 <div style="float: right; margin-left: 10px; margin-top: 5px" class="btn btn-primary" onclick="Search()">查询</div>
@@ -534,7 +536,10 @@
                      field: "iTotalProfit", title: "总利润", sortable: false, formatter: function (value, row, index) {
                          if (row.iTemporaryProfit === "" || row.iProfit === "" || row.iOutSourceProfit === "")
                              return "";
-                         return (Number(row.iTemporaryProfit) + Number(row.iProfit) + Number(row.iOutSourceProfit)).toFixed(2);
+                         var total = (Number(row.iTemporaryProfit) + Number(row.iProfit) + Number(row.iOutSourceProfit)).toFixed(2);
+                         var totalThis = (Number($("#totalThisTemp").val()) + Number(total)).toFixed(2);
+                         $("#totalThisTemp").val(totalThis);
+                         return total;
                      }
                  }
             ],
@@ -614,6 +619,8 @@
                 });
             },
             onLoadSuccess: function (data) {
+                $("#totalThis").val($("#totalThisTemp").val());
+                $("#totalThisTemp").val(0);
             },
             locale: "zh-CN",//中文支持,
             detailView: false, //是否显示详情折叠
