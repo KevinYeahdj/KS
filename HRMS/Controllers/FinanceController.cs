@@ -19,6 +19,7 @@ using Newtonsoft.Json;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
+using HRMS.Data;
 
 namespace HRMS.Controllers
 {
@@ -848,12 +849,16 @@ namespace HRMS.Controllers
 
         public void ExportReturnFee()
         {
+            //加入审计导出操作
+            LogFileHelper.ErrorLog("返费信息导出：" + SessionHelper.CurrentUser.UserName + "(" + SessionHelper.CurrentUser.UserName + ")");
             string path = "返费信息导出" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
             ExExcel<ReturnFeeModel>(GetExportData(), path, ConvertHelper.DicConvert(ReturnFeeManager.ReturnFeeDic));
         }
 
         public void ExportFlowReturnFeeHistory()
         {
+            //加入审计导出操作
+            LogFileHelper.ErrorLog("返费申请导出：" + SessionHelper.CurrentUser.UserName + "(" + SessionHelper.CurrentUser.UserName + ")");
             string path = "返费申请导出" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
             ExExcel<ReturnFeeHistoryViewModel>(GetExportDataReturnFeeHistory(), path, ConvertHelper.DicConvert(ReturnFeeManager.ReturnFeeHistoryDic4Export));
         }
@@ -896,6 +901,9 @@ namespace HRMS.Controllers
                 item.iCompany = comDic[item.iCompany];
                 item.iItemName = proDic[item.iItemName];
             }
+            //加入审计导出操作
+            LogFileHelper.ErrorLog("返费信息导出明细：" + SessionHelper.CurrentUser.UserName + "(" + SessionHelper.CurrentUser.UserName + ")" + JsonConvert.SerializeObject(paraDic));
+                
             return list;
 
         }
@@ -917,6 +925,9 @@ namespace HRMS.Controllers
                 item.iCompanyId = comDic[item.iCompanyId];
                 item.iProjectId = proDic[item.iProjectId];
             }
+            //加入审计导出操作
+            LogFileHelper.ErrorLog("返费申请导出明细：" + SessionHelper.CurrentUser.UserName + "(" + SessionHelper.CurrentUser.UserName + ")" + JsonConvert.SerializeObject(paraDic));
+              
             return list;
 
         }

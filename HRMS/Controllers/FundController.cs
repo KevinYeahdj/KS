@@ -19,6 +19,7 @@ using Newtonsoft.Json;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
+using HRMS.Data;
 
 namespace HRMS.Controllers
 {
@@ -1193,24 +1194,36 @@ namespace HRMS.Controllers
 
         public void ExportSocialSecurity()
         {
+            //加入审计导出操作
+            LogFileHelper.ErrorLog("社保信息导出：" + SessionHelper.CurrentUser.UserName + "(" + SessionHelper.CurrentUser.UserName + ")");
+            
             string path = "社保信息导出" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
             ExExcel<SocialSecurityModel>(GetExportData(), path, ConvertHelper.DicConvert(SocialSecurityManager.SocialSecurityViewDic));
         }
 
         public void ExportSocialSecurityDetail()
         {
+            //加入审计导出操作
+            LogFileHelper.ErrorLog("社保明细导出：" + SessionHelper.CurrentUser.UserName + "(" + SessionHelper.CurrentUser.UserName + ")");
+            
             string path = "社保明细导出" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
             ExExcel<SocialSecurityDetailModel>(GetSocialSecurityDetailExportData(), path, ConvertHelper.DicConvert(SocialSecurityManager.SocialSecurityDetailViewDic));
         }
 
         public void ExportProvidentFund()
         {
+            //加入审计导出操作
+            LogFileHelper.ErrorLog("公积金信息导出：" + SessionHelper.CurrentUser.UserName + "(" + SessionHelper.CurrentUser.UserName + ")");
+            
             string path = "公积金信息导出" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
             ExExcel<ProvidentFundModel>(GetProvidentFundExportData(), path, ConvertHelper.DicConvert(ProvidentFundManager.ProvidentFundViewDic));
         }
 
         public void ExportProvidentFundDetail()
         {
+            //加入审计导出操作
+            LogFileHelper.ErrorLog("公积金明细导出：" + SessionHelper.CurrentUser.UserName + "(" + SessionHelper.CurrentUser.UserName + ")");
+            
             string path = "公积金明细导出" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
             ExExcel<ProvidentFundDetailModel>(GetProvidentFundDetailExportData(), path, ConvertHelper.DicConvert(ProvidentFundManager.ProvidentFundDetailViewDic));
         }
@@ -1250,6 +1263,9 @@ namespace HRMS.Controllers
                 item.iCompany = comDic[item.iCompany];
                 item.iItemName = proDic[item.iItemName];
             }
+            //加入审计导出操作
+            LogFileHelper.ErrorLog("社保信息导出明细：" + SessionHelper.CurrentUser.UserName + "(" + SessionHelper.CurrentUser.UserName + ")" + JsonConvert.SerializeObject(paraDic));
+                
             return list;
 
         }
@@ -1289,6 +1305,9 @@ namespace HRMS.Controllers
                 item.iCompany = comDic[item.iCompany];
                 item.iItemName = proDic[item.iItemName];
             }
+            //加入审计导出操作
+            LogFileHelper.ErrorLog("公积金信息导出明细：" + SessionHelper.CurrentUser.UserName + "(" + SessionHelper.CurrentUser.UserName + ")" + JsonConvert.SerializeObject(paraDic));
+                
             return list;
 
         }
@@ -1329,6 +1348,9 @@ namespace HRMS.Controllers
                 item.iCompany = comDic[item.iCompany];
                 item.iItemName = proDic[item.iItemName];
             }
+            //加入审计导出操作
+            LogFileHelper.ErrorLog("公积金明细导出明细：" + SessionHelper.CurrentUser.UserName + "(" + SessionHelper.CurrentUser.UserName + ")" + JsonConvert.SerializeObject(paraDic));
+                
             return list;
         }
 
@@ -1365,6 +1387,9 @@ namespace HRMS.Controllers
                 item.iCompany = comDic[item.iCompany];
                 item.iItemName = proDic[item.iItemName];
             }
+            //加入审计导出操作
+            LogFileHelper.ErrorLog("社保明细导出明细：" + SessionHelper.CurrentUser.UserName + "(" + SessionHelper.CurrentUser.UserName + ")" + JsonConvert.SerializeObject(paraDic));
+                
             return list;
 
         }

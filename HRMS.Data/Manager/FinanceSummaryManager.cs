@@ -269,7 +269,7 @@ namespace HRMS.Data.Manager
 
             string insertTmp = "insert into FinanceSummary (iGuid, iCompanyId, iProjectId, iDate, [iSocialSecurityCompanyPay],[iSocialSecurityPersonalPay],[iProvidentFundPersonalPay],[iProvidentFundCompanyPay],[iSocialSecurityAdditional] ,[iReturnFee], [iOfficePay],[iTemporaryFee], [iSalaryOut],[iOutSourceSalaryOut],[iTemporarySalaryOut],[iProvidentFundAdditional] ,[iCreatedOn],[iCreatedBy] ,[iUpdatedOn] ,[iUpdatedBy],[iStatus],[iIsDeleted]) values(newid(),'{0}','{1}',{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},getdate(),'system',getdate(),'system',1,0 )";
 
-            string updateTmp = "update FinanceSummary set [iSocialSecurityCompanyPay]={3},[iSocialSecurityPersonalPay]={4},[iProvidentFundPersonalPay]={5},[iProvidentFundCompanyPay]={6},[iSocialSecurityAdditional]={7} ,[iReturnFee]={8}, [iOfficePay]={9},[iTemporaryFee]={10},[iSalaryOut]={11},[iOutSourceSalaryOut]={12},[iTemporarySalaryOut]={13},[iProvidentFundAdditional] ={14} where iCompanyId='{1}' and iProjectId= '{2}' and iDate={0}";
+            string updateTmp = "update FinanceSummary set [iSocialSecurityCompanyPay]={3},[iSocialSecurityPersonalPay]={4},[iProvidentFundPersonalPay]={5},[iProvidentFundCompanyPay]={6},[iSocialSecurityAdditional]={7} ,[iReturnFee]={8}, [iOfficePay]={9},[iTemporaryFee]={10},[iSalaryOut]={11},[iOutSourceSalaryOut]={12},[iTemporarySalaryOut]={13},[iProvidentFundAdditional] ={14}, [iMealFee] = {15} where iCompanyId='{1}' and iProjectId= '{2}' and iDate={0}";
 
 
             string sql = @"SELECT distinct [iCompanyId] ,[iProjectId] FROM [SysCompanyProjectRelation] m inner join SysCompany a on a.iGuid=m.iCompanyId and a.iIsDeleted=0
@@ -307,8 +307,9 @@ namespace HRMS.Data.Manager
                 string ssSql = "SELECT b.iCompany, b.iItemName, sum([iIndividualAmount]),sum([iCompanyAmount]) ,sum([iAdditionalAmount]) FROM [SocialSecurityDetail] a inner join hrinfo b on a.iHRInfoGuid = b.iGuid and a.iisdeleted=0 and b.iisdeleted=0 where a.iPayMonth=" + month + " group by b.iCompany, b.iItemName";
                 string pfSql = "SELECT b.iCompany, b.iItemName, sum([iIndividualAmount]),sum([iCompanyAmount]) ,sum([iAdditionalAmount]) FROM [ProvidentFundDetail] a inner join hrinfo b on a.iHRInfoGuid = b.iGuid and a.iisdeleted=0 and b.iisdeleted=0 where a.iPayMonth=" + month + " group by b.iCompany, b.iItemName";
                 string rfSql = "select hr.iCompany, hr.iItemName, sum(cast(rh.iReturnFeeAmount as decimal(6,2))) FROM [ReturnFeeHistory] rh inner join dbo.HRInfo hr on rh.iHRInfoGuid=hr.iGuid and rh.iisdeleted=0 and hr.iisdeleted=0  where left(CONVERT(varchar(100), rh.iReturnFeeActualPayDate, 112),6) ='" + month + "' and iReturnFeePayment='已付' group by hr.iCompany, hr.iItemName";
-                string jrSql = "SELECT [iCompanyId] ,[iProjectId] ,sum([iAmount]) FROM [Journal] where left(CONVERT(varchar(100), iPaidDate, 112),6) ='" + month + "' and iChecked='是' and iisdeleted=0 and iType<>'临时工费用' group by iCompanyId, iProjectId";
+                string jrSql = "SELECT [iCompanyId] ,[iProjectId] ,sum([iAmount]) FROM [Journal] where left(CONVERT(varchar(100), iPaidDate, 112),6) ='" + month + "' and iChecked='是' and iisdeleted=0 and iType<>'临时工费用' and iType<>'餐费' group by iCompanyId, iProjectId";
                 string jrTmpSql = "SELECT [iCompanyId] ,[iProjectId] ,sum([iAmount]) FROM [Journal] where left(CONVERT(varchar(100), iPaidDate, 112),6) ='" + month + "' and iChecked='是' and iisdeleted=0 and iType='临时工费用' group by iCompanyId, iProjectId";
+                string jrcfSql = "SELECT [iCompanyId] ,[iProjectId] ,sum([iAmount]) FROM [Journal] where left(CONVERT(varchar(100), iPaidDate, 112),6) ='" + month + "' and iChecked='是' and iisdeleted=0 and iType='餐费' group by iCompanyId, iProjectId";
                 string salaryOutSql = "SELECT [iCompanyId] ,[iProjectId] ,sum([iTotal]) FROM  [Salary] where left(CONVERT(varchar(100), iYearMonth, 112),6) ='" + month + "' and iApproveStatus='已审核' and iisdeleted=0 and iCategory='派遣工' group by iCompanyId, iProjectId";
                 string osSalaryOutSql = "SELECT [iCompanyId] ,[iProjectId] ,sum([iTotal]) FROM  [Salary] where left(CONVERT(varchar(100), iYearMonth, 112),6) ='" + month + "' and iApproveStatus='已审核' and iisdeleted=0 and iCategory='外包工' group by iCompanyId, iProjectId";
                 string temSalaryOutSql = "SELECT [iCompanyId] ,[iProjectId] ,sum([iTotal]) FROM  [Salary] where left(CONVERT(varchar(100), iYearMonth, 112),6) ='" + month + "' and iApproveStatus='已审核' and iisdeleted=0 and iCategory='临时工' group by iCompanyId, iProjectId";
@@ -317,6 +318,7 @@ namespace HRMS.Data.Manager
                 DataTable rfdt = DbHelperSQL.Query(rfSql).Tables[0];
                 DataTable jrdt = DbHelperSQL.Query(jrSql).Tables[0];
                 DataTable jrtmpdt = DbHelperSQL.Query(jrTmpSql).Tables[0];
+                DataTable jrcfdt = DbHelperSQL.Query(jrcfSql).Tables[0];  //餐费
                 DataTable salarydt = DbHelperSQL.Query(salaryOutSql).Tables[0];
                 DataTable osSalarydt = DbHelperSQL.Query(osSalaryOutSql).Tables[0];
                 DataTable temSalarydt = DbHelperSQL.Query(temSalaryOutSql).Tables[0];
@@ -341,7 +343,9 @@ namespace HRMS.Data.Manager
                 Dictionary<string, string> jrDic = new Dictionary<string, string>();
                 jrDic = jrdt.Rows.Cast<DataRow>().ToDictionary(x => x[0].ToString() + "|" + x[1].ToString(), x => x[2].ToString());
                 Dictionary<string, string> jrtmpDic = new Dictionary<string, string>();
-                jrtmpDic = jrtmpdt.Rows.Cast<DataRow>().ToDictionary(x => x[0].ToString() + "|" + x[1].ToString(), x => x[2].ToString());
+                jrtmpDic = jrtmpdt.Rows.Cast<DataRow>().ToDictionary(x => x[0].ToString() + "|" + x[1].ToString(), x => x[2].ToString()); 
+                Dictionary<string, string> jrcfDic = new Dictionary<string, string>();
+                jrcfDic = jrcfdt.Rows.Cast<DataRow>().ToDictionary(x => x[0].ToString() + "|" + x[1].ToString(), x => x[2].ToString());
                 Dictionary<string, string> salaryDic = new Dictionary<string, string>();
                 salaryDic = salarydt.Rows.Cast<DataRow>().ToDictionary(x => x[0].ToString() + "|" + x[1].ToString(), x => x[2].ToString());
                 Dictionary<string, string> osSalaryDic = new Dictionary<string, string>();
@@ -362,12 +366,13 @@ namespace HRMS.Data.Manager
                     string returnFee = rfDic.ContainsKey(company + "|" + project) ? rfDic[company + "|" + project] : "0";
                     string officePay = jrDic.ContainsKey(company + "|" + project) ? jrDic[company + "|" + project] : "0";
                     string tempPay = jrtmpDic.ContainsKey(company + "|" + project) ? jrtmpDic[company + "|" + project] : "0";
+                    string cfPay = jrcfDic.ContainsKey(company + "|" + project) ? jrcfDic[company + "|" + project] : "0";  //餐费
 
                     string salaryPay = salaryDic.ContainsKey(company + "|" + project) ? salaryDic[company + "|" + project] : "0";
                     string osSalaryPay = osSalaryDic.ContainsKey(company + "|" + project) ? osSalaryDic[company + "|" + project] : "0";
                     string temSalaryPay = temSalaryDic.ContainsKey(company + "|" + project) ? temSalaryDic[company + "|" + project] : "0";
 
-                    exeSqls.Add(string.Format(updateTmp, month.ToString(), company, project, string.IsNullOrEmpty(ssCompanyPay) ? "0" : ssCompanyPay, string.IsNullOrEmpty(ssPersonalPay) ? "0" : ssPersonalPay, string.IsNullOrEmpty(pfPersonalPay) ? "0" : pfPersonalPay, string.IsNullOrEmpty(pfCompanyPay) ? "0" : pfCompanyPay, string.IsNullOrEmpty(ssAdditional) ? "0" : ssAdditional, string.IsNullOrEmpty(returnFee) ? "0" : returnFee, string.IsNullOrEmpty(officePay) ? "0" : officePay, string.IsNullOrEmpty(tempPay) ? "0" : tempPay, string.IsNullOrEmpty(salaryPay) ? "0" : salaryPay, string.IsNullOrEmpty(osSalaryPay) ? "0" : osSalaryPay, string.IsNullOrEmpty(temSalaryPay) ? "0" : temSalaryPay, string.IsNullOrEmpty(pfAdditional) ? "0" : pfAdditional));
+                    exeSqls.Add(string.Format(updateTmp, month.ToString(), company, project, string.IsNullOrEmpty(ssCompanyPay) ? "0" : ssCompanyPay, string.IsNullOrEmpty(ssPersonalPay) ? "0" : ssPersonalPay, string.IsNullOrEmpty(pfPersonalPay) ? "0" : pfPersonalPay, string.IsNullOrEmpty(pfCompanyPay) ? "0" : pfCompanyPay, string.IsNullOrEmpty(ssAdditional) ? "0" : ssAdditional, string.IsNullOrEmpty(returnFee) ? "0" : returnFee, string.IsNullOrEmpty(officePay) ? "0" : officePay, string.IsNullOrEmpty(tempPay) ? "0" : tempPay, string.IsNullOrEmpty(salaryPay) ? "0" : salaryPay, string.IsNullOrEmpty(osSalaryPay) ? "0" : osSalaryPay, string.IsNullOrEmpty(temSalaryPay) ? "0" : temSalaryPay, string.IsNullOrEmpty(pfAdditional) ? "0" : pfAdditional, string.IsNullOrEmpty(cfPay) ? "0" : cfPay));
                 }
             }
             affectedRowCount = DbHelperSQL.ExecuteSqlTran(exeSqls);

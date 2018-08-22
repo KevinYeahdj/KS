@@ -19,6 +19,7 @@ using Newtonsoft.Json;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
+using HRMS.Data;
 
 namespace HRMS.Controllers
 {
@@ -496,24 +497,36 @@ namespace HRMS.Controllers
 
         public void ExportBasic()
         {
+            //加入审计导出操作
+            LogFileHelper.ErrorLog("人事基本信息导出：" + SessionHelper.CurrentUser.UserName + "(" + SessionHelper.CurrentUser.UserName + ")");
             string path = "人事基本信息导出" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
             ExExcel<HRInfoEntity>(GetExportData(), path, ConvertHelper.DicConvert(HRInfoManager.hrBasicDic));
+                
         }
         public void ExportAccount()
         {
+            //加入审计导出操作
+            LogFileHelper.ErrorLog("人事账户信息导出：" + SessionHelper.CurrentUser.UserName + "(" + SessionHelper.CurrentUser.UserName + ")");
             string path = "人事账户信息导出" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
             ExExcel<HRInfoEntity>(GetExportData(), path, ConvertHelper.DicConvert(HRInfoManager.hrAccountDic));
+            
         }
         public void ExportPosition()
         {
+            //加入审计导出操作
+            LogFileHelper.ErrorLog("人事职位信息导出：" + SessionHelper.CurrentUser.UserName + "(" + SessionHelper.CurrentUser.UserName + ")");
             string path = "人事职位信息导出" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
             ExExcel<HRInfoEntity>(GetExportData(), path, ConvertHelper.DicConvert(HRInfoManager.hrPositionDic));
+            
         }
 
         public void ExportFull()
         {
+            //加入审计导出操作
+            LogFileHelper.ErrorLog("人事完整信息导出：" + SessionHelper.CurrentUser.UserName + "(" + SessionHelper.CurrentUser.UserName + ")");
             string path = "人事完整信息导出" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
             ExExcel<HRInfoEntity>(GetExportData(), path, ConvertHelper.DicConvert(HRInfoManager.hrFullDic));
+            
         }
 
         private List<HRInfoEntity> GetExportData()
@@ -547,6 +560,8 @@ namespace HRMS.Controllers
                     item.iCompany = comDic[item.iCompany];
                     item.iItemName = proDic[item.iItemName];
                 }
+                //加入审计导出操作
+                LogFileHelper.ErrorLog("人事信息导出明细："+ SessionHelper.CurrentUser.UserName + "(" + SessionHelper.CurrentUser.UserName + ")"+ JsonConvert.SerializeObject(paraDic));
                 return list;
             }
             catch(Exception e)
